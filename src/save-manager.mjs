@@ -1,4 +1,5 @@
 import { validateState } from "./game-core.mjs";
+import { generateNpcs } from "./npc-manager.mjs";
 
 export class SaveManager {
   static key = "today-day-one.save.v1";
@@ -19,6 +20,7 @@ export class SaveManager {
     if (!raw) return null;
     try {
       const parsed = JSON.parse(raw);
+      parsed.npcs ??= generateNpcs();
       return validateState(parsed) ? parsed : null;
     } catch {
       return null;

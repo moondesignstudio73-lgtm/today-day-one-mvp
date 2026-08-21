@@ -14,8 +14,17 @@ import { appendTransaction, calculatePaycheck, DAILY_LIVING_COST, getEconomySumm
 import { ITEMS, getItem, validateItemData } from "../src/items-data.mjs";
 import { acquireActionItem, addItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "../src/inventory-manager.mjs";
 import { calculateGiftReaction, giveGift } from "../src/gift-manager.mjs";
+import { NPC_ARCHETYPES, validateNpcArchetypes } from "../src/npcs-data.mjs";
+import { generateNpcs, validateNpcs } from "../src/npc-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
+assert.equal(validateNpcArchetypes(), true);
+const generatedNpcs = generateNpcs(() => 0.5);
+assert.equal(generatedNpcs.length, NPC_ARCHETYPES.length);
+assert.equal(new Set(generatedNpcs.map(npc => npc.name)).size, generatedNpcs.length);
+assert.equal(validateNpcs(generatedNpcs), true);
+assert.ok(generatedNpcs.some(npc => npc.interestInPlayer > 0));
+assert.ok(generatedNpcs.some(npc => npc.interestInGirlfriend > 0));
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
@@ -51,6 +60,12 @@ const restored = SaveManager.load(storage);
 assert.ok(restored);
 assert.equal(restored.partner.name, original.partner.name);
 assert.equal(restored.money, original.money);
+const legacySave = structuredClone(original);
+delete legacySave.npcs;
+storage.setItem(SaveManager.key, JSON.stringify(legacySave));
+const migratedSave = SaveManager.load(storage);
+assert.ok(migratedSave);
+assert.equal(validateNpcs(migratedSave.npcs), true);
 storage.setItem(SaveManager.key, "{invalid-json");
 assert.equal(SaveManager.load(storage), null);
 
