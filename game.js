@@ -7,6 +7,7 @@ import { getActionAvailability } from "./src/action-manager.mjs";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress } from "./src/job-manager.mjs";
+import { processDayEndEconomy } from "./src/economy-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -54,9 +55,9 @@ function applyAction() {
   const clue = observePersonality(state, action.tag);
   if (clue?.revealed) toast(`${state.partner.name}의 성향을 하나 알아냈어요.`);
   state.selected = null;
-  const finishedDay = state.phase === 3;
+  const finishedDay = state.phase === 3; const completedDay = state.day;
   advanceTime(state);
-  if (finishedDay) dailyEvent();
+  if (finishedDay) { dailyEvent(); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); }
   const event = rollEvent(state);
   if (event) {
     state.logs.push({time:`DAY ${state.day} · EVENT`,text:`${event.title} — ${event.message}`});

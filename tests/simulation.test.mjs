@@ -10,6 +10,7 @@ import { calculateActionEffects } from "../src/consequence-manager.mjs";
 import { getRelationshipState } from "../src/relationship-manager.mjs";
 import { generateJob, JOBS, validateJob } from "../src/jobs-data.mjs";
 import { addJobProgress, applyJobModifiers } from "../src/job-manager.mjs";
+import { calculatePaycheck, DAILY_LIVING_COST, getEconomySummary, PAY_DAYS, processDayEndEconomy, recordTransaction } from "../src/economy-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 const memoryStorage = () => {
@@ -238,3 +239,18 @@ assert.equal(promotion.level, 2);
 assert.ok(jobState.job.incomeMultiplier > JOBS.find(job => job.id === "developer").incomeMultiplier);
 assert.ok(["planner","developer","designer","sales"].includes(generateJob(() => 0.75).id));
 console.log("✓ 4개 직업의 수입·스트레스·성장 보정과 승진 검증 통과");
+const economyState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const startingMoney = economyState.money;
+const normalDayEntries = processDayEndEconomy(economyState, 1);
+assert.equal(normalDayEntries.length, 1);
+assert.equal(economyState.money, startingMoney - DAILY_LIVING_COST);
+const beforePayday = economyState.money;
+const paydayEntries = processDayEndEconomy(economyState, PAY_DAYS[0]);
+assert.equal(paydayEntries.length, 2);
+assert.equal(paydayEntries[1].amount, calculatePaycheck(economyState));
+assert.equal(economyState.money, beforePayday - DAILY_LIVING_COST + calculatePaycheck(economyState));
+recordTransaction(economyState, { day:10, category:"test", label:"테스트 지출", amount:-1000 });
+const economySummary = getEconomySummary(economyState);
+assert.ok(economySummary.income > 0 && economySummary.expense > 0);
+assert.equal(economySummary.transactions, 4);
+console.log("✓ 일일 생활비·10일 급여·경제 원장과 요약 검증 통과");
