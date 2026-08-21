@@ -10,6 +10,7 @@ import { addJobProgress } from "./src/job-manager.mjs";
 import { processDayEndEconomy } from "./src/economy-manager.mjs";
 import { acquireActionItem } from "./src/inventory-manager.mjs";
 import { getItem } from "./src/items-data.mjs";
+import { giveGift } from "./src/gift-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -52,7 +53,7 @@ function applyAction() {
   if (action.random) { const win = Math.random() > .48; fx.money = win ? Math.round(40000+Math.random()*90000) : -Math.round(25000+Math.random()*70000); toast(win ? `투자 성공! ${money(fx.money)}` : `투자 손실 ${money(Math.abs(fx.money))}`); }
   applyEffects(state, fx);
   const acquiredItem = acquireActionItem(state, action);
-  if (acquiredItem) toast(`${getItem(acquiredItem.itemId).name} 획득${acquiredItem.equipped?' · 장착 완료':''}`);
+  if (acquiredItem) { const giftResult=action.autoGift?giveGift(state,acquiredItem.instanceId):null; toast(giftResult?`${giftResult.item.name} 선물 · “${giftResult.reaction.reaction}”`:`${getItem(acquiredItem.itemId).name} 획득${acquiredItem.equipped?' · 장착 완료':''}`); }
   const promotion = addJobProgress(state, action, fx);
   if (promotion) toast(`승진! 직업 레벨 ${promotion.level} · 수입 보정 상승`);
   state.choices.push(action.tag); state.actionHistory.push({ day:state.day, phase:state.phase, actionId:action.id, tag:action.tag }); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
