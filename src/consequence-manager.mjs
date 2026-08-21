@@ -1,10 +1,12 @@
 const scale = value => value / 100;
 import { applyJobModifiers } from "./job-manager.mjs";
+import { getEquipmentBonuses } from "./inventory-manager.mjs";
 
 export function calculateActionEffects(state, action) {
   const effects = { ...action.effects };
   const personality = state.partner.personality;
   const notes = [];
+  const equipment = getEquipmentBonuses(state);
 
   if (action.tag === "연락") {
     effects.affection = (effects.affection ?? 0) * (0.65 + scale(personality.contactImportance));
@@ -15,9 +17,10 @@ export function calculateActionEffects(state, action) {
 
   if (action.tag === "데이트") {
     effects.affection = (effects.affection ?? 0) * (0.6 + scale(personality.romanticism));
+    effects.affection *= 1 + (equipment.attractiveness + equipment.fashion) / 100;
     effects.excitement = 4 + scale(personality.romanticism) * 9;
     effects.relationshipStress = -4;
-    notes.push("낭만성");
+    notes.push("낭만성", "장착 스타일");
   }
 
   if (action.tag === "쇼핑") {

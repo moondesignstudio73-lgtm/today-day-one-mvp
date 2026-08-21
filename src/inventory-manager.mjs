@@ -33,6 +33,11 @@ export function getEquipmentBonuses(state) {
   }, { attractiveness:0, fashion:0 });
 }
 
+export function getEffectiveAppearance(state) {
+  const bonuses = getEquipmentBonuses(state);
+  return { charm:Math.min(100, state.charm + bonuses.attractiveness), fashion:Math.min(100, state.fashion + bonuses.fashion), bonuses };
+}
+
 export function acquireActionItem(state, action) {
   if (!action.itemId) return null;
   const instance = addItem(state, action.itemId, action.itemOwner ?? "player", "action");
