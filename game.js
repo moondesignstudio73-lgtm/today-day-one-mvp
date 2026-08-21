@@ -15,11 +15,12 @@ import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manag
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
-import { buildConversationContext, getContextualOpening } from "./src/conversation-manager.mjs";
+import { buildConversationContext, generateContextualReply, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
+const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
 
 let state;
 
@@ -96,10 +97,10 @@ function dailyEvent() { if(state.day%5===0){ const good=Math.random()>.45; const
 function openChat() {
   const context = buildConversationContext(state);
   const greeting = getContextualOpening(context).replace(`${state.partner.name}: `, "");
-  $("#modalContent").innerHTML=`<span class="eyebrow">CHAT WITH ${state.partner.name}</span><h2>${state.partner.name}와의 대화</h2><div class="chat-window"><div class="message her">${greeting}</div><div id="chatReply"></div></div><div class="chat-options"><button class="chat-option" data-reply="다정">나도 네 생각하고 있었어. 오늘 있었던 일 말해줄까?</button><button class="chat-option" data-reply="솔직">오늘 조금 힘들었어. 그래도 네 연락 보니까 좋다.</button><button class="chat-option" data-reply="무심">지금 좀 바빠. 나중에 얘기하자.</button></div>`;
-  $("#modal").classList.remove("hidden"); document.querySelectorAll(".chat-option").forEach(b=>b.addEventListener("click",()=>chatReply(b.dataset.reply,b.textContent)));
+  $("#modalContent").innerHTML=`<span class="eyebrow">CHAT WITH ${state.partner.name}</span><h2>${state.partner.name}와의 대화</h2><div class="chat-window"><div class="message her">${greeting}</div><div id="chatReply"></div></div><form id="chatForm" class="chat-compose"><input id="chatInput" maxlength="180" autocomplete="off" placeholder="자유롭게 메시지를 입력하세요" required><button type="submit">보내기</button></form>`;
+  $("#modal").classList.remove("hidden"); $("#chatForm").addEventListener("submit",event=>{ event.preventDefault(); chatReply($("#chatInput").value); });
 }
-function chatReply(type,text){ $("#chatReply").innerHTML=`<div class="message me">${text}</div><div class="message her">${type==="무심"?"알겠어… 방해 안 할게.":type==="솔직"?"힘들었구나. 내가 들어줄게.":"나도! 얼른 얘기해 줘 😊"}</div>`; state.affection=clamp(state.affection+(type==="무심"?-8:6),0,1000); state.trust=clamp(state.trust+(type==="솔직"?8:type==="무심"?-5:3),0,1000); SaveManager.save(state); document.querySelector(".chat-options").remove(); }
+function chatReply(message){ const response=generateContextualReply(buildConversationContext(state),message); if(!response)return; $("#chatReply").innerHTML=`<div class="message me">${escapeHtml(message)}</div><div class="message her">${escapeHtml(response.text)}</div>`; applyEffects(state,response.effects); recordConversationTurn(state,message,response.text); recordMemory(state,{type:"conversation",summary:`${state.partner.name}와의 대화`,importance:2,tags:["대화"]}); SaveManager.save(state); $("#chatForm").remove(); render(); }
 
 function openDebug() {
   if (!state) return;

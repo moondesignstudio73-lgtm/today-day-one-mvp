@@ -26,3 +26,23 @@ export function getContextualOpening(context) {
   if (context.relationship.affection > 700) return `${name}: 오늘 네 목소리 듣고 싶었는데, 잘 지냈어?`;
   return `${name}: 뭐 해? 오늘 하루는 어땠어?`;
 }
+
+export function generateContextualReply(context, message) {
+  const text = String(message ?? "").trim();
+  if (!text) return null;
+  const latestMemory = context.importantMemories?.at(0);
+  if (/미안|사과/.test(text)) return { text:context.relationship.trust < 450 ? "말해 줘서 고마워. 행동으로도 보여 줬으면 좋겠어." : "괜찮아. 솔직하게 말해 줘서 고마워.", effects:{ affection:4, trust:8 } };
+  if (/사랑|좋아해/.test(text)) return { text:context.relationship.affection >= 650 ? "나도 많이 좋아해. 오늘은 그 말이 더 듣고 싶었어." : "고마워. 우리 천천히 더 가까워지자.", effects:{ affection:9, trust:3 } };
+  if (/힘들|피곤|지쳤/.test(text)) return { text:"많이 힘들었구나. 오늘은 내가 네 편이 되어 줄게.", effects:{ affection:5, trust:7, stress:-4 } };
+  if (latestMemory?.type === "gift") return { text:`응, 듣고 있어. 그리고 ${latestMemory.summary}도 아직 고맙게 기억하고 있어.`, effects:{ affection:4, trust:2 } };
+  if (context.relationship.trust < 350) return { text:"무슨 말인지 알겠어. 그래도 지금은 조금 더 솔직한 얘기가 필요해.", effects:{ affection:1, trust:2 } };
+  return { text:"응, 계속 말해 줘. 오늘 네 이야기를 더 듣고 싶어.", effects:{ affection:3, trust:3 } };
+}
+
+export function recordConversationTurn(state, userMessage, assistantMessage) {
+  state.conversationHistory ??= [];
+  const turn = { day:state.day, phase:state.phase, user:String(userMessage), assistant:String(assistantMessage) };
+  state.conversationHistory.push(turn);
+  if (state.conversationHistory.length > 40) state.conversationHistory.splice(0, state.conversationHistory.length - 40);
+  return turn;
+}

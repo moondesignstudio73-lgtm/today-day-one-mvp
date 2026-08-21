@@ -19,7 +19,7 @@ import { applyNpcActionEffects, generateNpcs, getNpcRelationshipStatus, validate
 import { getTemptationOpportunity, resolveTemptation } from "../src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "../src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "../src/conflict-manager.mjs";
-import { buildConversationContext, getContextualOpening } from "../src/conversation-manager.mjs";
+import { buildConversationContext, generateContextualReply, getContextualOpening, recordConversationTurn } from "../src/conversation-manager.mjs";
 import { getMemoryContext, recordMemory, validateMemories } from "../src/memory-manager.mjs";
 import { getInitiatedMessageChance, maybeGenerateInitiatedMessage } from "../src/initiated-message-manager.mjs";
 
@@ -100,6 +100,13 @@ assert.ok(initiatedMessage?.text);
 assert.equal(maybeGenerateInitiatedMessage(messageState, () => 0), null);
 assert.equal(buildConversationContext(messageState).recentInitiatedMessages.length, 1);
 assert.ok(getContextualOpening(buildConversationContext(messageState)).includes(initiatedMessage.text));
+const apologyReply = generateContextualReply(buildConversationContext(messageState), "오늘은 내가 미안해");
+assert.ok(apologyReply.text.includes("고마워"));
+assert.ok(apologyReply.effects.trust > 0);
+assert.equal(generateContextualReply(buildConversationContext(messageState), "  "), null);
+const savedTurn = recordConversationTurn(messageState, "사랑해", "나도 좋아해");
+assert.equal(savedTurn.user, "사랑해");
+assert.equal(messageState.conversationHistory.length, 1);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
