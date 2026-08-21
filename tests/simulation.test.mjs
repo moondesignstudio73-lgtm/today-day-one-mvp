@@ -16,6 +16,7 @@ import { acquireActionItem, addItem, equipItem, getEffectiveAppearance, getEquip
 import { calculateGiftReaction, giveGift } from "../src/gift-manager.mjs";
 import { NPC_ARCHETYPES, validateNpcArchetypes } from "../src/npcs-data.mjs";
 import { applyNpcActionEffects, generateNpcs, getNpcRelationshipStatus, validateNpcs } from "../src/npc-manager.mjs";
+import { getTemptationOpportunity, resolveTemptation } from "../src/temptation-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -36,6 +37,16 @@ assert.equal(applyNpcActionEffects(npcRelationshipState, ACTIONS.night.find(acti
 assert.equal(getNpcRelationshipStatus({ relationshipType:"coworker", interestInPlayer:80, trust:30 }).tone, "danger");
 assert.equal(getNpcRelationshipStatus({ relationshipType:"rival", interestInGirlfriend:60, trust:30 }).tone, "warning");
 assert.equal(getNpcRelationshipStatus({ relationshipType:"friend", trust:70 }).tone, "safe");
+const temptationState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const temptingNpc = temptationState.npcs.find(npc => npc.relationshipType === "coworker");
+temptingNpc.interestInPlayer = 65;
+assert.equal(getTemptationOpportunity(temptationState).level, "drinks");
+const trustBeforeRejection = temptationState.trust;
+const rejectedTemptation = resolveTemptation(temptationState, temptingNpc.instanceId, "reject");
+assert.ok(rejectedTemptation.npc.interestInPlayer < 65);
+assert.ok(temptationState.trust > trustBeforeRejection);
+assert.equal(temptationState.temptationHistory.at(-1).choiceId, "reject");
+assert.equal(resolveTemptation(temptationState, temptingNpc.instanceId, "unknown"), null);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
