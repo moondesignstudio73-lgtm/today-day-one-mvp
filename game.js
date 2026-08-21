@@ -3,6 +3,7 @@ import { SaveManager } from "./src/save-manager.mjs";
 import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./src/girlfriend-manager.mjs";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs";
 import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs";
+import { getActionAvailability } from "./src/action-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -25,7 +26,7 @@ function render() {
   $("#traitList").innerHTML = traitRows.map(row => row.revealed ? `<div class="trait"><span>${row.name}</span><b>${row.value}</b></div>` : `<div class="trait locked"><span>${row.name}</span><b>${row.confidence ? `추론 ${row.confidence}%` : "???"}</b></div>`).join("");
   const stats = [["체력",state.energy],["건강",state.health],["스트레스",state.stress],["매력",state.charm],["업무 능력",state.work],["사회성",state.social]];
   $("#statList").innerHTML = stats.map(([name,val])=>`<div class="stat"><div class="stat-head"><span>${name}</span><b>${Math.round(val)}</b></div><div class="stat-track"><i style="width:${clamp(val)}%;background:${name==='스트레스'?'#e5846d':''}"></i></div></div>`).join("");
-  $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>`<button class="action-card ${state.selected===i?'selected':''}" data-index="${i}"><span class="action-icon">${a.icon}</span><span class="cost">${a.costLabel}</span><h3>${a.title}</h3><p>${a.desc}</p></button>`).join("");
+  $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>{ const availability=getActionAvailability(state,a); return `<button class="action-card ${state.selected===i?'selected':''} ${availability.available?'':'locked'}" data-index="${i}" ${availability.available?'':'disabled'}><span class="action-icon">${a.icon}</span><span class="cost">${availability.available?a.costLabel:'🔒 '+availability.reason}</span><h3>${a.title}</h3><p>${a.desc}</p></button>`; }).join("");
   document.querySelectorAll(".action-card").forEach(btn=>btn.addEventListener("click",()=>selectAction(Number(btn.dataset.index))));
   $("#eventLog").innerHTML = state.logs.length ? state.logs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${l.time}</b><span>${l.text}</span></div>`).join("") : `<div class="log-item"><b>DAY 1</b><span>두 사람의 첫 번째 이야기가 시작되었습니다.</span></div>`;
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
@@ -36,6 +37,8 @@ function selectAction(index) { state.selected = index; render(); }
 function applyAction() {
   if (state.selected === null) return;
   const phase = phases[state.phase], action = actions[phase.key][state.selected];
+  const availability = getActionAvailability(state, action);
+  if (!availability.available) { toast(availability.reason); state.selected=null; render(); return; }
   if ((action.effects.money ?? 0) < 0 && state.money + action.effects.money < 0) { toast("돈이 부족해 이 행동을 할 수 없어요."); return; }
   const fx = {...action.effects};
   if (action.tag === "연락") { fx.affection = (fx.affection||0)*state.partner.weights.contact; fx.trust = (fx.trust||0)*state.partner.weights.trust; }

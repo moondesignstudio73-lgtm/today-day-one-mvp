@@ -5,6 +5,7 @@ import { generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALIT
 import { getEligibleEvents, getEventDiagnostics, getEventProbability, meetsConditions, rollEvent } from "../src/event-manager.mjs";
 import { EVENT_DEFINITIONS } from "../src/events-data.mjs";
 import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
+import { getActionAvailability, getAvailableActions } from "../src/action-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 const memoryStorage = () => {
@@ -115,3 +116,12 @@ assert.equal(PHASES.length, 4);
 assert.equal(Object.values(ACTIONS).flat().length, 16);
 assert.equal(new Set(Object.values(ACTIONS).flat().map(action => action.id)).size, 16);
 console.log("✓ 4개 시간대·16개 행동 데이터 스키마 검증 통과");
+const requirementState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+requirementState.money = 10000;
+requirementState.energy = 8;
+const lockedDate = getActionAvailability(requirementState, ACTIONS.evening.find(action => action.id === "dinner-date"));
+assert.equal(lockedDate.available, false);
+assert.match(lockedDate.reason, /자산/);
+assert.equal(getActionAvailability(requirementState, ACTIONS.morning.find(action => action.id === "morning-gym")).available, false);
+assert.ok(getAvailableActions(requirementState, ACTIONS.evening).length > 0, "at least one evening action must remain available");
+console.log("✓ 돈·체력 기반 행동 요구조건과 잠금 사유 검증 통과");
