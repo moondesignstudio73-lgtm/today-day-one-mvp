@@ -35,6 +35,9 @@ let dialogueTimer = null;
 let dialogueText = "";
 let dialogueIndex = 0;
 const dialogueHistory = [];
+const dialogueSpeeds = [{label:"느림",delay:42},{label:"보통",delay:24},{label:"빠름",delay:10}];
+let dialogueSpeedIndex = Number(localStorage.getItem("today-day-one-dialogue-speed") ?? 1);
+if (!dialogueSpeeds[dialogueSpeedIndex]) dialogueSpeedIndex = 1;
 const modalFocusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
 
 function openModal() {
@@ -97,7 +100,7 @@ function typeDialogue(text) {
     dialogueIndex = Math.min(dialogueIndex + 1, dialogueText.length);
     sceneText.textContent = dialogueText.slice(0, dialogueIndex);
     if (dialogueIndex >= dialogueText.length) finishDialogueTyping();
-  }, 24);
+  }, dialogueSpeeds[dialogueSpeedIndex].delay);
 }
 
 function handleDialogueAdvance() {
@@ -111,10 +114,10 @@ function openDialogueHistory() {
 }
 
 function openGameMenu() {
-  const items = [["inventory","가방"],["shop","상점"],["finance","재정"],["career","커리어"],["people","인맥"],["investment","투자"],["history","대화 기록"],["save","저장"],["load","불러오기"],["debug","DEBUG"]];
+  const items = [["inventory","가방"],["shop","상점"],["finance","재정"],["career","커리어"],["people","인맥"],["investment","투자"],["history","대화 기록"],["speed",`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`],["save","저장"],["load","불러오기"],["debug","DEBUG"]];
   $("#modalContent").innerHTML=`<span class="eyebrow">GAME MENU</span><h2>메뉴</h2><div class="game-menu-grid">${items.map(([id,label])=>`<button type="button" data-menu-action="${id}">${label}</button>`).join("")}</div>`;
   openModal();
-  const actions = { inventory:openInventory, shop:openShop, finance:openFinance, career:openCareer, people:openPeople, investment:openInvestment, history:openDialogueHistory, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
+  const actions = { inventory:openInventory, shop:openShop, finance:openFinance, career:openCareer, people:openPeople, investment:openInvestment, history:openDialogueHistory, speed:()=>{dialogueSpeedIndex=(dialogueSpeedIndex+1)%dialogueSpeeds.length;localStorage.setItem("today-day-one-dialogue-speed",String(dialogueSpeedIndex));toast(`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`);openGameMenu();}, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
   document.querySelectorAll("[data-menu-action]").forEach(button=>button.addEventListener("click",()=>actions[button.dataset.menuAction]?.()));
 }
 
