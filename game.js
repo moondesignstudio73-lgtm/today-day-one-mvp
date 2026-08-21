@@ -20,7 +20,7 @@ import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs";
 import { analyzePlayHistory } from "./src/ending-manager.mjs";
-import { SoundManager } from "./src/sound-manager.mjs";
+import { SoundManager } from "./src/sound-manager.mjs?v=2";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
@@ -38,6 +38,7 @@ const dialogueHistory = [];
 const dialogueSpeeds = [{label:"느림",delay:42},{label:"보통",delay:24},{label:"빠름",delay:10}];
 let dialogueSpeedIndex = Number(localStorage.getItem("today-day-one-dialogue-speed") ?? 1);
 if (!dialogueSpeeds[dialogueSpeedIndex]) dialogueSpeedIndex = 1;
+let lastSceneSoundKey = "";
 const modalFocusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
 
 function openModal() {
@@ -127,6 +128,8 @@ function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}
 
 function render() {
   const p = state.partner, phase = phases[state.phase];
+  const sceneSoundKey = `${state.day}-${phase.key}`;
+  if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key); }
   $("#dayLabel").textContent = state.day; $("#phaseIcon").textContent = phase.icon; $("#phaseLabel").textContent = phase.label;
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
   typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerBio").textContent = p.bio;
@@ -298,7 +301,7 @@ function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${
 
 if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");
 renderSoundButton();
-$("#soundButton").addEventListener("click",()=>{const enabled=sound.toggle();renderSoundButton();if(enabled)sound.play("success");toast(enabled?"효과음을 켰어요.":"효과음을 껐어요.");});
+$("#soundButton").addEventListener("click",()=>{const enabled=sound.toggle();renderSoundButton();if(enabled){sound.play("success");if(state)sound.playScene(phases[state.phase].key);}toast(enabled?"효과음과 장면음을 켰어요.":"모든 소리를 껐어요.");});
 $("#debugButton").addEventListener("click",openDebug);
 $("#inventoryButton").addEventListener("click",openInventory);
 $("#shopButton").addEventListener("click",openShop);
