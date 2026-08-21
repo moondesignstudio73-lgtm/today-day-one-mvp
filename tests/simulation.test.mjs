@@ -115,6 +115,12 @@ assert.equal(generateContextualReply(buildConversationContext(messageState), "  
 const savedTurn = recordConversationTurn(messageState, "사랑해", "나도 좋아해");
 assert.equal(savedTurn.user, "사랑해");
 assert.equal(messageState.conversationHistory.length, 1);
+const rememberedContext = buildConversationContext(messageState);
+assert.equal(rememberedContext.recentConversation.length, 1);
+assert.equal(rememberedContext.recentConversation[0].user, "사랑해");
+const rememberedReply = generateContextualReply(rememberedContext, "아까 내가 한 말 기억해?");
+assert.ok(rememberedReply.text.includes("사랑해"));
+assert.ok(rememberedReply.effects.trust > 0);
 const remoteReply = await requestGirlfriendReply({ endpoint:"/api/chat", context:buildConversationContext(messageState), message:"안녕", fetchImpl:async () => ({ ok:true, json:async () => ({ reply:"오늘도 반가워!", effects:{ affection:5 } }) }) });
 assert.equal(remoteReply.source, "remote");
 assert.equal(remoteReply.effects.affection, 5);

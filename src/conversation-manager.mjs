@@ -5,12 +5,18 @@ export function buildConversationContext(state) {
   const recentEvents = (state.eventHistory ?? []).slice(-4).map(entry => ({ day:entry.day, title:entry.title, message:entry.message }));
   const recentGifts = (state.inventory ?? []).filter(entry => entry.owner === "girlfriend").slice(-3).map(entry => ({ itemId:entry.itemId, givenDay:entry.givenDay, equipped:entry.equipped }));
   const recentTemptations = (state.temptationHistory ?? []).slice(-3).map(entry => ({ day:entry.day, choiceId:entry.choiceId, partnerTrust:entry.partnerTrust }));
+  const recentConversation = (state.conversationHistory ?? []).slice(-4).map(turn => ({
+    day:turn.day,
+    phase:turn.phase,
+    user:String(turn.user ?? "").slice(0, 120),
+    assistant:String(turn.assistant ?? "").slice(0, 180)
+  }));
   return {
     day:state.day, phase:state.phase,
     girlfriend:{ name:state.partner.name, bio:state.partner.bio, personality:{ ...state.partner.personality } },
     relationship:{ affection:state.affection, trust:state.trust, excitement:state.excitement, attachment:state.attachment, conflict:state.conflict, stress:state.relationshipStress },
     player:{ money:state.money, health:state.health, energy:state.energy, fatigue:state.fatigue, stress:state.stress, charm:state.charm, fashion:state.fashion, confidence:state.confidence, job:state.job.name, jobLevel:state.jobLevel },
-    recentActions, recentEvents, recentGifts, recentTemptations, recentInitiatedMessages:(state.initiatedMessages ?? []).slice(-3), importantMemories:getMemoryContext(state)
+    recentActions, recentEvents, recentGifts, recentTemptations, recentConversation, recentInitiatedMessages:(state.initiatedMessages ?? []).slice(-3), importantMemories:getMemoryContext(state)
   };
 }
 
@@ -31,6 +37,11 @@ export function generateContextualReply(context, message) {
   const text = String(message ?? "").trim();
   if (!text) return null;
   const latestMemory = context.importantMemories?.at(0);
+  const previousTurn = context.recentConversation?.at(-1);
+  if (previousTurn && /기억|아까|전에|방금/.test(text)) {
+    const previousMessage = previousTurn.user.replace(/\s+/g, " ").slice(0, 42);
+    return { text:`응, 기억해. 아까 네가 “${previousMessage}”라고 말해 줬잖아.`, effects:{ affection:3, trust:5 } };
+  }
   if (/미안|사과/.test(text)) return { text:context.relationship.trust < 450 ? "말해 줘서 고마워. 행동으로도 보여 줬으면 좋겠어." : "괜찮아. 솔직하게 말해 줘서 고마워.", effects:{ affection:4, trust:8 } };
   if (/사랑|좋아해/.test(text)) return { text:context.relationship.affection >= 650 ? "나도 많이 좋아해. 오늘은 그 말이 더 듣고 싶었어." : "고마워. 우리 천천히 더 가까워지자.", effects:{ affection:9, trust:3 } };
   if (/힘들|피곤|지쳤/.test(text)) return { text:"많이 힘들었구나. 오늘은 내가 네 편이 되어 줄게.", effects:{ affection:5, trust:7, stress:-4 } };
