@@ -3,7 +3,7 @@ import { advanceTime, applyEffects, createInitialState, determineEnding, MAX_DAY
 import { SaveManager } from "../src/save-manager.mjs";
 import { estimateHint, generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS } from "../src/girlfriend-manager.mjs";
 import { getEligibleEvents, getEventDiagnostics, getEventProbability, MAX_EVENTS_PER_DAY, meetsConditions, rollEvent } from "../src/event-manager.mjs";
-import { EVENT_DEFINITIONS } from "../src/events-data.mjs";
+import { EVENT_DEFINITIONS, validateEventData } from "../src/events-data.mjs";
 import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
 import { getActionAvailability, getAvailableActions } from "../src/action-manager.mjs";
 import { calculateActionEffects } from "../src/consequence-manager.mjs";
@@ -154,6 +154,15 @@ for (let run = 0; run < 100; run += 1) {
 console.log("✓ 조건·확률·우선순위·쿨다운 이벤트와 100회 회귀 검증 통과");
 console.log("✓ 플레이어 상태·연인 성격 기반 동적 이벤트 확률 검증 통과");
 console.log("✓ 이별 위기·라이벌 접근 복합 조건과 성격 보정 검증 통과");
+assert.equal(validateEventData(), true);
+assert.equal(new Set(EVENT_DEFINITIONS.map(event => event.id)).size, EVENT_DEFINITIONS.length);
+const invalidProbability = [{ ...EVENT_DEFINITIONS[0], id:"bad-probability", probability:1.5 }];
+assert.equal(validateEventData(invalidProbability), false);
+const invalidOperator = [{ ...EVENT_DEFINITIONS[0], id:"bad-operator", conditions:[{ stat:"stress", operator:"!=", value:3 }] }];
+assert.equal(validateEventData(invalidOperator), false);
+const duplicateEvents = [{ ...EVENT_DEFINITIONS[0] }, { ...EVENT_DEFINITIONS[0] }];
+assert.equal(validateEventData(duplicateEvents), false);
+console.log(`✓ ${EVENT_DEFINITIONS.length}개 이벤트 데이터 스키마와 중복 ID 검증 통과`);
 console.log("✓ 디버그용 이벤트 진단 데이터 검증 통과");
 assert.equal(validateActionData(), true);
 assert.equal(PHASES.length, 4);

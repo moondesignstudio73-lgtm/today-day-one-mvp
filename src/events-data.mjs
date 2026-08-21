@@ -115,3 +115,27 @@ export const EVENT_DEFINITIONS = [
     effects: { money: 180000, stress: -8 }
   }
 ];
+
+const VALID_OPERATORS = new Set([">=", "<=", ">", "<", "=="]);
+
+function validateCondition(condition) {
+  if (condition.recentTag) return typeof condition.recentTag === "string" && Number.isInteger(condition.withinDays) && condition.withinDays >= 0 && Number.isInteger(condition.minCount ?? 1) && (condition.minCount ?? 1) > 0;
+  return typeof condition.stat === "string" && VALID_OPERATORS.has(condition.operator) && Number.isFinite(condition.value);
+}
+
+export function validateEventData(definitions = EVENT_DEFINITIONS) {
+  const ids = new Set();
+  return definitions.every(event => {
+    if (typeof event.id !== "string" || ids.has(event.id)) return false;
+    ids.add(event.id);
+    const modifiersValid = (event.probabilityModifiers ?? []).every(modifier =>
+      Array.isArray(modifier.conditions) && modifier.conditions.every(validateCondition) &&
+      (Number.isFinite(modifier.add) || Number.isFinite(modifier.multiply))
+    );
+    return typeof event.title === "string" && typeof event.message === "string" &&
+      Array.isArray(event.conditions) && event.conditions.every(validateCondition) &&
+      Number.isFinite(event.probability) && event.probability >= 0 && event.probability <= 1 &&
+      Number.isFinite(event.priority) && Number.isInteger(event.cooldown) && event.cooldown >= 0 &&
+      event.effects && Object.values(event.effects).every(Number.isFinite) && modifiersValid;
+  });
+}
