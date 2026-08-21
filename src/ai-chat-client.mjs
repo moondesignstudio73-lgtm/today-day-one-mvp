@@ -26,6 +26,8 @@ export async function requestGirlfriendReply({ endpoint, context, message, fetch
   try {
     const response = await fetchImpl(endpoint, { method:"POST", headers:{ "Content-Type":"application/json", Accept:"application/json" }, body:JSON.stringify({ context, message }), ...(controller ? { signal:controller.signal } : {}) });
     if (!response.ok) return fallback();
+    const contentType = response.headers?.get?.("content-type") ?? "application/json";
+    if (!contentType.toLowerCase().includes("application/json")) return fallback();
     const data = await response.json();
     const text = sanitizeRemoteReply(data.reply);
     if (!text) return fallback();

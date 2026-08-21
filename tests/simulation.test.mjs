@@ -137,6 +137,8 @@ assert.deepEqual(sanitizeRemoteEffects({ affection:250, money:999999, trust:-3.7
 const fallbackReply = await requestGirlfriendReply({ endpoint:"/api/chat", context:buildConversationContext(messageState), message:"오늘 힘들어", fetchImpl:async () => { throw new Error("offline"); } });
 assert.equal(fallbackReply.source, "local");
 assert.ok(fallbackReply.text.includes("힘들었구나"));
+const nonJsonReply = await requestGirlfriendReply({ endpoint:"/api/chat", context:buildConversationContext(messageState), message:"오늘 힘들어", fetchImpl:async () => ({ ok:true, headers:{ get:() => "text/html" }, json:async () => ({ reply:"잘못된 응답" }) }) });
+assert.equal(nonJsonReply.source, "local");
 assert.equal(validateStockData(), true);
 assert.equal(STOCKS.length, 3);
 const marketState = { day:2, investment:createInvestmentState() };
