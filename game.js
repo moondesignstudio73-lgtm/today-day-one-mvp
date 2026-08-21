@@ -137,6 +137,7 @@ function render() {
 
 function selectAction(index) { state.selected = index; sound.play("select"); render(); }
 function handleActionGridClick(event) {
+  event.stopPropagation();
   if (!(event.target instanceof Element)) return;
   const button = event.target.closest(".action-card");
   if (!button || button.disabled) return;
