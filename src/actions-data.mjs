@@ -10,7 +10,8 @@ export const ACTIONS = {
     { id:"morning-contact", icon:"💬", title:"다정하게 연락하기", desc:"좋은 아침 인사로 서로의 하루를 시작한다.", costLabel:"시간 1", timeCost:1, effects:{ affection:16, trust:10, energy:-3 }, tag:"연락" },
     { id:"morning-gym", icon:"🏃", title:"아침 운동", desc:"가볍게 뛰며 몸과 자신감을 관리한다.", costLabel:"시간 1", timeCost:1, requirements:[{ stat:"energy", operator:">=", value:12, message:"체력 12 이상 필요" }], effects:{ health:8, charm:5, confidence:5, fatigue:4, energy:-7, stress:-4 }, tag:"자기관리" },
     { id:"sleep-in", icon:"🛌", title:"조금 더 자기", desc:"피로를 풀지만 출근 준비는 아슬아슬하다.", costLabel:"시간 1", timeCost:1, effects:{ energy:15, fatigue:-14, work:-4, stress:-5 }, tag:"휴식" },
-    { id:"early-work", icon:"☕", title:"일찍 출근하기", desc:"커피 한 잔과 함께 업무를 먼저 시작한다.", costLabel:"수입 +₩25,000", timeCost:1, effects:{ money:25000, work:8, energy:-8, fatigue:7, stress:5 }, tag:"성공" }
+    { id:"early-work", icon:"☕", title:"일찍 출근하기", desc:"커피 한 잔과 함께 업무를 먼저 시작한다.", costLabel:"수입 +₩25,000", timeCost:1, effects:{ money:25000, work:8, energy:-8, fatigue:7, stress:5 }, tag:"성공" },
+    { id:"manager-feedback", icon:"🗣️", title:"상사와 1:1 피드백", desc:"업무 조언을 얻어 성장 방향을 다듬는다.", costLabel:"스트레스 +2", timeCost:1, effects:{ work:7, confidence:4, stress:2, energy:-4 }, tag:"성장" }
   ],
   day: [
     { id:"focused-work", icon:"💼", title:"업무에 집중하기", desc:"성과를 내고 수입과 능력을 높인다.", costLabel:"수입 +₩45,000", timeCost:1, effects:{ money:45000, work:10, energy:-10, fatigue:9, stress:8, affection:-4 }, tag:"성공" },

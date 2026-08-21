@@ -11,7 +11,8 @@ export const NPC_ACTION_RULES = [
   { actionId:"coworker-lunch", npcId:"female-coworker", effects:{ affection:8, trust:5, interestInPlayer:3 } },
   { actionId:"coworker-drinks", npcId:"female-coworker", effects:{ affection:12, trust:3, interestInPlayer:10 } },
   { actionId:"focused-work", npcId:"team-lead", effects:{ affection:3, trust:7 } },
-  { actionId:"early-work", npcId:"team-lead", effects:{ affection:2, trust:5 } }
+  { actionId:"early-work", npcId:"team-lead", effects:{ affection:2, trust:5 } },
+  { actionId:"manager-feedback", npcId:"team-lead", effects:{ affection:5, trust:10 } }
 ];
 
 export function validateNpcArchetypes(archetypes = NPC_ARCHETYPES) {
