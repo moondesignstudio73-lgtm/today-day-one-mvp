@@ -12,7 +12,13 @@ const OPERATORS = {
 };
 
 export function meetsConditions(state, conditions = []) {
-  return conditions.every(({ stat, operator, value }) => {
+  return conditions.every(condition => {
+    if (condition.recentTag) {
+      const minimumDay = state.day - condition.withinDays;
+      const count = (state.actionHistory ?? []).filter(entry => entry.tag === condition.recentTag && entry.day >= minimumDay).length;
+      return count >= (condition.minCount ?? 1);
+    }
+    const { stat, operator, value } = condition;
     const compare = OPERATORS[operator];
     const actual = stat.split(".").reduce((current, key) => current?.[key], state);
     return Boolean(compare) && compare(actual, value);

@@ -7,7 +7,8 @@ export const EVENT_DEFINITIONS = [
     probability: 0.38,
     probabilityModifiers: [
       { conditions: [{ stat: "energy", operator: "<=", value: 25 }], add: 0.2 },
-      { conditions: [{ stat: "health", operator: "<=", value: 40 }], add: 0.12 }
+      { conditions: [{ stat: "health", operator: "<=", value: 40 }], add: 0.12 },
+      { conditions: [{ recentTag: "성공", withinDays: 2, minCount: 4 }], add: 0.18 }
     ],
     priority: 80,
     cooldown: 3,
@@ -22,7 +23,8 @@ export const EVENT_DEFINITIONS = [
     probabilityModifiers: [
       { conditions: [{ stat: "partner.personality.jealousy", operator: ">=", value: 70 }], add: 0.18 },
       { conditions: [{ stat: "partner.personality.emotionalSensitivity", operator: ">=", value: 70 }], add: 0.12 },
-      { conditions: [{ stat: "conflict", operator: ">=", value: 45 }], add: 0.15 }
+      { conditions: [{ stat: "conflict", operator: ">=", value: 45 }], add: 0.15 },
+      { conditions: [{ recentTag: "유혹", withinDays: 3, minCount: 1 }], add: 0.25 }
     ],
     priority: 90,
     cooldown: 3,
@@ -36,7 +38,8 @@ export const EVENT_DEFINITIONS = [
     probability: 0.18,
     probabilityModifiers: [
       { conditions: [{ stat: "partner.personality.romanticism", operator: ">=", value: 70 }], add: 0.16 },
-      { conditions: [{ stat: "excitement", operator: ">=", value: 700 }], add: 0.1 }
+      { conditions: [{ stat: "excitement", operator: ">=", value: 700 }], add: 0.1 },
+      { conditions: [{ recentTag: "데이트", withinDays: 3, minCount: 2 }], add: 0.12 }
     ],
     priority: 55,
     cooldown: 4,

@@ -102,6 +102,15 @@ assert.ok(meetsConditions(eventState, [{ stat: "partner.personality.jealousy", o
 
 const cappedEvent = { probability: 0.9, probabilityModifiers: [{ conditions: [], multiply: 2 }] };
 assert.equal(getEventProbability(eventState, cappedEvent), 1, "probability must be capped at one");
+eventState.actionHistory = [{ day:eventState.day, tag:"유혹" }];
+eventState.partner.personality.jealousy = 50;
+eventState.partner.personality.emotionalSensitivity = 50;
+eventState.conflict = 0;
+assert.ok(meetsConditions(eventState, [{ recentTag:"유혹", withinDays:3, minCount:1 }]));
+const suspicionWithTemptation = getEventProbability(eventState, suspicionEvent);
+eventState.actionHistory = [{ day:eventState.day - 5, tag:"유혹" }];
+const suspicionWithoutRecentTemptation = getEventProbability(eventState, suspicionEvent);
+assert.equal(Math.round((suspicionWithTemptation - suspicionWithoutRecentTemptation) * 100), 25);
 eventState.day = eventState.eventHistory[0].day;
 const diagnostics = getEventDiagnostics(eventState);
 assert.equal(diagnostics.length, EVENT_DEFINITIONS.length);

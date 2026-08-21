@@ -30,6 +30,7 @@ export function createInitialState(partner, random = Math.random) {
     social: 36 + Math.floor(random() * 10),
     logs: [],
     choices: [],
+    actionHistory: [],
     eventHistory: [],
     ended: false,
     updatedAt: new Date().toISOString()
