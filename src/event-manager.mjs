@@ -36,6 +36,24 @@ export function getEligibleEvents(state, definitions = EVENT_DEFINITIONS) {
   }).sort((a, b) => b.priority - a.priority);
 }
 
+export function getEventDiagnostics(state, definitions = EVENT_DEFINITIONS) {
+  const history = state.eventHistory ?? [];
+  return definitions.map(event => {
+    const conditionsMet = meetsConditions(state, event.conditions);
+    const previous = [...history].reverse().find(entry => entry.id === event.id);
+    const cooldownRemaining = previous ? Math.max(0, event.cooldown - (state.day - previous.day)) : 0;
+    return {
+      id: event.id,
+      title: event.title,
+      conditionsMet,
+      cooldownRemaining,
+      probability: getEventProbability(state, event),
+      priority: event.priority,
+      eligible: conditionsMet && cooldownRemaining === 0
+    };
+  }).sort((a, b) => b.priority - a.priority);
+}
+
 export function rollEvent(state, random = Math.random, definitions = EVENT_DEFINITIONS) {
   const eligible = getEligibleEvents(state, definitions);
   for (const event of eligible) {

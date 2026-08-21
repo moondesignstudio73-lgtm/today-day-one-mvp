@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { advanceTime, applyEffects, createInitialState, determineEnding, MAX_DAY, validateState } from "../src/game-core.mjs";
 import { SaveManager } from "../src/save-manager.mjs";
 import { generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS } from "../src/girlfriend-manager.mjs";
-import { getEligibleEvents, getEventProbability, meetsConditions, rollEvent } from "../src/event-manager.mjs";
+import { getEligibleEvents, getEventDiagnostics, getEventProbability, meetsConditions, rollEvent } from "../src/event-manager.mjs";
 import { EVENT_DEFINITIONS } from "../src/events-data.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
@@ -90,6 +90,11 @@ assert.ok(meetsConditions(eventState, [{ stat: "partner.personality.jealousy", o
 
 const cappedEvent = { probability: 0.9, probabilityModifiers: [{ conditions: [], multiply: 2 }] };
 assert.equal(getEventProbability(eventState, cappedEvent), 1, "probability must be capped at one");
+eventState.day = eventState.eventHistory[0].day + 1;
+const diagnostics = getEventDiagnostics(eventState);
+assert.equal(diagnostics.length, EVENT_DEFINITIONS.length);
+assert.ok(diagnostics.every(item => typeof item.eligible === "boolean" && item.probability >= 0 && item.probability <= 1));
+assert.ok(diagnostics.some(item => item.cooldownRemaining > 0), "diagnostics must expose cooldown state");
 
 for (let run = 0; run < 100; run += 1) {
   const randomEventState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
@@ -103,3 +108,4 @@ for (let run = 0; run < 100; run += 1) {
 }
 console.log("✓ 조건·확률·우선순위·쿨다운 이벤트와 100회 회귀 검증 통과");
 console.log("✓ 플레이어 상태·연인 성격 기반 동적 이벤트 확률 검증 통과");
+console.log("✓ 디버그용 이벤트 진단 데이터 검증 통과");
