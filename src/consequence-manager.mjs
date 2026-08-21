@@ -4,10 +4,15 @@ import { getEquipmentBonuses } from "./inventory-manager.mjs";
 
 export function applySelfManagementModifiers(state, effects) {
   const modified = { ...effects };
-  if ((state.fatigue ?? 0) < 70) return modified;
-  for (const key of ["work", "social", "affection", "trust"]) if ((modified[key] ?? 0) > 0) modified[key] *= key === "work" || key === "social" ? 0.75 : 0.9;
-  if ((modified.money ?? 0) > 0) modified.money *= 0.85;
-  if ((modified.stress ?? 0) > 0) modified.stress *= 1.2;
+  if ((state.fatigue ?? 0) >= 70) {
+    for (const key of ["work", "social", "affection", "trust"]) if ((modified[key] ?? 0) > 0) modified[key] *= key === "work" || key === "social" ? 0.75 : 0.9;
+    if ((modified.money ?? 0) > 0) modified.money *= 0.85;
+    if ((modified.stress ?? 0) > 0) modified.stress *= 1.2;
+  }
+  if ((state.confidence ?? 0) >= 70) {
+    for (const key of ["social", "affection", "trust"]) if ((modified[key] ?? 0) > 0) modified[key] *= key === "social" ? 1.15 : 1.05;
+    if ((modified.stress ?? 0) > 0) modified.stress *= 0.9;
+  }
   return modified;
 }
 
@@ -59,5 +64,6 @@ export function calculateActionEffects(state, action) {
 
   const jobEffects = applyJobModifiers(state, action, effects);
   if ((state.fatigue ?? 0) >= 70) notes.push("피로 누적");
+  if ((state.confidence ?? 0) >= 70) notes.push("높은 자신감");
   return { effects:applySelfManagementModifiers(state, jobEffects), notes };
 }

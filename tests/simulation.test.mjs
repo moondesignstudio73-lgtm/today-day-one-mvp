@@ -348,4 +348,9 @@ const tiredWorkEffects = applySelfManagementModifiers({ fatigue:85 }, { money:50
 assert.ok(tiredWorkEffects.money < restedWorkEffects.money);
 assert.ok(tiredWorkEffects.work < restedWorkEffects.work);
 assert.ok(tiredWorkEffects.stress > restedWorkEffects.stress);
+const lowConfidenceEffects = applySelfManagementModifiers({ fatigue:20, confidence:40 }, { social:10, affection:10, stress:8 });
+const highConfidenceEffects = applySelfManagementModifiers({ fatigue:20, confidence:80 }, { social:10, affection:10, stress:8 });
+assert.ok(highConfidenceEffects.social > lowConfidenceEffects.social);
+assert.ok(highConfidenceEffects.affection > lowConfidenceEffects.affection);
+assert.ok(highConfidenceEffects.stress < lowConfidenceEffects.stress);
 console.log("✓ 피로·패션·자신감 자기관리 행동과 수치 범위 검증 통과");
