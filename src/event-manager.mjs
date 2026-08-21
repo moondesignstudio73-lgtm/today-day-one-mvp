@@ -1,6 +1,8 @@
 import { applyEffects } from "./game-core.mjs";
 import { EVENT_DEFINITIONS } from "./events-data.mjs";
 
+export const MAX_EVENTS_PER_DAY = 1;
+
 const OPERATORS = {
   ">=": (left, right) => left >= right,
   "<=": (left, right) => left <= right,
@@ -38,6 +40,8 @@ export function getEligibleEvents(state, definitions = EVENT_DEFINITIONS) {
 
 export function getEventDiagnostics(state, definitions = EVENT_DEFINITIONS) {
   const history = state.eventHistory ?? [];
+  const eventsToday = history.filter(entry => entry.day === state.day).length;
+  const dailyLimitReached = eventsToday >= MAX_EVENTS_PER_DAY;
   return definitions.map(event => {
     const conditionsMet = meetsConditions(state, event.conditions);
     const previous = [...history].reverse().find(entry => entry.id === event.id);
@@ -49,12 +53,15 @@ export function getEventDiagnostics(state, definitions = EVENT_DEFINITIONS) {
       cooldownRemaining,
       probability: getEventProbability(state, event),
       priority: event.priority,
-      eligible: conditionsMet && cooldownRemaining === 0
+      dailyLimitReached,
+      eligible: conditionsMet && cooldownRemaining === 0 && !dailyLimitReached
     };
   }).sort((a, b) => b.priority - a.priority);
 }
 
 export function rollEvent(state, random = Math.random, definitions = EVENT_DEFINITIONS) {
+  const eventsToday = (state.eventHistory ?? []).filter(entry => entry.day === state.day).length;
+  if (eventsToday >= MAX_EVENTS_PER_DAY) return null;
   const eligible = getEligibleEvents(state, definitions);
   for (const event of eligible) {
     if (random() <= getEventProbability(state, event)) return triggerEvent(state, event);

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { advanceTime, applyEffects, createInitialState, determineEnding, MAX_DAY, validateState } from "../src/game-core.mjs";
 import { SaveManager } from "../src/save-manager.mjs";
 import { estimateHint, generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS } from "../src/girlfriend-manager.mjs";
-import { getEligibleEvents, getEventDiagnostics, getEventProbability, meetsConditions, rollEvent } from "../src/event-manager.mjs";
+import { getEligibleEvents, getEventDiagnostics, getEventProbability, MAX_EVENTS_PER_DAY, meetsConditions, rollEvent } from "../src/event-manager.mjs";
 import { EVENT_DEFINITIONS } from "../src/events-data.mjs";
 import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
 import { getActionAvailability, getAvailableActions } from "../src/action-manager.mjs";
@@ -102,11 +102,16 @@ assert.ok(meetsConditions(eventState, [{ stat: "partner.personality.jealousy", o
 
 const cappedEvent = { probability: 0.9, probabilityModifiers: [{ conditions: [], multiply: 2 }] };
 assert.equal(getEventProbability(eventState, cappedEvent), 1, "probability must be capped at one");
-eventState.day = eventState.eventHistory[0].day + 1;
+eventState.day = eventState.eventHistory[0].day;
 const diagnostics = getEventDiagnostics(eventState);
 assert.equal(diagnostics.length, EVENT_DEFINITIONS.length);
 assert.ok(diagnostics.every(item => typeof item.eligible === "boolean" && item.probability >= 0 && item.probability <= 1));
 assert.ok(diagnostics.some(item => item.cooldownRemaining > 0), "diagnostics must expose cooldown state");
+assert.equal(MAX_EVENTS_PER_DAY, 1);
+const sameDayEventCount = eventState.eventHistory.length;
+assert.equal(rollEvent(eventState, () => 0), null, "a second event on the same day must not trigger");
+assert.equal(eventState.eventHistory.length, sameDayEventCount);
+assert.ok(getEventDiagnostics(eventState).every(item => item.dailyLimitReached), "diagnostics must expose daily event limit");
 
 for (let run = 0; run < 100; run += 1) {
   const randomEventState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
@@ -116,6 +121,8 @@ for (let run = 0; run < 100; run += 1) {
     advanceTime(randomEventState);
   }
   assert.equal(randomEventState.ended, true);
+  const dailyCounts = Object.values(Object.groupBy(randomEventState.eventHistory, event => event.day)).map(events => events.length);
+  assert.ok(dailyCounts.every(count => count <= MAX_EVENTS_PER_DAY));
   assert.ok(randomEventState.eventHistory.length <= 120);
 }
 console.log("✓ 조건·확률·우선순위·쿨다운 이벤트와 100회 회귀 검증 통과");

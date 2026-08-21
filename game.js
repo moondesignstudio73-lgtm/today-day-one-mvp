@@ -77,7 +77,7 @@ function openDebug() {
   const keys = ["day","phase","money","health","energy","stress","charm","work","social","affection","trust","excitement","attachment","conflict","relationshipStress"];
   const stateRows = keys.map(key=>`<div class="debug-stat"><span>${key}</span><b>${Math.round(state[key])}</b></div>`).join("");
   const personalityRows = Object.entries(state.partner.personality).map(([key,value])=>`<div class="debug-stat"><span>${key}</span><b>${value}</b></div>`).join("");
-  const eventRows = getEventDiagnostics(state).map(event=>`<div class="debug-event ${event.eligible?'':event.cooldownRemaining?'cooldown':'ineligible'}"><div><b>${event.title}</b><span>${Math.round(event.probability*100)}%</span></div><small>priority ${event.priority} · ${event.cooldownRemaining?`cooldown ${event.cooldownRemaining}일`:event.conditionsMet?'발생 가능':'조건 불충족'}</small></div>`).join("");
+  const eventRows = getEventDiagnostics(state).map(event=>`<div class="debug-event ${event.eligible?'':event.cooldownRemaining?'cooldown':'ineligible'}"><div><b>${event.title}</b><span>${Math.round(event.probability*100)}%</span></div><small>priority ${event.priority} · ${event.dailyLimitReached?'오늘 이벤트 한도 도달':event.cooldownRemaining?`cooldown ${event.cooldownRemaining}일`:event.conditionsMet?'발생 가능':'조건 불충족'}</small></div>`).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">DEVELOPER MODE</span><h2>Simulation Debug</h2><p>저장에는 영향을 주지 않는 읽기 전용 상태 패널입니다.</p><h3>Game State</h3><div class="debug-grid">${stateRows}</div><h3>${state.partner.name} · Hidden Personality</h3><div class="debug-grid">${personalityRows}</div><h3>Event Diagnostics</h3><div class="debug-events">${eventRows}</div>`;
   $("#modal").classList.remove("hidden");
 }
