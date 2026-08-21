@@ -7,6 +7,7 @@ import { EVENT_DEFINITIONS, validateEventData } from "../src/events-data.mjs";
 import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
 import { getActionAvailability, getAvailableActions } from "../src/action-manager.mjs";
 import { calculateActionEffects } from "../src/consequence-manager.mjs";
+import { getRelationshipState } from "../src/relationship-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 const memoryStorage = () => {
@@ -202,3 +203,13 @@ const calmEffects = calculateActionEffects(personalityState, temptationAction);
 assert.ok(Math.abs(jealousEffects.effects.trust) > Math.abs(calmEffects.effects.trust));
 assert.ok(jealousEffects.effects.conflict > calmEffects.effects.conflict);
 console.log("✓ 연락·데이트·쇼핑·성공·유혹의 성격별 복합 결과 검증 통과");
+const relationshipState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+relationshipState.affection = 800; relationshipState.trust = 300;
+assert.equal(getRelationshipState(relationshipState).id, "love-with-doubt");
+relationshipState.affection = 600; relationshipState.trust = 800; relationshipState.excitement = 300;
+assert.equal(getRelationshipState(relationshipState).id, "comfortable-rut");
+relationshipState.affection = 820; relationshipState.trust = 780; relationshipState.excitement = 700;
+assert.equal(getRelationshipState(relationshipState).id, "deep-love");
+relationshipState.affection = 250;
+assert.equal(getRelationshipState(relationshipState).id, "crisis");
+console.log("✓ 호감·신뢰·설렘·갈등 조합 관계 상태 판정 검증 통과");

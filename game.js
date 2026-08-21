@@ -5,6 +5,7 @@ import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs";
 import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs";
 import { getActionAvailability } from "./src/action-manager.mjs";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
+import { getRelationshipState } from "./src/relationship-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -19,6 +20,7 @@ function render() {
   $("#dayLabel").textContent = state.day; $("#phaseIcon").textContent = phase.icon; $("#phaseLabel").textContent = phase.label;
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
   $("#sceneText").textContent = phase.text; $("#partnerName").textContent = p.name; $("#partnerBio").textContent = p.bio;
+  const relationship = getRelationshipState(state); $("#relationshipState").textContent = `● ${relationship.label}`; $("#relationshipState").dataset.tone = relationship.tone; $("#relationshipState").title = relationship.description;
   $("#affectionValue").textContent = Math.round(state.affection); $("#trustValue").textContent = Math.round(state.trust);
   $("#affectionBar").style.width = `${state.affection/10}%`; $("#trustBar").style.width = `${state.trust/10}%`;
   const traitRows = getVisibleTraitRows(state); const revealedCount = traitRows.filter(row => row.revealed).length;
