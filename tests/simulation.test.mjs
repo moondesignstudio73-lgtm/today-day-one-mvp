@@ -26,6 +26,7 @@ import { requestGirlfriendReply } from "../src/ai-chat-client.mjs";
 import { STOCKS, validateStockData } from "../src/stocks-data.mjs";
 import { advanceStockMarket, buyStock, createInvestmentState, getPortfolioSummary, sellStock, validateInvestmentState } from "../src/investment-manager.mjs";
 import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE, validateLotteryState } from "../src/lottery-manager.mjs";
+import { analyzePlayHistory } from "../src/ending-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -163,6 +164,20 @@ assert.ok(savingsState.finance.interestEarned > 0);
 assert.equal(withdrawSavings(savingsState).ok,true);
 assert.equal(validateAdvancedEconomyState(savingsState.finance),true);
 assert.equal(validateAdvancedEconomyState(createAdvancedEconomyState()),true);
+const analysisState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+analysisState.day = 31;
+analysisState.choices.push("성공","성공","데이트","연락");
+analysisState.temptationHistory.push({day:12,choiceId:"secret"});
+analysisState.eventHistory.push({day:8,eventId:"surprise"});
+analysisState.jobLevel = 2;
+const playAnalysis = analyzePlayHistory(analysisState);
+assert.equal(playAnalysis.daysPlayed,30);
+assert.equal(playAnalysis.totalChoices,4);
+assert.deepEqual(playAnalysis.dominantChoice,{tag:"성공",count:2});
+assert.equal(playAnalysis.careerLevel,2);
+assert.equal(playAnalysis.secretChoices,1);
+assert.equal(playAnalysis.highlights.length,4);
+assert.ok(playAnalysis.netWorth >= analysisState.money);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };

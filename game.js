@@ -19,6 +19,7 @@ import { buildConversationContext, getContextualOpening, recordConversationTurn 
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs";
+import { analyzePlayHistory } from "./src/ending-manager.mjs";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 
@@ -178,8 +179,9 @@ function openInvestment() {
   $("#lotteryBuyButton").addEventListener("click",()=>{const result=buyInstantLottery(state);if(!result.ok){toast(result.reason);return;}state.logs.push({time:`DAY ${state.day} · LOTTERY`,text:`즉석복권 ${result.label}${result.prize?` · ${money(result.prize)} 당첨`:''}`});SaveManager.save(state);render();openInvestment();toast(result.prize?`${result.label}! ${money(result.prize)} 당첨`:`아쉽게도 꽝이에요.`);});
 }
 
-function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state);
-  $("#modalContent").innerHTML=`<span class="eyebrow">DAY 30 · YOUR ENDING</span><h2>${title}</h2><div class="ending-score">${Math.round((state.affection+state.trust)/20)}</div><p>${desc}</p><p><b>최종 기록</b><br>호감도 ${Math.round(state.affection)} · 신뢰도 ${Math.round(state.trust)} · 자산 ${money(state.money)}</p><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`; $("#modal").classList.remove("hidden"); }
+function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state); const analysis=analyzePlayHistory(state);
+  const highlights=analysis.highlights.map(text=>`<li>${escapeHtml(text)}</li>`).join("");
+  $("#modalContent").innerHTML=`<span class="eyebrow">DAY 30 · YOUR ENDING</span><h2>${title}</h2><div class="ending-score">${Math.round((state.affection+state.trust)/20)}</div><p>${desc}</p><div class="ending-analysis"><div><small>총 선택</small><b>${analysis.totalChoices}회</b></div><div><small>가장 많은 선택</small><b>${escapeHtml(analysis.dominantChoice.tag)} · ${analysis.dominantChoice.count}회</b></div><div><small>관계 기록</small><b>${analysis.relationshipLabel}</b></div><div><small>최종 총자산</small><b>${money(analysis.netWorth)}</b></div></div><h3>나의 30일 리포트</h3><ul class="ending-highlights">${highlights}</ul><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`; $("#modal").classList.remove("hidden"); }
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
 
 function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
