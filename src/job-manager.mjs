@@ -18,3 +18,9 @@ export function addJobProgress(state, action, effects) {
   state.job.incomeMultiplier = Number((state.job.incomeMultiplier + 0.08).toFixed(2));
   return { level:state.jobLevel, incomeMultiplier:state.job.incomeMultiplier };
 }
+
+export function getCareerSummary(state) {
+  const progress = Math.max(0, state.jobProgress ?? 0);
+  const threshold = Math.max(1, state.job?.promotionThreshold ?? 1);
+  return { progress, threshold, percent:Math.min(100, Math.round(progress / threshold * 100)), remaining:Math.max(0, threshold - progress) };
+}

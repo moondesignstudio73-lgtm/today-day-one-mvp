@@ -6,8 +6,8 @@ import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs";
 import { getActionAvailability } from "./src/action-manager.mjs";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
-import { addJobProgress } from "./src/job-manager.mjs";
-import { getEconomySummary, getNextPayday, processDayEndEconomy } from "./src/economy-manager.mjs";
+import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
+import { calculatePaycheck, getEconomySummary, getNextPayday, processDayEndEconomy } from "./src/economy-manager.mjs";
 import { acquireActionItem, equipItem, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs";
 import { getItem, ITEMS } from "./src/items-data.mjs";
 import { giveGift } from "./src/gift-manager.mjs";
@@ -17,7 +17,7 @@ const $ = (selector) => document.querySelector(selector);
 let state;
 
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); render(); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); $("#careerButton").classList.remove("hidden"); render(); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 
 function render() {
@@ -117,6 +117,12 @@ function openFinance() {
   $("#modal").classList.remove("hidden");
 }
 
+function openCareer() {
+  const career = getCareerSummary(state), job = state.job;
+  $("#modalContent").innerHTML=`<span class="eyebrow">MY CAREER</span><h2>${job.name} · Lv.${state.jobLevel}</h2><p>다음 10일 급여 예상 ${money(calculatePaycheck(state))}</p><div class="career-progress"><div><span>승진 진행도</span><b>${career.progress} / ${career.threshold}</b></div><i><em style="width:${career.percent}%"></em></i><small>승진까지 성장 포인트 ${career.remaining}</small></div><div class="career-stats"><div><small>연봉</small><b>${money(job.salary)}</b></div><div><small>수입 배율</small><b>×${job.incomeMultiplier.toFixed(2)}</b></div><div><small>성장 잠재력</small><b>${job.growthPotential}</b></div><div><small>인맥 기회</small><b>${job.socialOpportunity}</b></div><div><small>스트레스 배율</small><b>×${job.stressRate.toFixed(2)}</b></div></div><p class="career-tip">성공 행동으로 업무 능력을 올리면 승진 진행도가 쌓이고, 승진할 때마다 수입 배율이 증가합니다.</p>`;
+  $("#modal").classList.remove("hidden");
+}
+
 function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state);
   $("#modalContent").innerHTML=`<span class="eyebrow">DAY 30 · YOUR ENDING</span><h2>${title}</h2><div class="ending-score">${Math.round((state.affection+state.trust)/20)}</div><p>${desc}</p><p><b>최종 기록</b><br>호감도 ${Math.round(state.affection)} · 신뢰도 ${Math.round(state.trust)} · 자산 ${money(state.money)}</p><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`; $("#modal").classList.remove("hidden"); }
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
@@ -129,4 +135,5 @@ $("#debugButton").addEventListener("click",openDebug);
 $("#inventoryButton").addEventListener("click",openInventory);
 $("#shopButton").addEventListener("click",openShop);
 $("#financeButton").addEventListener("click",openFinance);
+$("#careerButton").addEventListener("click",openCareer);
 $("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",()=>$("#modal").classList.add("hidden")); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
