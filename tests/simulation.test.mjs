@@ -23,6 +23,8 @@ import { buildConversationContext, generateContextualReply, getContextualOpening
 import { getMemoryContext, recordMemory, validateMemories } from "../src/memory-manager.mjs";
 import { getInitiatedMessageChance, maybeGenerateInitiatedMessage } from "../src/initiated-message-manager.mjs";
 import { requestGirlfriendReply } from "../src/ai-chat-client.mjs";
+import { STOCKS, validateStockData } from "../src/stocks-data.mjs";
+import { advanceStockMarket, createInvestmentState, validateInvestmentState } from "../src/investment-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -114,6 +116,15 @@ assert.equal(remoteReply.effects.affection, 5);
 const fallbackReply = await requestGirlfriendReply({ endpoint:"/api/chat", context:buildConversationContext(messageState), message:"오늘 힘들어", fetchImpl:async () => { throw new Error("offline"); } });
 assert.equal(fallbackReply.source, "local");
 assert.ok(fallbackReply.text.includes("힘들었구나"));
+assert.equal(validateStockData(), true);
+assert.equal(STOCKS.length, 3);
+const marketState = { day:2, investment:createInvestmentState() };
+const pricesBefore = marketState.investment.market.map(stock => stock.price);
+const marketChanges = advanceStockMarket(marketState, () => 0.9);
+assert.equal(marketChanges.length, STOCKS.length);
+assert.ok(marketState.investment.market.every((stock,index) => stock.price !== pricesBefore[index] && stock.price >= 1000));
+assert.equal(marketState.investment.history.at(-1).day, 2);
+assert.equal(validateInvestmentState(marketState.investment), true);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };

@@ -2,6 +2,7 @@ import { validateGirlfriend } from "./girlfriend-manager.mjs";
 import { generateJob, validateJob } from "./jobs-data.mjs";
 import { generateNpcs, validateNpcs } from "./npc-manager.mjs";
 import { validateMemories } from "./memory-manager.mjs";
+import { createInvestmentState, validateInvestmentState } from "./investment-manager.mjs";
 
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
@@ -32,6 +33,7 @@ export function createInitialState(partner, random = Math.random) {
     memories: [],
     initiatedMessages: [],
     conversationHistory: [],
+    investment: createInvestmentState(),
     revealed: 0,
     revealedTraits: [],
     observations: {},
@@ -91,7 +93,7 @@ export function validateState(value) {
   if (value.version !== 1 || !Number.isInteger(value.day) || !Number.isInteger(value.phase)) return false;
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
   if (!validateGirlfriend(value.partner)) return false;
-  if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment || !validateNpcs(value.npcs) || !Array.isArray(value.npcHistory) || !Array.isArray(value.temptationHistory) || !Array.isArray(value.rivalHistory) || !validateMemories(value.memories) || !Array.isArray(value.initiatedMessages) || !Array.isArray(value.conversationHistory)) return false;
+  if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment || !validateNpcs(value.npcs) || !Array.isArray(value.npcHistory) || !Array.isArray(value.temptationHistory) || !Array.isArray(value.rivalHistory) || !validateMemories(value.memories) || !Array.isArray(value.initiatedMessages) || !Array.isArray(value.conversationHistory) || !validateInvestmentState(value.investment)) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
   return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "fatigue", "charm", "fashion", "confidence", "work", "social"].every(key => Number.isFinite(value[key]));
 }

@@ -17,6 +17,7 @@ import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs"
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
 import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs";
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
+import { advanceStockMarket } from "./src/investment-manager.mjs";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 
@@ -80,7 +81,7 @@ function applyAction() {
   advanceTime(state);
   const initiatedMessage = maybeGenerateInitiatedMessage(state);
   if (initiatedMessage) { state.logs.push({time:`DAY ${state.day} · MESSAGE`,text:`${state.partner.name}: ${initiatedMessage.text}`}); toast(`${state.partner.name}에게 메시지가 왔어요`); }
-  if (finishedDay) { dailyEvent(); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); }
+  if (finishedDay) { dailyEvent(); advanceStockMarket(state); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); }
   const event = rollEvent(state);
   if (event) {
     state.logs.push({time:`DAY ${state.day} · EVENT`,text:`${event.title} — ${event.message}`});
