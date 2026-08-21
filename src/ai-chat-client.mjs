@@ -24,7 +24,7 @@ export async function requestGirlfriendReply({ endpoint, context, message, fetch
   const safeTimeout = Number.isFinite(timeoutMs) ? Math.max(0, timeoutMs) : DEFAULT_REMOTE_TIMEOUT_MS;
   const timeout = controller && safeTimeout ? setTimeout(() => controller.abort(), safeTimeout) : null;
   try {
-    const response = await fetchImpl(endpoint, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ context, message }), ...(controller ? { signal:controller.signal } : {}) });
+    const response = await fetchImpl(endpoint, { method:"POST", headers:{ "Content-Type":"application/json", Accept:"application/json" }, body:JSON.stringify({ context, message }), ...(controller ? { signal:controller.signal } : {}) });
     if (!response.ok) return fallback();
     const data = await response.json();
     const text = sanitizeRemoteReply(data.reply);
