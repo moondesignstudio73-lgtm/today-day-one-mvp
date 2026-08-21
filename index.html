@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-standing-smile-2d.png">
@@ -84,6 +85,7 @@
         <div class="vn-stage panel" id="visualNovelStage" role="button" tabindex="0" aria-label="대화 전체 표시">
           <div class="vn-backdrop" aria-hidden="true"></div>
           <img class="vn-character" id="vnCharacter" src="assets/characters/girlfriend-standing-2d.png" alt="" aria-hidden="true">
+          <img class="vn-character-accessory" id="vnAccessoryLayer" alt="" aria-hidden="true" hidden>
           <div id="vnExpressionLayer" class="vn-expression-layer" aria-live="polite"></div>
           <div id="vnEquipmentLayer" class="vn-equipment-layer" aria-live="polite"></div>
           <div class="vn-scene-meta"><span class="eyebrow" id="phaseLabel">MORNING · 아침</span><span class="clock" id="clockLabel">08:00</span></div>
@@ -118,6 +120,6 @@
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=12"></script>
+  <script type="module" src="game.js?v=13"></script>
 </body>
 </html>

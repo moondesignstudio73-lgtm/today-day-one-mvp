@@ -30,8 +30,8 @@ import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySu
 import { analyzePlayHistory, ENDING_DEFINITIONS, selectEnding, validateEndingDefinitions } from "../src/ending-manager.mjs";
 import { SoundManager, SOUND_SETTING_KEY, validateSceneSoundPresets, validateSoundPresets } from "../src/sound-manager.mjs";
 import { createCharacterAppearance, seedFromIdentity, validateCharacterAppearance } from "../src/character-appearance.mjs";
-import { getCharacterSprite } from "../src/assets/asset-manifest.mjs";
-import { resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "../src/ui/character-renderer.mjs";
+import { getCharacterAccessory, getCharacterSprite } from "../src/assets/asset-manifest.mjs";
+import { resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "../src/ui/character-renderer.mjs";
 import { evaluateEndingBalance, summarizeEndingDistribution } from "../src/balance-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
@@ -45,6 +45,7 @@ assert.match(getCharacterSprite("girlfriend","smile"),/smile-2d\.png$/);
 assert.match(getCharacterSprite("girlfriend","tense"),/tense-2d\.png$/);
 assert.match(getCharacterSprite("girlfriend","calm","phone"),/phone-calm-2d\.png$/);
 assert.match(getCharacterSprite("girlfriend","calm","standing","date"),/date-outfit-calm-2d\.png$/);
+assert.match(getCharacterAccessory("girlfriend","ribbon-pin"),/lavender-ribbon-star-pin\.png$/);
 assert.equal(resolveCharacterExpression({conflict:0,trust:500,stress:80,affection:500}).tone,"worried");
 assert.equal(resolveCharacterExpression({conflict:0,trust:500,stress:20,affection:800}).tone,"smile");
 assert.equal(resolveCharacterExpression({conflict:60,trust:500,stress:20,affection:800}).tone,"tense");
@@ -52,6 +53,8 @@ assert.equal(resolveCharacterPose({phase:3,conflict:0,trust:500,stress:20,affect
 assert.equal(resolveCharacterPose({phase:3,conflict:60,trust:500,stress:20,affection:500}),"standing");
 assert.equal(resolveCharacterOutfit({phase:2,conflict:0,trust:500,stress:20,affection:500}),"date");
 assert.equal(resolveCharacterOutfit({phase:2,conflict:60,trust:500,stress:20,affection:500}),"default");
+assert.equal(resolveCharacterAccessory({characterAppearance:{accessory:"ribbon-pin"}}),"ribbon-pin");
+assert.equal(resolveCharacterAccessory({characterAppearance:{accessory:"none"}}),"none");
 assert.equal(validateNpcArchetypes(), true);
 const generatedNpcs = generateNpcs(() => 0.5);
 assert.equal(generatedNpcs.length, NPC_ARCHETYPES.length);

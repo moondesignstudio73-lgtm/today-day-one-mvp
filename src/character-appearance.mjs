@@ -45,6 +45,8 @@ export function createVisualState(partner) {
     characterAppearance:structuredClone(partner.characterAppearance),
     currentExpression:"calm",
     currentPose:"neutral",
+    currentOutfit:"default",
+    currentAccessory:"none",
     currentBackground:"home-morning",
     equippedVisualLayers:[],
     dialogueSettings:{ speed:"normal", auto:false },

@@ -1,4 +1,4 @@
-import { getCharacterSprite } from "../assets/asset-manifest.mjs";
+import { getCharacterAccessory, getCharacterSprite } from "../assets/asset-manifest.mjs";
 
 export function resolveCharacterExpression(state) {
   if (state.conflict >= 55 || state.trust < 320) return { tone:"tense", icon:"…", label:"긴장한 눈빛" };
@@ -15,17 +15,29 @@ export function resolveCharacterOutfit(state, expression = resolveCharacterExpre
   return state.phase === 2 && expression.tone === "calm" ? "date" : "default";
 }
 
-export function renderCharacter(image, state) {
+export function resolveCharacterAccessory(state) {
+  return state.characterAppearance?.accessory === "ribbon-pin" ? "ribbon-pin" : "none";
+}
+
+export function renderCharacter(image, state, accessoryImage) {
   const expression = resolveCharacterExpression(state);
   const pose = resolveCharacterPose(state,expression);
   const outfit = resolveCharacterOutfit(state,expression);
+  const accessory = resolveCharacterAccessory(state);
   const source = getCharacterSprite("girlfriend",expression.tone,pose,outfit);
+  const accessorySource = getCharacterAccessory("girlfriend",accessory);
   state.currentExpression = expression.tone;
   state.currentPose = pose;
   state.currentOutfit = outfit;
+  state.currentAccessory = accessory;
   if (image && image.getAttribute("src") !== source) image.setAttribute("src",source);
   if (image) image.dataset.expression = expression.tone;
   if (image) image.dataset.pose = pose;
   if (image) image.dataset.outfit = outfit;
+  if (accessoryImage) {
+    accessoryImage.hidden = !accessorySource;
+    accessoryImage.dataset.accessory = accessory;
+    if (accessorySource && accessoryImage.getAttribute("src") !== accessorySource) accessoryImage.setAttribute("src",accessorySource);
+  }
   return expression;
 }

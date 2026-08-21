@@ -11,6 +11,9 @@ export const CHARACTER_ASSETS = {
     },
     outfits:{
       date:"assets/characters/girlfriend-date-outfit-calm-2d.png"
+    },
+    accessories:{
+      "ribbon-pin":"assets/accessories/lavender-ribbon-star-pin.png"
     }
   }
 };
@@ -21,4 +24,8 @@ export function getCharacterSprite(character = "girlfriend", expression = "calm"
   if (expression === "calm" && outfit !== "default" && assets?.outfits?.[outfit]) return assets.outfits[outfit];
   const expressions = assets?.expressions;
   return expressions?.[expression] ?? expressions?.calm ?? "";
+}
+
+export function getCharacterAccessory(character = "girlfriend", accessory = "none") {
+  return CHARACTER_ASSETS[character]?.accessories?.[accessory] ?? "";
 }

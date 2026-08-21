@@ -24,7 +24,7 @@ import { SoundManager } from "./src/sound-manager.mjs?v=2";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
-import { renderCharacter, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs";
+import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -157,7 +157,7 @@ function render() {
   $("#dayLabel").textContent = state.day; $("#phaseIcon").textContent = phase.icon; $("#phaseLabel").textContent = phase.label;
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
   typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerBio").textContent = p.bio;
-  const expression = renderCharacter($("#vnCharacter"),state);
+  const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));
   $("#vnExpressionLayer").className=`vn-expression-layer ${expression.tone}`;
   $("#vnExpressionLayer").innerHTML=`<span aria-hidden="true">${expression.icon}</span><b>${expression.label}</b>`;
   const relationship = getRelationshipState(state); $("#relationshipState").textContent = `● ${relationship.label}`; $("#relationshipState").dataset.tone = relationship.tone; $("#relationshipState").title = relationship.description;
@@ -228,6 +228,7 @@ function applyAction() {
   state.currentExpression = currentExpression.tone;
   state.currentPose = resolveCharacterPose(state,currentExpression);
   state.currentOutfit = resolveCharacterOutfit(state,currentExpression);
+  state.currentAccessory = resolveCharacterAccessory(state);
   SaveManager.save(state);
   if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); if(temptation) openTemptation(temptation); }
 }
