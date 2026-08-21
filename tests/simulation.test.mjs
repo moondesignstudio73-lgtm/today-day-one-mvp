@@ -47,6 +47,7 @@ assert.match(getCharacterSprite("girlfriend","calm","phone"),/phone-calm-2d\.png
 assert.match(getCharacterSprite("girlfriend","calm","standing","date"),/date-outfit-calm-2d\.png$/);
 assert.match(getCharacterAccessory("girlfriend","ribbon-pin"),/lavender-ribbon-star-pin\.png$/);
 assert.match(getNpcSprite("female-coworker"),/female-coworker-2d\.png$/);
+assert.match(getNpcSprite("male-rival"),/male-rival-2d\.png$/);
 assert.equal(getNpcSprite("unknown-npc"),"");
 assert.equal(resolveCharacterExpression({conflict:0,trust:500,stress:80,affection:500}).tone,"worried");
 assert.equal(resolveCharacterExpression({conflict:0,trust:500,stress:20,affection:800}).tone,"smile");

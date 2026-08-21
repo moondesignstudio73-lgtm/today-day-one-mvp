@@ -19,7 +19,8 @@ export const CHARACTER_ASSETS = {
 };
 
 export const NPC_ASSETS = {
-  "female-coworker":"assets/npcs/female-coworker-2d.png"
+  "female-coworker":"assets/npcs/female-coworker-2d.png",
+  "male-rival":"assets/npcs/male-rival-2d.png"
 };
 
 export function getCharacterSprite(character = "girlfriend", expression = "calm", pose = "standing", outfit = "default") {
