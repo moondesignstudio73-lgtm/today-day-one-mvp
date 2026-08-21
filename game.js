@@ -16,6 +16,7 @@ import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from 
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
 import { buildConversationContext, getContextualOpening } from "./src/conversation-manager.mjs";
+import { recordMemory } from "./src/memory-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -68,6 +69,7 @@ function applyAction() {
   const rivalResult = applyRivalPressure(state, action);
   if (rivalResult?.record.delta > 0) state.logs.push({time:`DAY ${state.day} · RIVAL`,text:`${rivalResult.rival.name}의 접근 위험이 높아졌다.`});
   state.choices.push(action.tag); state.actionHistory.push({ day:state.day, phase:state.phase, actionId:action.id, tag:action.tag }); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
+  if (["데이트","유혹","쇼핑"].includes(action.tag)) recordMemory(state,{type:"action",summary:action.title,importance:action.tag==="유혹"?4:2,tags:[action.tag]});
   const clue = observePersonality(state, action.tag);
   if (clue?.revealed) toast(`${state.partner.name}의 성향을 하나 알아냈어요.`);
   state.selected = null;
@@ -78,6 +80,7 @@ function applyAction() {
   if (event) {
     state.logs.push({time:`DAY ${state.day} · EVENT`,text:`${event.title} — ${event.message}`});
     toast(`EVENT · ${event.title}`);
+    recordMemory(state,{type:"event",summary:event.title,importance:3,tags:["이벤트",event.id]});
   }
   const breakup = evaluateBreakup(state);
   SaveManager.save(state);
@@ -112,7 +115,7 @@ function openInventory() {
   $("#modalContent").innerHTML=`<span class="eyebrow">INVENTORY</span><h2>나의 가방</h2><p>장착 보너스 · 매력 +${bonuses.attractiveness} · 패션 +${bonuses.fashion}</p><div class="inventory-list">${cards}</div>`;
   $("#modal").classList.remove("hidden");
   document.querySelectorAll(".equip-button:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{ equipItem(state,button.dataset.instance); SaveManager.save(state); openInventory(); }));
-  document.querySelectorAll(".gift-button").forEach(button=>button.addEventListener("click",()=>{ const result=giveGift(state,button.dataset.gift); if(!result)return; state.logs.push({time:`DAY ${state.day} · GIFT`,text:`${result.item.name} 선물 · ${result.reaction.reaction}`}); SaveManager.save(state); toast(`${state.partner.name}: “${result.reaction.reaction}” · 호감 +${result.reaction.affection}`); render(); openInventory(); }));
+  document.querySelectorAll(".gift-button").forEach(button=>button.addEventListener("click",()=>{ const result=giveGift(state,button.dataset.gift); if(!result)return; state.logs.push({time:`DAY ${state.day} · GIFT`,text:`${result.item.name} 선물 · ${result.reaction.reaction}`}); recordMemory(state,{type:"gift",summary:`${result.item.name} 선물`,importance:4,tags:["선물",result.item.id]}); SaveManager.save(state); toast(`${state.partner.name}: “${result.reaction.reaction}” · 호감 +${result.reaction.affection}`); render(); openInventory(); }));
 }
 
 function openShop() {
@@ -152,7 +155,7 @@ function openTemptation({ npc, level }) {
   const buttons = Object.entries(TEMPTATION_CHOICES).map(([id,choice])=>`<button data-temptation="${id}">${choice.label}</button>`).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">TEMPTATION</span><h2>${npc.name}의 접근</h2><p>${message}</p><div class="temptation-options">${buttons}</div>`;
   $("#modal").classList.remove("hidden");
-  document.querySelectorAll("[data-temptation]").forEach(button=>button.addEventListener("click",()=>{ const result=resolveTemptation(state,npc.instanceId,button.dataset.temptation); if(!result)return; state.logs.push({time:`DAY ${state.day} · CHOICE`,text:`${npc.name}에게 “${result.choice.label}”`}); SaveManager.save(state); render(); $("#modal").classList.add("hidden"); toast(`선택 완료 · 신뢰 ${result.choice.partnerTrust>=0?'+':''}${result.choice.partnerTrust}`); }));
+  document.querySelectorAll("[data-temptation]").forEach(button=>button.addEventListener("click",()=>{ const result=resolveTemptation(state,npc.instanceId,button.dataset.temptation); if(!result)return; state.logs.push({time:`DAY ${state.day} · CHOICE`,text:`${npc.name}에게 “${result.choice.label}”`}); recordMemory(state,{type:"temptation",summary:`${npc.name}: ${result.choice.label}`,importance:5,tags:["유혹",button.dataset.temptation]}); SaveManager.save(state); render(); $("#modal").classList.add("hidden"); toast(`선택 완료 · 신뢰 ${result.choice.partnerTrust>=0?'+':''}${result.choice.partnerTrust}`); }));
 }
 
 function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state);

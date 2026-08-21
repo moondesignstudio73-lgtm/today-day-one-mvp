@@ -25,6 +25,7 @@ export class SaveManager {
       parsed.temptationHistory ??= [];
       parsed.rivalHistory ??= [];
       parsed.breakup ??= null;
+      parsed.memories ??= [];
       return validateState(parsed) ? parsed : null;
     } catch {
       return null;

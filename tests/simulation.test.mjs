@@ -20,6 +20,7 @@ import { getTemptationOpportunity, resolveTemptation } from "../src/temptation-m
 import { applyRivalPressure, calculateRivalRisk } from "../src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "../src/conflict-manager.mjs";
 import { buildConversationContext, getContextualOpening } from "../src/conversation-manager.mjs";
+import { getMemoryContext, recordMemory, validateMemories } from "../src/memory-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -82,6 +83,11 @@ assert.ok(getContextualOpening(conversationContext).includes("숨기는 거"));
 conversationState.temptationHistory = [];
 conversationState.fatigue = 80;
 assert.ok(getContextualOpening(buildConversationContext(conversationState)).includes("지쳐"));
+recordMemory(conversationState,{type:"gift",summary:"기념일 목걸이 선물",importance:4,tags:["선물"]});
+recordMemory(conversationState,{type:"temptation",summary:"비밀 만남을 거절함",importance:5,tags:["유혹","거절"]});
+assert.equal(validateMemories(conversationState.memories), true);
+assert.equal(getMemoryContext(conversationState,1)[0].type, "temptation");
+assert.equal(buildConversationContext(conversationState).importantMemories.length, 2);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };

@@ -1,3 +1,5 @@
+import { getMemoryContext } from "./memory-manager.mjs";
+
 export function buildConversationContext(state) {
   const recentActions = (state.actionHistory ?? []).slice(-6).map(entry => ({ day:entry.day, actionId:entry.actionId, tag:entry.tag }));
   const recentEvents = (state.eventHistory ?? []).slice(-4).map(entry => ({ day:entry.day, title:entry.title, message:entry.message }));
@@ -8,7 +10,7 @@ export function buildConversationContext(state) {
     girlfriend:{ name:state.partner.name, bio:state.partner.bio, personality:{ ...state.partner.personality } },
     relationship:{ affection:state.affection, trust:state.trust, excitement:state.excitement, attachment:state.attachment, conflict:state.conflict, stress:state.relationshipStress },
     player:{ money:state.money, health:state.health, energy:state.energy, fatigue:state.fatigue, stress:state.stress, charm:state.charm, fashion:state.fashion, confidence:state.confidence, job:state.job.name, jobLevel:state.jobLevel },
-    recentActions, recentEvents, recentGifts, recentTemptations
+    recentActions, recentEvents, recentGifts, recentTemptations, importantMemories:getMemoryContext(state)
   };
 }
 
