@@ -6,6 +6,7 @@ import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs";
 import { getActionAvailability } from "./src/action-manager.mjs";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
+import { addJobProgress } from "./src/job-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -24,7 +25,7 @@ function render() {
   $("#affectionValue").textContent = Math.round(state.affection); $("#trustValue").textContent = Math.round(state.trust);
   $("#affectionBar").style.width = `${state.affection/10}%`; $("#trustBar").style.width = `${state.trust/10}%`;
   const traitRows = getVisibleTraitRows(state); const revealedCount = traitRows.filter(row => row.revealed).length;
-  $("#moneyValue").textContent = money(state.money); $("#traitProgress").textContent = `${revealedCount} / 5`;
+  $("#moneyValue").textContent = money(state.money); $("#jobValue").textContent = `${state.job.name} · Lv.${state.jobLevel}`; $("#traitProgress").textContent = `${revealedCount} / 5`;
   $("#lifeStatus").textContent = state.stress > 75 ? "한계에 가까움" : state.energy < 25 ? "휴식이 필요함" : state.affection > 750 ? "사랑이 깊어지는 중" : "나쁘지 않은 하루";
   $("#traitList").innerHTML = traitRows.map(row => row.revealed ? `<div class="trait"><span>${row.name}</span><b>${row.value}</b></div>` : `<div class="trait locked"><span>${row.name}</span><b>${row.confidence ? `${row.hint} · ${row.confidence}%` : "???"}</b></div>`).join("");
   const stats = [["체력",state.energy],["건강",state.health],["스트레스",state.stress],["매력",state.charm],["업무 능력",state.work],["사회성",state.social]];
@@ -47,6 +48,8 @@ function applyAction() {
   const fx = consequence.effects;
   if (action.random) { const win = Math.random() > .48; fx.money = win ? Math.round(40000+Math.random()*90000) : -Math.round(25000+Math.random()*70000); toast(win ? `투자 성공! ${money(fx.money)}` : `투자 손실 ${money(Math.abs(fx.money))}`); }
   applyEffects(state, fx);
+  const promotion = addJobProgress(state, action, fx);
+  if (promotion) toast(`승진! 직업 레벨 ${promotion.level} · 수입 보정 상승`);
   state.choices.push(action.tag); state.actionHistory.push({ day:state.day, phase:state.phase, actionId:action.id, tag:action.tag }); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
   const clue = observePersonality(state, action.tag);
   if (clue?.revealed) toast(`${state.partner.name}의 성향을 하나 알아냈어요.`);

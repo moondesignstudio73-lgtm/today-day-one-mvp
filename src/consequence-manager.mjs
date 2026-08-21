@@ -1,4 +1,5 @@
 const scale = value => value / 100;
+import { applyJobModifiers } from "./job-manager.mjs";
 
 export function calculateActionEffects(state, action) {
   const effects = { ...action.effects };
@@ -44,5 +45,5 @@ export function calculateActionEffects(state, action) {
     notes.push("연락 선호");
   }
 
-  return { effects, notes };
+  return { effects:applyJobModifiers(state, action, effects), notes };
 }

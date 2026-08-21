@@ -1,4 +1,5 @@
 import { validateGirlfriend } from "./girlfriend-manager.mjs";
+import { generateJob, validateJob } from "./jobs-data.mjs";
 
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
@@ -14,6 +15,9 @@ export function createInitialState(partner, random = Math.random) {
     phase: 0,
     selected: null,
     partner,
+    job: generateJob(random),
+    jobLevel: 1,
+    jobProgress: 0,
     revealed: 0,
     revealedTraits: [],
     observations: {},
@@ -69,6 +73,7 @@ export function validateState(value) {
   if (value.version !== 1 || !Number.isInteger(value.day) || !Number.isInteger(value.phase)) return false;
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
   if (!validateGirlfriend(value.partner)) return false;
+  if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress)) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
   return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "charm", "work", "social"].every(key => Number.isFinite(value[key]));
 }

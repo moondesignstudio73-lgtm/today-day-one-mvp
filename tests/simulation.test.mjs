@@ -8,6 +8,8 @@ import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
 import { getActionAvailability, getAvailableActions } from "../src/action-manager.mjs";
 import { calculateActionEffects } from "../src/consequence-manager.mjs";
 import { getRelationshipState } from "../src/relationship-manager.mjs";
+import { generateJob, JOBS, validateJob } from "../src/jobs-data.mjs";
+import { addJobProgress, applyJobModifiers } from "../src/job-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 const memoryStorage = () => {
@@ -221,3 +223,18 @@ assert.equal(getRelationshipState(relationshipState).id, "deep-love");
 relationshipState.affection = 250;
 assert.equal(getRelationshipState(relationshipState).id, "crisis");
 console.log("✓ 호감·신뢰·설렘·갈등 조합 관계 상태 판정 검증 통과");
+assert.equal(JOBS.length, 4);
+assert.ok(JOBS.every(validateJob));
+const jobState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+assert.ok(validateJob(jobState.job));
+const workAction = ACTIONS.day.find(action => action.id === "focused-work");
+jobState.job = structuredClone(JOBS.find(job => job.id === "developer"));
+const modifiedWork = applyJobModifiers(jobState, workAction, workAction.effects);
+assert.ok(modifiedWork.money > workAction.effects.money);
+assert.ok(modifiedWork.stress > workAction.effects.stress);
+jobState.jobProgress = jobState.job.promotionThreshold - 1;
+const promotion = addJobProgress(jobState, workAction, modifiedWork);
+assert.equal(promotion.level, 2);
+assert.ok(jobState.job.incomeMultiplier > JOBS.find(job => job.id === "developer").incomeMultiplier);
+assert.ok(["planner","developer","designer","sales"].includes(generateJob(() => 0.75).id));
+console.log("✓ 4개 직업의 수입·스트레스·성장 보정과 승진 검증 통과");
