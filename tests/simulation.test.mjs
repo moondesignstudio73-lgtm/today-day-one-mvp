@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { advanceTime, applyEffects, createInitialState, determineEnding, MAX_DAY, validateState } from "../src/game-core.mjs";
 import { SaveManager } from "../src/save-manager.mjs";
-import { generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS } from "../src/girlfriend-manager.mjs";
+import { estimateHint, generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS } from "../src/girlfriend-manager.mjs";
 import { getEligibleEvents, getEventDiagnostics, getEventProbability, meetsConditions, rollEvent } from "../src/event-manager.mjs";
 import { EVENT_DEFINITIONS } from "../src/events-data.mjs";
 import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
@@ -64,6 +64,15 @@ const inferenceState = createInitialState(generateGirlfriend(() => 0.5), () => 0
 for (let i = 0; i < 12; i += 1) observePersonality(inferenceState, "연락", () => 0.1);
 assert.ok(inferenceState.revealedTraits.length > 0, "repeated interaction must reveal a trait");
 assert.equal(getVisibleTraitRows(inferenceState).length, 5);
+const highInferenceState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+highInferenceState.partner.personality.contactImportance = 90;
+const highObservation = observePersonality(highInferenceState, "연락", () => 0.5);
+assert.equal(highObservation.hint, "높은 편?");
+const lowInferenceState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+lowInferenceState.partner.personality.contactImportance = 10;
+const lowObservation = observePersonality(lowInferenceState, "연락", () => 0.5);
+assert.equal(lowObservation.hint, "낮은 편?");
+assert.equal(estimateHint(50), "보통에 가까움?");
 console.log("✓ 100명 성향 랜덤 생성과 숨겨진 성향 추론 검증 통과");
 
 const eventState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
