@@ -34,6 +34,8 @@ export class SaveManager {
       parsed.investment ??= createInvestmentState();
       parsed.lottery ??= createLotteryState();
       parsed.finance ??= createAdvancedEconomyState();
+      parsed.finance.bonds ??= [];
+      parsed.finance.bondInterestEarned ??= 0;
       return validateState(parsed) ? parsed : null;
     } catch {
       return null;
