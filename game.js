@@ -13,6 +13,7 @@ import { getItem, ITEMS } from "./src/items-data.mjs";
 import { giveGift } from "./src/gift-manager.mjs";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
+import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -62,6 +63,8 @@ function applyAction() {
   if (promotion) toast(`승진! 직업 레벨 ${promotion.level} · 수입 보정 상승`);
   const npcResult = applyNpcActionEffects(state, action);
   if (npcResult) state.logs.push({time:`DAY ${state.day} · NPC`,text:`${npcResult.npc.name}와의 관계가 변했다.`});
+  const rivalResult = applyRivalPressure(state, action);
+  if (rivalResult?.record.delta > 0) state.logs.push({time:`DAY ${state.day} · RIVAL`,text:`${rivalResult.rival.name}의 접근 위험이 높아졌다.`});
   state.choices.push(action.tag); state.actionHistory.push({ day:state.day, phase:state.phase, actionId:action.id, tag:action.tag }); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
   const clue = observePersonality(state, action.tag);
   if (clue?.revealed) toast(`${state.partner.name}의 성향을 하나 알아냈어요.`);
@@ -130,7 +133,7 @@ function openCareer() {
 }
 
 function openPeople() {
-  const cards = state.npcs.map(npc=>{ const status=getNpcRelationshipStatus(npc); const interest=npc.relationshipType==='rival'?`연인 관심 ${npc.interestInGirlfriend}`:`내 관심 ${npc.interestInPlayer}`; return `<div class="npc-card"><div><small>${npc.role}</small><b>${npc.name}</b><span>호감 ${npc.affection} · 신뢰 ${npc.trust} · ${interest}</span></div><em data-tone="${status.tone}">${status.label}</em></div>`; }).join("");
+  const cards = state.npcs.map(npc=>{ const status=npc.relationshipType==='rival'?calculateRivalRisk(state,npc):getNpcRelationshipStatus(npc); const interest=npc.relationshipType==='rival'?`연인 관심 ${npc.interestInGirlfriend} · 위험 ${status.score}`:`내 관심 ${npc.interestInPlayer}`; return `<div class="npc-card"><div><small>${npc.role}</small><b>${npc.name}</b><span>호감 ${npc.affection} · 신뢰 ${npc.trust} · ${interest}</span></div><em data-tone="${status.tone}">${status.label}</em></div>`; }).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">HUMAN RELATIONSHIPS</span><h2>나의 인맥</h2><p>선택에 따라 가까워지거나 위험해지는 사람들입니다.</p><div class="npc-list">${cards}</div>`;
   $("#modal").classList.remove("hidden");
 }

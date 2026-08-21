@@ -17,6 +17,7 @@ import { calculateGiftReaction, giveGift } from "../src/gift-manager.mjs";
 import { NPC_ARCHETYPES, validateNpcArchetypes } from "../src/npcs-data.mjs";
 import { applyNpcActionEffects, generateNpcs, getNpcRelationshipStatus, validateNpcs } from "../src/npc-manager.mjs";
 import { getTemptationOpportunity, resolveTemptation } from "../src/temptation-manager.mjs";
+import { applyRivalPressure, calculateRivalRisk } from "../src/rival-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -47,6 +48,17 @@ assert.ok(rejectedTemptation.npc.interestInPlayer < 65);
 assert.ok(temptationState.trust > trustBeforeRejection);
 assert.equal(temptationState.temptationHistory.at(-1).choiceId, "reject");
 assert.equal(resolveTemptation(temptationState, temptingNpc.instanceId, "unknown"), null);
+const rivalPressureState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const rivalNpc = rivalPressureState.npcs.find(npc => npc.relationshipType === "rival");
+const safeRivalRisk = calculateRivalRisk(rivalPressureState, rivalNpc);
+rivalPressureState.affection = 180; rivalPressureState.trust = 220; rivalPressureState.conflict = 80; rivalPressureState.relationshipStress = 85;
+rivalPressureState.partner.personality.loyalty = 15; rivalPressureState.partner.personality.opportunism = 90;
+const dangerousRivalRisk = calculateRivalRisk(rivalPressureState, rivalNpc);
+assert.ok(dangerousRivalRisk.score > safeRivalRisk.score);
+const rivalInterestBefore = rivalNpc.interestInGirlfriend;
+const rivalPressure = applyRivalPressure(rivalPressureState, ACTIONS.evening.find(action => action.id === "coworker-drinks"));
+assert.ok(rivalPressure.rival.interestInGirlfriend > rivalInterestBefore);
+assert.equal(rivalPressureState.rivalHistory.length, 1);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };

@@ -23,6 +23,7 @@ export class SaveManager {
       parsed.npcs ??= generateNpcs();
       parsed.npcHistory ??= [];
       parsed.temptationHistory ??= [];
+      parsed.rivalHistory ??= [];
       return validateState(parsed) ? parsed : null;
     } catch {
       return null;
