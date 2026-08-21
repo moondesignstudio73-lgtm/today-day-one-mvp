@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { advanceTime, applyEffects, createInitialState, determineEnding, MAX_DAY, validateState } from "../src/game-core.mjs";
 import { SaveManager } from "../src/save-manager.mjs";
 import { generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS } from "../src/girlfriend-manager.mjs";
-import { getEligibleEvents, meetsConditions, rollEvent } from "../src/event-manager.mjs";
+import { getEligibleEvents, getEventProbability, meetsConditions, rollEvent } from "../src/event-manager.mjs";
 import { EVENT_DEFINITIONS } from "../src/events-data.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
@@ -75,6 +75,22 @@ assert.equal(getEligibleEvents(eventState).some(event => event.id === "work-mist
 eventState.day += 3;
 assert.equal(getEligibleEvents(eventState).some(event => event.id === "work-mistake"), true, "event must return after cooldown");
 
+const suspicionEvent = EVENT_DEFINITIONS.find(event => event.id === "relationship-suspicion");
+eventState.partner.personality.jealousy = 50;
+eventState.partner.personality.emotionalSensitivity = 50;
+eventState.conflict = 0;
+const baseSuspicionChance = getEventProbability(eventState, suspicionEvent);
+eventState.partner.personality.jealousy = 85;
+eventState.partner.personality.emotionalSensitivity = 82;
+eventState.conflict = 60;
+const modifiedSuspicionChance = getEventProbability(eventState, suspicionEvent);
+assert.equal(baseSuspicionChance, 0.42);
+assert.equal(modifiedSuspicionChance, 0.87);
+assert.ok(meetsConditions(eventState, [{ stat: "partner.personality.jealousy", operator: ">=", value: 70 }]));
+
+const cappedEvent = { probability: 0.9, probabilityModifiers: [{ conditions: [], multiply: 2 }] };
+assert.equal(getEventProbability(eventState, cappedEvent), 1, "probability must be capped at one");
+
 for (let run = 0; run < 100; run += 1) {
   const randomEventState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
   for (let turn = 0; turn < 120; turn += 1) {
@@ -86,3 +102,4 @@ for (let run = 0; run < 100; run += 1) {
   assert.ok(randomEventState.eventHistory.length <= 120);
 }
 console.log("✓ 조건·확률·우선순위·쿨다운 이벤트와 100회 회귀 검증 통과");
+console.log("✓ 플레이어 상태·연인 성격 기반 동적 이벤트 확률 검증 통과");

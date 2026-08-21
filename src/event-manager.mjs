@@ -12,8 +12,19 @@ const OPERATORS = {
 export function meetsConditions(state, conditions = []) {
   return conditions.every(({ stat, operator, value }) => {
     const compare = OPERATORS[operator];
-    return Boolean(compare) && compare(state[stat], value);
+    const actual = stat.split(".").reduce((current, key) => current?.[key], state);
+    return Boolean(compare) && compare(actual, value);
   });
+}
+
+export function getEventProbability(state, event) {
+  let probability = event.probability;
+  for (const modifier of event.probabilityModifiers ?? []) {
+    if (!meetsConditions(state, modifier.conditions)) continue;
+    if (Number.isFinite(modifier.multiply)) probability *= modifier.multiply;
+    if (Number.isFinite(modifier.add)) probability += modifier.add;
+  }
+  return Math.max(0, Math.min(1, probability));
 }
 
 export function getEligibleEvents(state, definitions = EVENT_DEFINITIONS) {
@@ -28,7 +39,7 @@ export function getEligibleEvents(state, definitions = EVENT_DEFINITIONS) {
 export function rollEvent(state, random = Math.random, definitions = EVENT_DEFINITIONS) {
   const eligible = getEligibleEvents(state, definitions);
   for (const event of eligible) {
-    if (random() <= event.probability) return triggerEvent(state, event);
+    if (random() <= getEventProbability(state, event)) return triggerEvent(state, event);
   }
   return null;
 }
