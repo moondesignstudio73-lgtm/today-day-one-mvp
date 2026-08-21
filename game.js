@@ -58,6 +58,7 @@ function closeModal() {
   const modal = $("#modal");
   if (modal.classList.contains("hidden")) return;
   modal.classList.add("hidden");
+  modal.classList.remove("phone-menu-active");
   if (modalReturnFocus?.isConnected) modalReturnFocus.focus();
   modalReturnFocus = null;
   if (state && !state.ended && !state.breakup) sound.playScene(phases[state.phase].key,state.day);
@@ -141,11 +142,20 @@ function openDialogueHistory() {
 }
 
 function openGameMenu() {
-  const items = [["inventory","가방"],["shop","상점"],["finance","재정"],["career","커리어"],["people","인맥"],["investment","투자"],["history","대화 기록"],["speed",`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`],["save","저장"],["load","불러오기"],["debug","DEBUG"]];
-  $("#modalContent").innerHTML=`<span class="eyebrow">GAME MENU</span><h2>메뉴</h2><div class="game-menu-grid">${items.map(([id,label])=>`<button type="button" data-menu-action="${id}">${label}</button>`).join("")}</div>`;
+  const apps = [
+    ["inventory","🎒","가방","아이템·장착","rose"],["shop","🛍","상점","쇼핑하기","violet"],["finance","₩","재정","자산·거래","green"],
+    ["career","💼","커리어","직업·성장","blue"],["people","👥","인맥","친구·라이벌","orange"],["investment","📈","투자","주식·채권","mint"],
+    ["history","💬","대화","지난 기록","pink"],["speed","⏩","속도",dialogueSpeeds[dialogueSpeedIndex].label,"indigo"],["debug","⚙","설정","진단 도구","gray"]
+  ];
+  const dock = [["save","↓","저장하기"],["load","↻","불러오기"]];
+  const battery = Math.max(1,Math.round((state.energy+state.health)/2));
+  const appMarkup = apps.map(([id,icon,label,detail,tone])=>`<button class="phone-app" type="button" data-menu-action="${id}"><span class="phone-app-icon" data-tone="${tone}" aria-hidden="true">${icon}</span><b>${label}</b><small>${escapeHtml(detail)}</small></button>`).join("");
+  const dockMarkup = dock.map(([id,icon,label])=>`<button type="button" data-menu-action="${id}"><span aria-hidden="true">${icon}</span><b>${label}</b></button>`).join("");
+  $("#modal").classList.add("phone-menu-active");
+  $("#modalContent").innerHTML=`<article class="phone-menu" aria-label="스마트폰 게임 메뉴"><div class="phone-status"><b>${phases[state.phase].time}</b><span>DAY ${state.day} · ${battery}% ▰</span></div><div class="phone-island" aria-hidden="true"></div><header class="phone-menu-hero"><small>${escapeHtml(phases[state.phase].label)} · ${escapeHtml(state.partner.name)}</small><strong>오늘부터 1일</strong><span>${money(state.money)}</span></header><div class="phone-app-grid">${appMarkup}</div><div class="phone-dock">${dockMarkup}</div><div class="phone-home-indicator" aria-hidden="true"></div></article>`;
   openModal();
   const actions = { inventory:openInventory, shop:openShop, finance:openFinance, career:openCareer, people:openPeople, investment:openInvestment, history:openDialogueHistory, speed:()=>{dialogueSpeedIndex=(dialogueSpeedIndex+1)%dialogueSpeeds.length;localStorage.setItem("today-day-one-dialogue-speed",String(dialogueSpeedIndex));toast(`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`);openGameMenu();}, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
-  document.querySelectorAll("[data-menu-action]").forEach(button=>button.addEventListener("click",()=>actions[button.dataset.menuAction]?.()));
+  document.querySelectorAll("[data-menu-action]").forEach(button=>button.addEventListener("click",()=>{$("#modal").classList.remove("phone-menu-active");actions[button.dataset.menuAction]?.();}));
 }
 
 function openStoryScene(scene) {
