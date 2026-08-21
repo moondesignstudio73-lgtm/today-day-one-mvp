@@ -7,7 +7,7 @@ import { getActionAvailability } from "./src/action-manager.mjs";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
-import { appendTransaction, calculatePaycheck, getEconomySummary, getNextPayday, processDayEndEconomy, recordTransaction } from "./src/economy-manager.mjs";
+import { appendTransaction, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, processDayEndEconomy, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs";
 import { acquireActionItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs";
 import { getItem, ITEMS } from "./src/items-data.mjs";
 import { giveGift } from "./src/gift-manager.mjs";
@@ -133,10 +133,12 @@ function openShop() {
 }
 
 function openFinance() {
-  const summary = getEconomySummary(state), nextPayday = getNextPayday(state.day);
+  const summary = getEconomySummary(state), assets=getAssetSummary(state), nextPayday = getNextPayday(state.day);
   const rows = state.economyLedger.length ? state.economyLedger.slice(-10).reverse().map(entry=>`<div class="ledger-row"><span><b>${entry.label}</b><small>DAY ${entry.day} · ${entry.category}</small></span><strong class="${entry.amount>=0?'income':'expense'}">${entry.amount>=0?'+':''}${money(entry.amount)}</strong></div>`).join("") : `<p class="empty-inventory">아직 기록된 거래가 없습니다.</p>`;
-  $("#modalContent").innerHTML=`<span class="eyebrow">MY FINANCE</span><h2>30일 재정 기록</h2><p>보유 자산 ${money(state.money)} · ${nextPayday?`다음 급여 DAY ${nextPayday}`:'모든 급여 정산 완료'}</p><div class="finance-summary"><div><small>누적 수입</small><b>+${money(summary.income)}</b></div><div><small>누적 지출</small><b>-${money(summary.expense)}</b></div><div><small>순손익</small><b>${summary.net>=0?'+':''}${money(summary.net)}</b></div></div><h3>최근 거래</h3><div class="ledger-list">${rows}</div>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">MY FINANCE</span><h2>30일 재정 기록</h2><p>총자산 ${money(assets.netWorth)} · ${nextPayday?`다음 급여 DAY ${nextPayday}`:'모든 급여 정산 완료'}</p><div class="finance-summary"><div><small>현금</small><b>${money(assets.cash)}</b></div><div><small>저축</small><b>${money(assets.savings)}</b></div><div><small>주식 평가액</small><b>${money(assets.stockValue)}</b></div></div><div class="savings-card"><div><small>DAILY INTEREST 0.1%</small><b>안정 저축 계좌</b><span>누적 이자 ${money(state.finance.interestEarned)} · ${money(SAVINGS_TRANSFER_AMOUNT)} 단위 이체</span></div><div><button id="savingsDeposit" ${state.money<SAVINGS_TRANSFER_AMOUNT?'disabled':''}>입금</button><button id="savingsWithdraw" ${state.finance.savings<SAVINGS_TRANSFER_AMOUNT?'disabled':''}>출금</button></div></div><div class="finance-summary"><div><small>누적 수입</small><b>+${money(summary.income)}</b></div><div><small>누적 지출</small><b>-${money(summary.expense)}</b></div><div><small>순손익</small><b>${summary.net>=0?'+':''}${money(summary.net)}</b></div></div><h3>최근 거래</h3><div class="ledger-list">${rows}</div>`;
   $("#modal").classList.remove("hidden");
+  $("#savingsDeposit").addEventListener("click",()=>{const result=depositSavings(state);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openFinance();toast(`${money(result.amount)} 저축 완료`);});
+  $("#savingsWithdraw").addEventListener("click",()=>{const result=withdrawSavings(state);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openFinance();toast(`${money(result.amount)} 출금 완료`);});
 }
 
 function openCareer() {

@@ -10,7 +10,7 @@ import { applySelfManagementModifiers, calculateActionEffects } from "../src/con
 import { getRelationshipState } from "../src/relationship-manager.mjs";
 import { generateJob, JOBS, validateJob } from "../src/jobs-data.mjs";
 import { addJobProgress, applyJobModifiers, getCareerSummary } from "../src/job-manager.mjs";
-import { appendTransaction, calculatePaycheck, DAILY_LIVING_COST, getEconomySummary, getNextPayday, PAY_DAYS, processDayEndEconomy, recordTransaction } from "../src/economy-manager.mjs";
+import { appendTransaction, calculatePaycheck, createAdvancedEconomyState, DAILY_LIVING_COST, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, PAY_DAYS, processDayEndEconomy, recordTransaction, SAVINGS_TRANSFER_AMOUNT, validateAdvancedEconomyState, withdrawSavings } from "../src/economy-manager.mjs";
 import { ITEMS, getItem, validateItemData } from "../src/items-data.mjs";
 import { acquireActionItem, addItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "../src/inventory-manager.mjs";
 import { calculateGiftReaction, giveGift } from "../src/gift-manager.mjs";
@@ -150,6 +150,19 @@ for (let ticket=1;ticket<DAILY_TICKET_LIMIT;ticket+=1) assert.equal(buyInstantLo
 assert.equal(buyInstantLottery(lotteryState, () => 0.9).ok,false);
 assert.equal(validateLotteryState(lotteryState.lottery),true);
 assert.equal(validateLotteryState(createLotteryState()),true);
+const savingsState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const savingsCashBefore = savingsState.money;
+assert.equal(depositSavings(savingsState).ok,true);
+assert.equal(savingsState.money,savingsCashBefore-SAVINGS_TRANSFER_AMOUNT);
+assert.equal(savingsState.finance.savings,SAVINGS_TRANSFER_AMOUNT);
+const assetsAfterDeposit = getAssetSummary(savingsState);
+assert.equal(assetsAfterDeposit.netWorth,savingsCashBefore);
+const interestEntries = processDayEndEconomy(savingsState,1);
+assert.ok(interestEntries.some(entry => entry.category === "savings-interest"));
+assert.ok(savingsState.finance.interestEarned > 0);
+assert.equal(withdrawSavings(savingsState).ok,true);
+assert.equal(validateAdvancedEconomyState(savingsState.finance),true);
+assert.equal(validateAdvancedEconomyState(createAdvancedEconomyState()),true);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
@@ -188,11 +201,13 @@ assert.equal(restored.money, original.money);
 const legacySave = structuredClone(original);
 delete legacySave.npcs;
 delete legacySave.lottery;
+delete legacySave.finance;
 storage.setItem(SaveManager.key, JSON.stringify(legacySave));
 const migratedSave = SaveManager.load(storage);
 assert.ok(migratedSave);
 assert.equal(validateNpcs(migratedSave.npcs), true);
 assert.equal(validateLotteryState(migratedSave.lottery), true);
+assert.equal(validateAdvancedEconomyState(migratedSave.finance), true);
 storage.setItem(SaveManager.key, "{invalid-json");
 assert.equal(SaveManager.load(storage), null);
 
