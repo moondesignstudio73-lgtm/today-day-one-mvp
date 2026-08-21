@@ -4,7 +4,9 @@ export const ITEMS = [
   { id:"urban-sneakers", name:"노바 어반 스니커즈", brand:"Nova", category:"shoes", price:89000, luxuryLevel:2, attractivenessBonus:3, fashionBonus:7, preferenceTags:["캐주얼"] },
   { id:"classic-watch", name:"오르빗 클래식 워치", brand:"Orbit", category:"watch", price:180000, luxuryLevel:3, attractivenessBonus:5, fashionBonus:9, preferenceTags:["클래식","럭셔리"] },
   { id:"mini-bag", name:"벨르 미니백", brand:"Belle", category:"bag", price:240000, luxuryLevel:4, attractivenessBonus:6, fashionBonus:10, preferenceTags:["로맨틱","럭셔리"] },
-  { id:"silver-necklace", name:"셀레네 실버 네크리스", brand:"Selene", category:"accessory", price:120000, luxuryLevel:3, attractivenessBonus:5, fashionBonus:6, preferenceTags:["의미","로맨틱"] }
+  { id:"silver-necklace", name:"셀레네 실버 네크리스", brand:"Selene", category:"accessory", price:120000, luxuryLevel:3, attractivenessBonus:5, fashionBonus:6, preferenceTags:["의미","로맨틱"] },
+  { id:"velvet-lip-kit", name:"벨벳 데일리 립 키트", brand:"Mellow", category:"cosmetics", price:68000, luxuryLevel:2, attractivenessBonus:6, fashionBonus:4, preferenceTags:["뷰티","로맨틱"] },
+  { id:"aurora-phone", name:"오로라 프로 스마트폰", brand:"Aurora", category:"smartphone", price:1350000, luxuryLevel:5, attractivenessBonus:4, fashionBonus:5, preferenceTags:["테크","럭셔리"] }
 ];
 
 export function getItem(itemId) {
