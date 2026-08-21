@@ -23,7 +23,7 @@ import { calculateBreakupRisk, evaluateBreakup } from "../src/conflict-manager.m
 import { buildConversationContext, generateContextualReply, getContextualOpening, recordConversationTurn } from "../src/conversation-manager.mjs";
 import { getMemoryContext, recordMemory, validateMemories } from "../src/memory-manager.mjs";
 import { getInitiatedMessageChance, maybeGenerateInitiatedMessage } from "../src/initiated-message-manager.mjs";
-import { requestGirlfriendReply } from "../src/ai-chat-client.mjs";
+import { requestGirlfriendReply, sanitizeRemoteEffects } from "../src/ai-chat-client.mjs";
 import { STOCKS, validateStockData } from "../src/stocks-data.mjs";
 import { advanceStockMarket, buyStock, createInvestmentState, getPortfolioSummary, sellStock, validateInvestmentState } from "../src/investment-manager.mjs";
 import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE, validateLotteryState } from "../src/lottery-manager.mjs";
@@ -124,6 +124,7 @@ assert.ok(rememberedReply.effects.trust > 0);
 const remoteReply = await requestGirlfriendReply({ endpoint:"/api/chat", context:buildConversationContext(messageState), message:"안녕", fetchImpl:async () => ({ ok:true, json:async () => ({ reply:"오늘도 반가워!", effects:{ affection:5 } }) }) });
 assert.equal(remoteReply.source, "remote");
 assert.equal(remoteReply.effects.affection, 5);
+assert.deepEqual(sanitizeRemoteEffects({ affection:250, money:999999, trust:-3.7, broken:"x" }),{ affection:100, trust:-4 });
 const fallbackReply = await requestGirlfriendReply({ endpoint:"/api/chat", context:buildConversationContext(messageState), message:"오늘 힘들어", fetchImpl:async () => { throw new Error("offline"); } });
 assert.equal(fallbackReply.source, "local");
 assert.ok(fallbackReply.text.includes("힘들었구나"));
