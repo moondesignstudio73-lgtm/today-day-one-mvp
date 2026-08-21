@@ -5,6 +5,7 @@ const secretChoiceCount = state => (state.temptationHistory ?? []).filter(entry 
 const rivalInterest = state => (state.npcs ?? []).find(npc => npc.relationshipType === "rival")?.interestInGirlfriend ?? 0;
 const hasFutureTalk = state => (state.storyHistory ?? []).some(entry => entry.sceneId === "future-talk");
 const futureReady = (state, minimum) => !hasFutureTalk(state) || (state.futureScore ?? 0) >= minimum;
+const hiddenRouteStarted = state => state.hiddenRoute?.active === true && state.hiddenRoute?.started === true;
 export const ENDING_BALANCE_THRESHOLDS = Object.freeze({
   wealthyNetWorth: 3000000,
   loveAffection: 820,
@@ -12,6 +13,11 @@ export const ENDING_BALANCE_THRESHOLDS = Object.freeze({
 });
 
 export const ENDING_DEFINITIONS = [
+  { id:"hidden-escape", title:"도망", description:"돈과 건강, 일상이 무너지는 끝에서 연락을 끊었다. 사랑은 남았지만 살아남았다.", matches:state => hiddenRouteStarted(state) && state.hiddenRoute.choseLeave && (state.stress >= 80 || state.health <= 30 || state.money < 100000 || state.hiddenRoute.burden >= 700) },
+  { id:"hidden-role-reversal", title:"이번에는 내가", description:"초반에는 받기만 하던 그녀가 처음으로 힘든 플레이어의 곁을 지키러 왔다.", matches:state => hiddenRouteStarted(state) && state.hiddenRoute.receivedSupport && state.hiddenRoute.change >= 450 && state.hiddenRoute.boundary >= 400 },
+  { id:"hidden-mutual-life", title:"우리 둘 다 살아가는 연애", description:"사랑을 지키되 서로의 삶까지 대신 살지는 않기로 했다. 두 사람은 각자의 책임과 도움의 경계를 함께 세웠다.", matches:state => hiddenRouteStarted(state) && !state.hiddenRoute.choseLeave && state.hiddenRoute.change >= 500 && state.hiddenRoute.boundary >= 550 && state.hiddenRoute.dependency < 700 && state.hiddenRoute.stability >= 350 },
+  { id:"hidden-dependent-love", title:"나 없으면 안 되잖아", description:"호감은 넘쳤지만 모든 문제를 대신 해결한 끝에 사랑은 벗어날 수 없는 역할이 되었다.", matches:state => hiddenRouteStarted(state) && !state.hiddenRoute.choseLeave && (state.hiddenRoute.dependency >= 700 || state.hiddenRoute.boundary < 300) },
+  { id:"hidden-love-to-here", title:"사랑하지만 여기까지", description:"좋아하는 마음은 남아 있었다. 그래서 서로를 계속 망가뜨리기 전에 관계를 끝내기로 했다.", matches:state => hiddenRouteStarted(state) },
   { id:"betrayal-revealed", title:"바람 발각", description:"숨겨 온 선택이 드러나며 두 사람의 신뢰는 돌이킬 수 없이 무너졌다.", matches:state => secretChoiceCount(state) > 0 && state.trust < 400 },
   { id:"rival-chosen", title:"그녀의 다른 선택", description:"멀어진 마음 사이로 들어온 새로운 인연을 그녀는 외면하지 않았다.", matches:state => rivalInterest(state) >= 75 && state.affection < 500 && state.trust < 500 },
   { id:"economic-breakup", title:"경제 문제 이별", description:"계속되는 생활의 압박은 사랑만으로 견디기 어려운 벽이 되었다.", matches:state => getAssetSummary(state).netWorth < 200000 && state.conflict >= 50 },
@@ -30,7 +36,7 @@ export const ENDING_DEFINITIONS = [
 
 export function validateEndingDefinitions(definitions = ENDING_DEFINITIONS) {
   const ids = new Set();
-  return definitions.length === 14 && definitions.every(ending => typeof ending.id === "string" && !ids.has(ending.id) && ids.add(ending.id) && typeof ending.title === "string" && typeof ending.description === "string" && typeof ending.matches === "function");
+  return definitions.length === 19 && definitions.every(ending => typeof ending.id === "string" && !ids.has(ending.id) && ids.add(ending.id) && typeof ending.title === "string" && typeof ending.description === "string" && typeof ending.matches === "function");
 }
 
 export function selectEnding(state, definitions = ENDING_DEFINITIONS) {
@@ -71,6 +77,7 @@ export function analyzePlayHistory(state) {
   else if ((state.temptationHistory ?? []).length > 0) highlights.push("유혹 앞에서 관계를 지키는 선택을 했습니다.");
   else highlights.push(`예상 밖의 사건 ${(state.eventHistory ?? []).length}개를 지나왔습니다.`);
   if (hasFutureTalk(state)) highlights.push(`미래에 대한 선택은 ${state.futureScore >= 8 ? "함께할 준비" : "조금 더 필요한 준비"}로 이어졌습니다.`);
+  if (hiddenRouteStarted(state)) highlights.push(`히든 루트에서 경계 ${state.hiddenRoute.boundary}, 변화 ${state.hiddenRoute.change}, 의존 ${state.hiddenRoute.dependency}을 기록했습니다.`);
   return {
     daysPlayed:Math.min(30,Math.max(0,state.day > 30 ? 30 : state.day)),
     totalChoices:state.choices.length,

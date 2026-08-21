@@ -1,4 +1,6 @@
-export const STORY_SCENES = [
+import { HIDDEN_ROUTE_SCENES } from "./hidden-route-data.mjs";
+
+const STANDARD_STORY_SCENES = [
   {
     id:"unread-message", arc:"읽지 않은 메시지", window:[2,3], priority:100, bgm:"theme",
     title:"오늘 좀 힘들었어", speaker:"여자친구", message:"바쁜 오후, 짧지만 평소와 다른 메시지가 도착했다.",
@@ -173,11 +175,13 @@ export const STORY_SCENES = [
   }
 ];
 
+export const STORY_SCENES = [...STANDARD_STORY_SCENES,...HIDDEN_ROUTE_SCENES];
+
 export function validateStoryData(scenes = STORY_SCENES) {
   const ids = new Set();
   return scenes.every(scene => {
     if (typeof scene.id !== "string" || ids.has(scene.id)) return false;
     ids.add(scene.id);
-    return typeof scene.arc === "string" && Array.isArray(scene.window) && scene.window.length === 2 && scene.window.every(Number.isInteger) && scene.window[0] <= scene.window[1] && typeof scene.title === "string" && typeof scene.message === "string" && Array.isArray(scene.choices) && scene.choices.length >= 2 && scene.choices.every(choice => typeof choice.id === "string" && typeof choice.label === "string" && typeof choice.response === "string" && Object.values(choice.effects ?? {}).every(Number.isFinite));
+    return typeof scene.arc === "string" && Array.isArray(scene.window) && scene.window.length === 2 && scene.window.every(Number.isInteger) && scene.window[0] <= scene.window[1] && typeof scene.title === "string" && typeof scene.message === "string" && Array.isArray(scene.choices) && scene.choices.length >= 2 && scene.choices.every(choice => typeof choice.id === "string" && typeof choice.label === "string" && typeof choice.response === "string" && Object.values(choice.effects ?? {}).every(Number.isFinite) && Object.values(choice.routeEffects ?? {}).every(Number.isFinite));
   });
 }

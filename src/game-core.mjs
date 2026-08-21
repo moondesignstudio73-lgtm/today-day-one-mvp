@@ -7,6 +7,7 @@ import { createLotteryState, validateLotteryState } from "./lottery-manager.mjs"
 import { createAdvancedEconomyState, validateAdvancedEconomyState } from "./economy-manager.mjs";
 import { selectEnding } from "./ending-manager.mjs";
 import { createVisualState, validateCharacterAppearance } from "./character-appearance.mjs";
+import { createHiddenRouteState, validateHiddenRouteState } from "./hidden-route-manager.mjs";
 
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
@@ -43,6 +44,7 @@ export function createInitialState(partner, random = Math.random) {
     storyFlags: {},
     futureScore: 0,
     pendingStoryId: null,
+    hiddenRoute:createHiddenRouteState(random),
     investment: createInvestmentState(),
     lottery: createLotteryState(),
     revealed: 0,
@@ -108,6 +110,7 @@ export function validateState(value) {
   if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !validateAdvancedEconomyState(value.finance) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment || !validateNpcs(value.npcs) || !Array.isArray(value.npcHistory) || !Array.isArray(value.temptationHistory) || !Array.isArray(value.rivalHistory) || !validateMemories(value.memories) || !Array.isArray(value.initiatedMessages) || !Array.isArray(value.conversationHistory) || !validateInvestmentState(value.investment) || !validateLotteryState(value.lottery)) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
   if (!Array.isArray(value.storyHistory) || !value.storyFlags || typeof value.storyFlags !== "object" || !Number.isFinite(value.futureScore) || (value.pendingStoryId !== null && typeof value.pendingStoryId !== "string")) return false;
+  if (!validateHiddenRouteState(value.hiddenRoute)) return false;
   return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "fatigue", "charm", "fashion", "confidence", "work", "social"].every(key => Number.isFinite(value[key]));
 }
 

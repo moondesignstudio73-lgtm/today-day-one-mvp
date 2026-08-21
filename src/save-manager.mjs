@@ -4,6 +4,7 @@ import { createInvestmentState } from "./investment-manager.mjs";
 import { createLotteryState } from "./lottery-manager.mjs";
 import { createAdvancedEconomyState } from "./economy-manager.mjs";
 import { migrateVisualState } from "./character-appearance.mjs";
+import { createHiddenRouteState } from "./hidden-route-manager.mjs";
 
 export class SaveManager {
   static key = "today-day-one.save.v1";
@@ -37,6 +38,7 @@ export class SaveManager {
       parsed.storyFlags ??= {};
       parsed.futureScore ??= 0;
       parsed.pendingStoryId ??= null;
+      parsed.hiddenRoute ??= createHiddenRouteState(Math.random,false);
       parsed.investment ??= createInvestmentState();
       parsed.lottery ??= createLotteryState();
       parsed.finance ??= createAdvancedEconomyState();
