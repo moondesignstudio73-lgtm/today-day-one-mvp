@@ -1,10 +1,15 @@
 export const PAY_DAYS = [10, 20, 30];
 export const DAILY_LIVING_COST = 18000;
 
-export function recordTransaction(state, transaction) {
+export function appendTransaction(state, transaction) {
   state.economyLedger ??= [];
   const entry = { day:state.day, category:"etc", ...transaction };
   state.economyLedger.push(entry);
+  return entry;
+}
+
+export function recordTransaction(state, transaction) {
+  const entry = appendTransaction(state, transaction);
   state.money = Math.max(0, state.money + entry.amount);
   return entry;
 }

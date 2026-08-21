@@ -7,7 +7,7 @@ import { getActionAvailability } from "./src/action-manager.mjs";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
-import { calculatePaycheck, getEconomySummary, getNextPayday, processDayEndEconomy } from "./src/economy-manager.mjs";
+import { appendTransaction, calculatePaycheck, getEconomySummary, getNextPayday, processDayEndEconomy } from "./src/economy-manager.mjs";
 import { acquireActionItem, equipItem, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs";
 import { getItem, ITEMS } from "./src/items-data.mjs";
 import { giveGift } from "./src/gift-manager.mjs";
@@ -52,6 +52,7 @@ function applyAction() {
   const fx = consequence.effects;
   if (action.random) { const win = Math.random() > .48; fx.money = win ? Math.round(40000+Math.random()*90000) : -Math.round(25000+Math.random()*70000); toast(win ? `투자 성공! ${money(fx.money)}` : `투자 손실 ${money(Math.abs(fx.money))}`); }
   applyEffects(state, fx);
+  if (fx.money) appendTransaction(state, { category:"action", label:action.title, amount:Math.round(fx.money) });
   const acquiredItem = acquireActionItem(state, action);
   if (acquiredItem) { const giftResult=action.autoGift?giveGift(state,acquiredItem.instanceId):null; toast(giftResult?`${giftResult.item.name} 선물 · “${giftResult.reaction.reaction}”`:`${getItem(acquiredItem.itemId).name} 획득${acquiredItem.equipped?' · 장착 완료':''}`); }
   const promotion = addJobProgress(state, action, fx);

@@ -10,7 +10,7 @@ import { calculateActionEffects } from "../src/consequence-manager.mjs";
 import { getRelationshipState } from "../src/relationship-manager.mjs";
 import { generateJob, JOBS, validateJob } from "../src/jobs-data.mjs";
 import { addJobProgress, applyJobModifiers, getCareerSummary } from "../src/job-manager.mjs";
-import { calculatePaycheck, DAILY_LIVING_COST, getEconomySummary, getNextPayday, PAY_DAYS, processDayEndEconomy, recordTransaction } from "../src/economy-manager.mjs";
+import { appendTransaction, calculatePaycheck, DAILY_LIVING_COST, getEconomySummary, getNextPayday, PAY_DAYS, processDayEndEconomy, recordTransaction } from "../src/economy-manager.mjs";
 import { ITEMS, getItem, validateItemData } from "../src/items-data.mjs";
 import { acquireActionItem, addItem, equipItem, getEquipmentBonuses, purchaseItem } from "../src/inventory-manager.mjs";
 import { calculateGiftReaction, giveGift } from "../src/gift-manager.mjs";
@@ -249,6 +249,9 @@ assert.ok(["planner","developer","designer","sales"].includes(generateJob(() => 
 console.log("✓ 4개 직업의 수입·스트레스·성장 보정과 승진 검증 통과");
 const economyState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
 const startingMoney = economyState.money;
+const actionEntry = appendTransaction(economyState, { category:"action", label:"업무에 집중하기", amount:45000 });
+assert.equal(actionEntry.amount, 45000);
+assert.equal(economyState.money, startingMoney);
 const normalDayEntries = processDayEndEconomy(economyState, 1);
 assert.equal(normalDayEntries.length, 1);
 assert.equal(economyState.money, startingMoney - DAILY_LIVING_COST);
@@ -260,7 +263,7 @@ assert.equal(economyState.money, beforePayday - DAILY_LIVING_COST + calculatePay
 recordTransaction(economyState, { day:10, category:"test", label:"테스트 지출", amount:-1000 });
 const economySummary = getEconomySummary(economyState);
 assert.ok(economySummary.income > 0 && economySummary.expense > 0);
-assert.equal(economySummary.transactions, 4);
+assert.equal(economySummary.transactions, 5);
 assert.equal(getNextPayday(1), 10);
 assert.equal(getNextPayday(10), 10);
 assert.equal(getNextPayday(21), 30);
