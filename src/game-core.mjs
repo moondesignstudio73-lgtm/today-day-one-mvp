@@ -35,7 +35,10 @@ export function createInitialState(partner, random = Math.random) {
     health: 68 + Math.floor(random() * 10),
     energy: 72 + Math.floor(random() * 10),
     stress: 20 + Math.floor(random() * 11),
+    fatigue: 18 + Math.floor(random() * 10),
     charm: 44 + Math.floor(random() * 10),
+    fashion: 35 + Math.floor(random() * 10),
+    confidence: 40 + Math.floor(random() * 10),
     work: 38 + Math.floor(random() * 10),
     social: 36 + Math.floor(random() * 10),
     logs: [],
@@ -65,6 +68,7 @@ export function advanceTime(state) {
     state.day += 1;
     state.energy = clamp(state.energy + 18);
     state.stress = clamp(state.stress - 5);
+    state.fatigue = clamp(state.fatigue - 12);
   }
   if (state.day > MAX_DAY) state.ended = true;
   state.selected = null;
@@ -79,7 +83,7 @@ export function validateState(value) {
   if (!validateGirlfriend(value.partner)) return false;
   if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
-  return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "charm", "work", "social"].every(key => Number.isFinite(value[key]));
+  return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "fatigue", "charm", "fashion", "confidence", "work", "social"].every(key => Number.isFinite(value[key]));
 }
 
 export function determineEnding(state) {

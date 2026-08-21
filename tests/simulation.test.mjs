@@ -38,6 +38,7 @@ for (let run = 0; run < 100; run += 1) {
   assert.equal(actions, MAX_DAY * 4);
   assert.ok(validateState(state));
   for (const key of ["health", "energy", "stress", "charm", "work", "social"]) assert.ok(state[key] >= 0 && state[key] <= 100);
+  for (const key of ["fatigue", "fashion", "confidence"]) assert.ok(state[key] >= 0 && state[key] <= 100);
   assert.ok(state.affection >= 0 && state.affection <= 1000);
   assert.ok(state.trust >= 0 && state.trust <= 1000);
   assert.ok(determineEnding(state)[0].length > 0);
@@ -292,3 +293,15 @@ const lowGiftReaction = calculateGiftReaction(lowPreferenceState, getItem("rose-
 assert.ok(highGiftReaction.affection > lowGiftReaction.affection);
 assert.equal(lowGiftReaction.willEquip, false);
 console.log("✓ 물질·선물·낭만 성향별 선물 반응과 여자친구 장착 검증 통과");
+const selfState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const initialConfidence = selfState.confidence;
+const gymEffects = ACTIONS.morning.find(action => action.id === "morning-gym").effects;
+applyEffects(selfState, gymEffects);
+assert.ok(selfState.confidence > initialConfidence && selfState.fatigue > 0);
+selfState.fatigue = 90;
+applyEffects(selfState, ACTIONS.night.find(action => action.id === "early-sleep").effects);
+assert.equal(selfState.fatigue, 72);
+selfState.fashion = 98;
+applyEffects(selfState, ACTIONS.night.find(action => action.id === "online-shopping").effects);
+assert.equal(selfState.fashion, 100);
+console.log("✓ 피로·패션·자신감 자기관리 행동과 수치 범위 검증 통과");
