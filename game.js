@@ -34,6 +34,7 @@ let modalReturnFocus = null;
 let dialogueTimer = null;
 let dialogueText = "";
 let dialogueIndex = 0;
+const dialogueHistory = [];
 const modalFocusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
 
 function openModal() {
@@ -86,6 +87,8 @@ function typeDialogue(text) {
   finishDialogueTyping();
   dialogueText = text;
   dialogueIndex = 0;
+  dialogueHistory.push({ day: state.day, phase: phases[state.phase].label, title: $("#sceneTitle").textContent, text });
+  if (dialogueHistory.length > 40) dialogueHistory.shift();
   const sceneText = $("#sceneText");
   const stage = $("#visualNovelStage");
   sceneText.textContent = "";
@@ -101,8 +104,14 @@ function handleDialogueAdvance() {
   if (finishDialogueTyping()) sound.play("select");
 }
 
+function openDialogueHistory() {
+  const rows = dialogueHistory.length ? dialogueHistory.slice().reverse().map(entry=>`<article class="history-entry"><small>DAY ${entry.day} · ${escapeHtml(entry.phase)}</small><b>${escapeHtml(entry.title)}</b><p>${escapeHtml(entry.text)}</p></article>`).join("") : `<p>아직 기록된 대화가 없어요.</p>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">BACKLOG</span><h2>대화 기록</h2><div class="dialogue-history">${rows}</div>`;
+  openModal();
+}
+
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); $("#careerButton").classList.remove("hidden"); $("#peopleButton").classList.remove("hidden"); $("#investmentButton").classList.remove("hidden"); render(); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); $("#careerButton").classList.remove("hidden"); $("#peopleButton").classList.remove("hidden"); $("#investmentButton").classList.remove("hidden"); $("#historyButton").classList.remove("hidden"); render(); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 
 function render() {
@@ -280,6 +289,7 @@ $("#financeButton").addEventListener("click",openFinance);
 $("#careerButton").addEventListener("click",openCareer);
 $("#peopleButton").addEventListener("click",openPeople);
 $("#investmentButton").addEventListener("click",openInvestment);
+$("#historyButton").addEventListener("click",openDialogueHistory);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#visualNovelStage").addEventListener("keydown",event=>{ if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });
