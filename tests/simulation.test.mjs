@@ -25,6 +25,7 @@ import { getInitiatedMessageChance, maybeGenerateInitiatedMessage } from "../src
 import { requestGirlfriendReply } from "../src/ai-chat-client.mjs";
 import { STOCKS, validateStockData } from "../src/stocks-data.mjs";
 import { advanceStockMarket, buyStock, createInvestmentState, getPortfolioSummary, sellStock, validateInvestmentState } from "../src/investment-manager.mjs";
+import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE, validateLotteryState } from "../src/lottery-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -138,6 +139,17 @@ const sellResult = sellStock(tradingState,tradingStock.id,1);
 assert.equal(sellResult.ok,true);
 assert.equal(tradingState.investment.holdings[tradingStock.id].quantity,1);
 assert.equal(tradingState.economyLedger.at(-1).category,"investment");
+const lotteryState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const lotteryMoneyBefore = lotteryState.money;
+const jackpotResult = buyInstantLottery(lotteryState, () => 0);
+assert.equal(jackpotResult.ok,true);
+assert.equal(jackpotResult.tierId,"jackpot");
+assert.equal(lotteryState.money,lotteryMoneyBefore-LOTTERY_TICKET_PRICE+jackpotResult.prize);
+assert.equal(getLotterySummary(lotteryState).tickets,1);
+for (let ticket=1;ticket<DAILY_TICKET_LIMIT;ticket+=1) assert.equal(buyInstantLottery(lotteryState, () => 0.9).ok,true);
+assert.equal(buyInstantLottery(lotteryState, () => 0.9).ok,false);
+assert.equal(validateLotteryState(lotteryState.lottery),true);
+assert.equal(validateLotteryState(createLotteryState()),true);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
@@ -175,10 +187,12 @@ assert.equal(restored.partner.name, original.partner.name);
 assert.equal(restored.money, original.money);
 const legacySave = structuredClone(original);
 delete legacySave.npcs;
+delete legacySave.lottery;
 storage.setItem(SaveManager.key, JSON.stringify(legacySave));
 const migratedSave = SaveManager.load(storage);
 assert.ok(migratedSave);
 assert.equal(validateNpcs(migratedSave.npcs), true);
+assert.equal(validateLotteryState(migratedSave.lottery), true);
 storage.setItem(SaveManager.key, "{invalid-json");
 assert.equal(SaveManager.load(storage), null);
 

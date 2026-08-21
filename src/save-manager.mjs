@@ -1,6 +1,7 @@
 import { validateState } from "./game-core.mjs";
 import { generateNpcs } from "./npc-manager.mjs";
 import { createInvestmentState } from "./investment-manager.mjs";
+import { createLotteryState } from "./lottery-manager.mjs";
 
 export class SaveManager {
   static key = "today-day-one.save.v1";
@@ -30,6 +31,7 @@ export class SaveManager {
       parsed.initiatedMessages ??= [];
       parsed.conversationHistory ??= [];
       parsed.investment ??= createInvestmentState();
+      parsed.lottery ??= createLotteryState();
       return validateState(parsed) ? parsed : null;
     } catch {
       return null;

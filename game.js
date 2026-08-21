@@ -18,6 +18,7 @@ import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mj
 import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs";
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs";
+import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 
@@ -166,11 +167,13 @@ function openTemptation({ npc, level }) {
 
 function openInvestment() {
   const portfolio=getPortfolioSummary(state);
+  const lottery=getLotterySummary(state);
   const cards=state.investment.market.map(stock=>{ const holding=state.investment.holdings[stock.id]; return `<div class="stock-card"><div><small>${stock.risk.toUpperCase()} RISK · ${stock.changeRate>=0?'+':''}${stock.changeRate}%</small><b>${stock.name}</b><span>${money(stock.price)} · 보유 ${holding?.quantity??0}주${holding?` · 평균 ${money(holding.averageCost)}`:''}</span></div><div class="stock-actions"><button data-stock-buy="${stock.id}">1주 매수</button><button data-stock-sell="${stock.id}" ${holding?'':'disabled'}>1주 매도</button></div></div>`; }).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">VIRTUAL MARKET</span><h2>오늘의 투자</h2><p>보유 자산 ${money(state.money)} · 평가금액 ${money(portfolio.marketValue)} · 손익 ${portfolio.profitLoss>=0?'+':''}${money(portfolio.profitLoss)}</p><div class="stock-list">${cards}</div>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">VIRTUAL MARKET</span><h2>오늘의 투자</h2><p>보유 자산 ${money(state.money)} · 평가금액 ${money(portfolio.marketValue)} · 손익 ${portfolio.profitLoss>=0?'+':''}${money(portfolio.profitLoss)}</p><div class="stock-list">${cards}</div><div class="lottery-card"><div><small>INSTANT LOTTERY · DAY ${state.day}</small><b>오늘의 행운 복권</b><span>1장 ${money(LOTTERY_TICKET_PRICE)} · 오늘 ${lottery.today}/${DAILY_TICKET_LIMIT}장 · 누적 손익 ${lottery.net>=0?'+':''}${money(lottery.net)}</span></div><button id="lotteryBuyButton" ${lottery.today>=DAILY_TICKET_LIMIT||state.money<LOTTERY_TICKET_PRICE?'disabled':''}>한 장 긁기</button></div>`;
   $("#modal").classList.remove("hidden");
   document.querySelectorAll("[data-stock-buy]").forEach(button=>button.addEventListener("click",()=>{const result=buyStock(state,button.dataset.stockBuy);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openInvestment();}));
   document.querySelectorAll("[data-stock-sell]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{const result=sellStock(state,button.dataset.stockSell);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openInvestment();}));
+  $("#lotteryBuyButton").addEventListener("click",()=>{const result=buyInstantLottery(state);if(!result.ok){toast(result.reason);return;}state.logs.push({time:`DAY ${state.day} · LOTTERY`,text:`즉석복권 ${result.label}${result.prize?` · ${money(result.prize)} 당첨`:''}`});SaveManager.save(state);render();openInvestment();toast(result.prize?`${result.label}! ${money(result.prize)} 당첨`:`아쉽게도 꽝이에요.`);});
 }
 
 function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state);
