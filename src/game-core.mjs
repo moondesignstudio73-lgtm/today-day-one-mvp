@@ -1,3 +1,5 @@
+import { validateGirlfriend } from "./girlfriend-manager.mjs";
+
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
 
@@ -66,7 +68,7 @@ export function validateState(value) {
   if (!value || typeof value !== "object") return false;
   if (value.version !== 1 || !Number.isInteger(value.day) || !Number.isInteger(value.phase)) return false;
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
-  if (!value.partner || typeof value.partner.name !== "string" || !value.partner.personality) return false;
+  if (!validateGirlfriend(value.partner)) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
   return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "charm", "work", "social"].every(key => Number.isFinite(value[key]));
 }

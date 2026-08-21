@@ -51,6 +51,16 @@ export function generateGirlfriend(random = Math.random) {
   };
 }
 
+export function validateGirlfriend(girlfriend) {
+  if (!girlfriend || typeof girlfriend !== "object") return false;
+  if (typeof girlfriend.id !== "string" || typeof girlfriend.name !== "string" || typeof girlfriend.bio !== "string") return false;
+  if (!girlfriend.personality || typeof girlfriend.personality !== "object") return false;
+  const keys = Object.keys(girlfriend.personality);
+  if (keys.length !== PERSONALITY_KEYS.length || !PERSONALITY_KEYS.every(key => keys.includes(key))) return false;
+  if (!Object.values(girlfriend.personality).every(value => Number.isFinite(value) && value >= 0 && value <= 100)) return false;
+  return girlfriend.weights && ["contact", "money", "trust"].every(key => Number.isFinite(girlfriend.weights[key]));
+}
+
 export function observePersonality(state, actionTag, random = Math.random) {
   const candidates = ACTION_CLUES[actionTag];
   if (!candidates?.length) return null;

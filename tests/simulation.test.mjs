@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { advanceTime, applyEffects, createInitialState, determineEnding, MAX_DAY, validateState } from "../src/game-core.mjs";
 import { SaveManager } from "../src/save-manager.mjs";
-import { estimateHint, generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS } from "../src/girlfriend-manager.mjs";
+import { estimateHint, generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS, validateGirlfriend } from "../src/girlfriend-manager.mjs";
 import { getEligibleEvents, getEventDiagnostics, getEventProbability, MAX_EVENTS_PER_DAY, meetsConditions, rollEvent } from "../src/event-manager.mjs";
 import { EVENT_DEFINITIONS, validateEventData } from "../src/events-data.mjs";
 import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
@@ -60,6 +60,13 @@ for (let seed = 1; seed <= 100; seed += 1) {
   generatedValues.add(JSON.stringify(girlfriend.personality));
 }
 assert.ok(generatedValues.size > 95, "personality generation must produce varied results");
+assert.equal(validateGirlfriend(generateGirlfriend(() => 0.5)), true);
+const corruptGirlfriend = generateGirlfriend(() => 0.5);
+corruptGirlfriend.personality.jealousy = 140;
+assert.equal(validateGirlfriend(corruptGirlfriend), false);
+const missingTraitGirlfriend = generateGirlfriend(() => 0.5);
+delete missingTraitGirlfriend.personality.loyalty;
+assert.equal(validateGirlfriend(missingTraitGirlfriend), false);
 
 const inferenceState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
 for (let i = 0; i < 12; i += 1) observePersonality(inferenceState, "연락", () => 0.1);
