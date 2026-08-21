@@ -41,6 +41,7 @@ import { createHiddenRouteState, HIDDEN_ROUTE_CHANCE, STRENGTH_TRAITS, TROUBLE_T
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, spendNightTime } from "../src/night-manager.mjs";
 import { getAssetRequirementList, getWeatherForDay, resolvePhasePresentation, resolveStoryPresentation, validateScenePresentation } from "../src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationSceneSequence, inferReactionExpression, validateSceneSequence } from "../src/story-scene-controller.mjs";
+import { analyzePlayerBehavior, analyzeRelationshipState, createStoryProposalContext, getDaySeed, getRecencyWeight, runDailyStoryDirector, validateStoryDirectorState, validateStoryProposal } from "../src/dynamic-story-director.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.ok(Object.values(BACKGROUND_ASSETS).every(path=>existsSync(path)));
@@ -68,6 +69,32 @@ renderCharacter(fakeImage,presentationState,fakeAccessory,{expressionId:"smile",
 assert.equal(fakeImage.dataset.expression,"smile");
 assert.match(fakeImage.getAttribute("src"),/smile/);
 console.log("✓ 팝업 없는 데이터 기반 스토리 Scene 시퀀스 검증 통과");
+const directorState=createInitialState(partner,()=>0.5);
+directorState.day=13;directorState.trust=350;directorState.affection=780;directorState.stress=76;directorState.relationshipStress=48;
+directorState.actionHistory=[{day:2,phase:2,actionId:"date",tag:"데이트"},{day:11,phase:1,actionId:"overtime",tag:"성공"},{day:12,phase:1,actionId:"overtime",tag:"성공"},{day:12,phase:2,actionId:"coworker-drinks",tag:"유혹"}];
+directorState.storyHistory.push({sceneId:"small-lie",arc:"거짓말",choiceId:"hide",day:12,response:"넘어갔다."});
+directorState.memories.push({id:"important-lie",day:4,type:"story",summary:"중요한 거짓말",importance:5,tags:["거짓말"]});
+assert.equal(analyzeRelationshipState(directorState),"SUSPICIOUS");
+assert.ok(analyzePlayerBehavior(directorState,13).WORKAHOLIC>0);
+assert.ok(getRecencyWeight(13,{day:12,importance:1})>getRecencyWeight(13,{day:2,importance:1}));
+assert.ok(getRecencyWeight(13,{day:2,importance:5})>.8);
+const directorClone=structuredClone(directorState);
+const directorAnalysis=runDailyStoryDirector(directorState,13);
+const directorCloneAnalysis=runDailyStoryDirector(directorClone,13);
+assert.deepEqual(directorAnalysis,directorCloneAnalysis);
+assert.equal(getDaySeed(directorState,14),getDaySeed(directorClone,14));
+assert.equal(validateStoryDirectorState(directorState.storyDirector),true);
+assert.ok(directorAnalysis.unresolvedEvents.some(item=>item.type==="LIE"));
+assert.ok(directorState.storyDirector.nextDayPlan.eventCandidates.length>0);
+const proposalContext=createStoryProposalContext(directorState);
+assert.equal(proposalContext.currentDay,13);
+assert.equal(validateStoryProposal({eventId:proposalContext.availableEvents[0].id,dialogueTone:"차분함"},proposalContext.availableEvents.map(item=>item.id)),true);
+assert.equal(validateStoryProposal({eventId:proposalContext.availableEvents[0].id,dialogueTone:"차분함",money:0},proposalContext.availableEvents.map(item=>item.id)),false);
+const deterministicEvent={id:"director-seeded-event",title:"Seed Event",message:"결정적 이벤트",conditions:[],probability:.5,priority:1,cooldown:0,effects:{stress:1}};
+const seededA=structuredClone(directorState),seededB=structuredClone(directorState);
+assert.equal(rollEvent(seededA,null,[deterministicEvent])?.id??null,rollEvent(seededB,null,[deterministicEvent])?.id??null);
+for(let run=0;run<20;run+=1){const simulated=createInitialState(generateGirlfriend(()=>((run+3)%10)/10),()=>.5);for(let day=1;day<=30;day+=1){simulated.day=day;const tag=day%5===0?"유혹":day%3===0?"데이트":day%2===0?"성공":"연락";simulated.actionHistory.push({day,phase:day%3,actionId:tag==="성공"?"overtime":"daily-action",tag});if(tag==="유혹")simulated.temptationHistory.push({day,npcId:"coworker",choiceId:day%10===0?"secret":"reject",partnerTrust:0,conflict:0});runDailyStoryDirector(simulated,day);}assert.equal(simulated.storyDirector.analyses.length,30);assert.equal(Object.keys(simulated.storyDirector.daySeeds).length,30);assert.ok(simulated.storyDirector.analyses.every(item=>Number.isFinite(item.narrativeTension)&&item.eventCandidates.every(candidate=>Number.isFinite(candidate.finalProbability))));}
+console.log("✓ DAY Seed·누적 분석·Story Thread·미해결 사건·AI 제안 검증 통과");
 const nightStateTest = createInitialState(partner,() => 0.5);
 const nightStart = createDaySnapshot(nightStateTest);
 nightStateTest.money -= 12000;
@@ -517,6 +544,7 @@ delete legacySave.storyFlags;
 delete legacySave.futureScore;
 delete legacySave.pendingStoryId;
 delete legacySave.hiddenRoute;
+delete legacySave.storyDirector;
 delete legacySave.partner.appearanceSeed;
 delete legacySave.partner.characterAppearance;
 storage.setItem(SaveManager.key, JSON.stringify(legacySave));
@@ -534,6 +562,7 @@ assert.equal(migratedSave.futureScore,0);
 assert.equal(migratedSave.pendingStoryId,null);
 assert.equal(validateHiddenRouteState(migratedSave.hiddenRoute),true);
 assert.equal(migratedSave.hiddenRoute.active,false);
+assert.equal(validateStoryDirectorState(migratedSave.storyDirector),true);
 storage.setItem(SaveManager.key, "{invalid-json");
 assert.equal(SaveManager.load(storage), null);
 

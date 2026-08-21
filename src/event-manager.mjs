@@ -33,6 +33,8 @@ export function getEventProbability(state, event) {
     if (Number.isFinite(modifier.multiply)) probability *= modifier.multiply;
     if (Number.isFinite(modifier.add)) probability += modifier.add;
   }
+  const directorMultiplier=state.storyDirector?.nextDayPlan?.eventWeights?.[event.id]?.multiplier;
+  if(Number.isFinite(directorMultiplier))probability*=directorMultiplier;
   return Math.max(0, Math.min(1, probability));
 }
 
@@ -66,15 +68,18 @@ export function getEventDiagnostics(state, definitions = EVENT_DEFINITIONS) {
   }).sort((a, b) => b.priority - a.priority);
 }
 
-export function rollEvent(state, random = Math.random, definitions = EVENT_DEFINITIONS) {
+export function rollEvent(state, random = null, definitions = EVENT_DEFINITIONS) {
   const eventsToday = (state.eventHistory ?? []).filter(entry => entry.day === state.day).length;
   if (eventsToday >= MAX_EVENTS_PER_DAY) return null;
   const eligible = getEligibleEvents(state, definitions);
   for (const event of eligible) {
-    if (random() <= getEventProbability(state, event)) return triggerEvent(state, event);
+    const roll=typeof random==="function"?random():getDirectorRoll(state,event.id);
+    if (roll <= getEventProbability(state, event)) return triggerEvent(state, event);
   }
   return null;
 }
+
+function getDirectorRoll(state,eventId){const seed=state.storyDirector?.nextDayPlan?.seed;if(!Number.isInteger(seed))return Math.random();let hash=seed>>>0;for(const char of `${state.day}:${eventId}`){hash^=char.charCodeAt(0);hash=Math.imul(hash,16777619);}return (hash>>>0)/4294967296;}
 
 export function triggerEvent(state, event) {
   applyEffects(state, event.effects);

@@ -25,7 +25,7 @@ export function getEligibleStoryScenes(state, scenes = STORY_SCENES) {
     if (state.day < scene.window[0] || state.day > scene.window[1]) return false;
     if (scene.requires && !hasStoryChoice(state,scene.requires)) return false;
     return meetsStoryConditions(state,scene.conditions);
-  }).sort((a,b) => b.priority - a.priority || a.window[0] - b.window[0]);
+  }).sort((a,b) => ((state.storyDirector?.nextDayPlan?.storyScores?.[b.id]??b.priority)-(state.storyDirector?.nextDayPlan?.storyScores?.[a.id]??a.priority)) || a.window[0] - b.window[0]);
 }
 
 export function selectNextStoryScene(state, scenes = STORY_SCENES) {

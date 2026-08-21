@@ -30,6 +30,7 @@ import { getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/s
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, resetForNextDay, spendNightTime } from "./src/night-manager.mjs";
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
+import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -366,7 +367,7 @@ function openNightPc() {
 function goToSleep() {
   const night=ensureNightState(state);
   $("#modalContent").innerHTML=`<span class="eyebrow">SLEEP · ${formatNightTime(night.minutes)}</span><h2>오늘은 이제 잘까?</h2><p>${night.minutes>=25*60?'늦은 시간이어서 내일 피곤할 수 있어요.':'오늘의 기록을 저장하고 다음 날로 넘어갑니다.'}</p><button id="sleepConfirm" class="primary-button" type="button">취침 · SAVE · NEXT DAY →</button>`;openModal();
-  $("#sleepConfirm").addEventListener("click",()=>{if(!night.messagesRead){const importance=state.partner.personality.contactImportance;applyEffects(state,{affection:-Math.max(1,Math.round(importance/25)),trust:-Math.max(1,Math.round(importance/20))});state.logs.push({time:`DAY ${state.day} · MESSAGE`,text:`${state.partner.name}의 메시지를 확인하지 않고 잠들었다.`});}applyEffects(state,getLateSleepEffects(night.minutes));state.selected=actions.night.findIndex(action=>action.id==="early-sleep");closeModal();applyAction();});
+  $("#sleepConfirm").addEventListener("click",()=>{if(!night.messagesRead){const importance=state.partner.personality.contactImportance;applyEffects(state,{affection:-Math.max(1,Math.round(importance/25)),trust:-Math.max(1,Math.round(importance/20))});state.logs.push({time:`DAY ${state.day} · MESSAGE`,text:`${state.partner.name}의 메시지를 확인하지 않고 잠들었다.`});}applyEffects(state,getLateSleepEffects(night.minutes));state.selected=actions.night.findIndex(action=>action.id==="early-sleep");SaveManager.save(state);closeModal();applyAction();});
 }
 
 function handleRoomAction(event) {
@@ -411,7 +412,7 @@ function applyAction() {
   advanceTime(state);
   const initiatedMessage = maybeGenerateInitiatedMessage(state);
   if (initiatedMessage) { state.logs.push({time:`DAY ${state.day} · MESSAGE`,text:`${state.partner.name}: ${initiatedMessage.text}`}); toast(`${state.partner.name}에게 메시지가 왔어요`); }
-  if (finishedDay) { dailyEvent(); advanceStockMarket(state); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); if(state.day<=30)resetForNextDay(state); }
+  if (finishedDay) { dailyEvent(); advanceStockMarket(state); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); runDailyStoryDirector(state,completedDay); SaveManager.save(state); if(state.day<=30)resetForNextDay(state); }
   const event = rollEvent(state);
   if (event) {
     state.logs.push({time:`DAY ${state.day} · EVENT`,text:`${event.title} — ${event.message}`});
@@ -445,7 +446,11 @@ function openDebug() {
   const stateRows = keys.map(key=>`<div class="debug-stat"><span>${key}</span><b>${Math.round(state[key])}</b></div>`).join("");
   const personalityRows = Object.entries(state.partner.personality).map(([key,value])=>`<div class="debug-stat"><span>${key}</span><b>${value}</b></div>`).join("");
   const eventRows = getEventDiagnostics(state).map(event=>`<div class="debug-event ${event.eligible?'':event.cooldownRemaining?'cooldown':'ineligible'}"><div><b>${event.title}</b><span>${Math.round(event.probability*100)}%</span></div><small>priority ${event.priority} · ${event.dailyLimitReached?'오늘 이벤트 한도 도달':event.cooldownRemaining?`cooldown ${event.cooldownRemaining}일`:event.conditionsMet?'발생 가능':'조건 불충족'}</small></div>`).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">DEVELOPER MODE</span><h2>Simulation Debug</h2><p>저장에는 영향을 주지 않는 읽기 전용 상태 패널입니다.</p><h3>Game State</h3><div class="debug-grid">${stateRows}</div><h3>${state.partner.name} · Hidden Personality</h3><div class="debug-grid">${personalityRows}</div><h3>Event Diagnostics</h3><div class="debug-events">${eventRows}</div>`;
+  const director=state.storyDirector,analysis=director?.analyses?.at(-1),plan=director?.nextDayPlan;
+  const threadRows=Object.entries(director?.threads??{}).sort((a,b)=>b[1]-a[1]).map(([id,value])=>`<div class="debug-stat"><span>${id}</span><b>${value}</b></div>`).join("")||`<p>첫 DAY 종료 후 분석됩니다.</p>`;
+  const candidateRows=(plan?.eventCandidates??[]).map(candidate=>`<div class="debug-event ${candidate.blocked?'cooldown':''}"><div><b>${escapeHtml(candidate.title)}</b><span>${candidate.blocked?(candidate.blockedReason??"BLOCKED"):`${Math.round(candidate.finalProbability*100)}%`}</span></div><small>base ${Math.round(candidate.baseProbability*100)}% · ×${candidate.multiplier} · ${candidate.modifiers.map(item=>item.label).join(" · ")||"기본 가중치"}${candidate.cooldownRemaining?` · cooldown ${candidate.cooldownRemaining}`:''}</small></div>`).join("")||`<p>예약 후보가 없습니다.</p>`;
+  const unresolvedRows=(director?.unresolvedEvents??[]).map(item=>`<div class="debug-event"><div><b>${item.id}</b><span>STAGE ${item.stage}</span></div><small>${item.type} · DAY ${item.originDay} · ${item.status}</small></div>`).join("")||`<p>미해결 사건이 없습니다.</p>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">DEVELOPER MODE</span><h2>Simulation Debug</h2><p>저장에는 영향을 주지 않는 읽기 전용 상태 패널입니다.</p><h3>Story Director · ${analysis?`DAY ${analysis.day}`:"WAITING"}</h3><div class="debug-grid"><div class="debug-stat"><span>Relationship</span><b>${analysis?.relationshipState??"-"}</b></div><div class="debug-stat"><span>Tension</span><b>${analysis?.narrativeTension??0}</b></div><div class="debug-stat"><span>Dominant</span><b>${director?.dominantThread??"-"}</b></div><div class="debug-stat"><span>Status</span><b>${director?.dominantStatus??"-"}</b></div><div class="debug-stat"><span>Next Seed</span><b>${plan?.seed??"-"}</b></div><div class="debug-stat"><span>Foreshadow</span><b>R${director?.foreshadowing?.rival??0} · T${director?.foreshadowing?.temptation??0} · L${director?.foreshadowing?.lie??0}</b></div></div><h3>Active Threads</h3><div class="debug-grid">${threadRows}</div><h3>Next DAY Event Candidates</h3><div class="debug-events">${candidateRows}</div><h3>Unresolved Events</h3><div class="debug-events">${unresolvedRows}</div><h3>Game State</h3><div class="debug-grid">${stateRows}</div><h3>${state.partner.name} · Hidden Personality</h3><div class="debug-grid">${personalityRows}</div><h3>Runtime Event Diagnostics</h3><div class="debug-events">${eventRows}</div>`;
   openModal();
 }
 
