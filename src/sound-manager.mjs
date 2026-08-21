@@ -14,6 +14,35 @@ export const SCENE_SOUND_PRESETS = {
   night:{ frequency:262, endFrequency:349, duration:1.0, volume:0.015, wave:"sine" }
 };
 
+export const BGM_TRACKS = {
+  title:["assets/audio/bgm/title-1.mp3","assets/audio/bgm/title-2.mp3"],
+  daily:["assets/audio/bgm/daily-1.mp3","assets/audio/bgm/daily-2.mp3"],
+  theme:["assets/audio/bgm/theme-1.mp3","assets/audio/bgm/theme-2.mp3"],
+  dateShopping:["assets/audio/bgm/date-shopping-1.mp3","assets/audio/bgm/date-shopping-2.mp3"],
+  crisis:["assets/audio/bgm/relationship-crisis-1.mp3","assets/audio/bgm/relationship-crisis-2.mp3"],
+  ending:["assets/audio/bgm/ending-1.mp3","assets/audio/bgm/ending-2.mp3"]
+};
+
+export const SCENE_BGM_CATEGORIES = {
+  morning:"daily",
+  day:"daily",
+  evening:"theme",
+  night:"theme"
+};
+
+export function validateBgmTracks(tracks = BGM_TRACKS) {
+  return ["title","daily","theme","dateShopping","crisis","ending"].every(category =>
+    Array.isArray(tracks[category]) && tracks[category].length === 2 && tracks[category].every(source => typeof source === "string" && source.endsWith(".mp3"))
+  );
+}
+
+export function getBgmTrack(category, variant = 0, tracks = BGM_TRACKS) {
+  const playlist = tracks[category];
+  if (!playlist?.length) return "";
+  const index = Math.abs(Math.trunc(Number(variant) || 0)) % playlist.length;
+  return playlist[index];
+}
+
 export function validateSoundPresets(presets = SOUND_PRESETS) {
   return ["select","confirm","alert","success"].every(id => {
     const preset = presets[id];
@@ -29,19 +58,23 @@ export function validateSceneSoundPresets(presets = SCENE_SOUND_PRESETS) {
 }
 
 export class SoundManager {
-  constructor({ storage = globalThis.localStorage, contextFactory } = {}) {
+  constructor({ storage = globalThis.localStorage, contextFactory, audioFactory } = {}) {
     this.storage = storage;
     this.contextFactory = contextFactory ?? (() => {
       const AudioContextClass = globalThis.AudioContext ?? globalThis.webkitAudioContext;
       return AudioContextClass ? new AudioContextClass() : null;
     });
+    this.audioFactory = audioFactory ?? (source => typeof globalThis.Audio === "function" ? new globalThis.Audio(source) : null);
     this.context = null;
+    this.bgm = null;
+    this.bgmSource = "";
     this.enabled = this.storage?.getItem(SOUND_SETTING_KEY) === "on";
   }
 
   toggle(force) {
     this.enabled = typeof force === "boolean" ? force : !this.enabled;
     this.storage?.setItem(SOUND_SETTING_KEY,this.enabled ? "on" : "off");
+    if (!this.enabled) this.stopBgm();
     return this.enabled;
   }
 
@@ -70,12 +103,45 @@ export class SoundManager {
     }
   }
 
-  playScene(scene) {
+  playBgm(category, variant = 0, { loop = true } = {}) {
+    if (!this.enabled) return false;
+    const source = getBgmTrack(category,variant);
+    if (!source) return false;
+    try {
+      if (this.bgm && this.bgmSource === source) {
+        if (this.bgm.paused) this.bgm.play()?.catch?.(()=>{});
+        return true;
+      }
+      this.stopBgm();
+      const audio = this.audioFactory(source);
+      if (!audio) return false;
+      audio.loop = loop;
+      audio.volume = 0.22;
+      audio.preload = "auto";
+      this.bgm = audio;
+      this.bgmSource = source;
+      audio.play()?.catch?.(()=>{});
+      return true;
+    } catch {
+      this.bgm = null;
+      this.bgmSource = "";
+      return false;
+    }
+  }
+
+  stopBgm() {
+    try { this.bgm?.pause?.(); } catch {}
+    this.bgm = null;
+    this.bgmSource = "";
+  }
+
+  playScene(scene, variant = 0) {
     if (!this.enabled || !SCENE_SOUND_PRESETS[scene]) return false;
     const preset = SCENE_SOUND_PRESETS[scene];
     SOUND_PRESETS.scene = preset;
-    const played = this.play("scene");
+    const cuePlayed = this.play("scene");
     delete SOUND_PRESETS.scene;
-    return played;
+    const bgmPlayed = this.playBgm(SCENE_BGM_CATEGORIES[scene],variant);
+    return cuePlayed || bgmPlayed;
   }
 }
