@@ -11,14 +11,14 @@ import { appendTransaction, calculatePaycheck, getEconomySummary, getNextPayday,
 import { acquireActionItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs";
 import { getItem, ITEMS } from "./src/items-data.mjs";
 import { giveGift } from "./src/gift-manager.mjs";
-import { applyNpcActionEffects } from "./src/npc-manager.mjs";
+import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
 let state;
 
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); $("#careerButton").classList.remove("hidden"); render(); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); $("#careerButton").classList.remove("hidden"); $("#peopleButton").classList.remove("hidden"); render(); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 
 function render() {
@@ -128,6 +128,12 @@ function openCareer() {
   $("#modal").classList.remove("hidden");
 }
 
+function openPeople() {
+  const cards = state.npcs.map(npc=>{ const status=getNpcRelationshipStatus(npc); const interest=npc.relationshipType==='rival'?`연인 관심 ${npc.interestInGirlfriend}`:`내 관심 ${npc.interestInPlayer}`; return `<div class="npc-card"><div><small>${npc.role}</small><b>${npc.name}</b><span>호감 ${npc.affection} · 신뢰 ${npc.trust} · ${interest}</span></div><em data-tone="${status.tone}">${status.label}</em></div>`; }).join("");
+  $("#modalContent").innerHTML=`<span class="eyebrow">HUMAN RELATIONSHIPS</span><h2>나의 인맥</h2><p>선택에 따라 가까워지거나 위험해지는 사람들입니다.</p><div class="npc-list">${cards}</div>`;
+  $("#modal").classList.remove("hidden");
+}
+
 function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state);
   $("#modalContent").innerHTML=`<span class="eyebrow">DAY 30 · YOUR ENDING</span><h2>${title}</h2><div class="ending-score">${Math.round((state.affection+state.trust)/20)}</div><p>${desc}</p><p><b>최종 기록</b><br>호감도 ${Math.round(state.affection)} · 신뢰도 ${Math.round(state.trust)} · 자산 ${money(state.money)}</p><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`; $("#modal").classList.remove("hidden"); }
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
@@ -141,4 +147,5 @@ $("#inventoryButton").addEventListener("click",openInventory);
 $("#shopButton").addEventListener("click",openShop);
 $("#financeButton").addEventListener("click",openFinance);
 $("#careerButton").addEventListener("click",openCareer);
+$("#peopleButton").addEventListener("click",openPeople);
 $("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",()=>$("#modal").classList.add("hidden")); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });

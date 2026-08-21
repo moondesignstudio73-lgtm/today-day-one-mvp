@@ -29,3 +29,17 @@ export function applyNpcActionEffects(state, action) {
   state.npcHistory.push(record);
   return { npc, record };
 }
+
+export function getNpcRelationshipStatus(npc) {
+  if (npc.relationshipType === "coworker") {
+    if (npc.interestInPlayer >= 75) return { label:"비밀 만남 직전", tone:"danger" };
+    if (npc.interestInPlayer >= 60) return { label:"술자리 제안", tone:"warning" };
+    if (npc.interestInPlayer >= 45) return { label:"개인 연락", tone:"interest" };
+  }
+  if (npc.relationshipType === "rival") {
+    if (npc.interestInGirlfriend >= 75) return { label:"적극적인 접근", tone:"danger" };
+    if (npc.interestInGirlfriend >= 55) return { label:"경계할 관계", tone:"warning" };
+  }
+  if (npc.trust >= 60) return { label:"믿을 수 있는 사이", tone:"safe" };
+  return { label:"아직 어색한 사이", tone:"neutral" };
+}

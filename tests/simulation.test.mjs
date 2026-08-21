@@ -15,7 +15,7 @@ import { ITEMS, getItem, validateItemData } from "../src/items-data.mjs";
 import { acquireActionItem, addItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "../src/inventory-manager.mjs";
 import { calculateGiftReaction, giveGift } from "../src/gift-manager.mjs";
 import { NPC_ARCHETYPES, validateNpcArchetypes } from "../src/npcs-data.mjs";
-import { applyNpcActionEffects, generateNpcs, validateNpcs } from "../src/npc-manager.mjs";
+import { applyNpcActionEffects, generateNpcs, getNpcRelationshipStatus, validateNpcs } from "../src/npc-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -33,6 +33,9 @@ assert.equal(npcActionResult.npc.instanceId, coworkerNpc.instanceId);
 assert.ok(coworkerNpc.interestInPlayer > coworkerInterestBefore);
 assert.equal(npcRelationshipState.npcHistory.length, 1);
 assert.equal(applyNpcActionEffects(npcRelationshipState, ACTIONS.night.find(action => action.id === "early-sleep")), null);
+assert.equal(getNpcRelationshipStatus({ relationshipType:"coworker", interestInPlayer:80, trust:30 }).tone, "danger");
+assert.equal(getNpcRelationshipStatus({ relationshipType:"rival", interestInGirlfriend:60, trust:30 }).tone, "warning");
+assert.equal(getNpcRelationshipStatus({ relationshipType:"friend", trust:70 }).tone, "safe");
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
