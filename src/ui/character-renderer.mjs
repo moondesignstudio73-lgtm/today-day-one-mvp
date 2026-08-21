@@ -7,11 +7,18 @@ export function resolveCharacterExpression(state) {
   return { tone:"calm", icon:"✦", label:"차분한 표정" };
 }
 
+export function resolveCharacterPose(state, expression = resolveCharacterExpression(state)) {
+  return state.phase === 3 && expression.tone === "calm" ? "phone" : "standing";
+}
+
 export function renderCharacter(image, state) {
   const expression = resolveCharacterExpression(state);
-  const source = getCharacterSprite("girlfriend",expression.tone);
+  const pose = resolveCharacterPose(state,expression);
+  const source = getCharacterSprite("girlfriend",expression.tone,pose);
   state.currentExpression = expression.tone;
+  state.currentPose = pose;
   if (image && image.getAttribute("src") !== source) image.setAttribute("src",source);
   if (image) image.dataset.expression = expression.tone;
+  if (image) image.dataset.pose = pose;
   return expression;
 }

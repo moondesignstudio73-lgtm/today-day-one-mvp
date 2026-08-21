@@ -5,11 +5,16 @@ export const CHARACTER_ASSETS = {
       smile:"assets/characters/girlfriend-standing-smile-2d.png",
       worried:"assets/characters/girlfriend-standing-worried-2d.png",
       tense:"assets/characters/girlfriend-standing-tense-2d.png"
+    },
+    poses:{
+      phone:"assets/characters/girlfriend-phone-calm-2d.png"
     }
   }
 };
 
-export function getCharacterSprite(character = "girlfriend", expression = "calm") {
-  const expressions = CHARACTER_ASSETS[character]?.expressions;
+export function getCharacterSprite(character = "girlfriend", expression = "calm", pose = "standing") {
+  const assets = CHARACTER_ASSETS[character];
+  if (expression === "calm" && pose !== "standing" && assets?.poses?.[pose]) return assets.poses[pose];
+  const expressions = assets?.expressions;
   return expressions?.[expression] ?? expressions?.calm ?? "";
 }
