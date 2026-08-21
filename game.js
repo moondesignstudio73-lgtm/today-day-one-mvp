@@ -15,7 +15,8 @@ import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manag
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
-import { buildConversationContext, generateContextualReply, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs";
+import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs";
+import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 
@@ -100,7 +101,7 @@ function openChat() {
   $("#modalContent").innerHTML=`<span class="eyebrow">CHAT WITH ${state.partner.name}</span><h2>${state.partner.name}와의 대화</h2><div class="chat-window"><div class="message her">${greeting}</div><div id="chatReply"></div></div><form id="chatForm" class="chat-compose"><input id="chatInput" maxlength="180" autocomplete="off" placeholder="자유롭게 메시지를 입력하세요" required><button type="submit">보내기</button></form>`;
   $("#modal").classList.remove("hidden"); $("#chatForm").addEventListener("submit",event=>{ event.preventDefault(); chatReply($("#chatInput").value); });
 }
-function chatReply(message){ const response=generateContextualReply(buildConversationContext(state),message); if(!response)return; $("#chatReply").innerHTML=`<div class="message me">${escapeHtml(message)}</div><div class="message her">${escapeHtml(response.text)}</div>`; applyEffects(state,response.effects); recordConversationTurn(state,message,response.text); recordMemory(state,{type:"conversation",summary:`${state.partner.name}와의 대화`,importance:2,tags:["대화"]}); SaveManager.save(state); $("#chatForm").remove(); render(); }
+async function chatReply(message){ const form=$("#chatForm"), send=form?.querySelector("button"); if(send)send.disabled=true; const endpoint=document.querySelector('meta[name="today-day-one-ai-endpoint"]')?.content; const response=await requestGirlfriendReply({endpoint,context:buildConversationContext(state),message}); if(!response){if(send)send.disabled=false;return;} $("#chatReply").innerHTML=`<div class="message me">${escapeHtml(message)}</div><div class="message her">${escapeHtml(response.text)}</div><small class="reply-source">${response.source==='remote'?'AI 연결 응답':'로컬 컨텍스트 응답'}</small>`; applyEffects(state,response.effects); recordConversationTurn(state,message,response.text); recordMemory(state,{type:"conversation",summary:`${state.partner.name}와의 대화`,importance:2,tags:["대화",response.source]}); SaveManager.save(state); form?.remove(); render(); }
 
 function openDebug() {
   if (!state) return;

@@ -22,6 +22,7 @@ import { calculateBreakupRisk, evaluateBreakup } from "../src/conflict-manager.m
 import { buildConversationContext, generateContextualReply, getContextualOpening, recordConversationTurn } from "../src/conversation-manager.mjs";
 import { getMemoryContext, recordMemory, validateMemories } from "../src/memory-manager.mjs";
 import { getInitiatedMessageChance, maybeGenerateInitiatedMessage } from "../src/initiated-message-manager.mjs";
+import { requestGirlfriendReply } from "../src/ai-chat-client.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -107,6 +108,12 @@ assert.equal(generateContextualReply(buildConversationContext(messageState), "  
 const savedTurn = recordConversationTurn(messageState, "사랑해", "나도 좋아해");
 assert.equal(savedTurn.user, "사랑해");
 assert.equal(messageState.conversationHistory.length, 1);
+const remoteReply = await requestGirlfriendReply({ endpoint:"/api/chat", context:buildConversationContext(messageState), message:"안녕", fetchImpl:async () => ({ ok:true, json:async () => ({ reply:"오늘도 반가워!", effects:{ affection:5 } }) }) });
+assert.equal(remoteReply.source, "remote");
+assert.equal(remoteReply.effects.affection, 5);
+const fallbackReply = await requestGirlfriendReply({ endpoint:"/api/chat", context:buildConversationContext(messageState), message:"오늘 힘들어", fetchImpl:async () => { throw new Error("offline"); } });
+assert.equal(fallbackReply.source, "local");
+assert.ok(fallbackReply.text.includes("힘들었구나"));
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
