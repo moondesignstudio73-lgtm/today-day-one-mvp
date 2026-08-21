@@ -580,7 +580,7 @@ const replacementShirt = addItem(inventoryState, "linen-shirt");
 equipItem(inventoryState, replacementShirt.instanceId);
 assert.equal(inventoryState.equipment.clothes, replacementShirt.instanceId);
 assert.equal(shirt.equipped, false);
-console.log("✓ 8개 아이템·인벤토리·카테고리 장착·능력치 보너스 검증 통과");
+console.log("✓ 10개 아이템·인벤토리·카테고리 장착·능력치 보너스 검증 통과");
 const shoppingState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
 shoppingState.money = 100000;
 const moneyBeforePurchase = shoppingState.money;
