@@ -24,6 +24,7 @@ export function createInitialState(partner, random = Math.random) {
     equipment: {},
     girlfriendEquipment: {},
     npcs: generateNpcs(random),
+    npcHistory: [],
     revealed: 0,
     revealedTraits: [],
     observations: {},
@@ -83,7 +84,7 @@ export function validateState(value) {
   if (value.version !== 1 || !Number.isInteger(value.day) || !Number.isInteger(value.phase)) return false;
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
   if (!validateGirlfriend(value.partner)) return false;
-  if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment || !validateNpcs(value.npcs)) return false;
+  if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment || !validateNpcs(value.npcs) || !Array.isArray(value.npcHistory)) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
   return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "fatigue", "charm", "fashion", "confidence", "work", "social"].every(key => Number.isFinite(value[key]));
 }

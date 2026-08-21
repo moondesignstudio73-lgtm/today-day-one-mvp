@@ -21,6 +21,7 @@ export class SaveManager {
     try {
       const parsed = JSON.parse(raw);
       parsed.npcs ??= generateNpcs();
+      parsed.npcHistory ??= [];
       return validateState(parsed) ? parsed : null;
     } catch {
       return null;

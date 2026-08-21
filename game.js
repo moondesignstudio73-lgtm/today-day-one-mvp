@@ -11,6 +11,7 @@ import { appendTransaction, calculatePaycheck, getEconomySummary, getNextPayday,
 import { acquireActionItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs";
 import { getItem, ITEMS } from "./src/items-data.mjs";
 import { giveGift } from "./src/gift-manager.mjs";
+import { applyNpcActionEffects } from "./src/npc-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -58,6 +59,8 @@ function applyAction() {
   if (acquiredItem) { const giftResult=action.autoGift?giveGift(state,acquiredItem.instanceId):null; toast(giftResult?`${giftResult.item.name} 선물 · “${giftResult.reaction.reaction}”`:`${getItem(acquiredItem.itemId).name} 획득${acquiredItem.equipped?' · 장착 완료':''}`); }
   const promotion = addJobProgress(state, action, fx);
   if (promotion) toast(`승진! 직업 레벨 ${promotion.level} · 수입 보정 상승`);
+  const npcResult = applyNpcActionEffects(state, action);
+  if (npcResult) state.logs.push({time:`DAY ${state.day} · NPC`,text:`${npcResult.npc.name}와의 관계가 변했다.`});
   state.choices.push(action.tag); state.actionHistory.push({ day:state.day, phase:state.phase, actionId:action.id, tag:action.tag }); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
   const clue = observePersonality(state, action.tag);
   if (clue?.revealed) toast(`${state.partner.name}의 성향을 하나 알아냈어요.`);

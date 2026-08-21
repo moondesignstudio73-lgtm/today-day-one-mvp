@@ -15,7 +15,7 @@ import { ITEMS, getItem, validateItemData } from "../src/items-data.mjs";
 import { acquireActionItem, addItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "../src/inventory-manager.mjs";
 import { calculateGiftReaction, giveGift } from "../src/gift-manager.mjs";
 import { NPC_ARCHETYPES, validateNpcArchetypes } from "../src/npcs-data.mjs";
-import { generateNpcs, validateNpcs } from "../src/npc-manager.mjs";
+import { applyNpcActionEffects, generateNpcs, validateNpcs } from "../src/npc-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -25,6 +25,14 @@ assert.equal(new Set(generatedNpcs.map(npc => npc.name)).size, generatedNpcs.len
 assert.equal(validateNpcs(generatedNpcs), true);
 assert.ok(generatedNpcs.some(npc => npc.interestInPlayer > 0));
 assert.ok(generatedNpcs.some(npc => npc.interestInGirlfriend > 0));
+const npcRelationshipState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const coworkerNpc = npcRelationshipState.npcs.find(npc => npc.id === "female-coworker");
+const coworkerInterestBefore = coworkerNpc.interestInPlayer;
+const npcActionResult = applyNpcActionEffects(npcRelationshipState, ACTIONS.evening.find(action => action.id === "coworker-drinks"));
+assert.equal(npcActionResult.npc.instanceId, coworkerNpc.instanceId);
+assert.ok(coworkerNpc.interestInPlayer > coworkerInterestBefore);
+assert.equal(npcRelationshipState.npcHistory.length, 1);
+assert.equal(applyNpcActionEffects(npcRelationshipState, ACTIONS.night.find(action => action.id === "early-sleep")), null);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
