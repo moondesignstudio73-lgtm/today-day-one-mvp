@@ -110,8 +110,16 @@ function openDialogueHistory() {
   openModal();
 }
 
+function openGameMenu() {
+  const items = [["inventory","가방"],["shop","상점"],["finance","재정"],["career","커리어"],["people","인맥"],["investment","투자"],["history","대화 기록"],["save","저장"],["load","불러오기"],["debug","DEBUG"]];
+  $("#modalContent").innerHTML=`<span class="eyebrow">GAME MENU</span><h2>메뉴</h2><div class="game-menu-grid">${items.map(([id,label])=>`<button type="button" data-menu-action="${id}">${label}</button>`).join("")}</div>`;
+  openModal();
+  const actions = { inventory:openInventory, shop:openShop, finance:openFinance, career:openCareer, people:openPeople, investment:openInvestment, history:openDialogueHistory, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
+  document.querySelectorAll("[data-menu-action]").forEach(button=>button.addEventListener("click",()=>actions[button.dataset.menuAction]?.()));
+}
+
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); $("#careerButton").classList.remove("hidden"); $("#peopleButton").classList.remove("hidden"); $("#investmentButton").classList.remove("hidden"); $("#historyButton").classList.remove("hidden"); render(); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); render(); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 
 function render() {
@@ -291,6 +299,7 @@ $("#careerButton").addEventListener("click",openCareer);
 $("#peopleButton").addEventListener("click",openPeople);
 $("#investmentButton").addEventListener("click",openInvestment);
 $("#historyButton").addEventListener("click",openDialogueHistory);
+$("#menuButton").addEventListener("click",openGameMenu);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#visualNovelStage").addEventListener("keydown",event=>{ if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });
