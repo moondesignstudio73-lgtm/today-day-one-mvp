@@ -18,6 +18,10 @@ export const CHARACTER_ASSETS = {
   }
 };
 
+export const NPC_ASSETS = {
+  "female-coworker":"assets/npcs/female-coworker-2d.png"
+};
+
 export function getCharacterSprite(character = "girlfriend", expression = "calm", pose = "standing", outfit = "default") {
   const assets = CHARACTER_ASSETS[character];
   if (expression === "calm" && pose !== "standing" && assets?.poses?.[pose]) return assets.poses[pose];
@@ -28,4 +32,8 @@ export function getCharacterSprite(character = "girlfriend", expression = "calm"
 
 export function getCharacterAccessory(character = "girlfriend", accessory = "none") {
   return CHARACTER_ASSETS[character]?.accessories?.[accessory] ?? "";
+}
+
+export function getNpcSprite(npcId = "") {
+  return NPC_ASSETS[npcId] ?? "";
 }

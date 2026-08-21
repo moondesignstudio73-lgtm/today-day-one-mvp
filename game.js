@@ -25,6 +25,7 @@ import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs";
+import { getNpcSprite } from "./src/assets/asset-manifest.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -304,7 +305,11 @@ function openTemptation({ npc, level }) {
   sound.play("alert");
   const message = level==='secret'?`${npc.name}가 둘만의 비밀 만남을 제안했다.`:level==='drinks'?`${npc.name}가 다음에는 단둘이 마시자고 한다.`:`${npc.name}가 개인 연락처로 메시지를 보냈다.`;
   const buttons = Object.entries(TEMPTATION_CHOICES).map(([id,choice])=>`<button data-temptation="${id}">${choice.label}</button>`).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">TEMPTATION</span><h2>${npc.name}의 접근</h2><p>${message}</p><div class="temptation-options">${buttons}</div>`;
+  const sprite = getNpcSprite(npc.id);
+  const encounter = sprite
+    ? `<div class="temptation-character"><img src="${sprite}" alt="" aria-hidden="true"><div><small>${npc.role}</small><p>${message}</p></div></div>`
+    : `<p>${message}</p>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">TEMPTATION</span><h2>${npc.name}의 접근</h2>${encounter}<div class="temptation-options">${buttons}</div>`;
   openModal();
   document.querySelectorAll("[data-temptation]").forEach(button=>button.addEventListener("click",()=>{ const result=resolveTemptation(state,npc.instanceId,button.dataset.temptation); if(!result)return; state.logs.push({time:`DAY ${state.day} · CHOICE`,text:`${npc.name}에게 “${result.choice.label}”`}); recordMemory(state,{type:"temptation",summary:`${npc.name}: ${result.choice.label}`,importance:5,tags:["유혹",button.dataset.temptation]}); SaveManager.save(state); render(); closeModal(); toast(`선택 완료 · 신뢰 ${result.choice.partnerTrust>=0?'+':''}${result.choice.partnerTrust}`); }));
 }
