@@ -42,6 +42,7 @@ assert.notDeepEqual(createCharacterAppearance(12345),createCharacterAppearance(5
 assert.equal(seedFromIdentity("same-id"),seedFromIdentity("same-id"));
 assert.match(getCharacterSprite("girlfriend","worried"),/worried-2d\.png$/);
 assert.match(getCharacterSprite("girlfriend","smile"),/smile-2d\.png$/);
+assert.match(getCharacterSprite("girlfriend","tense"),/tense-2d\.png$/);
 assert.equal(resolveCharacterExpression({conflict:0,trust:500,stress:80,affection:500}).tone,"worried");
 assert.equal(resolveCharacterExpression({conflict:0,trust:500,stress:20,affection:800}).tone,"smile");
 assert.equal(resolveCharacterExpression({conflict:60,trust:500,stress:20,affection:800}).tone,"tense");
