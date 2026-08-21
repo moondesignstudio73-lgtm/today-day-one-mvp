@@ -163,6 +163,7 @@ console.log("✓ 조건·확률·우선순위·쿨다운 이벤트와 100회 회
 console.log("✓ 플레이어 상태·연인 성격 기반 동적 이벤트 확률 검증 통과");
 console.log("✓ 이별 위기·라이벌 접근 복합 조건과 성격 보정 검증 통과");
 assert.equal(validateEventData(), true);
+for (const id of ["sudden-overtime", "ex-contact", "date-cancelled"]) assert.ok(EVENT_DEFINITIONS.some(event => event.id === id));
 assert.equal(new Set(EVENT_DEFINITIONS.map(event => event.id)).size, EVENT_DEFINITIONS.length);
 const invalidProbability = [{ ...EVENT_DEFINITIONS[0], id:"bad-probability", probability:1.5 }];
 assert.equal(validateEventData(invalidProbability), false);

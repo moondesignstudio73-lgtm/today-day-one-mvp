@@ -1,5 +1,47 @@
 export const EVENT_DEFINITIONS = [
   {
+    id: "sudden-overtime",
+    title: "퇴근 직전의 긴급 업무",
+    message: "상사가 오늘 안에 끝내야 할 일이 생겼다며 갑작스러운 야근을 부탁했다.",
+    conditions: [{ stat: "day", operator: ">=", value: 3 }, { stat: "energy", operator: ">=", value: 18 }],
+    probability: 0.11,
+    probabilityModifiers: [
+      { conditions: [{ stat: "work", operator: ">=", value: 65 }], add: 0.08 },
+      { conditions: [{ recentTag: "성공", withinDays: 3, minCount: 3 }], add: 0.12 }
+    ],
+    priority: 45,
+    cooldown: 5,
+    effects: { money: 50000, work: 6, energy: -12, stress: 10, affection: -7, relationshipStress: 4 }
+  },
+  {
+    id: "ex-contact",
+    title: "오랜만이야, 잘 지내?",
+    message: "한동안 소식이 없던 전 연인에게서 짧은 메시지가 도착했다.",
+    conditions: [{ stat: "day", operator: ">=", value: 6 }, { stat: "social", operator: ">=", value: 35 }],
+    probability: 0.07,
+    probabilityModifiers: [
+      { conditions: [{ stat: "partner.personality.jealousy", operator: ">=", value: 70 }], add: 0.1 },
+      { conditions: [{ recentTag: "유혹", withinDays: 4, minCount: 1 }], add: 0.12 }
+    ],
+    priority: 60,
+    cooldown: 10,
+    effects: { trust: -8, conflict: 7, relationshipStress: 9, excitement: 3 }
+  },
+  {
+    id: "date-cancelled",
+    title: "오늘은 만나기 어려울 것 같아",
+    message: "기대하던 약속이 갑자기 취소됐다. 짧은 답장 뒤로 묘한 거리감이 남았다.",
+    conditions: [{ stat: "day", operator: ">=", value: 4 }, { stat: "affection", operator: ">=", value: 380 }],
+    probability: 0.08,
+    probabilityModifiers: [
+      { conditions: [{ stat: "relationshipStress", operator: ">=", value: 50 }], add: 0.15 },
+      { conditions: [{ stat: "partner.personality.independence", operator: ">=", value: 75 }], add: 0.08 }
+    ],
+    priority: 50,
+    cooldown: 6,
+    effects: { affection: -9, excitement: -12, stress: 5, relationshipStress: 5 }
+  },
+  {
     id: "relationship-crisis",
     title: "우리, 잠깐 이야기할까?",
     message: "쌓여 온 감정이 터졌다. 연인이 관계를 계속해야 할지 모르겠다고 말했다.",
