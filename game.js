@@ -88,13 +88,18 @@ function render() {
   const stats = [["체력",state.energy],["피로",state.fatigue],["건강",state.health],["스트레스",state.stress],[appearance.bonuses.attractiveness?`매력 +${appearance.bonuses.attractiveness}`:"매력",appearance.charm],[appearance.bonuses.fashion?`패션 +${appearance.bonuses.fashion}`:"패션",appearance.fashion],["자신감",state.confidence],["업무 능력",state.work],["사회성",state.social]];
   $("#statList").innerHTML = stats.map(([name,val])=>`<div class="stat"><div class="stat-head"><span>${name}</span><b>${Math.round(val)}</b></div><div class="stat-track"><i style="width:${clamp(val)}%;background:${name==='스트레스'?'#e5846d':''}"></i></div></div>`).join("");
   $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>{ const availability=getActionAvailability(state,a); return `<button class="action-card ${state.selected===i?'selected':''} ${availability.available?'':'locked'}" data-index="${i}" ${availability.available?'':'disabled'}><span class="action-icon">${a.icon}</span><span class="cost">${availability.available?a.costLabel:'🔒 '+availability.reason}</span><h3>${a.title}</h3><p>${a.desc}</p></button>`; }).join("");
-  document.querySelectorAll(".action-card").forEach(btn=>btn.addEventListener("click",()=>selectAction(Number(btn.dataset.index))));
   $("#eventLog").innerHTML = state.logs.length ? state.logs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${l.time}</b><span>${l.text}</span></div>`).join("") : `<div class="log-item"><b>DAY 1</b><span>두 사람의 첫 번째 이야기가 시작되었습니다.</span></div>`;
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
 }
 
 function selectAction(index) { state.selected = index; sound.play("select"); render(); }
+function handleActionGridClick(event) {
+  if (!(event.target instanceof Element)) return;
+  const button = event.target.closest(".action-card");
+  if (!button || button.disabled) return;
+  selectAction(Number(button.dataset.index));
+}
 function applyAction() {
   if (state.selected === null) return;
   const phase = phases[state.phase], action = actions[phase.key][state.selected];
@@ -241,5 +246,6 @@ $("#financeButton").addEventListener("click",openFinance);
 $("#careerButton").addEventListener("click",openCareer);
 $("#peopleButton").addEventListener("click",openPeople);
 $("#investmentButton").addEventListener("click",openInvestment);
+$("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
 document.addEventListener("keydown", handleModalKeydown);
