@@ -24,7 +24,7 @@ import { SoundManager } from "./src/sound-manager.mjs?v=2";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
-import { renderCharacter, resolveCharacterExpression, resolveCharacterPose } from "./src/ui/character-renderer.mjs";
+import { renderCharacter, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -227,6 +227,7 @@ function applyAction() {
   const currentExpression = resolveCharacterExpression(state);
   state.currentExpression = currentExpression.tone;
   state.currentPose = resolveCharacterPose(state,currentExpression);
+  state.currentOutfit = resolveCharacterOutfit(state,currentExpression);
   SaveManager.save(state);
   if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); if(temptation) openTemptation(temptation); }
 }

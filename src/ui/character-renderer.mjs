@@ -11,14 +11,21 @@ export function resolveCharacterPose(state, expression = resolveCharacterExpress
   return state.phase === 3 && expression.tone === "calm" ? "phone" : "standing";
 }
 
+export function resolveCharacterOutfit(state, expression = resolveCharacterExpression(state)) {
+  return state.phase === 2 && expression.tone === "calm" ? "date" : "default";
+}
+
 export function renderCharacter(image, state) {
   const expression = resolveCharacterExpression(state);
   const pose = resolveCharacterPose(state,expression);
-  const source = getCharacterSprite("girlfriend",expression.tone,pose);
+  const outfit = resolveCharacterOutfit(state,expression);
+  const source = getCharacterSprite("girlfriend",expression.tone,pose,outfit);
   state.currentExpression = expression.tone;
   state.currentPose = pose;
+  state.currentOutfit = outfit;
   if (image && image.getAttribute("src") !== source) image.setAttribute("src",source);
   if (image) image.dataset.expression = expression.tone;
   if (image) image.dataset.pose = pose;
+  if (image) image.dataset.outfit = outfit;
   return expression;
 }
