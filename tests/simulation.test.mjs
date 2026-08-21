@@ -93,11 +93,15 @@ console.log("✓ 100명 성향 랜덤 생성과 숨겨진 성향 추론 검증 �
 const eventState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
 eventState.day = 6;
 eventState.stress = 90;
+const moneyBeforeForcedEvent = eventState.money;
 assert.ok(meetsConditions(eventState, [{ stat: "stress", operator: ">=", value: 75 }]));
 assert.ok(getEligibleEvents(eventState).some(event => event.id === "work-mistake"));
 const forcedEvent = rollEvent(eventState, () => 0, EVENT_DEFINITIONS);
 assert.equal(forcedEvent.id, "work-mistake");
 assert.equal(eventState.eventHistory.length, 1);
+assert.equal(eventState.money, moneyBeforeForcedEvent - 20000);
+assert.equal(eventState.economyLedger.at(-1).category, "event");
+assert.equal(eventState.economyLedger.at(-1).amount, -20000);
 assert.equal(getEligibleEvents(eventState).some(event => event.id === "work-mistake"), false, "cooldown must prevent immediate repeat");
 eventState.day += 3;
 assert.equal(getEligibleEvents(eventState).some(event => event.id === "work-mistake"), true, "event must return after cooldown");

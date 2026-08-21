@@ -1,4 +1,5 @@
 import { applyEffects } from "./game-core.mjs";
+import { appendTransaction } from "./economy-manager.mjs";
 import { EVENT_DEFINITIONS } from "./events-data.mjs";
 
 export const MAX_EVENTS_PER_DAY = 1;
@@ -77,6 +78,7 @@ export function rollEvent(state, random = Math.random, definitions = EVENT_DEFIN
 
 export function triggerEvent(state, event) {
   applyEffects(state, event.effects);
+  if (event.effects.money) appendTransaction(state, { category:"event", label:event.title, amount:Math.round(event.effects.money) });
   state.eventHistory ??= [];
   const record = { id: event.id, day: state.day, phase: state.phase, title: event.title, message: event.message };
   state.eventHistory.push(record);

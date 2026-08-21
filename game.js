@@ -7,7 +7,7 @@ import { getActionAvailability } from "./src/action-manager.mjs";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
-import { appendTransaction, calculatePaycheck, getEconomySummary, getNextPayday, processDayEndEconomy } from "./src/economy-manager.mjs";
+import { appendTransaction, calculatePaycheck, getEconomySummary, getNextPayday, processDayEndEconomy, recordTransaction } from "./src/economy-manager.mjs";
 import { acquireActionItem, equipItem, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs";
 import { getItem, ITEMS } from "./src/items-data.mjs";
 import { giveGift } from "./src/gift-manager.mjs";
@@ -74,7 +74,7 @@ function applyAction() {
 }
 
 function resultText(a) { if(a.tag==="데이트") return `${state.partner.name}의 표정이 한결 밝아졌다.`; if(a.tag==="성공") return "미래를 위한 한 걸음을 내디뎠다."; if(a.tag==="유혹") return "새로운 인연의 기척이 느껴진다."; if(a.tag==="연락") return "짧은 대화가 두 사람을 조금 더 가깝게 했다."; return "선택의 결과가 하루에 남았다."; }
-function dailyEvent() { if(state.day%5===0){ const good=Math.random()>.45; const amount=good?60000:-35000; state.money+=amount; state.logs.push({time:`DAY ${state.day}`,text:good?"예상하지 못한 성과급이 들어왔다.":"갑작스러운 생활비 지출이 생겼다."}); } if(state.day%7===0){state.affection=clamp(state.affection-18,0,1000);state.trust=clamp(state.trust-8,0,1000);} }
+function dailyEvent() { if(state.day%5===0){ const good=Math.random()>.45; const amount=good?60000:-35000; const label=good?"예상하지 못한 성과급":"갑작스러운 생활비 지출"; recordTransaction(state,{category:"event",label,amount}); state.logs.push({time:`DAY ${state.day}`,text:`${label}${good?"이 들어왔다.":"이 생겼다."}`}); } if(state.day%7===0){state.affection=clamp(state.affection-18,0,1000);state.trust=clamp(state.trust-8,0,1000);} }
 
 function openChat() {
   const cold = state.trust < 350, warm = state.affection > 700;
