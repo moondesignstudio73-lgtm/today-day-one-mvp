@@ -128,6 +128,7 @@ function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}
 
 function render() {
   const p = state.partner, phase = phases[state.phase];
+  $("#visualNovelStage").dataset.scene = phase.key;
   const sceneSoundKey = `${state.day}-${phase.key}`;
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key); }
   $("#dayLabel").textContent = state.day; $("#phaseIcon").textContent = phase.icon; $("#phaseLabel").textContent = phase.label;
