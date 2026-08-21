@@ -2,48 +2,9 @@ import { advanceTime, applyEffects, clamp, createInitialState, determineEnding }
 import { SaveManager } from "./src/save-manager.mjs";
 import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./src/girlfriend-manager.mjs";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs";
+import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-
-const partners = [
-  { name: "서연", bio: "회사원 · 차분한 인상", traits: [["연락 중요도", "높음"], ["질투", "보통"], ["물질성향", "낮음"], ["독립성", "높음"], ["결혼관", "신중함"]], weights: { contact: 1.4, money: .6, trust: 1.2 } },
-  { name: "하린", bio: "대학생 · 솔직한 성격", traits: [["연락 중요도", "보통"], ["질투", "높음"], ["물질성향", "보통"], ["애정표현", "적극적"], ["결혼관", "낭만적"]], weights: { contact: 1, money: 1, trust: 1.4 } },
-  { name: "지우", bio: "디자이너 · 자유로운 영혼", traits: [["연락 중요도", "낮음"], ["질투", "낮음"], ["물질성향", "높음"], ["독립성", "매우 높음"], ["결혼관", "현실적"]], weights: { contact: .7, money: 1.5, trust: .8 } }
-];
-
-const phases = [
-  { key:"morning", label:"MORNING · 아침", time:"08:00", icon:"☀", title:"새로운 하루의 시작", text:"연인의 메시지와 함께 아침이 밝았다. 오늘의 첫 선택은?" },
-  { key:"day", label:"DAYTIME · 낮", time:"12:30", icon:"◐", title:"바쁜 하루의 한가운데", text:"업무도 관계도 놓칠 수 없다. 점심시간을 어떻게 보낼까?" },
-  { key:"evening", label:"EVENING · 저녁", time:"19:00", icon:"◇", title:"퇴근 후의 선택", text:"하루 중 가장 자유로운 시간. 누구와 무엇을 할지 선택하자." },
-  { key:"night", label:"NIGHT · 밤", time:"23:20", icon:"☾", title:"하루가 끝나기 전에", text:"잠들기 전, 오늘을 마무리할 마지막 시간이 남았다." }
-];
-
-const actions = {
-  morning: [
-    { icon:"💬", title:"다정하게 연락하기", desc:"좋은 아침 인사로 서로의 하루를 시작한다.", cost:"시간 1", fx:{ affection:16, trust:10, energy:-3 }, tag:"연락" },
-    { icon:"🏃", title:"아침 운동", desc:"가볍게 뛰며 몸과 자신감을 관리한다.", cost:"시간 1", fx:{ health:8, charm:5, energy:-7, stress:-4 }, tag:"자기관리" },
-    { icon:"🛌", title:"조금 더 자기", desc:"피로를 풀지만 출근 준비는 아슬아슬하다.", cost:"시간 1", fx:{ energy:15, work:-4, stress:-5 }, tag:"휴식" },
-    { icon:"☕", title:"일찍 출근하기", desc:"커피 한 잔과 함께 업무를 먼저 시작한다.", cost:"수입 +₩25,000", fx:{ money:25000, work:8, energy:-8, stress:5 }, tag:"성공" }
-  ],
-  day: [
-    { icon:"💼", title:"업무에 집중하기", desc:"성과를 내고 수입과 능력을 높인다.", cost:"수입 +₩45,000", fx:{ money:45000, work:10, energy:-10, stress:8, affection:-4 }, tag:"성공" },
-    { icon:"🍝", title:"연인과 점심", desc:"잠깐이라도 얼굴을 보며 함께 식사한다.", cost:"₩38,000", fx:{ money:-38000, affection:22, trust:8, stress:-7 }, tag:"데이트" },
-    { icon:"👥", title:"동료와 점심", desc:"회사 사람들과 가까워지고 정보를 얻는다.", cost:"₩14,000", fx:{ money:-14000, social:9, work:4, affection:-2 }, tag:"인간관계" },
-    { icon:"📈", title:"주식 확인하기", desc:"변동성 있는 시장에 작은 승부를 건다.", cost:"위험", random:true, fx:{ stress:5 }, tag:"투자" }
-  ],
-  evening: [
-    { icon:"🌙", title:"근사한 데이트", desc:"예약해 둔 레스토랑에서 특별한 저녁을 보낸다.", cost:"₩120,000", fx:{ money:-120000, affection:42, trust:12, stress:-12, energy:-8 }, tag:"데이트" },
-    { icon:"🛍️", title:"선물 쇼핑", desc:"그녀가 좋아할 만한 작은 선물을 고른다.", cost:"₩75,000", fx:{ money:-75000, affection:26, charm:3 }, tag:"쇼핑" },
-    { icon:"🌃", title:"야근하기", desc:"관계보다 오늘의 성과를 선택한다.", cost:"수입 +₩70,000", fx:{ money:70000, work:12, affection:-12, energy:-16, stress:12 }, tag:"성공" },
-    { icon:"🍻", title:"동료의 술자리", desc:"새로운 인맥, 혹은 위험한 인연이 시작될 수 있다.", cost:"₩45,000 · 위험", fx:{ money:-45000, social:12, trust:-8, stress:-8 }, tag:"유혹" }
-  ],
-  night: [
-    { icon:"♥", title:"통화하며 하루 마무리", desc:"오늘 있었던 일을 솔직하게 나눈다.", cost:"시간 1", fx:{ affection:20, trust:18, energy:-5 }, tag:"연락" },
-    { icon:"📱", title:"짧게 메시지만", desc:"바쁘다는 핑계로 간단한 인사만 남긴다.", cost:"시간 0", fx:{ affection:3, trust:1 }, tag:"연락" },
-    { icon:"🛒", title:"온라인 쇼핑", desc:"새 옷으로 패션과 기분을 챙긴다.", cost:"₩55,000", fx:{ money:-55000, charm:8, stress:-5 }, tag:"쇼핑" },
-    { icon:"💤", title:"일찍 잠들기", desc:"내일을 위해 충분히 휴식한다.", cost:"시간 1", fx:{ energy:20, health:5, stress:-8, affection:-5 }, tag:"휴식" }
-  ]
-};
 
 let state;
 
@@ -64,7 +25,7 @@ function render() {
   $("#traitList").innerHTML = traitRows.map(row => row.revealed ? `<div class="trait"><span>${row.name}</span><b>${row.value}</b></div>` : `<div class="trait locked"><span>${row.name}</span><b>${row.confidence ? `추론 ${row.confidence}%` : "???"}</b></div>`).join("");
   const stats = [["체력",state.energy],["건강",state.health],["스트레스",state.stress],["매력",state.charm],["업무 능력",state.work],["사회성",state.social]];
   $("#statList").innerHTML = stats.map(([name,val])=>`<div class="stat"><div class="stat-head"><span>${name}</span><b>${Math.round(val)}</b></div><div class="stat-track"><i style="width:${clamp(val)}%;background:${name==='스트레스'?'#e5846d':''}"></i></div></div>`).join("");
-  $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>`<button class="action-card ${state.selected===i?'selected':''}" data-index="${i}"><span class="action-icon">${a.icon}</span><span class="cost">${a.cost}</span><h3>${a.title}</h3><p>${a.desc}</p></button>`).join("");
+  $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>`<button class="action-card ${state.selected===i?'selected':''}" data-index="${i}"><span class="action-icon">${a.icon}</span><span class="cost">${a.costLabel}</span><h3>${a.title}</h3><p>${a.desc}</p></button>`).join("");
   document.querySelectorAll(".action-card").forEach(btn=>btn.addEventListener("click",()=>selectAction(Number(btn.dataset.index))));
   $("#eventLog").innerHTML = state.logs.length ? state.logs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${l.time}</b><span>${l.text}</span></div>`).join("") : `<div class="log-item"><b>DAY 1</b><span>두 사람의 첫 번째 이야기가 시작되었습니다.</span></div>`;
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
@@ -75,8 +36,8 @@ function selectAction(index) { state.selected = index; render(); }
 function applyAction() {
   if (state.selected === null) return;
   const phase = phases[state.phase], action = actions[phase.key][state.selected];
-  if (action.fx.money < 0 && state.money + action.fx.money < 0) { toast("돈이 부족해 이 행동을 할 수 없어요."); return; }
-  const fx = {...action.fx};
+  if ((action.effects.money ?? 0) < 0 && state.money + action.effects.money < 0) { toast("돈이 부족해 이 행동을 할 수 없어요."); return; }
+  const fx = {...action.effects};
   if (action.tag === "연락") { fx.affection = (fx.affection||0)*state.partner.weights.contact; fx.trust = (fx.trust||0)*state.partner.weights.trust; }
   if (["데이트","쇼핑"].includes(action.tag)) fx.affection = (fx.affection||0)*state.partner.weights.money;
   if (action.random) { const win = Math.random() > .48; fx.money = win ? Math.round(40000+Math.random()*90000) : -Math.round(25000+Math.random()*70000); toast(win ? `투자 성공! ${money(fx.money)}` : `투자 손실 ${money(Math.abs(fx.money))}`); }

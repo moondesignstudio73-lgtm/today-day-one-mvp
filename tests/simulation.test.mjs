@@ -4,6 +4,7 @@ import { SaveManager } from "../src/save-manager.mjs";
 import { generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS } from "../src/girlfriend-manager.mjs";
 import { getEligibleEvents, getEventDiagnostics, getEventProbability, meetsConditions, rollEvent } from "../src/event-manager.mjs";
 import { EVENT_DEFINITIONS } from "../src/events-data.mjs";
+import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 const memoryStorage = () => {
@@ -109,3 +110,8 @@ for (let run = 0; run < 100; run += 1) {
 console.log("✓ 조건·확률·우선순위·쿨다운 이벤트와 100회 회귀 검증 통과");
 console.log("✓ 플레이어 상태·연인 성격 기반 동적 이벤트 확률 검증 통과");
 console.log("✓ 디버그용 이벤트 진단 데이터 검증 통과");
+assert.equal(validateActionData(), true);
+assert.equal(PHASES.length, 4);
+assert.equal(Object.values(ACTIONS).flat().length, 16);
+assert.equal(new Set(Object.values(ACTIONS).flat().map(action => action.id)).size, 16);
+console.log("✓ 4개 시간대·16개 행동 데이터 스키마 검증 통과");
