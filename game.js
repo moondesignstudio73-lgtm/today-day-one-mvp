@@ -162,16 +162,15 @@ function openGameMenu() {
     ["schedule","📅","일정","30일 캘린더","pink"],["finance","💳","금융","자산·거래","indigo"],["todaylog","📝","오늘 기록","DAY 로그","gray"],
     ["gallery","🖼","CG 앨범","해금한 장면","violet"]
   ] : [
-    ["inventory","🎒","가방","아이템·장착","rose"],["shop","🛍","상점","쇼핑하기","violet"],["finance","₩","재정","자산·거래","green"],
-    ["career","💼","커리어","직업·성장","blue"],["people","👥","인맥","친구·라이벌","orange"],["investment","📈","투자","주식·채권","mint"],
-    ["history","💬","대화","지난 기록","pink"],["gallery","🖼","CG 앨범","장면 컬렉션","violet"],["speed","⏩","속도",dialogueSpeeds[dialogueSpeedIndex].label,"indigo"],["debug","⚙","설정","진단 도구","gray"]
+    ["save","↓","저장","현재 장면 보관","rose"],["load","↻","불러오기","저장 장면 복귀","violet"],["gallery","🖼","CG 앨범","해금한 장면","pink"],
+    ["speed","⏩","대사 속도",dialogueSpeeds[dialogueSpeedIndex].label,"indigo"],["debug","⚙","설정","접근성·진단","gray"]
   ];
-  const dock = isNight ? [["report","☾","하루 정산"],["save","↓","저장하기"]] : [["save","↓","저장하기"],["load","↻","불러오기"]];
+  const dock = isNight ? [["report","☾","하루 정산"],["save","↓","저장하기"]] : [["history","≡","대화 기록"],["save","↓","저장하기"]];
   const battery = Math.max(1,Math.round((state.energy+state.health)/2));
   const appMarkup = apps.map(([id,icon,label,detail,tone])=>`<button class="phone-app" type="button" data-menu-action="${id}"><span class="phone-app-icon" data-tone="${tone}" aria-hidden="true">${icon}</span><b>${label}</b><small>${escapeHtml(detail)}</small></button>`).join("");
   const dockMarkup = dock.map(([id,icon,label])=>`<button type="button" data-menu-action="${id}"><span aria-hidden="true">${icon}</span><b>${label}</b></button>`).join("");
   $("#modal").classList.add("phone-menu-active");
-  $("#modalContent").innerHTML=`<article class="phone-menu" aria-label="스마트폰 게임 메뉴"><div class="phone-status"><b>${isNight?formatNightTime(state.nightState.minutes):phases[state.phase].time}</b><span>DAY ${state.day} · ${battery}% ▰</span></div><div class="phone-island" aria-hidden="true"></div><header class="phone-menu-hero"><small>${isNight?"NIGHT TIME · 나의 방":escapeHtml(phases[state.phase].label)} · ${escapeHtml(state.partner.name)}</small><strong>${isNight?`${state.partner.name}에게 알림이 왔어요`:"오늘부터 1일"}</strong><span>${money(state.money)}</span></header><div class="phone-app-grid">${appMarkup}</div><div class="phone-dock">${dockMarkup}</div><div class="phone-home-indicator" aria-hidden="true"></div></article>`;
+  $("#modalContent").innerHTML=`<article class="phone-menu ${isNight?"":"story-system-menu"}" aria-label="${isNight?"야간 스마트폰":"스토리 시스템 메뉴"}"><div class="phone-status"><b>${isNight?formatNightTime(state.nightState.minutes):phases[state.phase].time}</b><span>DAY ${state.day} · ${battery}% ▰</span></div><div class="phone-island" aria-hidden="true"></div><header class="phone-menu-hero"><small>${isNight?"NIGHT TIME · 나의 방":"STORY MODE · SYSTEM"}</small><strong>${isNight?`${state.partner.name}에게 알림이 왔어요`:"이야기를 잠시 멈췄어요"}</strong><span>${isNight?money(state.money):"저장 · 기록 · 설정만 확인할 수 있어요"}</span></header><div class="phone-app-grid">${appMarkup}</div><div class="phone-dock">${dockMarkup}</div><div class="phone-home-indicator" aria-hidden="true"></div></article>`;
   openModal();
   const nightApp = (minutes,label,callback) => () => { const result=spendNightTime(state,minutes,label); if(!result.ok){toast(result.reason);openGameMenu();return;} callback(); SaveManager.save(state); };
   const actions = { inventory:openInventory, shop:isNight?nightApp(20,"온라인 쇼핑",openShop):openShop, finance:openFinance, career:openCareer, people:openPeople, investment:isNight?nightApp(20,"투자 확인",openInvestment):openInvestment, history:openDialogueHistory, gallery:openCgGallery, message:nightApp(10,"메시지",()=>{state.nightState.messagesRead=true;openChat();}), call:nightApp(30,"전화",openChat), sns:nightApp(20,"SNS",openSns), schedule:openSchedule, todaylog:openTodayLog, report:openDailyReport, speed:()=>{dialogueSpeedIndex=(dialogueSpeedIndex+1)%dialogueSpeeds.length;localStorage.setItem("today-day-one-dialogue-speed",String(dialogueSpeedIndex));toast(`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`);openGameMenu();}, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
@@ -258,7 +257,7 @@ function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentSte
 function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){immersiveScene.index=immersiveScene.sequence.indexOf(choice)+1;immersiveScene.currentStep=choice;renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
 function finishImmersiveScene() {
   if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;immersiveScene=null;
-  $("#gameScreen").classList.remove("story-mode");$("#visualNovelStage").classList.remove("narration-mode");$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
+  $("#visualNovelStage").classList.remove("narration-mode");$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
   SaveManager.save(state);render();
 }
 
@@ -271,6 +270,9 @@ function render() {
   const p = state.partner, phase = phases[state.phase];
   $("#dayLabel").textContent = state.day; $("#phaseIcon").textContent = phase.icon;
   if (state.phase === 3) { renderNightHome(); return; }
+  document.body.classList.add("ui-story-mode");
+  document.body.classList.remove("ui-night-mode");
+  $("#gameScreen").classList.add("story-mode");
   $("#gameScreen").classList.remove("night-mode");
   $("#nightHome").classList.add("hidden");
   $(".play-panel").classList.remove("hidden");
@@ -298,7 +300,7 @@ function render() {
   $("#vnEquipmentLayer").innerHTML = equippedItems.length ? `<small>NOW WEARING</small>${equippedItems.map(item=>`<span title="${escapeHtml(item.name)}">${item.icon}<b>${escapeHtml(item.name)}</b></span>`).join("")}` : "";
   const stats = [["체력",state.energy],["피로",state.fatigue],["건강",state.health],["스트레스",state.stress],[appearance.bonuses.attractiveness?`매력 +${appearance.bonuses.attractiveness}`:"매력",appearance.charm],[appearance.bonuses.fashion?`패션 +${appearance.bonuses.fashion}`:"패션",appearance.fashion],["자신감",state.confidence],["업무 능력",state.work],["사회성",state.social]];
   $("#statList").innerHTML = stats.map(([name,val])=>`<div class="stat"><div class="stat-head"><span>${name}</span><b>${Math.round(val)}</b></div><div class="stat-track"><i style="width:${clamp(val)}%;background:${name==='스트레스'?'#e5846d':''}"></i></div></div>`).join("");
-  $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>{ const availability=getActionAvailability(state,a); return `<button class="action-card ${state.selected===i?'selected':''} ${availability.available?'':'locked'}" data-index="${i}" ${availability.available?'':'disabled'}><span class="action-icon">${a.icon}</span><span class="cost">${availability.available?a.costLabel:'🔒 '+availability.reason}</span><h3>${a.title}</h3><p>${a.desc}</p></button>`; }).join("");
+  $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>{ const availability=getActionAvailability(state,a); return `<button class="action-card ${state.selected===i?'selected':''} ${availability.available?'':'locked'}" data-index="${i}" ${availability.available?'':'disabled'}><span class="action-icon">${a.icon}</span><span class="cost">${availability.available?escapeHtml(a.tag):'🔒 '+escapeHtml(availability.reason)}</span><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.desc)}</p></button>`; }).join("");
   $("#eventLog").innerHTML = state.logs.length ? state.logs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${l.time}</b><span>${l.text}</span></div>`).join("") : `<div class="log-item"><b>DAY 1</b><span>두 사람의 첫 번째 이야기가 시작되었습니다.</span></div>`;
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
@@ -317,6 +319,9 @@ function applyScenePresentation(presentation) {
 
 function renderNightHome() {
   const night = ensureNightState(state);
+  document.body.classList.remove("ui-story-mode");
+  document.body.classList.add("ui-night-mode");
+  $("#gameScreen").classList.remove("story-mode");
   $("#gameScreen").classList.add("night-mode");
   $(".play-panel").classList.add("hidden");
   $("#nightHome").classList.remove("hidden");
@@ -564,6 +569,8 @@ $("#peopleButton").addEventListener("click",openPeople);
 $("#investmentButton").addEventListener("click",openInvestment);
 $("#historyButton").addEventListener("click",openDialogueHistory);
 $("#menuButton").addEventListener("click",openGameMenu);
+$("#storyMenuButton").addEventListener("click",event=>{event.stopPropagation();openGameMenu();});
+$("#storyHistoryButton").addEventListener("click",event=>{event.stopPropagation();openDialogueHistory();});
 $("#nightHome").addEventListener("click",handleRoomAction);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
