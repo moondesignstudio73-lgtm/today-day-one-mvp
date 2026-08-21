@@ -39,9 +39,12 @@ const dialogueSpeeds = [{label:"느림",delay:42},{label:"보통",delay:24},{lab
 let dialogueSpeedIndex = Number(localStorage.getItem("today-day-one-dialogue-speed") ?? 1);
 if (!dialogueSpeeds[dialogueSpeedIndex]) dialogueSpeedIndex = 1;
 let lastSceneSoundKey = "";
+let autoMode = false;
+let autoAdvanceTimer = null;
 const modalFocusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
 
 function openModal() {
+  if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
   const modal = $("#modal");
   if (modal.classList.contains("hidden")) modalReturnFocus = document.activeElement;
   modal.classList.remove("hidden");
@@ -108,6 +111,25 @@ function handleDialogueAdvance() {
   if (finishDialogueTyping()) sound.play("select");
 }
 
+function renderAutoButton() {
+  const button = $("#autoButton");
+  button.textContent = autoMode ? "AUTO ON" : "AUTO OFF";
+  button.setAttribute("aria-pressed",String(autoMode));
+}
+
+function scheduleAutoAdvance() {
+  if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+  autoAdvanceTimer = autoMode && state?.selected !== null ? setTimeout(()=>{autoAdvanceTimer=null;applyAction();},1200) : null;
+}
+
+function toggleAutoMode(event) {
+  event.stopPropagation();
+  autoMode = !autoMode;
+  renderAutoButton();
+  scheduleAutoAdvance();
+  toast(autoMode ? "선택 후 자동으로 진행합니다." : "자동 진행을 껐어요.");
+}
+
 function openDialogueHistory() {
   const rows = dialogueHistory.length ? dialogueHistory.slice().reverse().map(entry=>`<article class="history-entry"><small>DAY ${entry.day} · ${escapeHtml(entry.phase)}</small><b>${escapeHtml(entry.title)}</b><p>${escapeHtml(entry.text)}</p></article>`).join("") : `<p>아직 기록된 대화가 없어요.</p>`;
   $("#modalContent").innerHTML=`<span class="eyebrow">BACKLOG</span><h2>대화 기록</h2><div class="dialogue-history">${rows}</div>`;
@@ -123,7 +145,7 @@ function openGameMenu() {
 }
 
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); render(); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); renderAutoButton(); render(); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 
 function render() {
@@ -155,7 +177,7 @@ function render() {
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
 }
 
-function selectAction(index) { state.selected = index; sound.play("select"); render(); }
+function selectAction(index) { state.selected = index; sound.play("select"); render(); scheduleAutoAdvance(); }
 function handleActionGridClick(event) {
   event.stopPropagation();
   if (!(event.target instanceof Element)) return;
@@ -164,6 +186,7 @@ function handleActionGridClick(event) {
   selectAction(Number(button.dataset.index));
 }
 function applyAction() {
+  if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
   if (state.selected === null) return;
   const phase = phases[state.phase], action = actions[phase.key][state.selected];
   const availability = getActionAvailability(state, action);
@@ -315,5 +338,6 @@ $("#menuButton").addEventListener("click",openGameMenu);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#visualNovelStage").addEventListener("keydown",event=>{ if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });
+$("#autoButton").addEventListener("click",toggleAutoMode);
 $("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
 document.addEventListener("keydown", handleModalKeydown);
