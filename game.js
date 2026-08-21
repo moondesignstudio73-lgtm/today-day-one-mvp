@@ -28,6 +28,7 @@ import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression,
 import { getNpcSprite } from "./src/assets/asset-manifest.mjs";
 import { getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, resetForNextDay, spendNightTime } from "./src/night-manager.mjs";
+import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -148,11 +149,12 @@ function openGameMenu() {
   const apps = isNight ? [
     ["message","💬","메시지",`${withParticle(state.partner.name,"과","와")} 대화`,"rose"],["call","📞","전화","통화하기","violet"],["shop","🛍","쇼핑","온라인 상점","green"],
     ["investment","📈","투자","주식·채권","blue"],["sns","📷","SNS","오늘의 피드","orange"],["people","👥","연락처","인맥 확인","mint"],
-    ["schedule","📅","일정","30일 캘린더","pink"],["finance","💳","금융","자산·거래","indigo"],["todaylog","📝","오늘 기록","DAY 로그","gray"]
+    ["schedule","📅","일정","30일 캘린더","pink"],["finance","💳","금융","자산·거래","indigo"],["todaylog","📝","오늘 기록","DAY 로그","gray"],
+    ["gallery","🖼","CG 앨범","해금한 장면","violet"]
   ] : [
     ["inventory","🎒","가방","아이템·장착","rose"],["shop","🛍","상점","쇼핑하기","violet"],["finance","₩","재정","자산·거래","green"],
     ["career","💼","커리어","직업·성장","blue"],["people","👥","인맥","친구·라이벌","orange"],["investment","📈","투자","주식·채권","mint"],
-    ["history","💬","대화","지난 기록","pink"],["speed","⏩","속도",dialogueSpeeds[dialogueSpeedIndex].label,"indigo"],["debug","⚙","설정","진단 도구","gray"]
+    ["history","💬","대화","지난 기록","pink"],["gallery","🖼","CG 앨범","장면 컬렉션","violet"],["speed","⏩","속도",dialogueSpeeds[dialogueSpeedIndex].label,"indigo"],["debug","⚙","설정","진단 도구","gray"]
   ];
   const dock = isNight ? [["report","☾","하루 정산"],["save","↓","저장하기"]] : [["save","↓","저장하기"],["load","↻","불러오기"]];
   const battery = Math.max(1,Math.round((state.energy+state.health)/2));
@@ -162,17 +164,20 @@ function openGameMenu() {
   $("#modalContent").innerHTML=`<article class="phone-menu" aria-label="스마트폰 게임 메뉴"><div class="phone-status"><b>${isNight?formatNightTime(state.nightState.minutes):phases[state.phase].time}</b><span>DAY ${state.day} · ${battery}% ▰</span></div><div class="phone-island" aria-hidden="true"></div><header class="phone-menu-hero"><small>${isNight?"NIGHT TIME · 나의 방":escapeHtml(phases[state.phase].label)} · ${escapeHtml(state.partner.name)}</small><strong>${isNight?`${state.partner.name}에게 알림이 왔어요`:"오늘부터 1일"}</strong><span>${money(state.money)}</span></header><div class="phone-app-grid">${appMarkup}</div><div class="phone-dock">${dockMarkup}</div><div class="phone-home-indicator" aria-hidden="true"></div></article>`;
   openModal();
   const nightApp = (minutes,label,callback) => () => { const result=spendNightTime(state,minutes,label); if(!result.ok){toast(result.reason);openGameMenu();return;} callback(); SaveManager.save(state); };
-  const actions = { inventory:openInventory, shop:isNight?nightApp(20,"온라인 쇼핑",openShop):openShop, finance:openFinance, career:openCareer, people:openPeople, investment:isNight?nightApp(20,"투자 확인",openInvestment):openInvestment, history:openDialogueHistory, message:nightApp(10,"메시지",()=>{state.nightState.messagesRead=true;openChat();}), call:nightApp(30,"전화",openChat), sns:nightApp(20,"SNS",openSns), schedule:openSchedule, todaylog:openTodayLog, report:openDailyReport, speed:()=>{dialogueSpeedIndex=(dialogueSpeedIndex+1)%dialogueSpeeds.length;localStorage.setItem("today-day-one-dialogue-speed",String(dialogueSpeedIndex));toast(`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`);openGameMenu();}, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
+  const actions = { inventory:openInventory, shop:isNight?nightApp(20,"온라인 쇼핑",openShop):openShop, finance:openFinance, career:openCareer, people:openPeople, investment:isNight?nightApp(20,"투자 확인",openInvestment):openInvestment, history:openDialogueHistory, gallery:openCgGallery, message:nightApp(10,"메시지",()=>{state.nightState.messagesRead=true;openChat();}), call:nightApp(30,"전화",openChat), sns:nightApp(20,"SNS",openSns), schedule:openSchedule, todaylog:openTodayLog, report:openDailyReport, speed:()=>{dialogueSpeedIndex=(dialogueSpeedIndex+1)%dialogueSpeeds.length;localStorage.setItem("today-day-one-dialogue-speed",String(dialogueSpeedIndex));toast(`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`);openGameMenu();}, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
   document.querySelectorAll("[data-menu-action]").forEach(button=>button.addEventListener("click",()=>{$("#modal").classList.remove("phone-menu-active");actions[button.dataset.menuAction]?.();}));
 }
 
 function openStoryScene(scene) {
   if (!scene) return;
+  const presentation=resolveStoryPresentation(scene,state);
+  applyScenePresentation(presentation);
   state.pendingStoryId = scene.id;
+  if(presentation.eventCgId&&!state.cgCollection.some(entry=>entry.id===presentation.eventCgId))state.cgCollection.push({id:presentation.eventCgId,title:scene.title,image:presentation.backgroundUrl,day:state.day});
   SaveManager.save(state);
   sound.playBgm(scene.bgm ?? "theme",state.day);
   const choices = scene.choices.map(choice=>`<button type="button" data-story-choice="${choice.id}">${escapeHtml(choice.label)}</button>`).join("");
-  $("#modalContent").innerHTML=`<article class="story-scene"><span class="eyebrow">STORY · ${escapeHtml(scene.arc)}</span><h2>${escapeHtml(scene.title)}</h2><small>${escapeHtml(scene.speaker)}</small><p>${escapeHtml(scene.message)}</p><div class="story-choices">${choices}</div></article>`;
+  $("#modalContent").innerHTML=`<article class="story-scene"><div class="story-visual" style="background-image:url('${presentation.backgroundUrl}')"><span>${escapeHtml(presentation.timeOfDay)} · ${escapeHtml(presentation.weather)}</span></div><span class="eyebrow">STORY · ${escapeHtml(scene.arc)}</span><h2>${escapeHtml(scene.title)}</h2><small>${escapeHtml(scene.speaker)}</small><p>${escapeHtml(scene.message)}</p><div class="story-choices">${choices}</div></article>`;
   openModal();
   document.querySelectorAll("[data-story-choice]").forEach(button=>button.addEventListener("click",()=>{
     const result=resolveStoryChoice(state,scene.id,button.dataset.storyChoice);
@@ -200,6 +205,7 @@ function render() {
   $("#nightHome").classList.add("hidden");
   $(".play-panel").classList.remove("hidden");
   $("#visualNovelStage").dataset.scene = phase.key;
+  applyScenePresentation(resolvePhasePresentation(state,phase.key));
   const sceneSoundKey = `${state.day}-${phase.key}`;
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
@@ -226,6 +232,17 @@ function render() {
   $("#eventLog").innerHTML = state.logs.length ? state.logs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${l.time}</b><span>${l.text}</span></div>`).join("") : `<div class="log-item"><b>DAY 1</b><span>두 사람의 첫 번째 이야기가 시작되었습니다.</span></div>`;
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
+  const nextPhase=phases[Math.min(state.phase+1,phases.length-1)];
+  preloadSceneAssets([resolvePhasePresentation({...state,phase:Math.min(state.phase+1,3)},nextPhase.key)]);
+}
+
+function applyScenePresentation(presentation) {
+  state.currentBackground=presentation.backgroundId;
+  const stage=$("#visualNovelStage");
+  if(stage){stage.dataset.weather=presentation.weather;stage.dataset.timeOfDay=presentation.timeOfDay;}
+  const backdrop=$("#vnBackdrop");
+  if(backdrop&&backdrop.dataset.backgroundId!==presentation.backgroundId){backdrop.dataset.backgroundId=presentation.backgroundId;backdrop.style.backgroundImage=`linear-gradient(180deg,#1d203114 0 62%,#17182773 100%),url("${presentation.backgroundUrl}")`;}
+  const character=$("#vnCharacter");if(character)character.dataset.animation=presentation.animationId;
 }
 
 function renderNightHome() {
@@ -264,6 +281,13 @@ function openSns() {
 }
 
 function openSchedule() { $("#modalContent").innerHTML=`<span class="eyebrow">30 DAYS CALENDAR</span><h2>우리의 일정</h2><div class="schedule-card"><b>DAY ${state.day}</b><span>오늘의 일정을 마무리하는 중</span></div><div class="schedule-card"><b>DAY ${Math.min(30,state.day+1)}</b><span>내일의 선택은 아직 정해지지 않았어요.</span></div>`;openModal(); }
+
+function openCgGallery() {
+  const unlocked=state.cgCollection??[];
+  const unlockedCards=unlocked.map(entry=>`<article class="cg-card"><img src="${entry.image}" alt="${escapeHtml(entry.title)}" loading="lazy"><div><small>DAY ${entry.day}</small><b>${escapeHtml(entry.title)}</b></div></article>`).join("");
+  const lockedCards=Array.from({length:Math.max(0,8-unlocked.length)},(_,index)=>`<article class="cg-card locked"><span>?</span><div><small>LOCKED ${index+1}</small><b>???</b></div></article>`).join("");
+  $("#modalContent").innerHTML=`<span class="eyebrow">CG COLLECTION</span><h2>기억에 남은 장면</h2><p>${unlocked.length} / 8 해금 · 중요 장면을 직접 보면 앨범에 저장됩니다.</p><div class="cg-gallery">${unlockedCards}${lockedCards}</div>`;openModal();
+}
 
 function openNightPc() {
   $("#modalContent").innerHTML=`<span class="eyebrow">MY COMPUTER · 60 MIN</span><h2>컴퓨터로 무엇을 할까?</h2><div class="pc-actions"><button data-pc-action="game">🎮 게임하기<small>스트레스 완화 · 피로 증가</small></button><button data-pc-action="study">📚 자기계발<small>업무 능력 증가 · 피로 증가</small></button><button data-pc-action="work">💼 야간 업무<small>수입 증가 · 스트레스 증가</small></button></div>`;openModal();

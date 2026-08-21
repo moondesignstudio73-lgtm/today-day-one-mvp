@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import { advanceTime, applyEffects, createInitialState, determineEnding, MAX_DAY, validateState } from "../src/game-core.mjs";
 import { getWrappedFocusIndex } from "../src/ui-manager.mjs";
 import { SaveManager } from "../src/save-manager.mjs";
@@ -30,7 +31,7 @@ import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySu
 import { analyzePlayHistory, ENDING_DEFINITIONS, selectEnding, validateEndingDefinitions } from "../src/ending-manager.mjs";
 import { BGM_TRACKS, getBgmTrack, SoundManager, SOUND_SETTING_KEY, validateBgmTracks, validateSceneSoundPresets, validateSoundPresets } from "../src/sound-manager.mjs";
 import { createCharacterAppearance, seedFromIdentity, validateCharacterAppearance } from "../src/character-appearance.mjs";
-import { getCharacterAccessory, getCharacterSprite, getNpcSprite } from "../src/assets/asset-manifest.mjs";
+import { BACKGROUND_ASSETS, getBackgroundAsset, getCharacterAccessory, getCharacterSprite, getNpcSprite } from "../src/assets/asset-manifest.mjs";
 import { resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "../src/ui/character-renderer.mjs";
 import { evaluateEndingBalance, summarizeEndingDistribution } from "../src/balance-manager.mjs";
 import { STORY_SCENES, validateStoryData } from "../src/story-data.mjs";
@@ -38,8 +39,21 @@ import { getEligibleStoryScenes, getStoryScene, resolveStoryChoice, selectNextSt
 import { HIDDEN_ROUTE_SCENES } from "../src/hidden-route-data.mjs";
 import { createHiddenRouteState, HIDDEN_ROUTE_CHANCE, STRENGTH_TRAITS, TROUBLE_TRAITS, validateHiddenRouteState } from "../src/hidden-route-manager.mjs";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, spendNightTime } from "../src/night-manager.mjs";
+import { getAssetRequirementList, getWeatherForDay, resolvePhasePresentation, resolveStoryPresentation, validateScenePresentation } from "../src/scene-presentation.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
+assert.ok(Object.values(BACKGROUND_ASSETS).every(path=>existsSync(path)));
+assert.equal(getBackgroundAsset("office-day"),BACKGROUND_ASSETS["office-day"]);
+assert.equal(getWeatherForDay(7),"rain");
+assert.equal(getWeatherForDay(5),"cloudy");
+const presentationState=createInitialState(partner,()=>0.5);
+assert.equal(validateScenePresentation(resolvePhasePresentation(presentationState,"day")),true);
+assert.equal(resolvePhasePresentation(presentationState,"day").backgroundId,"office-day");
+const presentationRequirements=getAssetRequirementList(STORY_SCENES,EVENT_DEFINITIONS);
+assert.equal(presentationRequirements.missingBackgrounds.length,0);
+assert.ok(presentationRequirements.story.every(entry=>validateScenePresentation(entry)));
+assert.ok(validateScenePresentation(resolveStoryPresentation(STORY_SCENES[0],presentationState)));
+console.log("✓ 장면 메타데이터·배경 매칭·에셋 경로 검증 통과");
 const nightStateTest = createInitialState(partner,() => 0.5);
 const nightStart = createDaySnapshot(nightStateTest);
 nightStateTest.money -= 12000;

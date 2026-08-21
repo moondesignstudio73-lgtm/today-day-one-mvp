@@ -39,6 +39,7 @@ export class SaveManager {
       parsed.storyFlags ??= {};
       parsed.futureScore ??= 0;
       parsed.pendingStoryId ??= null;
+      parsed.cgCollection ??= [];
       parsed.hiddenRoute ??= createHiddenRouteState(Math.random,false);
       parsed.investment ??= createInvestmentState();
       parsed.lottery ??= createLotteryState();

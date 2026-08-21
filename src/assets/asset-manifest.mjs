@@ -23,6 +23,14 @@ export const NPC_ASSETS = {
   "male-rival":"assets/npcs/male-rival-2d.png"
 };
 
+export const BACKGROUND_ASSETS = {
+  "home-morning":"assets/backgrounds/morning-studio-2d.png",
+  "home-night":"assets/backgrounds/home/BG_HOME_NIGHT_001.webp",
+  "office-day":"assets/backgrounds/office/BG_OFFICE_DAY_001.webp",
+  "cafe-rain-evening":"assets/backgrounds/cafe/BG_CAFE_RAIN_EVENING_001.webp",
+  "river-night":"assets/backgrounds/street/BG_RIVER_NIGHT_001.webp"
+};
+
 export function getCharacterSprite(character = "girlfriend", expression = "calm", pose = "standing", outfit = "default") {
   const assets = CHARACTER_ASSETS[character];
   if (expression === "calm" && pose !== "standing" && assets?.poses?.[pose]) return assets.poses[pose];
@@ -37,4 +45,8 @@ export function getCharacterAccessory(character = "girlfriend", accessory = "non
 
 export function getNpcSprite(npcId = "") {
   return NPC_ASSETS[npcId] ?? "";
+}
+
+export function getBackgroundAsset(backgroundId = "home-morning") {
+  return BACKGROUND_ASSETS[backgroundId] ?? BACKGROUND_ASSETS["home-morning"];
 }
