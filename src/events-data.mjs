@@ -1,5 +1,35 @@
 export const EVENT_DEFINITIONS = [
   {
+    id: "relationship-crisis",
+    title: "우리, 잠깐 이야기할까?",
+    message: "쌓여 온 감정이 터졌다. 연인이 관계를 계속해야 할지 모르겠다고 말했다.",
+    conditions: [{ stat: "day", operator: ">=", value: 10 }, { stat: "affection", operator: "<=", value: 340 }, { stat: "relationshipStress", operator: ">=", value: 45 }],
+    probability: 0.48,
+    probabilityModifiers: [
+      { conditions: [{ stat: "partner.personality.loyalty", operator: "<=", value: 35 }], add: 0.2 },
+      { conditions: [{ stat: "conflict", operator: ">=", value: 70 }], add: 0.18 },
+      { conditions: [{ recentTag: "유혹", withinDays: 5, minCount: 2 }], add: 0.2 }
+    ],
+    priority: 100,
+    cooldown: 5,
+    effects: { affection: -28, trust: -20, conflict: 18, relationshipStress: 15, excitement: -18 }
+  },
+  {
+    id: "rival-approach",
+    title: "낯선 이름의 알림",
+    message: "연인에게 호감을 보이는 사람이 가까이 다가오기 시작했다.",
+    conditions: [{ stat: "day", operator: ">=", value: 8 }, { stat: "trust", operator: "<=", value: 430 }, { stat: "relationshipStress", operator: ">=", value: 35 }],
+    probability: 0.22,
+    probabilityModifiers: [
+      { conditions: [{ stat: "partner.personality.opportunism", operator: ">=", value: 70 }], add: 0.22 },
+      { conditions: [{ stat: "partner.personality.loyalty", operator: "<=", value: 35 }], add: 0.18 },
+      { conditions: [{ recentTag: "성공", withinDays: 3, minCount: 4 }], add: 0.12 }
+    ],
+    priority: 85,
+    cooldown: 6,
+    effects: { trust: -12, relationshipStress: 12, conflict: 6 }
+  },
+  {
     id: "work-mistake",
     title: "집중력이 흐려진 오후",
     message: "쌓인 스트레스 때문에 회사에서 작은 실수를 했다.",
