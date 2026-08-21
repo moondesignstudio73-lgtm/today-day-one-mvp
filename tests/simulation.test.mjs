@@ -23,7 +23,7 @@ import { calculateBreakupRisk, evaluateBreakup } from "../src/conflict-manager.m
 import { buildConversationContext, generateContextualReply, getContextualOpening, recordConversationTurn } from "../src/conversation-manager.mjs";
 import { getMemoryContext, recordMemory, validateMemories } from "../src/memory-manager.mjs";
 import { getInitiatedMessageChance, maybeGenerateInitiatedMessage } from "../src/initiated-message-manager.mjs";
-import { DEFAULT_REMOTE_TIMEOUT_MS, requestGirlfriendReply, sanitizeRemoteEffects } from "../src/ai-chat-client.mjs";
+import { DEFAULT_REMOTE_TIMEOUT_MS, MAX_REMOTE_REPLY_LENGTH, requestGirlfriendReply, sanitizeRemoteEffects, sanitizeRemoteReply } from "../src/ai-chat-client.mjs";
 import { STOCKS, validateStockData } from "../src/stocks-data.mjs";
 import { advanceStockMarket, buyStock, createInvestmentState, getPortfolioSummary, sellStock, validateInvestmentState } from "../src/investment-manager.mjs";
 import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE, validateLotteryState } from "../src/lottery-manager.mjs";
@@ -125,6 +125,9 @@ const remoteReply = await requestGirlfriendReply({ endpoint:"/api/chat", context
 assert.equal(remoteReply.source, "remote");
 assert.equal(remoteReply.effects.affection, 5);
 assert.equal(DEFAULT_REMOTE_TIMEOUT_MS, 12000);
+assert.equal(MAX_REMOTE_REPLY_LENGTH, 500);
+assert.equal(sanitizeRemoteReply("  반가워  "), "반가워");
+assert.equal(sanitizeRemoteReply("가".repeat(600)).length, MAX_REMOTE_REPLY_LENGTH);
 let requestSignal;
 await requestGirlfriendReply({ endpoint:"/api/chat", context:buildConversationContext(messageState), message:"안녕", fetchImpl:async (_url, options) => { requestSignal=options.signal; return { ok:true, json:async () => ({ reply:"연결 확인", effects:{} }) }; } });
 assert.ok(requestSignal instanceof AbortSignal);

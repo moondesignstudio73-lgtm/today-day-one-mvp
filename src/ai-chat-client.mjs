@@ -10,6 +10,12 @@ export function sanitizeRemoteEffects(effects) {
 }
 
 export const DEFAULT_REMOTE_TIMEOUT_MS = 12000;
+export const MAX_REMOTE_REPLY_LENGTH = 500;
+
+export function sanitizeRemoteReply(reply) {
+  if (typeof reply !== "string") return "";
+  return reply.trim().slice(0, MAX_REMOTE_REPLY_LENGTH);
+}
 
 export async function requestGirlfriendReply({ endpoint, context, message, fetchImpl = globalThis.fetch, timeoutMs = DEFAULT_REMOTE_TIMEOUT_MS }) {
   const fallback = () => ({ ...generateContextualReply(context, message), source:"local" });
@@ -21,9 +27,10 @@ export async function requestGirlfriendReply({ endpoint, context, message, fetch
     const response = await fetchImpl(endpoint, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ context, message }), ...(controller ? { signal:controller.signal } : {}) });
     if (!response.ok) return fallback();
     const data = await response.json();
-    if (typeof data.reply !== "string" || !data.reply.trim()) return fallback();
+    const text = sanitizeRemoteReply(data.reply);
+    if (!text) return fallback();
     const effects = sanitizeRemoteEffects(data.effects);
-    return { text:data.reply.trim(), effects, source:"remote" };
+    return { text, effects, source:"remote" };
   } catch {
     return fallback();
   } finally {
