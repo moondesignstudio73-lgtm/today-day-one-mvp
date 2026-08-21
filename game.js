@@ -1,6 +1,7 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs";
 import { SaveManager } from "./src/save-manager.mjs";
 import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./src/girlfriend-manager.mjs";
+import { rollEvent } from "./src/event-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -87,6 +88,11 @@ function applyAction() {
   const finishedDay = state.phase === 3;
   advanceTime(state);
   if (finishedDay) dailyEvent();
+  const event = rollEvent(state);
+  if (event) {
+    state.logs.push({time:`DAY ${state.day} · EVENT`,text:`${event.title} — ${event.message}`});
+    toast(`EVENT · ${event.title}`);
+  }
   SaveManager.save(state);
   if (state.day > 30) showEnding(); else render();
 }

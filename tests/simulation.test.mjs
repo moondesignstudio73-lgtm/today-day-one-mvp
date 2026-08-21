@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { advanceTime, applyEffects, createInitialState, determineEnding, MAX_DAY, validateState } from "../src/game-core.mjs";
 import { SaveManager } from "../src/save-manager.mjs";
 import { generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS } from "../src/girlfriend-manager.mjs";
+import { getEligibleEvents, meetsConditions, rollEvent } from "../src/event-manager.mjs";
+import { EVENT_DEFINITIONS } from "../src/events-data.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 const memoryStorage = () => {
@@ -60,3 +62,27 @@ for (let i = 0; i < 12; i += 1) observePersonality(inferenceState, "연락", () 
 assert.ok(inferenceState.revealedTraits.length > 0, "repeated interaction must reveal a trait");
 assert.equal(getVisibleTraitRows(inferenceState).length, 5);
 console.log("✓ 100명 성향 랜덤 생성과 숨겨진 성향 추론 검증 통과");
+
+const eventState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+eventState.day = 6;
+eventState.stress = 90;
+assert.ok(meetsConditions(eventState, [{ stat: "stress", operator: ">=", value: 75 }]));
+assert.ok(getEligibleEvents(eventState).some(event => event.id === "work-mistake"));
+const forcedEvent = rollEvent(eventState, () => 0, EVENT_DEFINITIONS);
+assert.equal(forcedEvent.id, "work-mistake");
+assert.equal(eventState.eventHistory.length, 1);
+assert.equal(getEligibleEvents(eventState).some(event => event.id === "work-mistake"), false, "cooldown must prevent immediate repeat");
+eventState.day += 3;
+assert.equal(getEligibleEvents(eventState).some(event => event.id === "work-mistake"), true, "event must return after cooldown");
+
+for (let run = 0; run < 100; run += 1) {
+  const randomEventState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+  for (let turn = 0; turn < 120; turn += 1) {
+    applyEffects(randomEventState, { stress: turn % 9 === 0 ? 12 : -1, energy: -2, health: turn % 12 === 0 ? -3 : 0 });
+    rollEvent(randomEventState, () => ((run * 31 + turn * 17) % 100) / 100);
+    advanceTime(randomEventState);
+  }
+  assert.equal(randomEventState.ended, true);
+  assert.ok(randomEventState.eventHistory.length <= 120);
+}
+console.log("✓ 조건·확률·우선순위·쿨다운 이벤트와 100회 회귀 검증 통과");

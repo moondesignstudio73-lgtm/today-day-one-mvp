@@ -17,6 +17,10 @@ export function createInitialState(partner, random = Math.random) {
     observations: {},
     affection: 500 + Math.floor(random() * 41),
     trust: 480 + Math.floor(random() * 41),
+    excitement: 500,
+    attachment: 450,
+    conflict: 0,
+    relationshipStress: 10,
     money: 780000 + Math.floor(random() * 140001),
     health: 68 + Math.floor(random() * 10),
     energy: 72 + Math.floor(random() * 10),
@@ -26,6 +30,7 @@ export function createInitialState(partner, random = Math.random) {
     social: 36 + Math.floor(random() * 10),
     logs: [],
     choices: [],
+    eventHistory: [],
     ended: false,
     updatedAt: new Date().toISOString()
   };
@@ -62,7 +67,7 @@ export function validateState(value) {
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
   if (!value.partner || typeof value.partner.name !== "string" || !value.partner.personality) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
-  return ["affection", "trust", "money", "health", "energy", "stress", "charm", "work", "social"].every(key => Number.isFinite(value[key]));
+  return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "charm", "work", "social"].every(key => Number.isFinite(value[key]));
 }
 
 export function determineEnding(state) {
