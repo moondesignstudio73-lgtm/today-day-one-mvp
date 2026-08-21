@@ -28,3 +28,7 @@ export function getEconomySummary(state) {
   const expense = ledger.filter(entry => entry.amount < 0).reduce((sum, entry) => sum + Math.abs(entry.amount), 0);
   return { income, expense, net:income - expense, transactions:ledger.length };
 }
+
+export function getNextPayday(day) {
+  return PAY_DAYS.find(payday => payday >= day) ?? null;
+}
