@@ -300,6 +300,7 @@ assert.ok(givenGift.reaction.willEquip);
 assert.equal(givenGift.instance.owner, "girlfriend");
 assert.equal(giftState.girlfriendEquipment.perfume, perfume.instanceId);
 assert.equal(giftState.affection, affectionBeforeGift + highGiftReaction.affection);
+assert.equal(giveGift(giftState, perfume.instanceId), null);
 const lowPreferenceState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
 lowPreferenceState.partner.personality.materialism = 10;
 lowPreferenceState.partner.personality.giftPreference = 10;
