@@ -7,7 +7,8 @@ export const ITEMS = [
   { id:"silver-necklace", name:"셀레네 실버 네크리스", brand:"Selene", category:"accessory", price:120000, luxuryLevel:3, attractivenessBonus:5, fashionBonus:6, preferenceTags:["의미","로맨틱"] },
   { id:"velvet-lip-kit", name:"벨벳 데일리 립 키트", brand:"Mellow", category:"cosmetics", price:68000, luxuryLevel:2, attractivenessBonus:6, fashionBonus:4, preferenceTags:["뷰티","로맨틱"] },
   { id:"aurora-phone", name:"오로라 프로 스마트폰", brand:"Aurora", category:"smartphone", price:1350000, luxuryLevel:5, attractivenessBonus:4, fashionBonus:5, preferenceTags:["테크","럭셔리"] },
-  { id:"solstice-ev", name:"솔스티스 전기 세단", brand:"Solstice", category:"car", price:8900000, luxuryLevel:6, attractivenessBonus:10, fashionBonus:8, preferenceTags:["드라이브","테크","럭셔리"] }
+  { id:"solstice-ev", name:"솔스티스 전기 세단", brand:"Solstice", category:"car", price:8900000, luxuryLevel:6, attractivenessBonus:10, fashionBonus:8, preferenceTags:["드라이브","테크","럭셔리"] },
+  { id:"skyline-studio", name:"스카이라인 리버뷰 스튜디오", brand:"Skyline Living", category:"home", price:24000000, luxuryLevel:7, attractivenessBonus:12, fashionBonus:10, preferenceTags:["주거","안정","럭셔리"] }
 ];
 
 export function getItem(itemId) {
