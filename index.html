@@ -74,9 +74,15 @@
       </aside>
 
       <section class="play-panel">
-        <div class="today-card panel">
-          <div><span class="eyebrow" id="phaseLabel">MORNING · 아침</span><h2 id="sceneTitle">첫날의 아침</h2><p id="sceneText">눈을 뜨자 어젯밤부터 연인이 된 그녀의 메시지가 와 있다. 오늘은 어떻게 시작할까?</p></div>
-          <div class="clock" id="clockLabel">08:00</div>
+        <div class="vn-stage panel" id="visualNovelStage">
+          <div class="vn-backdrop" aria-hidden="true"></div>
+          <img class="vn-character" src="assets/characters/girlfriend-standing-2d.png" alt="" aria-hidden="true">
+          <div class="vn-scene-meta"><span class="eyebrow" id="phaseLabel">MORNING · 아침</span><span class="clock" id="clockLabel">08:00</span></div>
+          <div class="vn-dialogue" aria-live="polite">
+            <span class="vn-nameplate" id="sceneTitle">첫날의 아침</span>
+            <p id="sceneText">눈을 뜨자 어젯밤부터 연인이 된 그녀의 메시지가 와 있다. 오늘은 어떻게 시작할까?</p>
+            <span class="vn-next-cue" aria-hidden="true">▼</span>
+          </div>
         </div>
         <div id="actionGrid" class="action-grid"></div>
         <div class="timeline panel">
