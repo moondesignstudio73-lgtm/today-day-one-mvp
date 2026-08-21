@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#17131f">
+  <title>오늘부터 1일: Thirty Days</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="처음으로">
+        <span class="brand-mark">1</span>
+        <span><strong>오늘부터 1일</strong><small>THIRTY DAYS</small></span>
+      </a>
+      <div class="day-pill"><span id="phaseIcon">☀</span> DAY <strong id="dayLabel">1</strong><i>/ 30</i></div>
+      <button id="resetButton" class="icon-button" type="button" title="새 게임">↻</button>
+    </header>
+
+    <section id="introScreen" class="intro-screen">
+      <div class="intro-copy">
+        <span class="eyebrow">30 DAYS · 1 LIFE · YOUR CHOICE</span>
+        <h1>사랑도, 돈도,<br><em>내가 선택하는 삶.</em></h1>
+        <p>정답 없는 연애가 오늘 시작된다. 30일 동안 일하고, 사랑하고, 흔들리며 당신만의 이야기를 만들어 보세요.</p>
+        <button id="startButton" class="primary-button" type="button">우리의 첫날 시작하기 <span>→</span></button>
+        <div class="intro-notes"><span>◇ 매번 달라지는 연인</span><span>◇ 14가지 엔딩</span><span>◇ 선택 기반 시뮬레이션</span></div>
+      </div>
+      <div class="intro-art" aria-hidden="true">
+        <div class="phone-card">
+          <div class="phone-top"><span>9:41</span><span>● ●</span></div>
+          <div class="avatar large">♥</div>
+          <strong>서연</strong><small>방금 전</small>
+          <div class="bubble">우리 오늘부터 1일 맞지? 😊</div>
+          <div class="typing"><i></i><i></i><i></i></div>
+        </div>
+        <div class="floating-card card-love"><small>호감도</small><strong>+24 ♥</strong></div>
+        <div class="floating-card card-money"><small>이번 달 자산</small><strong>₩ 1,200,000</strong></div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="game-screen hidden">
+      <aside class="profile-panel panel">
+        <div class="partner-head">
+          <div class="avatar" id="partnerAvatar">♥</div>
+          <div><span class="online">● 연애 중</span><h2 id="partnerName">서연</h2><p id="partnerBio">회사원 · 차분한 인상</p></div>
+        </div>
+        <div class="relationship">
+          <div class="meter-row"><span>호감도</span><b id="affectionValue">520</b></div>
+          <div class="meter"><i id="affectionBar" class="pink"></i></div>
+          <div class="meter-row"><span>신뢰도</span><b id="trustValue">500</b></div>
+          <div class="meter"><i id="trustBar" class="purple"></i></div>
+        </div>
+        <div class="traits-title"><span>알게 된 성향</span><small id="traitProgress">0 / 5</small></div>
+        <div id="traitList" class="trait-list"></div>
+        <button id="chatButton" class="chat-button" type="button">♥ 메시지 보내기</button>
+      </aside>
+
+      <section class="play-panel">
+        <div class="today-card panel">
+          <div><span class="eyebrow" id="phaseLabel">MORNING · 아침</span><h2 id="sceneTitle">첫날의 아침</h2><p id="sceneText">눈을 뜨자 어젯밤부터 연인이 된 그녀의 메시지가 와 있다. 오늘은 어떻게 시작할까?</p></div>
+          <div class="clock" id="clockLabel">08:00</div>
+        </div>
+        <div id="actionGrid" class="action-grid"></div>
+        <div class="timeline panel">
+          <div class="section-title"><h3>오늘의 기록</h3><span id="turnCount">첫 번째 선택</span></div>
+          <div id="eventLog" class="event-log"></div>
+        </div>
+      </section>
+
+      <aside class="life-panel panel">
+        <div class="section-title"><h3>나의 하루</h3><span id="lifeStatus">괜찮은 시작</span></div>
+        <div class="money-card"><small>보유 자산</small><strong id="moneyValue">₩ 850,000</strong><span id="jobValue">주니어 기획자</span></div>
+        <div id="statList" class="stat-list"></div>
+        <div class="mini-tip"><span>TIP</span><p id="tipText">모든 행동은 다른 선택의 가능성을 바꿉니다.</p></div>
+        <button id="nextButton" class="next-button" type="button" disabled>행동을 선택해 주세요</button>
+      </aside>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <button id="closeModal" class="modal-close" type="button">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="game.js"></script>
+</body>
+</html>
