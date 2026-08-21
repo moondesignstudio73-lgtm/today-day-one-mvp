@@ -6,6 +6,7 @@ import { createInvestmentState, validateInvestmentState } from "./investment-man
 import { createLotteryState, validateLotteryState } from "./lottery-manager.mjs";
 import { createAdvancedEconomyState, validateAdvancedEconomyState } from "./economy-manager.mjs";
 import { selectEnding } from "./ending-manager.mjs";
+import { createVisualState, validateCharacterAppearance } from "./character-appearance.mjs";
 
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
@@ -21,6 +22,7 @@ export function createInitialState(partner, random = Math.random) {
     phase: 0,
     selected: null,
     partner,
+    ...createVisualState(partner),
     job: generateJob(random),
     jobLevel: 1,
     jobProgress: 0,
@@ -98,6 +100,7 @@ export function validateState(value) {
   if (value.version !== 1 || !Number.isInteger(value.day) || !Number.isInteger(value.phase)) return false;
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
   if (!validateGirlfriend(value.partner)) return false;
+  if (!Number.isInteger(value.appearanceSeed) || !validateCharacterAppearance(value.characterAppearance) || !Array.isArray(value.equippedVisualLayers) || typeof value.currentExpression !== "string" || typeof value.currentPose !== "string" || typeof value.currentBackground !== "string") return false;
   if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !validateAdvancedEconomyState(value.finance) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment || !validateNpcs(value.npcs) || !Array.isArray(value.npcHistory) || !Array.isArray(value.temptationHistory) || !Array.isArray(value.rivalHistory) || !validateMemories(value.memories) || !Array.isArray(value.initiatedMessages) || !Array.isArray(value.conversationHistory) || !validateInvestmentState(value.investment) || !validateLotteryState(value.lottery)) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
   return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "fatigue", "charm", "fashion", "confidence", "work", "social"].every(key => Number.isFinite(value[key]));

@@ -1,6 +1,6 @@
-import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs";
-import { SaveManager } from "./src/save-manager.mjs";
-import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./src/girlfriend-manager.mjs";
+import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=2";
+import { SaveManager } from "./src/save-manager.mjs?v=2";
+import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./src/girlfriend-manager.mjs?v=2";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs";
 import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs";
 import { getActionAvailability } from "./src/action-manager.mjs";
@@ -240,7 +240,7 @@ async function chatReply(message){ const form=$("#chatForm"), send=form?.querySe
 
 function openDebug() {
   if (!state) return;
-  const keys = ["day","phase","money","health","energy","fatigue","stress","charm","fashion","confidence","work","social","affection","trust","excitement","attachment","conflict","relationshipStress"];
+  const keys = ["day","phase","appearanceSeed","money","health","energy","fatigue","stress","charm","fashion","confidence","work","social","affection","trust","excitement","attachment","conflict","relationshipStress"];
   const stateRows = keys.map(key=>`<div class="debug-stat"><span>${key}</span><b>${Math.round(state[key])}</b></div>`).join("");
   const personalityRows = Object.entries(state.partner.personality).map(([key,value])=>`<div class="debug-stat"><span>${key}</span><b>${value}</b></div>`).join("");
   const eventRows = getEventDiagnostics(state).map(event=>`<div class="debug-event ${event.eligible?'':event.cooldownRemaining?'cooldown':'ineligible'}"><div><b>${event.title}</b><span>${Math.round(event.probability*100)}%</span></div><small>priority ${event.priority} · ${event.dailyLimitReached?'오늘 이벤트 한도 도달':event.cooldownRemaining?`cooldown ${event.cooldownRemaining}일`:event.conditionsMet?'발생 가능':'조건 불충족'}</small></div>`).join("");

@@ -2,6 +2,8 @@ const NAMES = ["서연", "하린", "지우", "다은", "소민", "유나"];
 const JOBS = ["회사원", "대학생", "디자이너", "마케터", "프리랜서"];
 const IMPRESSIONS = ["차분한 인상", "솔직한 성격", "자유로운 영혼", "따뜻한 미소", "도도한 분위기"];
 
+import { createCharacterAppearance, validateCharacterAppearance } from "./character-appearance.mjs";
+
 export const PERSONALITY_KEYS = [
   "contactImportance", "jealousy", "materialism", "romanticism", "independence",
   "marriageDesire", "economicPreference", "vanity", "loyalty", "opportunism",
@@ -38,11 +40,17 @@ export function traitLabel(value) {
 
 export function generateGirlfriend(random = Math.random) {
   const personality = Object.fromEntries(PERSONALITY_KEYS.map(key => [key, randomInt(random, 8, 92)]));
+  const id = `girlfriend-${randomInt(random, 100000, 999999)}`;
+  const name = NAMES[randomInt(random, 0, NAMES.length - 1)];
+  const bio = `${JOBS[randomInt(random, 0, JOBS.length - 1)]} · ${IMPRESSIONS[randomInt(random, 0, IMPRESSIONS.length - 1)]}`;
+  const appearanceSeed = randomInt(random, 1, 2147483646);
   return {
-    id: `girlfriend-${randomInt(random, 100000, 999999)}`,
-    name: NAMES[randomInt(random, 0, NAMES.length - 1)],
-    bio: `${JOBS[randomInt(random, 0, JOBS.length - 1)]} · ${IMPRESSIONS[randomInt(random, 0, IMPRESSIONS.length - 1)]}`,
+    id,
+    name,
+    bio,
     personality,
+    appearanceSeed,
+    characterAppearance:createCharacterAppearance(appearanceSeed),
     weights: {
       contact: .65 + personality.contactImportance / 100,
       money: .55 + personality.materialism / 100,
@@ -55,6 +63,7 @@ export function validateGirlfriend(girlfriend) {
   if (!girlfriend || typeof girlfriend !== "object") return false;
   if (typeof girlfriend.id !== "string" || typeof girlfriend.name !== "string" || typeof girlfriend.bio !== "string") return false;
   if (!girlfriend.personality || typeof girlfriend.personality !== "object") return false;
+  if (!Number.isInteger(girlfriend.appearanceSeed) || !validateCharacterAppearance(girlfriend.characterAppearance)) return false;
   const keys = Object.keys(girlfriend.personality);
   if (keys.length !== PERSONALITY_KEYS.length || !PERSONALITY_KEYS.every(key => keys.includes(key))) return false;
   if (!Object.values(girlfriend.personality).every(value => Number.isFinite(value) && value >= 0 && value <= 100)) return false;

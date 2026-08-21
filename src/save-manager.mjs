@@ -3,6 +3,7 @@ import { generateNpcs } from "./npc-manager.mjs";
 import { createInvestmentState } from "./investment-manager.mjs";
 import { createLotteryState } from "./lottery-manager.mjs";
 import { createAdvancedEconomyState } from "./economy-manager.mjs";
+import { migrateVisualState } from "./character-appearance.mjs";
 
 export class SaveManager {
   static key = "today-day-one.save.v1";
@@ -23,6 +24,7 @@ export class SaveManager {
     if (!raw) return null;
     try {
       const parsed = JSON.parse(raw);
+      migrateVisualState(parsed);
       parsed.npcs ??= generateNpcs();
       parsed.npcHistory ??= [];
       parsed.temptationHistory ??= [];
