@@ -127,6 +127,9 @@ function render() {
   $("#dayLabel").textContent = state.day; $("#phaseIcon").textContent = phase.icon; $("#phaseLabel").textContent = phase.label;
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
   typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerBio").textContent = p.bio;
+  const expression = state.conflict >= 55 || state.trust < 320 ? {tone:"tense",icon:"…",label:"긴장한 눈빛"} : state.stress >= 72 ? {tone:"worried",icon:"?",label:"걱정스러운 표정"} : state.affection >= 700 ? {tone:"smile",icon:"♡",label:"다정한 미소"} : {tone:"calm",icon:"✦",label:"차분한 표정"};
+  $("#vnExpressionLayer").className=`vn-expression-layer ${expression.tone}`;
+  $("#vnExpressionLayer").innerHTML=`<span aria-hidden="true">${expression.icon}</span><b>${expression.label}</b>`;
   const relationship = getRelationshipState(state); $("#relationshipState").textContent = `● ${relationship.label}`; $("#relationshipState").dataset.tone = relationship.tone; $("#relationshipState").title = relationship.description;
   $("#affectionValue").textContent = Math.round(state.affection); $("#trustValue").textContent = Math.round(state.trust);
   $("#affectionBar").style.width = `${state.affection/10}%`; $("#trustBar").style.width = `${state.trust/10}%`;
