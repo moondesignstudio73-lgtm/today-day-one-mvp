@@ -15,6 +15,7 @@ import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manag
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
+import { buildConversationContext, getContextualOpening } from "./src/conversation-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -87,8 +88,8 @@ function resultText(a) { if(a.tag==="데이트") return `${state.partner.name}�
 function dailyEvent() { if(state.day%5===0){ const good=Math.random()>.45; const amount=good?60000:-35000; const label=good?"예상하지 못한 성과급":"갑작스러운 생활비 지출"; recordTransaction(state,{category:"event",label,amount}); state.logs.push({time:`DAY ${state.day}`,text:`${label}${good?"이 들어왔다.":"이 생겼다."}`}); } if(state.day%7===0){state.affection=clamp(state.affection-18,0,1000);state.trust=clamp(state.trust-8,0,1000);} }
 
 function openChat() {
-  const cold = state.trust < 350, warm = state.affection > 700;
-  const greeting = cold ? "오늘은 왜 이렇게 연락이 늦었어?" : warm ? "오늘도 목소리 듣고 싶었는데 ♥" : "뭐 해? 오늘 하루는 어땠어?";
+  const context = buildConversationContext(state);
+  const greeting = getContextualOpening(context).replace(`${state.partner.name}: `, "");
   $("#modalContent").innerHTML=`<span class="eyebrow">CHAT WITH ${state.partner.name}</span><h2>${state.partner.name}와의 대화</h2><div class="chat-window"><div class="message her">${greeting}</div><div id="chatReply"></div></div><div class="chat-options"><button class="chat-option" data-reply="다정">나도 네 생각하고 있었어. 오늘 있었던 일 말해줄까?</button><button class="chat-option" data-reply="솔직">오늘 조금 힘들었어. 그래도 네 연락 보니까 좋다.</button><button class="chat-option" data-reply="무심">지금 좀 바빠. 나중에 얘기하자.</button></div>`;
   $("#modal").classList.remove("hidden"); document.querySelectorAll(".chat-option").forEach(b=>b.addEventListener("click",()=>chatReply(b.dataset.reply,b.textContent)));
 }

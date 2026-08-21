@@ -19,6 +19,7 @@ import { applyNpcActionEffects, generateNpcs, getNpcRelationshipStatus, validate
 import { getTemptationOpportunity, resolveTemptation } from "../src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "../src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "../src/conflict-manager.mjs";
+import { buildConversationContext, getContextualOpening } from "../src/conversation-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -70,6 +71,17 @@ assert.ok(crisisBreakupRisk.score > safeBreakupRisk.score);
 const breakupResult = evaluateBreakup(breakupState);
 assert.ok(breakupResult && breakupState.ended);
 assert.equal(evaluateBreakup(breakupState), breakupResult);
+const conversationState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+conversationState.actionHistory.push({ day:1, actionId:"focused-work", tag:"성공" });
+conversationState.temptationHistory.push({ day:1, choiceId:"secret", partnerTrust:-20 });
+const conversationContext = buildConversationContext(conversationState);
+assert.equal(conversationContext.girlfriend.name, conversationState.partner.name);
+assert.equal(conversationContext.recentActions.at(-1).actionId, "focused-work");
+assert.equal(conversationContext.recentTemptations.at(-1).choiceId, "secret");
+assert.ok(getContextualOpening(conversationContext).includes("숨기는 거"));
+conversationState.temptationHistory = [];
+conversationState.fatigue = 80;
+assert.ok(getContextualOpening(buildConversationContext(conversationState)).includes("지쳐"));
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
