@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { advanceTime, applyEffects, createInitialState, determineEnding, MAX_DAY, validateState } from "../src/game-core.mjs";
+import { getWrappedFocusIndex } from "../src/ui-manager.mjs";
 import { SaveManager } from "../src/save-manager.mjs";
 import { estimateHint, generateGirlfriend, getVisibleTraitRows, observePersonality, PERSONALITY_KEYS, validateGirlfriend } from "../src/girlfriend-manager.mjs";
 import { getEligibleEvents, getEventDiagnostics, getEventProbability, MAX_EVENTS_PER_DAY, meetsConditions, rollEvent } from "../src/event-manager.mjs";
@@ -205,6 +206,11 @@ assert.equal(soundValues.get(SOUND_SETTING_KEY),"on");
 assert.equal(soundManager.play("confirm"),true);
 assert.equal(soundStopped,1);
 assert.equal(soundManager.toggle(false),false);
+assert.equal(getWrappedFocusIndex(0,3,true),2);
+assert.equal(getWrappedFocusIndex(2,3,false),0);
+assert.equal(getWrappedFocusIndex(-1,3,false),0);
+assert.equal(getWrappedFocusIndex(-1,3,true),2);
+assert.equal(getWrappedFocusIndex(0,0,false),-1);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
