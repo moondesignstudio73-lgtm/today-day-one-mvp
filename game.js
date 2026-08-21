@@ -4,6 +4,7 @@ import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./s
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs";
 import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs";
 import { getActionAvailability } from "./src/action-manager.mjs";
+import { calculateActionEffects } from "./src/consequence-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -40,9 +41,8 @@ function applyAction() {
   const availability = getActionAvailability(state, action);
   if (!availability.available) { toast(availability.reason); state.selected=null; render(); return; }
   if ((action.effects.money ?? 0) < 0 && state.money + action.effects.money < 0) { toast("돈이 부족해 이 행동을 할 수 없어요."); return; }
-  const fx = {...action.effects};
-  if (action.tag === "연락") { fx.affection = (fx.affection||0)*state.partner.weights.contact; fx.trust = (fx.trust||0)*state.partner.weights.trust; }
-  if (["데이트","쇼핑"].includes(action.tag)) fx.affection = (fx.affection||0)*state.partner.weights.money;
+  const consequence = calculateActionEffects(state, action);
+  const fx = consequence.effects;
   if (action.random) { const win = Math.random() > .48; fx.money = win ? Math.round(40000+Math.random()*90000) : -Math.round(25000+Math.random()*70000); toast(win ? `투자 성공! ${money(fx.money)}` : `투자 손실 ${money(Math.abs(fx.money))}`); }
   applyEffects(state, fx);
   state.choices.push(action.tag); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});

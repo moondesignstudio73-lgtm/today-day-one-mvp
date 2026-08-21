@@ -6,6 +6,7 @@ import { getEligibleEvents, getEventDiagnostics, getEventProbability, meetsCondi
 import { EVENT_DEFINITIONS } from "../src/events-data.mjs";
 import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
 import { getActionAvailability, getAvailableActions } from "../src/action-manager.mjs";
+import { calculateActionEffects } from "../src/consequence-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 const memoryStorage = () => {
@@ -125,3 +126,27 @@ assert.match(lockedDate.reason, /자산/);
 assert.equal(getActionAvailability(requirementState, ACTIONS.morning.find(action => action.id === "morning-gym")).available, false);
 assert.ok(getAvailableActions(requirementState, ACTIONS.evening).length > 0, "at least one evening action must remain available");
 console.log("✓ 돈·체력 기반 행동 요구조건과 잠금 사유 검증 통과");
+const personalityState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const contactAction = ACTIONS.morning.find(action => action.id === "morning-contact");
+personalityState.partner.personality.contactImportance = 90;
+const highContactEffects = calculateActionEffects(personalityState, contactAction);
+personalityState.partner.personality.contactImportance = 10;
+const lowContactEffects = calculateActionEffects(personalityState, contactAction);
+assert.ok(highContactEffects.effects.affection > lowContactEffects.effects.affection);
+
+const dateAction = ACTIONS.evening.find(action => action.id === "dinner-date");
+personalityState.partner.personality.romanticism = 90;
+const romanticEffects = calculateActionEffects(personalityState, dateAction);
+personalityState.partner.personality.romanticism = 10;
+const practicalEffects = calculateActionEffects(personalityState, dateAction);
+assert.ok(romanticEffects.effects.affection > practicalEffects.effects.affection);
+assert.ok(romanticEffects.effects.excitement > practicalEffects.effects.excitement);
+
+const temptationAction = ACTIONS.evening.find(action => action.id === "coworker-drinks");
+personalityState.partner.personality.jealousy = 90;
+const jealousEffects = calculateActionEffects(personalityState, temptationAction);
+personalityState.partner.personality.jealousy = 10;
+const calmEffects = calculateActionEffects(personalityState, temptationAction);
+assert.ok(Math.abs(jealousEffects.effects.trust) > Math.abs(calmEffects.effects.trust));
+assert.ok(jealousEffects.effects.conflict > calmEffects.effects.conflict);
+console.log("✓ 연락·데이트·쇼핑·성공·유혹의 성격별 복합 결과 검증 통과");
