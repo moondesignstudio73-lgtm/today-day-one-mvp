@@ -24,7 +24,7 @@ import { getMemoryContext, recordMemory, validateMemories } from "../src/memory-
 import { getInitiatedMessageChance, maybeGenerateInitiatedMessage } from "../src/initiated-message-manager.mjs";
 import { requestGirlfriendReply } from "../src/ai-chat-client.mjs";
 import { STOCKS, validateStockData } from "../src/stocks-data.mjs";
-import { advanceStockMarket, createInvestmentState, validateInvestmentState } from "../src/investment-manager.mjs";
+import { advanceStockMarket, buyStock, createInvestmentState, getPortfolioSummary, sellStock, validateInvestmentState } from "../src/investment-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -125,6 +125,19 @@ assert.equal(marketChanges.length, STOCKS.length);
 assert.ok(marketState.investment.market.every((stock,index) => stock.price !== pricesBefore[index] && stock.price >= 1000));
 assert.equal(marketState.investment.history.at(-1).day, 2);
 assert.equal(validateInvestmentState(marketState.investment), true);
+const tradingState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+tradingState.money = 500000;
+const tradingStock = tradingState.investment.market[0];
+const moneyBeforeBuy = tradingState.money;
+const buyResult = buyStock(tradingState,tradingStock.id,2);
+assert.equal(buyResult.ok,true);
+assert.equal(tradingState.money,moneyBeforeBuy-tradingStock.price*2);
+assert.equal(tradingState.investment.holdings[tradingStock.id].quantity,2);
+assert.equal(getPortfolioSummary(tradingState).positions,1);
+const sellResult = sellStock(tradingState,tradingStock.id,1);
+assert.equal(sellResult.ok,true);
+assert.equal(tradingState.investment.holdings[tradingStock.id].quantity,1);
+assert.equal(tradingState.economyLedger.at(-1).category,"investment");
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };

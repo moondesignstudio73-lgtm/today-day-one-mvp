@@ -17,7 +17,7 @@ import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs"
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
 import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs";
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
-import { advanceStockMarket } from "./src/investment-manager.mjs";
+import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 
@@ -27,7 +27,7 @@ const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&"
 let state;
 
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); $("#careerButton").classList.remove("hidden"); $("#peopleButton").classList.remove("hidden"); render(); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); $("#careerButton").classList.remove("hidden"); $("#peopleButton").classList.remove("hidden"); $("#investmentButton").classList.remove("hidden"); render(); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 
 function render() {
@@ -164,6 +164,15 @@ function openTemptation({ npc, level }) {
   document.querySelectorAll("[data-temptation]").forEach(button=>button.addEventListener("click",()=>{ const result=resolveTemptation(state,npc.instanceId,button.dataset.temptation); if(!result)return; state.logs.push({time:`DAY ${state.day} · CHOICE`,text:`${npc.name}에게 “${result.choice.label}”`}); recordMemory(state,{type:"temptation",summary:`${npc.name}: ${result.choice.label}`,importance:5,tags:["유혹",button.dataset.temptation]}); SaveManager.save(state); render(); $("#modal").classList.add("hidden"); toast(`선택 완료 · 신뢰 ${result.choice.partnerTrust>=0?'+':''}${result.choice.partnerTrust}`); }));
 }
 
+function openInvestment() {
+  const portfolio=getPortfolioSummary(state);
+  const cards=state.investment.market.map(stock=>{ const holding=state.investment.holdings[stock.id]; return `<div class="stock-card"><div><small>${stock.risk.toUpperCase()} RISK · ${stock.changeRate>=0?'+':''}${stock.changeRate}%</small><b>${stock.name}</b><span>${money(stock.price)} · 보유 ${holding?.quantity??0}주${holding?` · 평균 ${money(holding.averageCost)}`:''}</span></div><div class="stock-actions"><button data-stock-buy="${stock.id}">1주 매수</button><button data-stock-sell="${stock.id}" ${holding?'':'disabled'}>1주 매도</button></div></div>`; }).join("");
+  $("#modalContent").innerHTML=`<span class="eyebrow">VIRTUAL MARKET</span><h2>오늘의 투자</h2><p>보유 자산 ${money(state.money)} · 평가금액 ${money(portfolio.marketValue)} · 손익 ${portfolio.profitLoss>=0?'+':''}${money(portfolio.profitLoss)}</p><div class="stock-list">${cards}</div>`;
+  $("#modal").classList.remove("hidden");
+  document.querySelectorAll("[data-stock-buy]").forEach(button=>button.addEventListener("click",()=>{const result=buyStock(state,button.dataset.stockBuy);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openInvestment();}));
+  document.querySelectorAll("[data-stock-sell]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{const result=sellStock(state,button.dataset.stockSell);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openInvestment();}));
+}
+
 function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state);
   $("#modalContent").innerHTML=`<span class="eyebrow">DAY 30 · YOUR ENDING</span><h2>${title}</h2><div class="ending-score">${Math.round((state.affection+state.trust)/20)}</div><p>${desc}</p><p><b>최종 기록</b><br>호감도 ${Math.round(state.affection)} · 신뢰도 ${Math.round(state.trust)} · 자산 ${money(state.money)}</p><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`; $("#modal").classList.remove("hidden"); }
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
@@ -178,4 +187,5 @@ $("#shopButton").addEventListener("click",openShop);
 $("#financeButton").addEventListener("click",openFinance);
 $("#careerButton").addEventListener("click",openCareer);
 $("#peopleButton").addEventListener("click",openPeople);
+$("#investmentButton").addEventListener("click",openInvestment);
 $("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",()=>$("#modal").classList.add("hidden")); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
