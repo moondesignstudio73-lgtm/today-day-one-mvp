@@ -20,6 +20,7 @@ import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs";
 import { analyzePlayHistory } from "./src/ending-manager.mjs";
+import { SoundManager } from "./src/sound-manager.mjs";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 
@@ -27,6 +28,9 @@ const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
 
 let state;
+const sound = new SoundManager();
+
+function renderSoundButton(){ const button=$("#soundButton");button.textContent=sound.enabled?"♪ ON":"♪ OFF";button.setAttribute("aria-pressed",String(sound.enabled));button.title=sound.enabled?"효과음 끄기":"효과음 켜기"; }
 
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
 function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); $("#debugButton").classList.remove("hidden"); $("#inventoryButton").classList.remove("hidden"); $("#shopButton").classList.remove("hidden"); $("#financeButton").classList.remove("hidden"); $("#careerButton").classList.remove("hidden"); $("#peopleButton").classList.remove("hidden"); $("#investmentButton").classList.remove("hidden"); render(); }
@@ -54,7 +58,7 @@ function render() {
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
 }
 
-function selectAction(index) { state.selected = index; render(); }
+function selectAction(index) { state.selected = index; sound.play("select"); render(); }
 function applyAction() {
   if (state.selected === null) return;
   const phase = phases[state.phase], action = actions[phase.key][state.selected];
@@ -91,6 +95,7 @@ function applyAction() {
     recordMemory(state,{type:"event",summary:event.title,importance:3,tags:["이벤트",event.id]});
   }
   const breakup = evaluateBreakup(state);
+  sound.play("confirm");
   SaveManager.save(state);
   if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); if(temptation) openTemptation(temptation); }
 }
@@ -156,11 +161,13 @@ function openPeople() {
 }
 
 function showBreakup(breakup) {
+  sound.play("alert");
   $("#modalContent").innerHTML=`<span class="eyebrow">RELATIONSHIP ENDED · DAY ${breakup.day}</span><h2>${breakup.reason}</h2><div class="ending-score">${breakup.risk}</div><p>${state.partner.name}와의 관계는 더 이어지지 못했습니다. 호감 ${breakup.affection} · 신뢰 ${breakup.trust}</p><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`;
   $("#modal").classList.remove("hidden");
 }
 
 function openTemptation({ npc, level }) {
+  sound.play("alert");
   const message = level==='secret'?`${npc.name}가 둘만의 비밀 만남을 제안했다.`:level==='drinks'?`${npc.name}가 다음에는 단둘이 마시자고 한다.`:`${npc.name}가 개인 연락처로 메시지를 보냈다.`;
   const buttons = Object.entries(TEMPTATION_CHOICES).map(([id,choice])=>`<button data-temptation="${id}">${choice.label}</button>`).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">TEMPTATION</span><h2>${npc.name}의 접근</h2><p>${message}</p><div class="temptation-options">${buttons}</div>`;
@@ -180,6 +187,7 @@ function openInvestment() {
 }
 
 function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state); const analysis=analyzePlayHistory(state);
+  sound.play("success");
   const highlights=analysis.highlights.map(text=>`<li>${escapeHtml(text)}</li>`).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">DAY 30 · YOUR ENDING</span><h2>${title}</h2><div class="ending-score">${Math.round((state.affection+state.trust)/20)}</div><p>${desc}</p><div class="ending-analysis"><div><small>총 선택</small><b>${analysis.totalChoices}회</b></div><div><small>가장 많은 선택</small><b>${escapeHtml(analysis.dominantChoice.tag)} · ${analysis.dominantChoice.count}회</b></div><div><small>관계 기록</small><b>${analysis.relationshipLabel}</b></div><div><small>최종 총자산</small><b>${money(analysis.netWorth)}</b></div></div><h3>나의 30일 리포트</h3><ul class="ending-highlights">${highlights}</ul><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`; $("#modal").classList.remove("hidden"); }
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
@@ -188,6 +196,8 @@ function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("�
 function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
 
 if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");
+renderSoundButton();
+$("#soundButton").addEventListener("click",()=>{const enabled=sound.toggle();renderSoundButton();if(enabled)sound.play("success");toast(enabled?"효과음을 켰어요.":"효과음을 껐어요.");});
 $("#debugButton").addEventListener("click",openDebug);
 $("#inventoryButton").addEventListener("click",openInventory);
 $("#shopButton").addEventListener("click",openShop);

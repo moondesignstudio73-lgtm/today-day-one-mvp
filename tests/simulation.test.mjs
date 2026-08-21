@@ -27,6 +27,7 @@ import { STOCKS, validateStockData } from "../src/stocks-data.mjs";
 import { advanceStockMarket, buyStock, createInvestmentState, getPortfolioSummary, sellStock, validateInvestmentState } from "../src/investment-manager.mjs";
 import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE, validateLotteryState } from "../src/lottery-manager.mjs";
 import { analyzePlayHistory, ENDING_DEFINITIONS, selectEnding, validateEndingDefinitions } from "../src/ending-manager.mjs";
+import { SoundManager, SOUND_SETTING_KEY, validateSoundPresets } from "../src/sound-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -191,6 +192,19 @@ assert.equal(selectEnding(lotteryEndingState).id,"lottery-reversal");
 const happyEndingState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
 happyEndingState.affection = 900; happyEndingState.trust = 900;
 assert.equal(selectEnding(happyEndingState).id,"happy-marriage");
+assert.equal(validateSoundPresets(),true);
+const soundValues = new Map();
+const soundStorage = { getItem:key => soundValues.get(key) ?? null, setItem:(key,value) => soundValues.set(key,value) };
+let soundStopped = 0;
+const fakeAudioContext = { currentTime:0, state:"running", destination:{}, createOscillator:()=>({type:"",frequency:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){},start(){},stop(){soundStopped+=1;}}), createGain:()=>({gain:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){}}) };
+const soundManager = new SoundManager({storage:soundStorage,contextFactory:()=>fakeAudioContext});
+assert.equal(soundManager.enabled,false);
+assert.equal(soundManager.play("select"),false);
+assert.equal(soundManager.toggle(),true);
+assert.equal(soundValues.get(SOUND_SETTING_KEY),"on");
+assert.equal(soundManager.play("confirm"),true);
+assert.equal(soundStopped,1);
+assert.equal(soundManager.toggle(false),false);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
