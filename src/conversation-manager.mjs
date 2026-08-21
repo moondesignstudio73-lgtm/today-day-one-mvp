@@ -10,12 +10,14 @@ export function buildConversationContext(state) {
     girlfriend:{ name:state.partner.name, bio:state.partner.bio, personality:{ ...state.partner.personality } },
     relationship:{ affection:state.affection, trust:state.trust, excitement:state.excitement, attachment:state.attachment, conflict:state.conflict, stress:state.relationshipStress },
     player:{ money:state.money, health:state.health, energy:state.energy, fatigue:state.fatigue, stress:state.stress, charm:state.charm, fashion:state.fashion, confidence:state.confidence, job:state.job.name, jobLevel:state.jobLevel },
-    recentActions, recentEvents, recentGifts, recentTemptations, importantMemories:getMemoryContext(state)
+    recentActions, recentEvents, recentGifts, recentTemptations, recentInitiatedMessages:(state.initiatedMessages ?? []).slice(-3), importantMemories:getMemoryContext(state)
   };
 }
 
 export function getContextualOpening(context) {
   const name = context.girlfriend.name;
+  const initiated = context.recentInitiatedMessages?.at(-1);
+  if (initiated?.day === context.day) return `${name}: ${initiated.text}`;
   const latestTemptation = context.recentTemptations.at(-1);
   if (latestTemptation?.choiceId === "secret") return `${name}: 요즘 나한테 숨기는 거 있어? 왠지 느낌이 이상해.`;
   if (context.recentGifts.length) return `${name}: 선물 고마워. 오늘도 그때 생각이 났어.`;

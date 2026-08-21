@@ -26,6 +26,7 @@ export class SaveManager {
       parsed.rivalHistory ??= [];
       parsed.breakup ??= null;
       parsed.memories ??= [];
+      parsed.initiatedMessages ??= [];
       return validateState(parsed) ? parsed : null;
     } catch {
       return null;

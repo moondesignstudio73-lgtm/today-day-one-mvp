@@ -17,6 +17,7 @@ import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs"
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
 import { buildConversationContext, getContextualOpening } from "./src/conversation-manager.mjs";
 import { recordMemory } from "./src/memory-manager.mjs";
+import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -75,6 +76,8 @@ function applyAction() {
   state.selected = null;
   const finishedDay = state.phase === 3; const completedDay = state.day;
   advanceTime(state);
+  const initiatedMessage = maybeGenerateInitiatedMessage(state);
+  if (initiatedMessage) { state.logs.push({time:`DAY ${state.day} · MESSAGE`,text:`${state.partner.name}: ${initiatedMessage.text}`}); toast(`${state.partner.name}에게 메시지가 왔어요`); }
   if (finishedDay) { dailyEvent(); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); }
   const event = rollEvent(state);
   if (event) {

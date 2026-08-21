@@ -21,6 +21,7 @@ import { applyRivalPressure, calculateRivalRisk } from "../src/rival-manager.mjs
 import { calculateBreakupRisk, evaluateBreakup } from "../src/conflict-manager.mjs";
 import { buildConversationContext, getContextualOpening } from "../src/conversation-manager.mjs";
 import { getMemoryContext, recordMemory, validateMemories } from "../src/memory-manager.mjs";
+import { getInitiatedMessageChance, maybeGenerateInitiatedMessage } from "../src/initiated-message-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -88,6 +89,17 @@ recordMemory(conversationState,{type:"temptation",summary:"비밀 만남을 거�
 assert.equal(validateMemories(conversationState.memories), true);
 assert.equal(getMemoryContext(conversationState,1)[0].type, "temptation");
 assert.equal(buildConversationContext(conversationState).importantMemories.length, 2);
+const messageState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+messageState.partner.personality.contactImportance = 90;
+const highContactChance = getInitiatedMessageChance(messageState);
+messageState.partner.personality.contactImportance = 10;
+assert.ok(highContactChance > getInitiatedMessageChance(messageState));
+messageState.partner.personality.contactImportance = 90;
+const initiatedMessage = maybeGenerateInitiatedMessage(messageState, () => 0);
+assert.ok(initiatedMessage?.text);
+assert.equal(maybeGenerateInitiatedMessage(messageState, () => 0), null);
+assert.equal(buildConversationContext(messageState).recentInitiatedMessages.length, 1);
+assert.ok(getContextualOpening(buildConversationContext(messageState)).includes(initiatedMessage.text));
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
