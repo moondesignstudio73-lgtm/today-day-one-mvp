@@ -2,6 +2,15 @@ const scale = value => value / 100;
 import { applyJobModifiers } from "./job-manager.mjs";
 import { getEquipmentBonuses } from "./inventory-manager.mjs";
 
+export function applySelfManagementModifiers(state, effects) {
+  const modified = { ...effects };
+  if ((state.fatigue ?? 0) < 70) return modified;
+  for (const key of ["work", "social", "affection", "trust"]) if ((modified[key] ?? 0) > 0) modified[key] *= key === "work" || key === "social" ? 0.75 : 0.9;
+  if ((modified.money ?? 0) > 0) modified.money *= 0.85;
+  if ((modified.stress ?? 0) > 0) modified.stress *= 1.2;
+  return modified;
+}
+
 export function calculateActionEffects(state, action) {
   const effects = { ...action.effects };
   const personality = state.partner.personality;
@@ -48,5 +57,7 @@ export function calculateActionEffects(state, action) {
     notes.push("연락 선호");
   }
 
-  return { effects:applyJobModifiers(state, action, effects), notes };
+  const jobEffects = applyJobModifiers(state, action, effects);
+  if ((state.fatigue ?? 0) >= 70) notes.push("피로 누적");
+  return { effects:applySelfManagementModifiers(state, jobEffects), notes };
 }

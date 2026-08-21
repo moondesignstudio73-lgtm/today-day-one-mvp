@@ -6,7 +6,7 @@ import { getEligibleEvents, getEventDiagnostics, getEventProbability, MAX_EVENTS
 import { EVENT_DEFINITIONS, validateEventData } from "../src/events-data.mjs";
 import { ACTIONS, PHASES, validateActionData } from "../src/actions-data.mjs";
 import { getActionAvailability, getAvailableActions } from "../src/action-manager.mjs";
-import { calculateActionEffects } from "../src/consequence-manager.mjs";
+import { applySelfManagementModifiers, calculateActionEffects } from "../src/consequence-manager.mjs";
 import { getRelationshipState } from "../src/relationship-manager.mjs";
 import { generateJob, JOBS, validateJob } from "../src/jobs-data.mjs";
 import { addJobProgress, applyJobModifiers, getCareerSummary } from "../src/job-manager.mjs";
@@ -343,4 +343,9 @@ assert.equal(selfState.fatigue, 72);
 selfState.fashion = 98;
 applyEffects(selfState, ACTIONS.night.find(action => action.id === "online-shopping").effects);
 assert.equal(selfState.fashion, 100);
+const restedWorkEffects = applySelfManagementModifiers({ fatigue:20 }, { money:50000, work:10, stress:8 });
+const tiredWorkEffects = applySelfManagementModifiers({ fatigue:85 }, { money:50000, work:10, stress:8 });
+assert.ok(tiredWorkEffects.money < restedWorkEffects.money);
+assert.ok(tiredWorkEffects.work < restedWorkEffects.work);
+assert.ok(tiredWorkEffects.stress > restedWorkEffects.stress);
 console.log("✓ 피로·패션·자신감 자기관리 행동과 수치 범위 검증 통과");
