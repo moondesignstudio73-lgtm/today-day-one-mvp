@@ -9,11 +9,16 @@ export function sanitizeRemoteEffects(effects) {
     .map(([key,value]) => [key,Math.max(-100,Math.min(100,Math.round(value)))]));
 }
 
-export async function requestGirlfriendReply({ endpoint, context, message, fetchImpl = globalThis.fetch }) {
+export const DEFAULT_REMOTE_TIMEOUT_MS = 12000;
+
+export async function requestGirlfriendReply({ endpoint, context, message, fetchImpl = globalThis.fetch, timeoutMs = DEFAULT_REMOTE_TIMEOUT_MS }) {
   const fallback = () => ({ ...generateContextualReply(context, message), source:"local" });
   if (!endpoint || typeof fetchImpl !== "function") return fallback();
+  const controller = typeof AbortController === "function" ? new AbortController() : null;
+  const safeTimeout = Number.isFinite(timeoutMs) ? Math.max(0, timeoutMs) : DEFAULT_REMOTE_TIMEOUT_MS;
+  const timeout = controller && safeTimeout ? setTimeout(() => controller.abort(), safeTimeout) : null;
   try {
-    const response = await fetchImpl(endpoint, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ context, message }) });
+    const response = await fetchImpl(endpoint, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ context, message }), ...(controller ? { signal:controller.signal } : {}) });
     if (!response.ok) return fallback();
     const data = await response.json();
     if (typeof data.reply !== "string" || !data.reply.trim()) return fallback();
@@ -21,5 +26,7 @@ export async function requestGirlfriendReply({ endpoint, context, message, fetch
     return { text:data.reply.trim(), effects, source:"remote" };
   } catch {
     return fallback();
+  } finally {
+    if (timeout) clearTimeout(timeout);
   }
 }
