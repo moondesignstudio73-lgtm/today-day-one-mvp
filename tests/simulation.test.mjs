@@ -26,7 +26,7 @@ import { requestGirlfriendReply } from "../src/ai-chat-client.mjs";
 import { STOCKS, validateStockData } from "../src/stocks-data.mjs";
 import { advanceStockMarket, buyStock, createInvestmentState, getPortfolioSummary, sellStock, validateInvestmentState } from "../src/investment-manager.mjs";
 import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE, validateLotteryState } from "../src/lottery-manager.mjs";
-import { analyzePlayHistory } from "../src/ending-manager.mjs";
+import { analyzePlayHistory, ENDING_DEFINITIONS, selectEnding, validateEndingDefinitions } from "../src/ending-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -178,6 +178,19 @@ assert.equal(playAnalysis.careerLevel,2);
 assert.equal(playAnalysis.secretChoices,1);
 assert.equal(playAnalysis.highlights.length,4);
 assert.ok(playAnalysis.netWorth >= analysisState.money);
+assert.equal(validateEndingDefinitions(),true);
+assert.equal(ENDING_DEFINITIONS.length,14);
+assert.equal(new Set(ENDING_DEFINITIONS.map(ending => ending.id)).size,14);
+const betrayalEndingState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+betrayalEndingState.trust = 300;
+betrayalEndingState.temptationHistory.push({day:20,choiceId:"secret"});
+assert.equal(selectEnding(betrayalEndingState).id,"betrayal-revealed");
+const lotteryEndingState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+lotteryEndingState.lottery.totalWon = 500000;
+assert.equal(selectEnding(lotteryEndingState).id,"lottery-reversal");
+const happyEndingState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+happyEndingState.affection = 900; happyEndingState.trust = 900;
+assert.equal(selectEnding(happyEndingState).id,"happy-marriage");
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };

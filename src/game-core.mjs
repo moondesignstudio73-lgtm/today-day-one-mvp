@@ -5,6 +5,7 @@ import { validateMemories } from "./memory-manager.mjs";
 import { createInvestmentState, validateInvestmentState } from "./investment-manager.mjs";
 import { createLotteryState, validateLotteryState } from "./lottery-manager.mjs";
 import { createAdvancedEconomyState, validateAdvancedEconomyState } from "./economy-manager.mjs";
+import { selectEnding } from "./ending-manager.mjs";
 
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
@@ -103,11 +104,6 @@ export function validateState(value) {
 }
 
 export function determineEnding(state) {
-  const count = tag => state.choices.filter(choice => choice === tag).length;
-  if (state.affection > 820 && state.trust > 760) return ["사랑으로 결혼", "화려하진 않아도 서로를 가장 잘 아는 두 사람은 평생을 약속했다."];
-  if (state.money > 1800000 && state.affection > 650) return ["함께 만든 미래", "사랑과 성공 사이의 균형을 찾아, 더 단단한 미래를 약속했다."];
-  if (state.trust < 250) return ["무너진 신뢰", "사랑은 남아 있었지만 반복된 의심을 이겨내지 못했다."];
-  if (count("성공") > 25) return ["워커홀릭", "눈부신 커리어를 손에 넣었지만, 가장 가까운 사람과의 거리는 멀어졌다."];
-  if (state.affection < 350) return ["사랑하지만 이별", "좋아하는 마음만으로는 함께 살아갈 수 없다는 것을 알게 되었다."];
-  return ["각자의 내일", "30일의 선택 끝에 두 사람은 잠시 서로의 삶을 돌아보기로 했다."];
+  const ending = selectEnding(state);
+  return [ending.title,ending.description];
 }
