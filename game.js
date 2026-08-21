@@ -29,6 +29,7 @@ import { getNpcSprite } from "./src/assets/asset-manifest.mjs";
 import { getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, resetForNextDay, spendNightTime } from "./src/night-manager.mjs";
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
+import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -46,6 +47,8 @@ if (!dialogueSpeeds[dialogueSpeedIndex]) dialogueSpeedIndex = 1;
 let lastSceneSoundKey = "";
 let autoMode = false;
 let autoAdvanceTimer = null;
+let immersiveScene = null;
+let sceneAdvanceTimer = null;
 const modalFocusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
 
 function openModal() {
@@ -115,7 +118,8 @@ function typeDialogue(text) {
 }
 
 function handleDialogueAdvance() {
-  if (finishDialogueTyping()) sound.play("select");
+  if (finishDialogueTyping()) { sound.play("select"); return; }
+  if (immersiveScene) advanceImmersiveScene();
 }
 
 function renderAutoButton() {
@@ -126,6 +130,11 @@ function renderAutoButton() {
 
 function scheduleAutoAdvance() {
   if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+  if (immersiveScene) {
+    if (sceneAdvanceTimer) clearTimeout(sceneAdvanceTimer);
+    sceneAdvanceTimer = autoMode && immersiveScene.currentStep?.type !== "choice" ? setTimeout(()=>{sceneAdvanceTimer=null;handleDialogueAdvance();},1600) : null;
+    return;
+  }
   autoAdvanceTimer = autoMode && state?.selected !== null ? setTimeout(()=>{autoAdvanceTimer=null;applyAction();},1200) : null;
 }
 
@@ -171,25 +180,85 @@ function openGameMenu() {
 function openStoryScene(scene) {
   if (!scene) return;
   const presentation=resolveStoryPresentation(scene,state);
-  applyScenePresentation(presentation);
   state.pendingStoryId = scene.id;
   if(presentation.eventCgId&&!state.cgCollection.some(entry=>entry.id===presentation.eventCgId))state.cgCollection.push({id:presentation.eventCgId,title:scene.title,image:presentation.backgroundUrl,day:state.day});
   SaveManager.save(state);
   sound.playBgm(scene.bgm ?? "theme",state.day);
-  const choices = scene.choices.map(choice=>`<button type="button" data-story-choice="${choice.id}">${escapeHtml(choice.label)}</button>`).join("");
-  $("#modalContent").innerHTML=`<article class="story-scene"><div class="story-visual" style="background-image:url('${presentation.backgroundUrl}')"><span>${escapeHtml(presentation.timeOfDay)} · ${escapeHtml(presentation.weather)}</span></div><span class="eyebrow">STORY · ${escapeHtml(scene.arc)}</span><h2>${escapeHtml(scene.title)}</h2><small>${escapeHtml(scene.speaker)}</small><p>${escapeHtml(scene.message)}</p><div class="story-choices">${choices}</div></article>`;
-  openModal();
-  document.querySelectorAll("[data-story-choice]").forEach(button=>button.addEventListener("click",()=>{
-    const result=resolveStoryChoice(state,scene.id,button.dataset.storyChoice);
-    if(!result)return;
+  startImmersiveScene({id:scene.id,type:"story",presentation,sequence:createStorySceneSequence(scene,presentation),onChoice:choiceId=>{
+    const result=resolveStoryChoice(state,scene.id,choiceId);
+    if(!result)return null;
     state.logs.push({time:`DAY ${state.day} · STORY`,text:`${scene.title} — ${result.choice.label}`});
-    SaveManager.save(state);
-    render();
-    sound.play("confirm");
-    $("#modalContent").innerHTML=`<article class="story-scene story-result"><span class="eyebrow">${escapeHtml(scene.arc)} · RESULT</span><h2>${escapeHtml(result.choice.label)}</h2><blockquote>${escapeHtml(result.response)}</blockquote><button id="storyContinue" class="primary-button" type="button">이야기 계속하기 →</button></article>`;
-    $("#storyContinue").addEventListener("click",closeModal);
-    $("#storyContinue").focus();
-  }));
+    SaveManager.save(state);sound.play("confirm");
+    return createStoryReactionSequence(result);
+  }});
+}
+
+function startImmersiveScene(session) {
+  if (!session?.sequence?.length) return;
+  if (sceneAdvanceTimer) clearTimeout(sceneAdvanceTimer);
+  immersiveScene={...session,index:0,currentStep:null};
+  $("#gameScreen").classList.add("story-mode");
+  $("#skipButton").classList.remove("hidden");
+  $("#storyChoiceLayer").classList.add("hidden");
+  $("#actionGrid").classList.add("hidden");
+  $("#nextButton").classList.add("hidden");
+  applyScenePresentation(session.presentation);
+  updateImmersiveCharacter(session.presentation.expressionId);
+  renderImmersiveStep();
+}
+
+function updateImmersiveCharacter(expressionId="calm") {
+  const character=$("#vnCharacter");
+  const characterId=immersiveScene?.presentation?.characterId??"girlfriend";
+  const npcSprite=characterId!=="girlfriend"?getNpcSprite(characterId):"";
+  if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;return;}
+  state.currentExpression=expressionId;
+  renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId:immersiveScene?.presentation?.poseId,outfitId:immersiveScene?.presentation?.outfitId});
+}
+
+function renderImmersiveStep() {
+  if (!immersiveScene) return;
+  const step=immersiveScene.sequence[immersiveScene.index++];
+  immersiveScene.currentStep=step;
+  $("#storyChoiceLayer").classList.add("hidden");
+  $("#storyChoiceLayer").innerHTML="";
+  if (!step || step.type === "sceneEnd") { finishImmersiveScene(); return; }
+  if (step.type === "transition") { showSceneTransition(step); return; }
+  if (step.type === "characterEnter") { $("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
+  if (step.type === "expressionChange") { updateImmersiveCharacter(step.expressionId); queueSceneStep(220); return; }
+  if (step.type === "choice") { renderImmersiveChoices(step.options); return; }
+  if (step.expressionId) updateImmersiveCharacter(step.expressionId);
+  $("#sceneTitle").textContent=step.type === "narration" ? "내레이션" : step.speaker;
+  $("#visualNovelStage").classList.toggle("narration-mode",step.type === "narration");
+  typeDialogue(step.text);
+  scheduleAutoAdvance();
+}
+
+function queueSceneStep(delay) { if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=setTimeout(()=>{sceneAdvanceTimer=null;renderImmersiveStep();},delay); }
+function showSceneTransition(step) {
+  const layer=$("#sceneTransition");layer.className=`scene-transition ${step.style??"fade"}`;layer.querySelector("span").textContent=step.label??"";
+  requestAnimationFrame(()=>layer.classList.add("active"));
+  sceneAdvanceTimer=setTimeout(()=>{layer.classList.remove("active");sceneAdvanceTimer=setTimeout(()=>{layer.classList.add("hidden");sceneAdvanceTimer=null;renderImmersiveStep();},360);},720);
+}
+function renderImmersiveChoices(options=[]) {
+  const layer=$("#storyChoiceLayer");
+  layer.innerHTML=options.map(option=>`<button type="button" data-immersive-choice="${escapeHtml(option.id)}">${escapeHtml(option.label)}</button>`).join("");
+  layer.classList.remove("hidden");
+  layer.querySelector("button")?.focus();
+}
+function chooseImmersiveOption(choiceId) {
+  if(!immersiveScene?.onChoice)return;
+  const next=immersiveScene.onChoice(choiceId);
+  if(!next?.length)return;
+  immersiveScene.sequence=next;immersiveScene.index=0;immersiveScene.currentStep=null;
+  renderImmersiveStep();
+}
+function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentStep?.type==="choice")return;renderImmersiveStep(); }
+function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){immersiveScene.index=immersiveScene.sequence.indexOf(choice)+1;immersiveScene.currentStep=choice;renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
+function finishImmersiveScene() {
+  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;immersiveScene=null;
+  $("#gameScreen").classList.remove("story-mode");$("#visualNovelStage").classList.remove("narration-mode");$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
+  SaveManager.save(state);render();
 }
 
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
@@ -346,7 +415,6 @@ function applyAction() {
   const event = rollEvent(state);
   if (event) {
     state.logs.push({time:`DAY ${state.day} · EVENT`,text:`${event.title} — ${event.message}`});
-    toast(`EVENT · ${event.title}`);
     recordMemory(state,{type:"event",summary:event.title,importance:3,tags:["이벤트",event.id]});
   }
   const breakup = evaluateBreakup(state);
@@ -357,7 +425,7 @@ function applyAction() {
   state.currentOutfit = resolveCharacterOutfit(state,currentExpression);
   state.currentAccessory = resolveCharacterAccessory(state);
   SaveManager.save(state);
-  if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); const story=selectNextStoryScene(state); if(temptation) openTemptation(temptation); else if(story) openStoryScene(story); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }
+  if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); const story=selectNextStoryScene(state); if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }
 }
 
 function resultText(a) { if(a.tag==="데이트") return `${state.partner.name}의 표정이 한결 밝아졌다.`; if(a.tag==="성공") return "미래를 위한 한 걸음을 내디뎠다."; if(a.tag==="유혹") return "새로운 인연의 기척이 느껴진다."; if(a.tag==="연락") return "짧은 대화가 두 사람을 조금 더 가깝게 했다."; return "선택의 결과가 하루에 남았다."; }
@@ -433,14 +501,14 @@ function openTemptation({ npc, level }) {
   sound.play("alert");
   sound.playBgm("crisis",state.day);
   const message = level==='secret'?`${npc.name}가 둘만의 비밀 만남을 제안했다.`:level==='drinks'?`${npc.name}가 다음에는 단둘이 마시자고 한다.`:`${npc.name}가 개인 연락처로 메시지를 보냈다.`;
-  const buttons = Object.entries(TEMPTATION_CHOICES).map(([id,choice])=>`<button data-temptation="${id}">${choice.label}</button>`).join("");
-  const sprite = getNpcSprite(npc.id);
-  const encounter = sprite
-    ? `<div class="temptation-character"><img src="${sprite}" alt="" aria-hidden="true"><div><small>${npc.role}</small><p>${message}</p></div></div>`
-    : `<p>${message}</p>`;
-  $("#modalContent").innerHTML=`<span class="eyebrow">TEMPTATION</span><h2>${npc.name}의 접근</h2>${encounter}<div class="temptation-options">${buttons}</div>`;
-  openModal();
-  document.querySelectorAll("[data-temptation]").forEach(button=>button.addEventListener("click",()=>{ const result=resolveTemptation(state,npc.instanceId,button.dataset.temptation); if(!result)return; state.logs.push({time:`DAY ${state.day} · CHOICE`,text:`${npc.name}에게 “${result.choice.label}”`}); recordMemory(state,{type:"temptation",summary:`${npc.name}: ${result.choice.label}`,importance:5,tags:["유혹",button.dataset.temptation]}); SaveManager.save(state); render(); closeModal(); toast(`선택 완료 · 신뢰 ${result.choice.partnerTrust>=0?'+':''}${result.choice.partnerTrust}`); }));
+  const presentation={...resolvePhasePresentation(state,"evening"),characterId:npc.id,expressionId:"calm",animationId:"soft-sway"};
+  const choices=Object.entries(TEMPTATION_CHOICES).map(([id,choice])=>({id,label:choice.label}));
+  startImmersiveScene({id:`temptation-${npc.instanceId}`,type:"temptation",presentation,sequence:createTemptationSceneSequence({npc,choices},message),onChoice:choiceId=>{const result=resolveTemptation(state,npc.instanceId,choiceId);if(!result)return null;state.logs.push({time:`DAY ${state.day} · CHOICE`,text:`${npc.name}에게 “${result.choice.label}”`});recordMemory(state,{type:"temptation",summary:`${npc.name}: ${result.choice.label}`,importance:5,tags:["유혹",choiceId]});SaveManager.save(state);return createTemptationReactionSequence(npc,choiceId);}});
+}
+
+function openEventScene(event) {
+  const presentation=resolveStoryPresentation({id:event.id,title:event.title,message:event.message,bgm:"theme"},state);
+  startImmersiveScene({id:event.id,type:"event",presentation,sequence:createEventSceneSequence(event)});
 }
 
 function openInvestment() {
@@ -479,7 +547,9 @@ $("#menuButton").addEventListener("click",openGameMenu);
 $("#nightHome").addEventListener("click",handleRoomAction);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
+$("#storyChoiceLayer").addEventListener("click",event=>{event.stopPropagation();const button=event.target.closest("[data-immersive-choice]");if(button)chooseImmersiveOption(button.dataset.immersiveChoice);});
 $("#visualNovelStage").addEventListener("keydown",event=>{ if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });
 $("#autoButton").addEventListener("click",toggleAutoMode);
+$("#skipButton").addEventListener("click",skipImmersiveScene);
 $("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
 document.addEventListener("keydown", handleModalKeydown);

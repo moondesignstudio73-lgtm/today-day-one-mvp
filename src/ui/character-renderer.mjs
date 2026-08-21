@@ -19,10 +19,10 @@ export function resolveCharacterAccessory(state) {
   return state.characterAppearance?.accessory === "ribbon-pin" ? "ribbon-pin" : "none";
 }
 
-export function renderCharacter(image, state, accessoryImage) {
-  const expression = resolveCharacterExpression(state);
-  const pose = resolveCharacterPose(state,expression);
-  const outfit = resolveCharacterOutfit(state,expression);
+export function renderCharacter(image, state, accessoryImage, overrides = {}) {
+  const expression = overrides.expressionId ? { tone:overrides.expressionId, icon:"✦", label:overrides.expressionId } : resolveCharacterExpression(state);
+  const pose = overrides.poseId ?? resolveCharacterPose(state,expression);
+  const outfit = overrides.outfitId ?? resolveCharacterOutfit(state,expression);
   const accessory = resolveCharacterAccessory(state);
   const source = getCharacterSprite("girlfriend",expression.tone,pose,outfit);
   const accessorySource = getCharacterAccessory("girlfriend",accessory);

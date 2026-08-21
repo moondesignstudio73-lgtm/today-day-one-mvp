@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=21">
+  <link rel="stylesheet" href="styles.css?v=22">
   <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
@@ -93,10 +93,13 @@
           <div class="vn-scene-meta"><span class="eyebrow" id="phaseLabel">MORNING · 아침</span><span class="clock" id="clockLabel">08:00</span></div>
           <div class="story-quick-hud" aria-label="현재 정보"><span id="quickLocation">집</span><b id="quickMoney">₩ 850,000</b></div>
           <div id="actionGrid" class="action-grid vn-choices" aria-label="행동 선택지"></div>
+          <div id="storyChoiceLayer" class="immersive-choices hidden" aria-label="스토리 선택지"></div>
+          <div id="sceneTransition" class="scene-transition hidden" aria-live="polite"><span></span></div>
           <button id="nextButton" class="next-button story-next-button" type="button" disabled>행동을 선택해 주세요</button>
           <div class="vn-dialogue" aria-live="polite">
             <span class="vn-nameplate" id="sceneTitle">첫날의 아침</span>
             <button id="autoButton" class="vn-auto-button" type="button" aria-pressed="false">AUTO OFF</button>
+            <button id="skipButton" class="vn-skip-button hidden" type="button">SKIP</button>
             <p id="sceneText">눈을 뜨자 어젯밤부터 연인이 된 그녀의 메시지가 와 있다. 오늘은 어떻게 시작할까?</p>
             <span class="vn-next-cue" aria-hidden="true">▼</span>
           </div>
@@ -141,6 +144,6 @@
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=21"></script>
+  <script type="module" src="game.js?v=22"></script>
 </body>
 </html>
