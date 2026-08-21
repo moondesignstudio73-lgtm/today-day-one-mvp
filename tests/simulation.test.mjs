@@ -30,6 +30,8 @@ import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySu
 import { analyzePlayHistory, ENDING_DEFINITIONS, selectEnding, validateEndingDefinitions } from "../src/ending-manager.mjs";
 import { SoundManager, SOUND_SETTING_KEY, validateSceneSoundPresets, validateSoundPresets } from "../src/sound-manager.mjs";
 import { createCharacterAppearance, seedFromIdentity, validateCharacterAppearance } from "../src/character-appearance.mjs";
+import { getCharacterSprite } from "../src/assets/asset-manifest.mjs";
+import { resolveCharacterExpression } from "../src/ui/character-renderer.mjs";
 import { evaluateEndingBalance, summarizeEndingDistribution } from "../src/balance-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
@@ -38,6 +40,9 @@ assert.deepEqual(createCharacterAppearance(partner.appearanceSeed),partner.chara
 assert.deepEqual(createCharacterAppearance(12345),createCharacterAppearance(12345));
 assert.notDeepEqual(createCharacterAppearance(12345),createCharacterAppearance(54321));
 assert.equal(seedFromIdentity("same-id"),seedFromIdentity("same-id"));
+assert.match(getCharacterSprite("girlfriend","worried"),/worried-2d\.png$/);
+assert.equal(resolveCharacterExpression({conflict:0,trust:500,stress:80,affection:500}).tone,"worried");
+assert.equal(resolveCharacterExpression({conflict:60,trust:500,stress:20,affection:800}).tone,"tense");
 assert.equal(validateNpcArchetypes(), true);
 const generatedNpcs = generateNpcs(() => 0.5);
 assert.equal(generatedNpcs.length, NPC_ARCHETYPES.length);
