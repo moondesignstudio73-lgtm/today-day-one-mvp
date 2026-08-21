@@ -493,8 +493,14 @@ function openPeople() {
 function showBreakup(breakup) {
   sound.play("alert");
   sound.playBgm("crisis",breakup.day);
-  $("#modalContent").innerHTML=`<span class="eyebrow">RELATIONSHIP ENDED · DAY ${breakup.day}</span><h2>${breakup.reason}</h2><div class="ending-score">${breakup.risk}</div><p>${state.partner.name}와의 관계는 더 이어지지 못했습니다. 호감 ${breakup.affection} · 신뢰 ${breakup.trust}</p><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`;
-  openModal();
+  const presentation={...resolvePhasePresentation(state,"evening"),expressionId:"tense",animationId:"look-away"};
+  startImmersiveScene({id:`breakup-${breakup.day}`,type:"ending",presentation,sequence:[
+    {type:"transition",style:"fade",label:`DAY ${breakup.day} · 마지막 대화`},
+    {type:"narration",text:breakup.reason},
+    {type:"dialogue",speaker:state.partner.name,text:"우리, 여기까지 하는 게 좋을 것 같아.",expressionId:"tense"},
+    {type:"narration",text:`${state.partner.name}와의 관계는 더 이어지지 못했다. 정확한 수치보다 마지막 표정이 오래 남았다.`},
+    {type:"choice",options:[{id:"restart",label:"새로운 30일 시작하기 →"}]}
+  ],onChoice:choiceId=>{if(choiceId==="restart")location.reload();return null;}});
 }
 
 function openTemptation({ npc, level }) {
@@ -525,8 +531,17 @@ function openInvestment() {
 function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state); const analysis=analyzePlayHistory(state);
   sound.play("success");
   sound.playBgm("ending",Math.round(state.affection+state.trust),{loop:false});
-  const highlights=analysis.highlights.map(text=>`<li>${escapeHtml(text)}</li>`).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">DAY 30 · YOUR ENDING</span><h2>${title}</h2><div class="ending-score">${Math.round((state.affection+state.trust)/20)}</div><p>${desc}</p><div class="ending-analysis"><div><small>총 선택</small><b>${analysis.totalChoices}회</b></div><div><small>가장 많은 선택</small><b>${escapeHtml(analysis.dominantChoice.tag)} · ${analysis.dominantChoice.count}회</b></div><div><small>관계 기록</small><b>${analysis.relationshipLabel}</b></div><div><small>최종 총자산</small><b>${money(analysis.netWorth)}</b></div></div><h3>나의 30일 리포트</h3><ul class="ending-highlights">${highlights}</ul><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`; openModal(); }
+  const presentation={...resolvePhasePresentation(state,"evening"),expressionId:state.affection+state.trust>=1200?"smile":"calm",animationId:"soft-sway"};
+  const highlights=analysis.highlights.join(" ");
+  startImmersiveScene({id:"day-30-ending",type:"ending",presentation,sequence:[
+    {type:"transition",style:"flash",label:"DAY 30 · OUR ENDING"},
+    {type:"narration",text:desc},
+    {type:"dialogue",speaker:state.partner.name,text:title,expressionId:presentation.expressionId},
+    {type:"narration",text:`30일 동안 ${analysis.totalChoices}번 선택했다. 가장 많이 택한 방향은 ${analysis.dominantChoice.tag}, 우리의 관계는 ${analysis.relationshipLabel}으로 남았다.`},
+    {type:"narration",text:highlights||"서로의 선택이 하나의 이야기가 되었다."},
+    {type:"choice",options:[{id:"restart",label:"새로운 30일 시작하기 →"}]}
+  ],onChoice:choiceId=>{if(choiceId==="restart")location.reload();return null;}});
+}
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
 
 function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); if(state.breakup)showBreakup(state.breakup);else if(state.day>30)showEnding();else if(state.pendingStoryId)openStoryScene(getStoryScene(state.pendingStoryId));else toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
