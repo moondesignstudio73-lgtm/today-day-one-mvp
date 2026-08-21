@@ -26,6 +26,7 @@ import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.m
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs";
 import { getNpcSprite } from "./src/assets/asset-manifest.mjs";
+import { getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -147,6 +148,27 @@ function openGameMenu() {
   document.querySelectorAll("[data-menu-action]").forEach(button=>button.addEventListener("click",()=>actions[button.dataset.menuAction]?.()));
 }
 
+function openStoryScene(scene) {
+  if (!scene) return;
+  state.pendingStoryId = scene.id;
+  SaveManager.save(state);
+  sound.playBgm(scene.bgm ?? "theme",state.day);
+  const choices = scene.choices.map(choice=>`<button type="button" data-story-choice="${choice.id}">${escapeHtml(choice.label)}</button>`).join("");
+  $("#modalContent").innerHTML=`<article class="story-scene"><span class="eyebrow">STORY · ${escapeHtml(scene.arc)}</span><h2>${escapeHtml(scene.title)}</h2><small>${escapeHtml(scene.speaker)}</small><p>${escapeHtml(scene.message)}</p><div class="story-choices">${choices}</div></article>`;
+  openModal();
+  document.querySelectorAll("[data-story-choice]").forEach(button=>button.addEventListener("click",()=>{
+    const result=resolveStoryChoice(state,scene.id,button.dataset.storyChoice);
+    if(!result)return;
+    state.logs.push({time:`DAY ${state.day} · STORY`,text:`${scene.title} — ${result.choice.label}`});
+    SaveManager.save(state);
+    render();
+    sound.play("confirm");
+    $("#modalContent").innerHTML=`<article class="story-scene story-result"><span class="eyebrow">${escapeHtml(scene.arc)} · RESULT</span><h2>${escapeHtml(result.choice.label)}</h2><blockquote>${escapeHtml(result.response)}</blockquote><button id="storyContinue" class="primary-button" type="button">이야기 계속하기 →</button></article>`;
+    $("#storyContinue").addEventListener("click",closeModal);
+    $("#storyContinue").focus();
+  }));
+}
+
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
 function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); renderAutoButton(); render(); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
@@ -232,7 +254,7 @@ function applyAction() {
   state.currentOutfit = resolveCharacterOutfit(state,currentExpression);
   state.currentAccessory = resolveCharacterAccessory(state);
   SaveManager.save(state);
-  if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); if(temptation) openTemptation(temptation); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }
+  if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); const story=selectNextStoryScene(state); if(temptation) openTemptation(temptation); else if(story) openStoryScene(story); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }
 }
 
 function resultText(a) { if(a.tag==="데이트") return `${state.partner.name}의 표정이 한결 밝아졌다.`; if(a.tag==="성공") return "미래를 위한 한 걸음을 내디뎠다."; if(a.tag==="유혹") return "새로운 인연의 기척이 느껴진다."; if(a.tag==="연락") return "짧은 대화가 두 사람을 조금 더 가깝게 했다."; return "선택의 결과가 하루에 남았다."; }
@@ -336,7 +358,7 @@ function showEnding(){ state.ended=true; const [title, desc] = determineEnding(s
   $("#modalContent").innerHTML=`<span class="eyebrow">DAY 30 · YOUR ENDING</span><h2>${title}</h2><div class="ending-score">${Math.round((state.affection+state.trust)/20)}</div><p>${desc}</p><div class="ending-analysis"><div><small>총 선택</small><b>${analysis.totalChoices}회</b></div><div><small>가장 많은 선택</small><b>${escapeHtml(analysis.dominantChoice.tag)} · ${analysis.dominantChoice.count}회</b></div><div><small>관계 기록</small><b>${analysis.relationshipLabel}</b></div><div><small>최종 총자산</small><b>${money(analysis.netWorth)}</b></div></div><h3>나의 30일 리포트</h3><ul class="ending-highlights">${highlights}</ul><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`; openModal(); }
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
 
-function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); if(state.breakup)showBreakup(state.breakup);else if(state.day>30)showEnding();else toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
+function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); if(state.breakup)showBreakup(state.breakup);else if(state.day>30)showEnding();else if(state.pendingStoryId)openStoryScene(getStoryScene(state.pendingStoryId));else toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
 function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
 
 if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");

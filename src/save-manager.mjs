@@ -33,6 +33,10 @@ export class SaveManager {
       parsed.memories ??= [];
       parsed.initiatedMessages ??= [];
       parsed.conversationHistory ??= [];
+      parsed.storyHistory ??= [];
+      parsed.storyFlags ??= {};
+      parsed.futureScore ??= 0;
+      parsed.pendingStoryId ??= null;
       parsed.investment ??= createInvestmentState();
       parsed.lottery ??= createLotteryState();
       parsed.finance ??= createAdvancedEconomyState();
