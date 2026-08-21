@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=19">
+  <link rel="stylesheet" href="styles.css?v=20">
   <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
@@ -91,7 +91,9 @@
           <div id="vnExpressionLayer" class="vn-expression-layer" aria-live="polite"></div>
           <div id="vnEquipmentLayer" class="vn-equipment-layer" aria-live="polite"></div>
           <div class="vn-scene-meta"><span class="eyebrow" id="phaseLabel">MORNING · 아침</span><span class="clock" id="clockLabel">08:00</span></div>
+          <div class="story-quick-hud" aria-label="현재 정보"><span id="quickLocation">집</span><b id="quickMoney">₩ 850,000</b></div>
           <div id="actionGrid" class="action-grid vn-choices" aria-label="행동 선택지"></div>
+          <button id="nextButton" class="next-button story-next-button" type="button" disabled>행동을 선택해 주세요</button>
           <div class="vn-dialogue" aria-live="polite">
             <span class="vn-nameplate" id="sceneTitle">첫날의 아침</span>
             <button id="autoButton" class="vn-auto-button" type="button" aria-pressed="false">AUTO OFF</button>
@@ -110,8 +112,25 @@
         <div class="money-card"><small>보유 자산</small><strong id="moneyValue">₩ 850,000</strong><span id="jobValue">주니어 기획자</span></div>
         <div id="statList" class="stat-list"></div>
         <div class="mini-tip"><span>TIP</span><p id="tipText">모든 행동은 다른 선택의 가능성을 바꿉니다.</p></div>
-        <button id="nextButton" class="next-button" type="button" disabled>행동을 선택해 주세요</button>
       </aside>
+
+      <section id="nightHome" class="night-home hidden" aria-label="나의 방 NIGHT TIME">
+        <div class="night-room-glow" aria-hidden="true"></div>
+        <header class="night-home-header">
+          <div><span>NIGHT TIME · 나의 방</span><h2>오늘 하루도 끝났다.</h2></div>
+          <div class="night-clock"><b id="nightClock">23:10</b><small id="nightDayLabel">DAY 1</small></div>
+        </header>
+        <div class="night-room-scene">
+          <button class="room-object room-phone" type="button" data-room-action="phone"><span>📱</span><b>스마트폰</b><small>메시지 · 쇼핑 · 투자</small><i id="phoneBadge">NEW</i></button>
+          <button class="room-object room-pc" type="button" data-room-action="pc"><span>🖥️</span><b>컴퓨터</b><small>자기계발 · 업무 · 휴식</small></button>
+          <button class="room-object room-wardrobe" type="button" data-room-action="wardrobe"><span>👔</span><b>옷장</b><small>내일의 스타일</small></button>
+          <button class="room-object room-report" type="button" data-room-action="report"><span>📝</span><b>DAY REPORT</b><small>오늘의 변화 확인</small></button>
+          <button class="room-object room-bed" type="button" data-room-action="bed"><span>🌙</span><b>침대</b><small>저장하고 다음 날로</small></button>
+          <div class="room-window" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div class="room-floor" aria-hidden="true"></div>
+        </div>
+        <p class="night-home-tip" id="nightHomeTip">밤 활동은 시간을 사용합니다. 늦게 잘수록 내일 더 피곤해져요.</p>
+      </section>
     </section>
   </main>
 
@@ -122,6 +141,6 @@
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=19"></script>
+  <script type="module" src="game.js?v=20"></script>
 </body>
 </html>

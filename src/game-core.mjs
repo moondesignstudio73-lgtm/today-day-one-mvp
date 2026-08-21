@@ -8,6 +8,7 @@ import { createAdvancedEconomyState, validateAdvancedEconomyState } from "./econ
 import { selectEnding } from "./ending-manager.mjs";
 import { createVisualState, validateCharacterAppearance } from "./character-appearance.mjs";
 import { createHiddenRouteState, validateHiddenRouteState } from "./hidden-route-manager.mjs";
+import { createDaySnapshot } from "./night-manager.mjs";
 
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
@@ -17,7 +18,7 @@ export function clamp(value, min = 0, max = 100) {
 }
 
 export function createInitialState(partner, random = Math.random) {
-  return {
+  const state = {
     version: 1,
     day: 1,
     phase: 0,
@@ -71,8 +72,12 @@ export function createInitialState(partner, random = Math.random) {
     actionHistory: [],
     eventHistory: [],
     ended: false,
+    nightState: null,
+    dayStartSnapshot: null,
     updatedAt: new Date().toISOString()
   };
+  state.dayStartSnapshot = createDaySnapshot(state);
+  return state;
 }
 
 export function applyEffects(state, effects) {
@@ -111,6 +116,7 @@ export function validateState(value) {
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
   if (!Array.isArray(value.storyHistory) || !value.storyFlags || typeof value.storyFlags !== "object" || !Number.isFinite(value.futureScore) || (value.pendingStoryId !== null && typeof value.pendingStoryId !== "string")) return false;
   if (!validateHiddenRouteState(value.hiddenRoute)) return false;
+  if (!value.dayStartSnapshot || typeof value.dayStartSnapshot !== "object" || (value.nightState !== null && typeof value.nightState !== "object")) return false;
   return ["affection", "trust", "excitement", "attachment", "conflict", "relationshipStress", "money", "health", "energy", "stress", "fatigue", "charm", "fashion", "confidence", "work", "social"].every(key => Number.isFinite(value[key]));
 }
 

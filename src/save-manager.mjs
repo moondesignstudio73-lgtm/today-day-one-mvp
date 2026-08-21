@@ -5,6 +5,7 @@ import { createLotteryState } from "./lottery-manager.mjs";
 import { createAdvancedEconomyState } from "./economy-manager.mjs";
 import { migrateVisualState } from "./character-appearance.mjs";
 import { createHiddenRouteState } from "./hidden-route-manager.mjs";
+import { createDaySnapshot } from "./night-manager.mjs";
 
 export class SaveManager {
   static key = "today-day-one.save.v1";
@@ -44,6 +45,8 @@ export class SaveManager {
       parsed.finance ??= createAdvancedEconomyState();
       parsed.finance.bonds ??= [];
       parsed.finance.bondInterestEarned ??= 0;
+      parsed.dayStartSnapshot ??= createDaySnapshot(parsed);
+      parsed.nightState ??= null;
       return validateState(parsed) ? parsed : null;
     } catch {
       return null;
