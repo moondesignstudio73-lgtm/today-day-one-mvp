@@ -13,6 +13,8 @@ export function createInitialState(partner, random = Math.random) {
     selected: null,
     partner,
     revealed: 0,
+    revealedTraits: [],
+    observations: {},
     affection: 500 + Math.floor(random() * 41),
     trust: 480 + Math.floor(random() * 41),
     money: 780000 + Math.floor(random() * 140001),
@@ -58,7 +60,7 @@ export function validateState(value) {
   if (!value || typeof value !== "object") return false;
   if (value.version !== 1 || !Number.isInteger(value.day) || !Number.isInteger(value.phase)) return false;
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
-  if (!value.partner || typeof value.partner.name !== "string") return false;
+  if (!value.partner || typeof value.partner.name !== "string" || !value.partner.personality) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices)) return false;
   return ["affection", "trust", "money", "health", "energy", "stress", "charm", "work", "social"].every(key => Number.isFinite(value[key]));
 }

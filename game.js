@@ -1,5 +1,6 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs";
 import { SaveManager } from "./src/save-manager.mjs";
+import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./src/girlfriend-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -45,7 +46,7 @@ const actions = {
 
 let state;
 
-function startGame() { state = createInitialState(partners[Math.floor(Math.random()*partners.length)]); showGame(); SaveManager.save(state); }
+function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
 function showGame() { $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); render(); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 
@@ -56,9 +57,10 @@ function render() {
   $("#sceneText").textContent = phase.text; $("#partnerName").textContent = p.name; $("#partnerBio").textContent = p.bio;
   $("#affectionValue").textContent = Math.round(state.affection); $("#trustValue").textContent = Math.round(state.trust);
   $("#affectionBar").style.width = `${state.affection/10}%`; $("#trustBar").style.width = `${state.trust/10}%`;
-  $("#moneyValue").textContent = money(state.money); $("#traitProgress").textContent = `${state.revealed} / 5`;
+  const traitRows = getVisibleTraitRows(state); const revealedCount = traitRows.filter(row => row.revealed).length;
+  $("#moneyValue").textContent = money(state.money); $("#traitProgress").textContent = `${revealedCount} / 5`;
   $("#lifeStatus").textContent = state.stress > 75 ? "한계에 가까움" : state.energy < 25 ? "휴식이 필요함" : state.affection > 750 ? "사랑이 깊어지는 중" : "나쁘지 않은 하루";
-  $("#traitList").innerHTML = p.traits.map((t,i)=> i < state.revealed ? `<div class="trait"><span>${t[0]}</span><b>${t[1]}</b></div>` : `<div class="trait locked"><span>숨겨진 성향</span><b>???</b></div>`).join("");
+  $("#traitList").innerHTML = traitRows.map(row => row.revealed ? `<div class="trait"><span>${row.name}</span><b>${row.value}</b></div>` : `<div class="trait locked"><span>${row.name}</span><b>${row.confidence ? `추론 ${row.confidence}%` : "???"}</b></div>`).join("");
   const stats = [["체력",state.energy],["건강",state.health],["스트레스",state.stress],["매력",state.charm],["업무 능력",state.work],["사회성",state.social]];
   $("#statList").innerHTML = stats.map(([name,val])=>`<div class="stat"><div class="stat-head"><span>${name}</span><b>${Math.round(val)}</b></div><div class="stat-track"><i style="width:${clamp(val)}%;background:${name==='스트레스'?'#e5846d':''}"></i></div></div>`).join("");
   $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>`<button class="action-card ${state.selected===i?'selected':''}" data-index="${i}"><span class="action-icon">${a.icon}</span><span class="cost">${a.cost}</span><h3>${a.title}</h3><p>${a.desc}</p></button>`).join("");
@@ -79,7 +81,8 @@ function applyAction() {
   if (action.random) { const win = Math.random() > .48; fx.money = win ? Math.round(40000+Math.random()*90000) : -Math.round(25000+Math.random()*70000); toast(win ? `투자 성공! ${money(fx.money)}` : `투자 손실 ${money(Math.abs(fx.money))}`); }
   applyEffects(state, fx);
   state.choices.push(action.tag); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
-  if ((action.tag === "데이트" || action.tag === "연락") && Math.random() > .58 && state.revealed < 5) { state.revealed++; toast(`${state.partner.name}의 새로운 성향을 알게 되었어요.`); }
+  const clue = observePersonality(state, action.tag);
+  if (clue?.revealed) toast(`${state.partner.name}의 성향을 하나 알아냈어요.`);
   state.selected = null;
   const finishedDay = state.phase === 3;
   advanceTime(state);
