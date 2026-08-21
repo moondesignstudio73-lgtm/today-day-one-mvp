@@ -14,6 +14,7 @@ import { giveGift } from "./src/gift-manager.mjs";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
+import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -77,8 +78,9 @@ function applyAction() {
     state.logs.push({time:`DAY ${state.day} · EVENT`,text:`${event.title} — ${event.message}`});
     toast(`EVENT · ${event.title}`);
   }
+  const breakup = evaluateBreakup(state);
   SaveManager.save(state);
-  if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); if(temptation) openTemptation(temptation); }
+  if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); if(temptation) openTemptation(temptation); }
 }
 
 function resultText(a) { if(a.tag==="데이트") return `${state.partner.name}의 표정이 한결 밝아졌다.`; if(a.tag==="성공") return "미래를 위한 한 걸음을 내디뎠다."; if(a.tag==="유혹") return "새로운 인연의 기척이 느껴진다."; if(a.tag==="연락") return "짧은 대화가 두 사람을 조금 더 가깝게 했다."; return "선택의 결과가 하루에 남았다."; }
@@ -133,8 +135,14 @@ function openCareer() {
 }
 
 function openPeople() {
+  const breakupRisk = calculateBreakupRisk(state);
   const cards = state.npcs.map(npc=>{ const status=npc.relationshipType==='rival'?calculateRivalRisk(state,npc):getNpcRelationshipStatus(npc); const interest=npc.relationshipType==='rival'?`연인 관심 ${npc.interestInGirlfriend} · 위험 ${status.score}`:`내 관심 ${npc.interestInPlayer}`; return `<div class="npc-card"><div><small>${npc.role}</small><b>${npc.name}</b><span>호감 ${npc.affection} · 신뢰 ${npc.trust} · ${interest}</span></div><em data-tone="${status.tone}">${status.label}</em></div>`; }).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">HUMAN RELATIONSHIPS</span><h2>나의 인맥</h2><p>선택에 따라 가까워지거나 위험해지는 사람들입니다.</p><div class="npc-list">${cards}</div>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">HUMAN RELATIONSHIPS</span><h2>나의 인맥</h2><p>현재 연애 위기 ${breakupRisk.score} · ${breakupRisk.label}</p><div class="npc-list">${cards}</div>`;
+  $("#modal").classList.remove("hidden");
+}
+
+function showBreakup(breakup) {
+  $("#modalContent").innerHTML=`<span class="eyebrow">RELATIONSHIP ENDED · DAY ${breakup.day}</span><h2>${breakup.reason}</h2><div class="ending-score">${breakup.risk}</div><p>${state.partner.name}와의 관계는 더 이어지지 못했습니다. 호감 ${breakup.affection} · 신뢰 ${breakup.trust}</p><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`;
   $("#modal").classList.remove("hidden");
 }
 

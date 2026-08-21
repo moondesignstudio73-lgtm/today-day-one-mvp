@@ -18,6 +18,7 @@ import { NPC_ARCHETYPES, validateNpcArchetypes } from "../src/npcs-data.mjs";
 import { applyNpcActionEffects, generateNpcs, getNpcRelationshipStatus, validateNpcs } from "../src/npc-manager.mjs";
 import { getTemptationOpportunity, resolveTemptation } from "../src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "../src/rival-manager.mjs";
+import { calculateBreakupRisk, evaluateBreakup } from "../src/conflict-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -59,6 +60,16 @@ const rivalInterestBefore = rivalNpc.interestInGirlfriend;
 const rivalPressure = applyRivalPressure(rivalPressureState, ACTIONS.evening.find(action => action.id === "coworker-drinks"));
 assert.ok(rivalPressure.rival.interestInGirlfriend > rivalInterestBefore);
 assert.equal(rivalPressureState.rivalHistory.length, 1);
+const breakupState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const safeBreakupRisk = calculateBreakupRisk(breakupState);
+assert.equal(evaluateBreakup(breakupState), null);
+breakupState.affection = 100; breakupState.trust = 120; breakupState.conflict = 100; breakupState.relationshipStress = 100;
+breakupState.partner.personality.loyalty = 0; breakupState.partner.personality.emotionalSensitivity = 100;
+const crisisBreakupRisk = calculateBreakupRisk(breakupState);
+assert.ok(crisisBreakupRisk.score > safeBreakupRisk.score);
+const breakupResult = evaluateBreakup(breakupState);
+assert.ok(breakupResult && breakupState.ended);
+assert.equal(evaluateBreakup(breakupState), breakupResult);
 const memoryStorage = () => {
   const values = new Map();
   return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };

@@ -27,6 +27,7 @@ export function createInitialState(partner, random = Math.random) {
     npcHistory: [],
     temptationHistory: [],
     rivalHistory: [],
+    breakup: null,
     revealed: 0,
     revealedTraits: [],
     observations: {},
