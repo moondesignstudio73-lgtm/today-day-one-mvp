@@ -20,14 +20,14 @@ export const ACTIONS = {
   ],
   evening: [
     { id:"dinner-date", icon:"🌙", title:"근사한 데이트", desc:"예약해 둔 레스토랑에서 특별한 저녁을 보낸다.", costLabel:"₩120,000", timeCost:1, requirements:[{ stat:"money", operator:">=", value:120000, message:"자산 ₩120,000 이상 필요" },{ stat:"energy", operator:">=", value:10, message:"체력 10 이상 필요" }], effects:{ money:-120000, affection:42, trust:12, stress:-12, energy:-8 }, tag:"데이트" },
-    { id:"gift-shopping", icon:"🛍️", title:"선물 쇼핑", desc:"그녀가 좋아할 만한 작은 선물을 고른다.", costLabel:"₩75,000", timeCost:1, effects:{ money:-75000, affection:26, charm:3 }, tag:"쇼핑" },
+    { id:"gift-shopping", icon:"🛍️", title:"선물 쇼핑", desc:"그녀가 좋아할 만한 작은 선물을 고른다.", costLabel:"₩75,000", timeCost:1, itemId:"rose-parfum", itemOwner:"gift", effects:{ money:-75000, affection:26, charm:3 }, tag:"쇼핑" },
     { id:"overtime", icon:"🌃", title:"야근하기", desc:"관계보다 오늘의 성과를 선택한다.", costLabel:"수입 +₩70,000", timeCost:1, effects:{ money:70000, work:12, affection:-12, energy:-16, stress:12 }, tag:"성공" },
     { id:"coworker-drinks", icon:"🍻", title:"동료의 술자리", desc:"새로운 인맥, 혹은 위험한 인연이 시작될 수 있다.", costLabel:"₩45,000 · 위험", timeCost:1, effects:{ money:-45000, social:12, trust:-8, stress:-8 }, tag:"유혹" }
   ],
   night: [
     { id:"night-call", icon:"♥", title:"통화하며 하루 마무리", desc:"오늘 있었던 일을 솔직하게 나눈다.", costLabel:"시간 1", timeCost:1, effects:{ affection:20, trust:18, energy:-5 }, tag:"연락" },
     { id:"short-message", icon:"📱", title:"짧게 메시지만", desc:"바쁘다는 핑계로 간단한 인사만 남긴다.", costLabel:"시간 0", timeCost:0, effects:{ affection:3, trust:1 }, tag:"연락" },
-    { id:"online-shopping", icon:"🛒", title:"온라인 쇼핑", desc:"새 옷으로 패션과 기분을 챙긴다.", costLabel:"₩55,000", timeCost:1, requirements:[{ stat:"money", operator:">=", value:55000, message:"자산 ₩55,000 이상 필요" }], effects:{ money:-55000, charm:8, stress:-5 }, tag:"쇼핑" },
+    { id:"online-shopping", icon:"🛒", title:"온라인 쇼핑", desc:"새 옷으로 패션과 기분을 챙긴다.", costLabel:"₩55,000", timeCost:1, itemId:"linen-shirt", itemOwner:"player", requirements:[{ stat:"money", operator:">=", value:55000, message:"자산 ₩55,000 이상 필요" }], effects:{ money:-55000, charm:8, stress:-5 }, tag:"쇼핑" },
     { id:"early-sleep", icon:"💤", title:"일찍 잠들기", desc:"내일을 위해 충분히 휴식한다.", costLabel:"시간 1", timeCost:1, effects:{ energy:20, health:5, stress:-8, affection:-5 }, tag:"휴식" }
   ]
 };

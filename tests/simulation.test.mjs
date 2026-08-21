@@ -11,6 +11,8 @@ import { getRelationshipState } from "../src/relationship-manager.mjs";
 import { generateJob, JOBS, validateJob } from "../src/jobs-data.mjs";
 import { addJobProgress, applyJobModifiers } from "../src/job-manager.mjs";
 import { calculatePaycheck, DAILY_LIVING_COST, getEconomySummary, PAY_DAYS, processDayEndEconomy, recordTransaction } from "../src/economy-manager.mjs";
+import { ITEMS, getItem, validateItemData } from "../src/items-data.mjs";
+import { acquireActionItem, addItem, equipItem, getEquipmentBonuses } from "../src/inventory-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 const memoryStorage = () => {
@@ -254,3 +256,18 @@ const economySummary = getEconomySummary(economyState);
 assert.ok(economySummary.income > 0 && economySummary.expense > 0);
 assert.equal(economySummary.transactions, 4);
 console.log("✓ 일일 생활비·10일 급여·경제 원장과 요약 검증 통과");
+assert.equal(validateItemData(), true);
+assert.equal(ITEMS.length, 6);
+const inventoryState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
+const shirt = acquireActionItem(inventoryState, ACTIONS.night.find(action => action.id === "online-shopping"));
+assert.ok(shirt?.equipped);
+assert.equal(inventoryState.inventory.length, 1);
+assert.equal(inventoryState.equipment.clothes, shirt.instanceId);
+const gift = acquireActionItem(inventoryState, ACTIONS.evening.find(action => action.id === "gift-shopping"));
+assert.equal(gift.owner, "gift");
+assert.equal(gift.equipped, false);
+const sneakers = addItem(inventoryState, "urban-sneakers");
+equipItem(inventoryState, sneakers.instanceId);
+const bonuses = getEquipmentBonuses(inventoryState);
+assert.equal(bonuses.fashion, getItem("linen-shirt").fashionBonus + getItem("urban-sneakers").fashionBonus);
+console.log("✓ 6개 아이템·인벤토리·카테고리 장착·능력치 보너스 검증 통과");
