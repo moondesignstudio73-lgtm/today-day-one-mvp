@@ -29,6 +29,7 @@ import { advanceStockMarket, buyStock, createInvestmentState, getPortfolioSummar
 import { buyInstantLottery, createLotteryState, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE, validateLotteryState } from "../src/lottery-manager.mjs";
 import { analyzePlayHistory, ENDING_DEFINITIONS, selectEnding, validateEndingDefinitions } from "../src/ending-manager.mjs";
 import { SoundManager, SOUND_SETTING_KEY, validateSoundPresets } from "../src/sound-manager.mjs";
+import { evaluateEndingBalance, summarizeEndingDistribution } from "../src/balance-manager.mjs";
 
 const partner = generateGirlfriend(() => 0.5);
 assert.equal(validateNpcArchetypes(), true);
@@ -193,6 +194,54 @@ assert.equal(selectEnding(lotteryEndingState).id,"lottery-reversal");
 const happyEndingState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
 happyEndingState.affection = 900; happyEndingState.trust = 900;
 assert.equal(selectEnding(happyEndingState).id,"happy-marriage");
+assert.deepEqual(summarizeEndingDistribution(["a","b","a"]),{
+  total:3,
+  uniqueEndings:2,
+  counts:{a:2,b:1},
+  dominant:{id:"a",count:2,share:2/3}
+});
+assert.equal(evaluateEndingBalance([]).balanced,false);
+const seededRandom = seed => {
+  let value = seed >>> 0;
+  return () => ((value = (value * 1664525 + 1013904223) >>> 0) / 4294967296);
+};
+const balanceEndingIds = [];
+for (let run = 1; run <= 200; run += 1) {
+  const random = seededRandom(run);
+  const balanceState = createInitialState(generateGirlfriend(random), random);
+  while (!balanceState.ended) {
+    const phase = PHASES[balanceState.phase];
+    const available = getAvailableActions(balanceState, ACTIONS[phase.key]);
+    const action = available[Math.floor(random() * available.length)];
+    const { effects } = calculateActionEffects(balanceState, action);
+    if (action.random) {
+      const win = random() > 0.48;
+      effects.money = win ? Math.round(40000 + random() * 90000) : -Math.round(25000 + random() * 70000);
+    }
+    applyEffects(balanceState, effects);
+    if (effects.money) appendTransaction(balanceState, { category:"action", label:action.title, amount:Math.round(effects.money) });
+    addJobProgress(balanceState, action, effects);
+    applyNpcActionEffects(balanceState, action);
+    applyRivalPressure(balanceState, action);
+    balanceState.choices.push(action.tag);
+    balanceState.actionHistory.push({ day:balanceState.day, phase:balanceState.phase, actionId:action.id, tag:action.tag });
+    observePersonality(balanceState, action.tag, random);
+    const finishedDay = balanceState.phase === PHASES.length - 1;
+    const completedDay = balanceState.day;
+    advanceTime(balanceState);
+    if (finishedDay) {
+      advanceStockMarket(balanceState, random);
+      processDayEndEconomy(balanceState, completedDay);
+    }
+    rollEvent(balanceState, random);
+  }
+  balanceEndingIds.push(selectEnding(balanceState).id);
+}
+const endingBalance = evaluateEndingBalance(balanceEndingIds);
+assert.equal(endingBalance.balanced,true,JSON.stringify(endingBalance));
+assert.ok(endingBalance.uniqueEndings >= 5);
+assert.ok(endingBalance.dominant.share <= 0.5);
+console.log(`✓ 200회 플레이 엔딩 균형 검증 통과 · ${endingBalance.uniqueEndings}종 · 최다 ${(endingBalance.dominant.share*100).toFixed(1)}%`);
 assert.equal(validateSoundPresets(),true);
 const soundValues = new Map();
 const soundStorage = { getItem:key => soundValues.get(key) ?? null, setItem:(key,value) => soundValues.set(key,value) };
