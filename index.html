@@ -21,7 +21,11 @@
         <span><strong>오늘부터 1일</strong><small>THIRTY DAYS</small></span>
       </a>
       <div class="day-pill"><span id="phaseIcon">☀</span> DAY <strong id="dayLabel">1</strong><i>/ 30</i></div>
-      <button id="resetButton" class="icon-button" type="button" title="새 게임">↻</button>
+      <div class="top-actions">
+        <button id="saveButton" class="text-button hidden" type="button">저장</button>
+        <button id="loadButton" class="text-button" type="button">불러오기</button>
+        <button id="resetButton" class="icon-button" type="button" title="새 게임">↻</button>
+      </div>
     </header>
 
     <section id="introScreen" class="intro-screen">
@@ -91,6 +95,6 @@
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script src="game.js"></script>
+  <script type="module" src="game.js"></script>
 </body>
 </html>

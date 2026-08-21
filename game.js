@@ -1,3 +1,6 @@
+import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs";
+import { SaveManager } from "./src/save-manager.mjs";
+
 const $ = (selector) => document.querySelector(selector);
 
 const partners = [
@@ -41,10 +44,9 @@ const actions = {
 };
 
 let state;
-const initialState = () => ({ day:1, phase:0, selected:null, partner:partners[Math.floor(Math.random()*partners.length)], revealed:0, affection:520, trust:500, money:850000, health:72, energy:76, stress:24, charm:48, work:42, social:40, logs:[], choices:[], ended:false });
 
-function startGame() { state = initialState(); $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); render(); }
-function clamp(value, min=0, max=100) { return Math.max(min, Math.min(max, value)); }
+function startGame() { state = createInitialState(partners[Math.floor(Math.random()*partners.length)]); showGame(); SaveManager.save(state); }
+function showGame() { $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#saveButton").classList.remove("hidden"); render(); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 
 function render() {
@@ -75,11 +77,14 @@ function applyAction() {
   if (action.tag === "연락") { fx.affection = (fx.affection||0)*state.partner.weights.contact; fx.trust = (fx.trust||0)*state.partner.weights.trust; }
   if (["데이트","쇼핑"].includes(action.tag)) fx.affection = (fx.affection||0)*state.partner.weights.money;
   if (action.random) { const win = Math.random() > .48; fx.money = win ? Math.round(40000+Math.random()*90000) : -Math.round(25000+Math.random()*70000); toast(win ? `투자 성공! ${money(fx.money)}` : `투자 손실 ${money(Math.abs(fx.money))}`); }
-  Object.entries(fx).forEach(([key,val])=> { if (key === "money") state.money += val; else if (["affection","trust"].includes(key)) state[key]=clamp(state[key]+val,0,1000); else state[key]=clamp(state[key]+val); });
+  applyEffects(state, fx);
   state.choices.push(action.tag); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
   if ((action.tag === "데이트" || action.tag === "연락") && Math.random() > .58 && state.revealed < 5) { state.revealed++; toast(`${state.partner.name}의 새로운 성향을 알게 되었어요.`); }
   state.selected = null;
-  if (state.phase < 3) state.phase++; else { state.phase=0; state.day++; state.energy=clamp(state.energy+18); state.stress=clamp(state.stress-5); dailyEvent(); }
+  const finishedDay = state.phase === 3;
+  advanceTime(state);
+  if (finishedDay) dailyEvent();
+  SaveManager.save(state);
   if (state.day > 30) showEnding(); else render();
 }
 
@@ -92,10 +97,14 @@ function openChat() {
   $("#modalContent").innerHTML=`<span class="eyebrow">CHAT WITH ${state.partner.name}</span><h2>${state.partner.name}와의 대화</h2><div class="chat-window"><div class="message her">${greeting}</div><div id="chatReply"></div></div><div class="chat-options"><button class="chat-option" data-reply="다정">나도 네 생각하고 있었어. 오늘 있었던 일 말해줄까?</button><button class="chat-option" data-reply="솔직">오늘 조금 힘들었어. 그래도 네 연락 보니까 좋다.</button><button class="chat-option" data-reply="무심">지금 좀 바빠. 나중에 얘기하자.</button></div>`;
   $("#modal").classList.remove("hidden"); document.querySelectorAll(".chat-option").forEach(b=>b.addEventListener("click",()=>chatReply(b.dataset.reply,b.textContent)));
 }
-function chatReply(type,text){ $("#chatReply").innerHTML=`<div class="message me">${text}</div><div class="message her">${type==="무심"?"알겠어… 방해 안 할게.":type==="솔직"?"힘들었구나. 내가 들어줄게.":"나도! 얼른 얘기해 줘 😊"}</div>`; state.affection=clamp(state.affection+(type==="무심"?-8:6),0,1000); state.trust=clamp(state.trust+(type==="솔직"?8:type==="무심"?-5:3),0,1000); document.querySelector(".chat-options").remove(); }
+function chatReply(type,text){ $("#chatReply").innerHTML=`<div class="message me">${text}</div><div class="message her">${type==="무심"?"알겠어… 방해 안 할게.":type==="솔직"?"힘들었구나. 내가 들어줄게.":"나도! 얼른 얘기해 줘 😊"}</div>`; state.affection=clamp(state.affection+(type==="무심"?-8:6),0,1000); state.trust=clamp(state.trust+(type==="솔직"?8:type==="무심"?-5:3),0,1000); SaveManager.save(state); document.querySelector(".chat-options").remove(); }
 
-function showEnding(){ state.ended=true; const top=(tag)=>state.choices.filter(x=>x===tag).length; let title="각자의 내일", desc="30일의 선택 끝에 두 사람은 잠시 서로의 삶을 돌아보기로 했다."; if(state.affection>820&&state.trust>760){title="사랑으로 결혼";desc="화려하진 않아도 서로를 가장 잘 아는 두 사람은 평생을 약속했다."} else if(state.money>1800000&&state.affection>650){title="함께 만든 미래";desc="사랑과 성공 사이의 균형을 찾아, 더 단단한 미래를 약속했다."} else if(state.trust<250){title="무너진 신뢰";desc="사랑은 남아 있었지만 반복된 의심을 이겨내지 못했다."} else if(top("성공")>25){title="워커홀릭";desc="눈부신 커리어를 손에 넣었지만, 가장 가까운 사람과의 거리는 멀어졌다."} else if(state.affection<350){title="사랑하지만 이별";desc="좋아하는 마음만으로는 함께 살아갈 수 없다는 것을 알게 되었다."}
+function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state);
   $("#modalContent").innerHTML=`<span class="eyebrow">DAY 30 · YOUR ENDING</span><h2>${title}</h2><div class="ending-score">${Math.round((state.affection+state.trust)/20)}</div><p>${desc}</p><p><b>최종 기록</b><br>호감도 ${Math.round(state.affection)} · 신뢰도 ${Math.round(state.trust)} · 자산 ${money(state.money)}</p><button class="primary-button" onclick="location.reload()">새로운 30일 시작하기 →</button>`; $("#modal").classList.remove("hidden"); }
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
 
-$("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#closeModal").addEventListener("click",()=>$("#modal").classList.add("hidden")); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) location.reload(); });
+function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
+function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
+
+if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");
+$("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",()=>$("#modal").classList.add("hidden")); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });

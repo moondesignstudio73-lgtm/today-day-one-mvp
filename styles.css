@@ -17,6 +17,7 @@ button { font: inherit; }
 .day-pill { padding: 9px 15px; border: 1px solid var(--line); border-radius: 99px; background: rgba(255,255,255,.65); font: 600 12px Outfit; letter-spacing: .08em; }
 .day-pill span { color: var(--gold); margin-right: 5px; }.day-pill strong { font-size: 17px; }.day-pill i { color: #aaa; font-style: normal; }
 .icon-button { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: rgba(255,255,255,.7); cursor: pointer; font-size: 20px; color: var(--muted); }
+.top-actions { display:flex; align-items:center; gap:7px; }.text-button{border:1px solid var(--line);border-radius:99px;background:rgba(255,255,255,.7);padding:8px 12px;color:var(--muted);font-size:11px;cursor:pointer}.text-button:hover{color:var(--pink);border-color:#e8638740}
 .intro-screen { min-height: calc(100vh - 125px); display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 6vw; padding: 4vh 7vw 8vh; }
 .eyebrow { color: var(--pink); font: 700 11px Outfit; letter-spacing: .2em; }
 .intro-copy h1 { margin: 18px 0 20px; font-size: clamp(48px,6.2vw,88px); line-height: .98; letter-spacing: -.07em; font-weight: 500; }
