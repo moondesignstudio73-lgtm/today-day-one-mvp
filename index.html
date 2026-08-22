@@ -152,16 +152,36 @@
           <div><span>NIGHT TIME · 나의 방</span><h2>오늘 하루도 끝났다.</h2></div>
           <div class="night-clock"><b id="nightClock">23:10</b><small id="nightDayLabel">DAY 1</small></div>
         </header>
-        <div class="night-room-scene">
+        <div id="nightRoomScene" class="night-room-scene">
           <button class="room-object room-phone" type="button" data-room-action="phone"><span>📱</span><b>스마트폰</b><small>메시지 · 쇼핑 · 투자</small><i id="phoneBadge">NEW</i></button>
           <button class="room-object room-pc" type="button" data-room-action="pc"><span>🖥️</span><b>컴퓨터</b><small>자기계발 · 업무 · 휴식</small></button>
           <button class="room-object room-wardrobe" type="button" data-room-action="wardrobe"><span>👔</span><b>옷장</b><small>내일의 스타일</small></button>
           <button class="room-object room-report" type="button" data-room-action="report"><span>📝</span><b>DAY REPORT</b><small>오늘의 변화 확인</small></button>
           <button class="room-object room-bed" type="button" data-room-action="bed"><span>🌙</span><b>침대</b><small>저장하고 다음 날로</small></button>
+          <button class="room-object room-exit" type="button" data-room-action="exit"><span>🚪</span><b>외출하기</b><small>동네 RPG 지도로 이동</small></button>
           <div class="room-window" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
           <div class="room-floor" aria-hidden="true"></div>
         </div>
         <p class="night-home-tip" id="nightHomeTip">밤 활동은 시간을 사용합니다. 늦게 잘수록 내일 더 피곤해져요.</p>
+      </section>
+      <section id="worldMap" class="world-map hidden" aria-label="동네 RPG 지도">
+        <header class="world-map-header">
+          <div class="world-header-actions"><button id="returnHomeButton" type="button">← 나의 방</button><button id="worldAtlasButton" type="button">🗺 지도 보기</button></div>
+          <div><span id="worldCityLabel">SEOUL</span><h2 id="worldMapTitle">동수동</h2><p id="worldMapSubtitle"></p></div>
+          <div class="world-clock"><b id="worldClock">23:10</b><button id="worldTransportButton" type="button"><small id="worldTransport">도보 이동</small></button></div>
+        </header>
+        <div id="worldMapCanvas" class="world-map-canvas" tabindex="0" aria-label="방향키 또는 화면 버튼으로 이동">
+          <div id="worldRoadLayer" class="world-road-layer" aria-hidden="true"></div>
+          <div id="worldLocationLayer" class="world-location-layer"></div>
+          <div id="worldPlayer" class="world-player" aria-label="내 캐릭터"><span><img id="worldPlayerSprite" src="assets/characters/map/PLAYER_BALANCED.png" alt=""><img id="worldVehicleSprite" src="assets/characters/map/VEHICLE_WEALTHY.png" alt=""></span><b id="worldPlayerName">나</b></div>
+        </div>
+        <footer class="world-map-footer">
+          <div id="nearbyLocation"><b>동네를 둘러보세요</b><span>장소 가까이 이동하면 입장할 수 있습니다.</span></div>
+          <button id="enterLocationButton" class="primary-button" type="button" disabled>장소 입장</button>
+          <div class="world-dpad" aria-label="이동 버튼">
+            <button data-world-move="0,-1" type="button">↑</button><button data-world-move="-1,0" type="button">←</button><button data-world-move="0,1" type="button">↓</button><button data-world-move="1,0" type="button">→</button>
+          </div>
+        </footer>
       </section>
     </section>
   </main>
@@ -193,6 +213,6 @@
     </article>
   </section>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=32"></script>
+  <script type="module" src="game.js?v=34"></script>
 </body>
 </html>

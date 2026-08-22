@@ -1,5 +1,5 @@
-import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=3";
-import { SaveManager } from "./src/save-manager.mjs?v=7";
+import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=4";
+import { SaveManager } from "./src/save-manager.mjs?v=8";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=7";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=5";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=5";
@@ -45,6 +45,7 @@ import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
 import { getActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=3";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=1";
+import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -503,7 +504,7 @@ function render() {
   const p = state.partner, phase = phases[state.phase];
   document.body.dataset.heroine=p.heroineId;document.documentElement.style.setProperty("--heroine-accent",p.uiAccent??"#ff91b5");
   $("#dayLabel").textContent = state.day; $("#phaseIcon").textContent = phase.icon;
-  if (state.phase === 3) { renderNightHome(); return; }
+  if (state.phase === 3) { if(state.world?.mode==="district")renderWorldMap();else renderNightHome(); return; }
   document.body.classList.add("ui-story-mode");
   document.body.classList.remove("ui-night-mode");
   $("#gameScreen").classList.add("story-mode");
@@ -564,18 +565,96 @@ function verifyPresentationAsset(presentation,backdrop){
 
 function renderNightHome() {
   const night = ensureNightState(state);
+  const home=getPlayerHomeProfile(state.player?.archetypeId);
   document.body.classList.remove("ui-story-mode");
   document.body.classList.add("ui-night-mode");
   $("#gameScreen").classList.remove("story-mode");
   $("#gameScreen").classList.add("night-mode");
   $(".play-panel").classList.add("hidden");
   $("#nightHome").classList.remove("hidden");
+  $("#worldMap").classList.add("hidden");
+  const roomScene=$("#nightRoomScene");
+  roomScene.classList.add("has-room-background");
+  roomScene.style.backgroundImage=`linear-gradient(180deg,#10121b20,#0c0b16a1),url("${home.background}")`;
+  roomScene.style.backgroundSize="cover";
+  roomScene.style.backgroundPosition="center";
+  $(".night-home-header h2").textContent=home.homeName;
   $("#nightClock").textContent = formatNightTime(night.minutes);
   $("#nightDayLabel").textContent = `DAY ${state.day}`;
   $("#phoneBadge").classList.toggle("hidden",night.messagesRead);
   $("#nightHomeTip").textContent = night.activities.length ? `오늘 밤: ${night.activities.map(item=>item.label).join(" · ")}` : "밤 활동은 시간을 사용합니다. 늦게 잘수록 내일 더 피곤해져요.";
   const soundKey = `${state.day}-night-home`;
   if (soundKey !== lastSceneSoundKey) { lastSceneSoundKey=soundKey;sound.playScene("night",state.day); }
+}
+
+function renderWorldMap() {
+  const night=ensureNightState(state);
+  const world=state.world;
+  const map=WORLD_MAPS[world.districtId]??WORLD_MAPS.dongsu;
+  document.body.classList.remove("ui-story-mode");document.body.classList.add("ui-night-mode");
+  $("#gameScreen").classList.remove("story-mode");$("#gameScreen").classList.add("night-mode");
+  $(".play-panel").classList.add("hidden");$("#nightHome").classList.add("hidden");$("#worldMap").classList.remove("hidden");
+  $("#worldCityLabel").textContent=`${map.cityId.toUpperCase()} · ${map.theme==="premium"?"PREMIUM DISTRICT":map.theme==="coast"?"COAST DISTRICT":"LOCAL DISTRICT"}`;
+  $("#worldMapTitle").textContent=map.name;$("#worldMapSubtitle").textContent=map.subtitle;
+  const transport=TRANSPORT_OPTIONS.find(option=>option.id===world.transport)??TRANSPORT_OPTIONS[0];
+  $("#worldClock").textContent=formatNightTime(night.minutes);$("#worldTransport").textContent=`${transport.icon} ${transport.name}${world.transportConfirmed?"":" 선택 필요"}`;
+  const canvas=$("#worldMapCanvas");canvas.dataset.theme=map.theme;
+  $("#worldRoadLayer").innerHTML=getRoadCells(map).map(cell=>`<i class="world-road-cell" style="--map-x:${cell.x/(map.width-1)*100}%;--map-y:${cell.y/(map.height-1)*100}%"></i>`).join("");
+  $("#worldLocationLayer").innerHTML=map.locations.map(location=>`<button class="world-location ${world.discoveredLocations.includes(location.id)?"discovered":""}" type="button" data-world-location="${escapeHtml(location.id)}" style="--map-x:${location.x/(map.width-1)*100}%;--map-y:${location.y/(map.height-1)*100}%"><span>${location.icon}</span><b>${escapeHtml(location.name)}</b><small>${escapeHtml(location.category)}</small></button>`).join("");
+  const player=$("#worldPlayer");player.style.setProperty("--map-x",String(world.x/(map.width-1)));player.style.setProperty("--map-y",String(world.y/(map.height-1)));player.dataset.transport=world.transport;player.dataset.archetype=state.player?.archetypeId??"balanced";$("#worldPlayerName").textContent=state.player?.name??"나";
+  const nearby=getNearbyLocation(world);const enter=$("#enterLocationButton");
+  if(nearby){$("#nearbyLocation").innerHTML=`<b>${escapeHtml(nearby.name)}</b><span>${escapeHtml(nearby.description)}</span>`;enter.disabled=false;enter.textContent=nearby.category==="home"?"귀가하기":"장소 입장";enter.dataset.locationId=nearby.id;}
+  else{$("#nearbyLocation").innerHTML="<b>동네를 둘러보세요</b><span>장소 가까이 이동하면 입장할 수 있습니다.</span>";enter.disabled=true;enter.textContent="장소 입장";delete enter.dataset.locationId;}
+  canvas.focus({preventScroll:true});
+}
+
+function openWorldMap() {
+  const home=getPlayerHomeProfile(state.player?.archetypeId);const map=WORLD_MAPS[home.districtId];
+  state.world.mode="district";state.world.cityId="seoul";state.world.districtId=home.districtId;
+  if(!Number.isFinite(state.world.x)||!Number.isFinite(state.world.y)){state.world.x=map.start.x;state.world.y=map.start.y;}
+  SaveManager.save(state);renderWorldMap();
+  if(!state.world.transportConfirmed)setTimeout(()=>openTransportSelector(true),0);
+}
+
+function returnToNightHome() { state.world.mode="home";SaveManager.save(state);renderNightHome(); }
+
+function moveOnWorldMap(dx,dy) { if(!state.world.transportConfirmed){openTransportSelector(true);return;}const result=moveWorldPlayer(state.world,dx,dy);if(!result.moved){toast("길을 따라 이동해 주세요.");return;}const nearby=getNearbyLocation(state.world);if(nearby&&!state.world.discoveredLocations.includes(nearby.id)){state.world.discoveredLocations.push(nearby.id);toast(`${nearby.name} 발견`);}SaveManager.save(state);renderWorldMap(); }
+
+function handleWorldMapKeydown(event) { const moves={ArrowUp:[0,-1],w:[0,-1],W:[0,-1],ArrowDown:[0,1],s:[0,1],S:[0,1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0]};const move=moves[event.key];if(!move||!$("#modal").classList.contains("hidden"))return;event.preventDefault();moveOnWorldMap(...move); }
+
+function handleWorldMoveClick(event) { const button=event.target.closest("[data-world-move]");if(!button)return;const [dx,dy]=button.dataset.worldMove.split(",").map(Number);moveOnWorldMap(dx,dy); }
+
+function openTransportSelector(required=false) {
+  const current=state.world.transport;
+  const cards=TRANSPORT_OPTIONS.map(option=>{const locked=option.requiresVehicle&&!state.world.ownedVehicleId;return `<button class="transport-card ${current===option.id?"selected":""}" data-world-transport="${option.id}" type="button" ${locked?"disabled":""}><span>${option.icon}</span><b>${escapeHtml(option.name)}</b><small>${escapeHtml(option.description)}</small><em>${locked?"자동차 미보유":option.cost?`${money(option.cost)} / 1회`:"무료"}</em></button>`;}).join("");
+  $("#modalContent").innerHTML=`<span class="eyebrow">MOVE STYLE</span><h2>이동수단 선택</h2><p>${required?"지도에서 이동하기 전에 이용할 수단을 선택해 주세요.":"이동수단에 따라 지도 위 캐릭터 표시가 달라집니다."}</p><div class="transport-grid">${cards}</div>`;openModal();
+  document.querySelectorAll("[data-world-transport]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{const result=selectWorldTransport(state.world,button.dataset.worldTransport);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);closeModal();renderWorldMap();toast(`${result.option.name} 이동으로 변경했습니다.`);}));
+}
+
+function openWorldAtlas(viewId=state.world.atlasView||"nationwide") {
+  const view=WORLD_ATLAS[viewId]??WORLD_ATLAS.nationwide;state.world.atlasView=view.id;
+  const tabs=Object.values(WORLD_ATLAS).map(item=>`<button data-atlas-view="${item.id}" class="${item.id===view.id?"selected":""}" type="button">${item.name}</button>`).join("");
+  const homeDistrict=getPlayerHomeProfile(state.player?.archetypeId).districtId;
+  const panels=view.id==="nationwide"
+    ? `<div class="atlas-korea"><span>SEOUL</span><i></i><span>BUSAN</span></div><div class="atlas-destination-grid"><button data-atlas-view="seoul" type="button"><b>서울</b><small>현재 생활권 · 동수동/금수동</small></button><button data-atlas-view="busan" type="button"><b>부산</b><small>여행 생활권 · 해운동</small></button></div>`
+    : view.id==="seoul"
+      ? `<div class="atlas-city-card seoul"><b>서울 생활 지도</b><p>동수동의 생활 상권과 금수동의 한강 상권을 확인합니다.</p><button data-travel-district="${homeDistrict}" type="button">내 동네로 이동</button></div>`
+      : `<div class="atlas-city-card busan"><b>부산 여행 지도</b><p>해운대·광안리·서면을 잇는 바다 여행 지역입니다.</p><button data-travel-city="busan" type="button">부산 해운동으로 이동</button></div>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">WORLD ATLAS</span><h2>${escapeHtml(view.name)} 지도</h2><p>${escapeHtml(view.subtitle)}</p><nav class="atlas-tabs" aria-label="지도 범위">${tabs}</nav>${panels}`;openModal();
+  document.querySelectorAll("[data-atlas-view]").forEach(button=>button.addEventListener("click",()=>openWorldAtlas(button.dataset.atlasView)));
+  document.querySelectorAll("[data-travel-district]").forEach(button=>button.addEventListener("click",()=>{travelToCity(state.world,"seoul",button.dataset.travelDistrict);SaveManager.save(state);closeModal();renderWorldMap();toast("서울 생활권으로 이동했습니다.");}));
+  document.querySelectorAll("[data-travel-city]").forEach(button=>button.addEventListener("click",()=>{const result=travelToCity(state.world,button.dataset.travelCity,homeDistrict);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);closeModal();renderWorldMap();toast(`${result.map.name}으로 이동했습니다.`);}));
+}
+
+function getVenueMenu(location) {
+  const menus={korean:"김밥 · 라면 · 순댓국 · 국밥 · 제육쌈밥",japanese:"라멘 · 돈부리 · 돈가스 · 스시",chinese:"짜장면 · 짬뽕 · 딤섬 · 마라탕",diet:"샐러드 · 포케 · 단백질 식단",cafe:"커피 · 차 · 디저트",bar:"맥주 · 하이볼 · 안주",shopping:"패션 · 선물 · 생활용품",culture:"전시 관람 · 기념품"};return menus[location.category]??"주변을 둘러보고 새로운 이야기를 발견한다.";
+}
+
+function openWorldLocation() {
+  const id=$("#enterLocationButton").dataset.locationId;if(!id)return;const map=WORLD_MAPS[state.world.districtId];const location=map.locations.find(item=>item.id===id);if(!location)return;
+  if(location.category==="home"){returnToNightHome();return;}
+  $("#modalContent").innerHTML=`<span class="eyebrow">${escapeHtml(map.name)} · ${escapeHtml(location.category.toUpperCase())}</span><h2>${location.icon} ${escapeHtml(location.name)}</h2><p>${escapeHtml(location.description)}</p><div class="venue-menu-preview"><small>이곳에서 할 수 있는 일</small><strong>${escapeHtml(getVenueMenu(location))}</strong></div><button id="visitLocationConfirm" class="primary-button" type="button">둘러보기 · 20분</button>`;openModal();
+  $("#visitLocationConfirm").addEventListener("click",()=>{const result=spendNightTime(state,20,`${location.name} 방문`);if(!result.ok){toast(result.reason);return;}discoverLocation(state.world,location.id,state.day);state.logs.push({time:`DAY ${state.day} · MAP`,text:`${map.name}의 ${location.name}에 방문했다.`});SaveManager.save(state);closeModal();renderWorldMap();toast(`${location.name} 방문 완료`);});
 }
 
 function openDailyReport() {
@@ -622,7 +701,7 @@ function goToSleep() {
 
 function handleRoomAction(event) {
   const button=event.target.closest("[data-room-action]");if(!button)return;
-  const handlers={phone:openGameMenu,pc:openNightPc,wardrobe:openInventory,report:openDailyReport,bed:goToSleep};handlers[button.dataset.roomAction]?.();
+  const handlers={phone:openGameMenu,pc:openNightPc,wardrobe:openInventory,report:openDailyReport,bed:goToSleep,exit:openWorldMap};handlers[button.dataset.roomAction]?.();
 }
 
 function selectAction(index) { state.selected = index; sound.play("select"); render(); scheduleAutoAdvance(); }
@@ -870,6 +949,12 @@ $("#menuButton").addEventListener("click",openGameMenu);
 $("#storyMenuButton").addEventListener("click",event=>{event.stopPropagation();openGameMenu();});
 $("#storyHistoryButton").addEventListener("click",event=>{event.stopPropagation();openDialogueHistory();});
 $("#nightHome").addEventListener("click",handleRoomAction);
+$("#returnHomeButton").addEventListener("click",returnToNightHome);
+$("#worldAtlasButton").addEventListener("click",()=>openWorldAtlas());
+$("#worldTransportButton").addEventListener("click",()=>openTransportSelector(false));
+$("#enterLocationButton").addEventListener("click",openWorldLocation);
+$("#worldMapCanvas").addEventListener("keydown",handleWorldMapKeydown);
+$(".world-dpad").addEventListener("click",handleWorldMoveClick);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#storyChoiceLayer").addEventListener("click",event=>{event.stopPropagation();const button=event.target.closest("[data-immersive-choice]");if(button)chooseImmersiveOption(button.dataset.immersiveChoice);});

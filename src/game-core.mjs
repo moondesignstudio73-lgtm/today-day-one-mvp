@@ -11,6 +11,7 @@ import { createHiddenRouteState, validateHiddenRouteState } from "./hidden-route
 import { createDaySnapshot } from "./night-manager.mjs";
 import { createStoryDirectorState, validateStoryDirectorState } from "./dynamic-story-director.mjs";
 import { applyPlayerArchetype, createPlayerProfile, validatePlayerProfile } from "./player-profile-data.mjs";
+import { createWorldState, validateWorldState } from "./world-map-manager.mjs";
 
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
@@ -30,6 +31,7 @@ export function createInitialState(partner, random = Math.random, setup = {}) {
     selected: null,
     partner,
     player,
+    world:createWorldState(player),
     ...createVisualState(partner),
     job: selectedJob,
     jobLevel: 1,
@@ -126,6 +128,7 @@ export function validateState(value) {
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
   if (!validateGirlfriend(value.partner)) return false;
   if (!validatePlayerProfile(value.player)) return false;
+  if (!validateWorldState(value.world)) return false;
   if (!Number.isInteger(value.appearanceSeed) || !validateCharacterAppearance(value.characterAppearance) || !Array.isArray(value.equippedVisualLayers) || typeof value.currentExpression !== "string" || typeof value.currentPose !== "string" || typeof value.currentOutfit !== "string" || typeof value.currentAccessory !== "string" || typeof value.currentBackground !== "string") return false;
   if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !validateAdvancedEconomyState(value.finance) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment || !validateNpcs(value.npcs) || !Array.isArray(value.npcHistory) || !Array.isArray(value.temptationHistory) || !Array.isArray(value.rivalHistory) || !validateMemories(value.memories) || !Array.isArray(value.initiatedMessages) || !Array.isArray(value.conversationHistory) || !validateInvestmentState(value.investment) || !validateLotteryState(value.lottery)) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices) || !value.situationEventStates || !value.futureEventWeights || !Array.isArray(value.microEventHistory) || !value.eventRuntime || !value.settings) return false;

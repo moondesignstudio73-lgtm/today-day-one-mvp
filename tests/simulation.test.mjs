@@ -53,6 +53,7 @@ import { analyzePlayerBehavior, analyzeRelationshipState, createStoryProposalCon
 import { applyPlayerArchetype, createPlayerProfile, migratePlayerProfile, PLAYER_ARCHETYPES, validatePlayerProfile } from "../src/player-profile-data.mjs";
 import { ACTION_RESULT_ASSETS, getActionResultAsset, getVisibleActionEffects } from "../src/action-result-assets.mjs";
 import { ACTION_RESULT_VIDEOS, getActionResultVideo, isGirlfriendHappy, isGirlfriendSad } from "../src/action-result-videos.mjs";
+import { createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
 
 assert.deepEqual(Object.keys(ACTION_RESULT_ASSETS).sort(),["coworker-lunch","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"]);
 assert.ok(Object.values(ACTION_RESULT_ASSETS).every(asset=>existsSync(asset)));
@@ -87,6 +88,48 @@ assert.equal(getActionResultVideo("gift-shopping",happyVideoState,()=>shoppingRo
 assert.equal(getActionResultVideo("morning-contact",sadVideoState,()=>0.99),"assets/video/action-results/sad01.mp4");
 assert.equal(getActionResultVideo("lunch-date",happyVideoState,()=>0.99),null);
 console.log("✓ 기분·데이트·식사·쇼핑 상황별 결과 영상 랜덤 선택 검증 통과");
+
+assert.ok(Object.values(PLAYER_HOME_PROFILES).every(profile=>existsSync(profile.background)));
+assert.equal(getPlayerHomeProfile("balanced").districtId,"dongsu");
+assert.match(getPlayerHomeProfile("balanced").background,/BG_HOME_BASIC_VILLA_NIGHT_001\.png$/);
+assert.equal(getPlayerHomeProfile("handsome").districtId,"dongsu");
+assert.equal(getPlayerHomeProfile("wealthy").districtId,"geumsu");
+assert.ok(WORLD_MAPS.dongsu.locations.length>=9);
+assert.ok(WORLD_MAPS.geumsu.locations.length>=8);
+assert.ok(WORLD_MAPS.busan.locations.length>=7);
+assert.deepEqual(Object.keys(WORLD_ATLAS),["nationwide","seoul","busan"]);
+assert.equal(TRANSPORT_OPTIONS.length,5);
+assert.equal(existsSync("assets/characters/map/PLAYER_BALANCED.png"),true);
+assert.equal(existsSync("assets/characters/map/VEHICLE_WEALTHY.png"),true);
+const localWorld=createWorldState({archetypeId:"balanced"});
+const richWorld=createWorldState({archetypeId:"wealthy"});
+assert.equal(localWorld.districtId,"dongsu");
+assert.equal(richWorld.districtId,"geumsu");
+assert.equal(richWorld.ownedVehicleId,"wealthy-sedan");
+assert.equal(richWorld.transport,"car");
+assert.equal(richWorld.transportConfirmed,true);
+assert.equal(localWorld.transportConfirmed,false);
+assert.equal(selectWorldTransport(localWorld,"car").ok,false);
+assert.equal(selectWorldTransport(localWorld,"bus").ok,true);
+const roadCells=getRoadCells("dongsu");
+assert.ok(roadCells.length>WORLD_MAPS.dongsu.locations.length);
+assert.ok(roadCells.every(cell=>isRoadCell("dongsu",cell.x,cell.y)));
+const adjacentRoad=roadCells.find(cell=>Math.abs(cell.x-localWorld.x)+Math.abs(cell.y-localWorld.y)===1);
+assert.ok(adjacentRoad);
+assert.equal(moveWorldPlayer(localWorld,adjacentRoad.x-localWorld.x,adjacentRoad.y-localWorld.y).moved,true);
+const blockedMove=[[1,0],[-1,0],[0,1],[0,-1]].find(([dx,dy])=>!isRoadCell("dongsu",localWorld.x+dx,localWorld.y+dy));
+if(blockedMove){const before={x:localWorld.x,y:localWorld.y};assert.equal(moveWorldPlayer(localWorld,...blockedMove).moved,false);assert.deepEqual({x:localWorld.x,y:localWorld.y},before);}
+assert.equal(travelToCity(localWorld,"busan","dongsu").map.id,"busan");
+assert.equal(localWorld.cityId,"busan");
+localWorld.x=WORLD_MAPS.dongsu.start.x;localWorld.y=WORLD_MAPS.dongsu.start.y;
+localWorld.cityId="seoul";localWorld.districtId="dongsu";
+const homeNearby=getNearbyLocation(localWorld);
+assert.equal(homeNearby.category,"home");
+discoverLocation(localWorld,"small-cafe",3);
+assert.ok(localWorld.discoveredLocations.includes("small-cafe"));
+assert.equal(localWorld.visitHistory.at(-1).day,3);
+assert.equal(validateWorldState(migrateWorldState(null,{archetypeId:"balanced"})),true);
+console.log("✓ 캐릭터별 방·도로 제한 이동·남자/고급차 마커·서울/부산/전국 지도·이동수단 검증 통과");
 
 assert.equal(PLAYER_ARCHETYPES.length,3);
 assert.ok(PLAYER_ARCHETYPES.every((entry)=>existsSync(entry.image)));
