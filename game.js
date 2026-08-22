@@ -380,7 +380,7 @@ function restoreEventCheckpoint(){
   state.logs.push({time:`DAY ${state.day} · RECOVERY`,text:`알 수 없는 이벤트 ${saved.activeEvent}를 건너뛰고 안전 지점으로 복구했다.`});state.eventRuntime={...saved,activeEvent:null,state:"IDLE",checkpoint:null,inputLock:{locked:false,owner:null,reason:null,lockedFor:0}};SaveManager.save(state);
 }
 
-const GIRLFRIEND_NAMES = ["서연", "하은", "수아", "지아", "아린", "유진", "나리", "유리"];
+const MBTI_TYPES = ["ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP", "ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"];
 const PERSONALITY_LABELS = { romanticism:"로맨틱", independence:"독립적", loyalty:"한결같음", emotionalSensitivity:"섬세함", socialPreference:"사교적", contactImportance:"연락 중시" };
 
 function setOnboardingProgress(step, total = 3) {
@@ -407,7 +407,7 @@ function personalitySummary(partner) {
 }
 
 function beginOnboarding() {
-  onboarding = { step:1, partner:null, girlfriendNameReady:false, girlfriendTraitsReady:false, girlfriendJobReady:false, playerArchetype:null, playerName:"", playerJob:null, previewState:null };
+  onboarding = { step:1, partner:null, girlfriendTraitsReady:false, girlfriendJobReady:false, playerArchetype:null, playerName:"", playerJob:null, previewState:null };
   $("#introScreen").classList.add("hidden");
   $("#onboardingScreen").classList.remove("hidden");
   renderGirlfriendSetup();
@@ -417,21 +417,19 @@ function renderGirlfriendSetup() {
   setOnboardingProgress(1);
   const candidates = HEROINE_PROFILES.slice(0,3);
   $("#onboardingContent").innerHTML = `
-    <header class="setup-heading"><span>GIRLFRIEND SELECT</span><h1>여자친구 캐릭터 선택</h1><p>첫 번째 캐릭터를 선택한 뒤 이름, 성향, 직업을 하나씩 확인하세요.</p></header>
-    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>`<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${getGirlfriendVisual().previewImage}" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`).join("")}</div>
+    <header class="setup-heading"><span>GIRLFRIEND SELECT</span><h1>여자친구 캐릭터 선택</h1><p>보라색 머리 캐릭터를 선택한 뒤 MBTI와 직업을 확인하세요. 이름은 그대로 유지됩니다.</p></header>
+    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>`<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${getGirlfriendVisual().previewImage}?v=6" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`).join("")}</div>
     <div class="roll-panel ${onboarding.partner?"":"locked"}">
-      <div class="roll-row"><div><small>NAME</small><b id="girlfriendNameRoll">${onboarding.girlfriendNameReady?escapeHtml(onboarding.partner.name):"버튼을 눌러 이름 확인"}</b></div><button id="rollGirlfriendName" type="button" ${onboarding.partner?"":"disabled"}>이름 랜덤 선택</button></div>
-      <div class="roll-row"><div><small>PERSONALITY & STATS</small><b id="girlfriendTraitRoll">${onboarding.girlfriendTraitsReady?personalitySummary(onboarding.partner):"숨겨진 성향과 수치"}</b></div><button id="rollGirlfriendTraits" type="button" ${onboarding.partner?"":"disabled"}>성향 랜덤 선택</button></div>
+      <div class="roll-row"><div><small>MBTI</small><b id="girlfriendTraitRoll">${onboarding.girlfriendTraitsReady?escapeHtml(onboarding.partner.mbti):"버튼을 눌러 MBTI 선택"}</b></div><button id="rollGirlfriendTraits" type="button" ${onboarding.partner?"":"disabled"}>MBTI 랜덤 선택</button></div>
       <div class="roll-row"><div><small>CAREER</small><b id="girlfriendJobRoll">${onboarding.girlfriendJobReady?escapeHtml(onboarding.partner.career.name):"여자친구의 직업"}</b></div><button id="rollGirlfriendJob" type="button" ${onboarding.partner?"":"disabled"}>직업 랜덤 선택</button></div>
     </div>
-    <button id="girlfriendSetupNext" class="primary-button setup-next" type="button" ${onboarding.girlfriendNameReady&&onboarding.girlfriendTraitsReady&&onboarding.girlfriendJobReady?"":"disabled"}>나의 캐릭터 선택으로</button>`;
+    <button id="girlfriendSetupNext" class="primary-button setup-next" type="button" ${onboarding.girlfriendTraitsReady&&onboarding.girlfriendJobReady?"":"disabled"}>나의 캐릭터 선택으로</button>`;
   document.querySelectorAll("[data-heroine]").forEach((button)=>button.addEventListener("click",()=>{
     onboarding.partner=createGirlfriendFromProfile(button.dataset.heroine);
-    onboarding.girlfriendNameReady=onboarding.girlfriendTraitsReady=onboarding.girlfriendJobReady=false;
+    onboarding.girlfriendTraitsReady=onboarding.girlfriendJobReady=false;
     renderGirlfriendSetup();
   }));
-  $("#rollGirlfriendName")?.addEventListener("click",(event)=>runRoll(event.currentTarget,$("#girlfriendNameRoll"),GIRLFRIEND_NAMES,()=>{onboarding.partner.name=GIRLFRIEND_NAMES[Math.floor(Math.random()*GIRLFRIEND_NAMES.length)];onboarding.girlfriendNameReady=true;setTimeout(renderGirlfriendSetup,120);return onboarding.partner.name;}));
-  $("#rollGirlfriendTraits")?.addEventListener("click",(event)=>runRoll(event.currentTarget,$("#girlfriendTraitRoll"),["분석 중...","성향 조합 중...","숨겨진 마음 확인 중..."],()=>{rerollGirlfriendPersonality(onboarding.partner);onboarding.girlfriendTraitsReady=true;setTimeout(renderGirlfriendSetup,120);return personalitySummary(onboarding.partner);}));
+  $("#rollGirlfriendTraits")?.addEventListener("click",(event)=>runRoll(event.currentTarget,$("#girlfriendTraitRoll"),MBTI_TYPES,()=>{rerollGirlfriendPersonality(onboarding.partner);onboarding.partner.mbti=MBTI_TYPES[Math.floor(Math.random()*MBTI_TYPES.length)];onboarding.girlfriendTraitsReady=true;setTimeout(renderGirlfriendSetup,120);return onboarding.partner.mbti;}));
   $("#rollGirlfriendJob")?.addEventListener("click",(event)=>{const careers=GIRLFRIEND_JOBS.filter((career)=>career.id!=="high-school-senior");runRoll(event.currentTarget,$("#girlfriendJobRoll"),careers.map((career)=>career.name),()=>{const selected=structuredClone(careers[Math.floor(Math.random()*careers.length)]);selected.heroineId=onboarding.partner.heroineId;onboarding.partner.career=selected;onboarding.partner.job=selected.name;onboarding.girlfriendJobReady=true;setTimeout(renderGirlfriendSetup,120);return selected.name;});});
   $("#girlfriendSetupNext")?.addEventListener("click",renderPlayerSetup);
 }
@@ -468,7 +466,7 @@ function renderSetupSummary() {
   const player=createPlayerProfile(onboarding.playerArchetype,onboarding.playerName);
   onboarding.previewState=createInitialState(onboarding.partner,Math.random,{player,job:onboarding.playerJob});
   const preview=onboarding.previewState;
-  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>FINAL PROFILE</span><h1>${escapeHtml(player.name)}의 30일이 시작됩니다</h1><p>선택한 설정은 저장 데이터와 모든 게임 시스템에 적용됩니다.</p></header><div class="setup-summary"><img src="${player.image}" alt="${escapeHtml(player.name)}"><div><span>${escapeHtml(player.archetypeName)}</span><h2>${escapeHtml(player.name)}</h2><dl><div><dt>직업</dt><dd>${escapeHtml(preview.job.name)}</dd></div><div><dt>초기 자금</dt><dd>${money(preview.money)}</dd></div><div><dt>매력 / 패션</dt><dd>${preview.charm} / ${preview.fashion}</dd></div><div><dt>업무 / 사교</dt><dd>${preview.work} / ${preview.social}</dd></div></dl></div><div class="summary-partner"><small>GIRLFRIEND</small><strong>${escapeHtml(preview.partner.name)}</strong><span>${escapeHtml(preview.partner.career.name)}</span><p>${personalitySummary(preview.partner)}</p></div></div><button id="openIntroButton" class="primary-button setup-next" type="button">다음 · 프롤로그 보기</button>`;
+  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>FINAL PROFILE</span><h1>${escapeHtml(player.name)}의 30일이 시작됩니다</h1><p>선택한 설정은 저장 데이터와 모든 게임 시스템에 적용됩니다.</p></header><div class="setup-summary"><img src="${player.image}" alt="${escapeHtml(player.name)}"><div><span>${escapeHtml(player.archetypeName)}</span><h2>${escapeHtml(player.name)}</h2><dl><div><dt>직업</dt><dd>${escapeHtml(preview.job.name)}</dd></div><div><dt>초기 자금</dt><dd>${money(preview.money)}</dd></div><div><dt>매력 / 패션</dt><dd>${preview.charm} / ${preview.fashion}</dd></div><div><dt>업무 / 사교</dt><dd>${preview.work} / ${preview.social}</dd></div></dl></div><div class="summary-partner"><small>GIRLFRIEND</small><strong>${escapeHtml(preview.partner.name)}</strong><span>${escapeHtml(preview.partner.mbti)} · ${escapeHtml(preview.partner.career.name)}</span><p>${personalitySummary(preview.partner)}</p></div></div><button id="openIntroButton" class="primary-button setup-next" type="button">다음 · 프롤로그 보기</button>`;
   $("#openIntroButton").addEventListener("click",openStoryIntro);
 }
 
