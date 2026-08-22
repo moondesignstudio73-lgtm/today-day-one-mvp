@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=26">
+  <link rel="stylesheet" href="styles.css?v=27">
   <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
@@ -172,7 +172,26 @@
       <div id="modalContent"></div>
     </div>
   </div>
+  <section id="actionResultModal" class="action-result-modal hidden" role="dialog" aria-modal="true" aria-labelledby="actionResultTitle" aria-describedby="actionResultText">
+    <article class="action-result-card">
+      <div class="action-result-media">
+        <img id="actionResultImage" src="" alt="" hidden>
+        <div id="actionResultPending" class="action-result-pending" hidden>
+          <span aria-hidden="true">✦</span>
+          <strong>이미지 준비 중</strong>
+          <small>이 활동의 장면 일러스트는 곧 추가됩니다.</small>
+        </div>
+      </div>
+      <div class="action-result-copy">
+        <span>ACTIVITY RESULT</span>
+        <h2 id="actionResultTitle"></h2>
+        <p id="actionResultText"></p>
+        <div id="actionResultEffects" class="action-result-effects" aria-label="능력치 변화"></div>
+      </div>
+      <button id="actionResultConfirm" class="primary-button action-result-confirm" type="button">확인</button>
+    </article>
+  </section>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=28"></script>
+  <script type="module" src="game.js?v=29"></script>
 </body>
 </html>

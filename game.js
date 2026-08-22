@@ -43,6 +43,7 @@ import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
+import { getActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=1";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -53,6 +54,8 @@ const INTRO_VIDEO_PLAYLIST = ["assets/video/intro.mp4", "assets/video/intro2.mp4
 let introVideoIndex = 0;
 const sound = new SoundManager();
 let modalReturnFocus = null;
+let actionResultReturnFocus = null;
+let actionResultContinuation = null;
 let dialogueTimer = null;
 let dialogueText = "";
 let dialogueIndex = 0;
@@ -91,6 +94,50 @@ function closeModal() {
   if (modalReturnFocus?.isConnected) modalReturnFocus.focus();
   modalReturnFocus = null;
   if (state && !state.ended && !state.breakup) { if(state.phase===3)renderNightHome();else sound.playScene(phases[state.phase].key,state.day); }
+}
+
+function formatActionEffectValue(effect) {
+  const sign = effect.value > 0 ? "+" : "";
+  return effect.key === "money" ? `${sign}${money(effect.value)}` : `${sign}${effect.value}`;
+}
+
+function openActionResultModal(action, message, effects, continuation) {
+  const modal = $("#actionResultModal");
+  const image = $("#actionResultImage");
+  const pending = $("#actionResultPending");
+  const asset = getActionResultAsset(action.id);
+  actionResultReturnFocus = document.activeElement;
+  actionResultContinuation = continuation;
+  $("#actionResultTitle").textContent = action.title;
+  $("#actionResultText").textContent = message;
+  if (asset) {
+    image.src = asset;
+    image.alt = `${action.title} 활동 결과 장면`;
+    image.hidden = false;
+    pending.hidden = true;
+  } else {
+    image.removeAttribute("src");
+    image.alt = "";
+    image.hidden = true;
+    pending.hidden = false;
+  }
+  const rows = getVisibleActionEffects(effects);
+  $("#actionResultEffects").innerHTML = rows.length
+    ? rows.map(effect => `<span class="${effect.value > 0 ? "up" : "down"}"><b>${escapeHtml(effect.label)}</b><em>${escapeHtml(formatActionEffectValue(effect))}</em></span>`).join("")
+    : '<span class="neutral"><b>변화</b><em>기록 완료</em></span>';
+  modal.classList.remove("hidden");
+  requestAnimationFrame(() => $("#actionResultConfirm").focus());
+}
+
+function confirmActionResult() {
+  const modal = $("#actionResultModal");
+  if (modal.classList.contains("hidden")) return;
+  modal.classList.add("hidden");
+  const continuation = actionResultContinuation;
+  actionResultContinuation = null;
+  if (actionResultReturnFocus?.isConnected) actionResultReturnFocus.focus();
+  actionResultReturnFocus = null;
+  continuation?.();
 }
 
 function handleModalKeydown(event) {
@@ -591,7 +638,7 @@ function applyAction() {
   const initiatedMessage = maybeGenerateInitiatedMessage(state);
   if (initiatedMessage) { state.logs.push({time:`DAY ${state.day} · MESSAGE`,text:`${state.partner.name}: ${initiatedMessage.text}`}); toast(`${state.partner.name}에게 메시지가 왔어요`); }
   if (finishedDay) { dailyEvent(); advanceStockMarket(state); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); runDailyStoryDirector(state,completedDay); SaveManager.save(state); if(state.day<=30)resetForNextDay(state); }
-  const microEvents=rollMicroEvents(state);microEvents.forEach(micro=>state.logs.push({time:`DAY ${micro.day} · MICRO`,text:micro.text}));if(microEvents.length)toast(microEvents.at(-1).text);
+  const microEvents=rollMicroEvents(state);microEvents.forEach(micro=>state.logs.push({time:`DAY ${micro.day} · MICRO`,text:micro.text}));
   const event = rollEvent(state);
   if (event) {
     state.logs.push({time:`DAY ${state.day} · EVENT`,text:`${event.title} — ${event.message}`});
@@ -605,7 +652,11 @@ function applyAction() {
   state.currentOutfit = resolveCharacterOutfit(state,currentExpression);
   state.currentAccessory = resolveCharacterAccessory(state);
   SaveManager.save(state);
-  if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { render(); const temptation=npcResult&&getTemptationOpportunity(state); const story=selectNextStoryScene(state); if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }
+  const actionMessage = [resultText(action), ...microEvents.map(micro=>micro.text)].join(" ");
+  render();
+  openActionResultModal(action, actionMessage, fx, () => {
+    if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { const temptation=npcResult&&getTemptationOpportunity(state); const story=selectNextStoryScene(state); if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }
+  });
 }
 
 function resultText(a) { if(a.tag==="데이트") return `${state.partner.name}의 표정이 한결 밝아졌다.`; if(a.tag==="성공") return "미래를 위한 한 걸음을 내디뎠다."; if(a.tag==="유혹") return "새로운 인연의 기척이 느껴진다."; if(a.tag==="연락") return "짧은 대화가 두 사람을 조금 더 가깝게 했다."; return "선택의 결과가 하루에 남았다."; }
@@ -802,7 +853,7 @@ $("#autoButton").addEventListener("click",toggleAutoMode);
 $("#skipButton").addEventListener("click",skipImmersiveScene);
 $("#fullscreenButton").addEventListener("click",toggleFullscreen);
 $("#storyFullscreenButton").addEventListener("click",toggleFullscreen);
-$("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
+$("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#actionResultConfirm").addEventListener("click",confirmActionResult); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
 $("#introVideo").addEventListener("ended",playNextIntroVideo);
 $("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();introVideoIndex=INTRO_VIDEO_PLAYLIST.length-1;unlockIntroStart("프롤로그 영상을 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
 $("#introGameStartButton").addEventListener("click",finishOnboarding);
