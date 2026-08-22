@@ -44,6 +44,7 @@ import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
 import { getActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=3";
+import { getActionResultVideo } from "./src/action-result-videos.mjs?v=1";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -104,13 +105,27 @@ function formatActionEffectValue(effect) {
 function openActionResultModal(action, message, effects, continuation) {
   const modal = $("#actionResultModal");
   const image = $("#actionResultImage");
+  const video = $("#actionResultVideo");
   const pending = $("#actionResultPending");
   const asset = getActionResultAsset(action.id);
+  const videoAsset = getActionResultVideo(action.id,state);
   actionResultReturnFocus = document.activeElement;
   actionResultContinuation = continuation;
   $("#actionResultTitle").textContent = action.title;
   $("#actionResultText").textContent = message;
-  if (asset) {
+  video.pause();
+  video.hidden = true;
+  video.removeAttribute("src");
+  if (videoAsset) {
+    image.removeAttribute("src");
+    image.alt = "";
+    image.hidden = true;
+    video.src = videoAsset;
+    video.setAttribute("aria-label", `${action.title} 행동 결과 영상`);
+    video.hidden = false;
+    pending.hidden = true;
+    video.play().catch(() => {});
+  } else if (asset) {
     image.src = asset;
     image.alt = `${action.title} 활동 결과 장면`;
     image.hidden = false;
@@ -132,6 +147,11 @@ function openActionResultModal(action, message, effects, continuation) {
 function confirmActionResult() {
   const modal = $("#actionResultModal");
   if (modal.classList.contains("hidden")) return;
+  const video = $("#actionResultVideo");
+  video.pause();
+  video.currentTime = 0;
+  video.hidden = true;
+  video.removeAttribute("src");
   modal.classList.add("hidden");
   const continuation = actionResultContinuation;
   actionResultContinuation = null;

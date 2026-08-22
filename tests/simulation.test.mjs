@@ -52,6 +52,7 @@ import { createEventSceneSequence, createStoryReactionSequence, createStoryScene
 import { analyzePlayerBehavior, analyzeRelationshipState, createStoryProposalContext, getDaySeed, getRecencyWeight, runDailyStoryDirector, validateStoryDirectorState, validateStoryProposal } from "../src/dynamic-story-director.mjs";
 import { applyPlayerArchetype, createPlayerProfile, migratePlayerProfile, PLAYER_ARCHETYPES, validatePlayerProfile } from "../src/player-profile-data.mjs";
 import { ACTION_RESULT_ASSETS, getActionResultAsset, getVisibleActionEffects } from "../src/action-result-assets.mjs";
+import { ACTION_RESULT_VIDEOS, getActionResultVideo, isGirlfriendHappy, isGirlfriendSad } from "../src/action-result-videos.mjs";
 
 assert.deepEqual(Object.keys(ACTION_RESULT_ASSETS).sort(),["coworker-lunch","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"]);
 assert.ok(Object.values(ACTION_RESULT_ASSETS).every(asset=>existsSync(asset)));
@@ -73,6 +74,19 @@ assert.deepEqual(getVisibleActionEffects({npcInterest:12,npcTrust:8,trust:-20,co
   {key:"conflict",label:"갈등",value:12}
 ]);
 console.log("✓ 활동 결과 팝업 10종 이미지·효과 표시 매핑 검증 통과");
+
+assert.ok(Object.values(ACTION_RESULT_VIDEOS).flat().every(asset=>existsSync(asset)));
+const happyVideoState={affection:650,trust:600,conflict:10,relationshipStress:20,currentExpression:"smile"};
+const sadVideoState={...happyVideoState,conflict:70,currentExpression:"tense"};
+assert.equal(isGirlfriendHappy(happyVideoState),true);
+assert.equal(isGirlfriendSad(sadVideoState),true);
+assert.equal(getActionResultVideo("focused-work",happyVideoState,()=>0),null);
+assert.equal(getActionResultVideo("dinner-date",happyVideoState,()=>0),"assets/video/action-results/date01.mp4");
+let shoppingRoll=0;
+assert.equal(getActionResultVideo("gift-shopping",happyVideoState,()=>shoppingRoll++?0.99:0),"assets/video/action-results/shop02.mp4");
+assert.equal(getActionResultVideo("morning-contact",sadVideoState,()=>0.99),"assets/video/action-results/sad01.mp4");
+assert.equal(getActionResultVideo("lunch-date",happyVideoState,()=>0.99),null);
+console.log("✓ 기분·데이트·식사·쇼핑 상황별 결과 영상 랜덤 선택 검증 통과");
 
 assert.equal(PLAYER_ARCHETYPES.length,3);
 assert.ok(PLAYER_ARCHETYPES.every((entry)=>existsSync(entry.image)));
