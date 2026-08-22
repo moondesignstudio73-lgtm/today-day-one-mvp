@@ -44,7 +44,7 @@ import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { getGirlfriendVisual } from "./src/girlfriend-visual-data.mjs";
 import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
-import { getActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=4";
+import { getActionResultAsset, getOneTimeActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=5";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=1";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs";
 
@@ -139,8 +139,14 @@ function openActionResultModal(action, message, effects, continuation) {
   const image = $("#actionResultImage");
   const video = $("#actionResultVideo");
   const pending = $("#actionResultPending");
-  const asset = getActionResultAsset(action.id);
-  const videoAsset = getActionResultVideo(action.id,state);
+  state.seenOneTimeActionResults ??= [];
+  const oneTimeAsset = getOneTimeActionResultAsset(action.id,state.seenOneTimeActionResults);
+  const asset = oneTimeAsset ?? getActionResultAsset(action.id);
+  const videoAsset = oneTimeAsset ? null : getActionResultVideo(action.id,state);
+  if (oneTimeAsset) {
+    state.seenOneTimeActionResults.push(action.id);
+    SaveManager.save(state);
+  }
   actionResultReturnFocus = document.activeElement;
   actionResultContinuation = continuation;
   $("#actionResultTitle").textContent = action.title;
