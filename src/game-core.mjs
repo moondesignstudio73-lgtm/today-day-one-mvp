@@ -1,5 +1,5 @@
 import { validateGirlfriend } from "./girlfriend-manager.mjs";
-import { generateJob, validateJob } from "./jobs-data.mjs";
+import { generateJob, getJobStartingState, validateJob } from "./jobs-data.mjs";
 import { generateNpcs, validateNpcs } from "./npc-manager.mjs";
 import { validateMemories } from "./memory-manager.mjs";
 import { createInvestmentState, validateInvestmentState } from "./investment-manager.mjs";
@@ -19,6 +19,8 @@ export function clamp(value, min = 0, max = 100) {
 }
 
 export function createInitialState(partner, random = Math.random) {
+  const selectedJob = generateJob(random);
+  const jobStart = getJobStartingState(selectedJob, random);
   const state = {
     version: 1,
     day: 1,
@@ -26,7 +28,7 @@ export function createInitialState(partner, random = Math.random) {
     selected: null,
     partner,
     ...createVisualState(partner),
-    job: generateJob(random),
+    job: selectedJob,
     jobLevel: 1,
     jobProgress: 0,
     economyLedger: [],
@@ -60,16 +62,16 @@ export function createInitialState(partner, random = Math.random) {
     attachment: 450,
     conflict: 0,
     relationshipStress: 10,
-    money: 780000 + Math.floor(random() * 140001),
-    health: 68 + Math.floor(random() * 10),
-    energy: 72 + Math.floor(random() * 10),
-    stress: 20 + Math.floor(random() * 11),
-    fatigue: 18 + Math.floor(random() * 10),
-    charm: 44 + Math.floor(random() * 10),
-    fashion: 35 + Math.floor(random() * 10),
-    confidence: 40 + Math.floor(random() * 10),
-    work: 38 + Math.floor(random() * 10),
-    social: 36 + Math.floor(random() * 10),
+    money: jobStart.money,
+    health: jobStart.health,
+    energy: jobStart.energy,
+    stress: jobStart.stress,
+    fatigue: jobStart.fatigue,
+    charm: jobStart.charm,
+    fashion: jobStart.fashion,
+    confidence: jobStart.confidence,
+    work: jobStart.work,
+    social: jobStart.social,
     logs: [],
     choices: [],
     actionHistory: [],

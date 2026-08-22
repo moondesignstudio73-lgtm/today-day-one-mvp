@@ -34,16 +34,37 @@ export function recordTransaction(state, transaction) {
   return entry;
 }
 
-export function calculatePaycheck(state) {
+export function getJobIncomeFactor(state, payday = state.day) {
+  const [minimum = 1, maximum = 1] = state.job?.incomeVariance ?? [1, 1];
+  if (minimum === maximum) return minimum;
+  const seed = `${state.appearanceSeed ?? 0}:${state.job?.id ?? "job"}:${payday}`;
+  let hash = 2166136261;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash ^= seed.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  const ratio = (hash >>> 0) / 4294967295;
+  return minimum + (maximum - minimum) * ratio;
+}
+
+export function calculatePaycheck(state, payday = state.day) {
   const baseTenDayPay = state.job.salary / 3;
   const levelBonus = 1 + ((state.jobLevel ?? 1) - 1) * 0.08;
-  return Math.round(baseTenDayPay * state.job.incomeMultiplier * levelBonus);
+  return Math.round(baseTenDayPay * state.job.incomeMultiplier * levelBonus * getJobIncomeFactor(state, payday));
+}
+
+export function getPaycheckRange(state) {
+  const baseTenDayPay = state.job.salary / 3;
+  const levelBonus = 1 + ((state.jobLevel ?? 1) - 1) * 0.08;
+  const [minimum = 1, maximum = 1] = state.job?.incomeVariance ?? [1, 1];
+  const multiplier = state.job.incomeMultiplier * levelBonus;
+  return { minimum: Math.round(baseTenDayPay * multiplier * minimum), maximum: Math.round(baseTenDayPay * multiplier * maximum) };
 }
 
 export function processDayEndEconomy(state, completedDay) {
   const entries = [];
   entries.push(recordTransaction(state, { day:completedDay, category:"living", label:"하루 생활비", amount:-Math.min(DAILY_LIVING_COST, state.money) }));
-  if (PAY_DAYS.includes(completedDay)) entries.push(recordTransaction(state, { day:completedDay, category:"salary", label:`${state.job.name} 급여`, amount:calculatePaycheck(state) }));
+  if (PAY_DAYS.includes(completedDay)) entries.push(recordTransaction(state, { day:completedDay, category:"salary", label:`${state.job.name} 급여`, amount:calculatePaycheck(state, completedDay) }));
   const finance = ensureFinanceState(state);
   if (finance.savings > 0) {
     const interest = Math.max(1, Math.round(finance.savings * DAILY_SAVINGS_RATE));

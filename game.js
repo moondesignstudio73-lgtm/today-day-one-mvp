@@ -13,8 +13,8 @@ import { getActionAvailability, isActionVisible } from "./src/action-manager.mjs
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
-import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=2";
-import { acquireActionItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs";
+import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, getPaycheckRange, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=6";
+import { acquireActionItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs?v=6";
 import { getItem, ITEMS } from "./src/items-data.mjs?v=5";
 import { giveGift } from "./src/gift-manager.mjs?v=5";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
@@ -566,6 +566,7 @@ function openShop() {
   const cards = visibleItems.map(item=>{const heroineOutfit=item.category==="heroine-outfit",unlocked=!heroineOutfit||isOutfitUnlocked(state,item);const visual=item.productImage?`<img class="shop-product-image" src="${item.productImage}" alt="${escapeHtml(item.name)}" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`;const actions=heroineOutfit?`<button data-buy="${item.id}" data-owner="gift" ${unlocked?'':'disabled'}>${unlocked?`${state.partner.name} 선물용`:`DAY ${item.unlockConditions.day} 잠금`}</button>`:`<button data-buy="${item.id}" data-owner="player">내 것</button><button data-buy="${item.id}" data-owner="gift">선물용</button>`;return `<div class="shop-item ${heroineOutfit?'heroine-outfit-card':''}">${visual}<div><small>${item.brand} · ${item.rarity??`LUX ${item.luxuryLevel}`}</small><b>${escapeHtml(item.name)}</b><span>${escapeHtml((item.styleTags??item.preferenceTags).join(" · "))} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span><strong>${money(item.price)}</strong></div><div class="shop-actions">${actions}</div></div>`;}).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">LIFESTYLE SHOP</span><h2>오늘의 상점</h2><p>보유 자산 ${money(state.money)} · ${state.partner.name} 전용 의상 10종이 관계 진행에 따라 해금됩니다.</p><div class="shop-list">${cards}</div>`;
   openModal();
+  if (state.job?.id === "used-car-dealer") $("#modalContent").insertAdjacentHTML("afterbegin", `<p class="career-tip"><b>딜러 네트워크 적용:</b> ${escapeHtml(state.partner.name)}에게 선물할 차량은 결제 시 12% 자동 할인됩니다.</p>`);
   document.querySelectorAll("[data-buy]").forEach(button=>button.addEventListener("click",()=>{ const result=purchaseItem(state,button.dataset.buy,button.dataset.owner); if(!result.ok){toast(result.reason);return;} SaveManager.save(state); toast(`${result.item.name} 구매 완료`); openShop(); render(); }));
 }
 
@@ -581,7 +582,10 @@ function openFinance() {
 
 function openCareer() {
   const career = getCareerSummary(state), job = state.job;
+  const payday = getNextPayday(state.day) ?? state.day;
+  const paycheckRange = getPaycheckRange(state);
   $("#modalContent").innerHTML=`<span class="eyebrow">MY CAREER</span><h2>${job.name} · Lv.${state.jobLevel}</h2><p>다음 10일 급여 예상 ${money(calculatePaycheck(state))}</p><div class="career-progress"><div><span>승진 진행도</span><b>${career.progress} / ${career.threshold}</b></div><i><em style="width:${career.percent}%"></em></i><small>승진까지 성장 포인트 ${career.remaining}</small></div><div class="career-stats"><div><small>연봉</small><b>${money(job.salary)}</b></div><div><small>수입 배율</small><b>×${job.incomeMultiplier.toFixed(2)}</b></div><div><small>성장 잠재력</small><b>${job.growthPotential}</b></div><div><small>인맥 기회</small><b>${job.socialOpportunity}</b></div><div><small>스트레스 배율</small><b>×${job.stressRate.toFixed(2)}</b></div></div><p class="career-tip">성공 행동으로 업무 능력을 올리면 승진 진행도가 쌓이고, 승진할 때마다 수입 배율이 증가합니다.</p>`;
+  $("#modalContent").insertAdjacentHTML("beforeend", `<section class="career-perk"><small>${escapeHtml(job.incomeType)} · DAY ${payday} 예상 ${money(calculatePaycheck(state, payday))}</small><h3>${escapeHtml(job.perkName)}</h3><p>${escapeHtml(job.perkDescription)}</p><span>급여 범위 ${money(paycheckRange.minimum)} ~ ${money(paycheckRange.maximum)}</span></section>`);
   openModal();
 }
 

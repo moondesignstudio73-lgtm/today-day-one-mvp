@@ -8,6 +8,7 @@ import { migrateVisualState } from "./character-appearance.mjs";
 import { createHiddenRouteState } from "./hidden-route-manager.mjs";
 import { createDaySnapshot } from "./night-manager.mjs";
 import { migrateStoryDirectorState } from "./dynamic-story-director.mjs";
+import { migrateJob } from "./jobs-data.mjs";
 
 export class SaveManager {
   static key = "today-day-one.save.v1";
@@ -28,6 +29,7 @@ export class SaveManager {
     if (!raw) return null;
     try {
       const parsed = JSON.parse(raw);
+      parsed.job = migrateJob(parsed.job);
       migrateHeroineProfile(parsed.partner);
       migrateVisualState(parsed);
       parsed.npcs=migrateNpcRoster(parsed.npcs);

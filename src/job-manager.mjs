@@ -1,10 +1,17 @@
 export function applyJobModifiers(state, action, effects) {
-  if (action.tag !== "성공" || !state.job) return { ...effects };
+  if (!state.job) return { ...effects };
   const modified = { ...effects };
-  if ((modified.money ?? 0) > 0) modified.money *= state.job.incomeMultiplier;
-  if ((modified.work ?? 0) > 0) modified.work *= 0.65 + state.job.growthPotential / 100;
-  if ((modified.stress ?? 0) > 0) modified.stress *= state.job.stressRate;
-  if ((modified.social ?? 0) > 0) modified.social *= 0.6 + state.job.socialOpportunity / 100;
+  if (action.tag === "성공") {
+    if ((modified.money ?? 0) > 0) modified.money *= state.job.incomeMultiplier;
+    if ((modified.work ?? 0) > 0) modified.work *= 0.65 + state.job.growthPotential / 100;
+    if ((modified.stress ?? 0) > 0) modified.stress *= state.job.stressRate;
+    if ((modified.social ?? 0) > 0) modified.social *= 0.6 + state.job.socialOpportunity / 100;
+  }
+  if (state.job.id === "professional-athlete" && (action.tag === "자기관리" || /exercise|rest|health/.test(action.id ?? ""))) {
+    for (const key of ["health", "energy"]) if ((modified[key] ?? 0) > 0) modified[key] *= 1.3;
+    for (const key of ["stress", "fatigue"]) if ((modified[key] ?? 0) < 0) modified[key] *= 1.3;
+  }
+  if (["multi-job-worker", "day-laborer"].includes(state.job.id) && (modified.fatigue ?? 0) > 0) modified.fatigue *= 1.15;
   return modified;
 }
 
