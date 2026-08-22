@@ -52,6 +52,73 @@ export const WORLD_MAPS = Object.freeze({
       {id:"geumsu-station",name:"금수역",icon:"🚇",category:"transport",x:5,y:7,description:"서울 중심부와 연결되는 지하철역"}
     ])
   }),
+  yeonhui:Object.freeze({
+    id:"yeonhui",cityId:"seoul",name:"연희동",subtitle:"여자친구의 일상과 추억이 머무는 조용한 서울 동네",theme:"romantic",width:12,height:8,start:{x:6,y:6},
+    locations:Object.freeze([
+      {id:"yeonhui-station",name:"연희역",icon:"🚇",category:"transport",x:6,y:6,description:"여자친구의 동네로 이어지는 지하철역"},
+      {id:"girlfriend-home",name:"여자친구의 집",icon:"🏡",category:"girlfriend-home",x:2,y:2,description:"여자친구가 생활하는 익숙하고 따뜻한 공간"},
+      {id:"flower-cafe",name:"플로라 카페",icon:"🌷",category:"cafe",x:5,y:1,description:"꽃과 디저트가 가득한 여자친구의 단골 카페"},
+      {id:"yeonhui-bakery",name:"연희 베이커리",icon:"🥐",category:"cafe",x:9,y:2,description:"갓 구운 빵 냄새가 골목까지 퍼지는 작은 빵집"},
+      {id:"memory-park",name:"기억의 공원",icon:"🌸",category:"date",x:9,y:5,description:"둘이 천천히 산책하며 이야기하기 좋은 공원"},
+      {id:"vinyl-store",name:"오후의 레코드",icon:"🎵",category:"culture",x:3,y:5,description:"여자친구가 좋아하는 음악을 발견할 수 있는 가게"},
+      {id:"rose-bistro",name:"로즈 비스트로",icon:"🍝",category:"western",x:1,y:6,description:"따뜻한 조명 아래 저녁 데이트를 즐기는 식당"}
+    ])
+  }),
+  hongdae:Object.freeze({
+    id:"hongdae",cityId:"seoul",name:"홍대거리",subtitle:"음악과 클럽의 네온이 밤새 이어지는 번화가",theme:"nightlife",width:12,height:8,start:{x:6,y:6},
+    locations:Object.freeze([
+      {id:"hongdae-station",name:"홍대입구역",icon:"🚇",category:"transport",x:6,y:6,description:"홍대 번화가로 이어지는 지하철역"},
+      {id:"neon-club",name:"클럽 네온",icon:"🪩",category:"club",x:2,y:2,description:"DJ 공연과 화려한 조명이 이어지는 성인 클럽",adultOnly:true},
+      {id:"live-house",name:"라이브 하우스",icon:"🎸",category:"culture",x:5,y:1,description:"인디 밴드의 공연을 가까이서 즐기는 무대"},
+      {id:"rooftop-pub",name:"문라이트 루프탑",icon:"🍸",category:"bar",x:9,y:2,description:"홍대 야경이 펼쳐지는 루프탑 바",adultOnly:true},
+      {id:"street-fashion",name:"스트리트 편집숍",icon:"👟",category:"shopping",x:9,y:5,description:"개성 있는 패션과 액세서리를 고르는 편집숍"},
+      {id:"night-food",name:"심야 포차거리",icon:"🍢",category:"korean",x:3,y:5,description:"밤늦게까지 길거리 음식을 즐기는 골목"}
+    ])
+  }),
+  seongsu:Object.freeze({
+    id:"seongsu",cityId:"seoul",name:"성수 피트니스 거리",subtitle:"운동과 라이프스타일 공간이 모인 활기찬 거리",theme:"fitness",width:12,height:8,start:{x:6,y:6},
+    locations:Object.freeze([
+      {id:"seongsu-station",name:"성수역",icon:"🚇",category:"transport",x:6,y:6,description:"피트니스 거리로 연결되는 지하철역"},
+      {id:"prime-gym",name:"프라임 짐",icon:"🏋️",category:"gym",x:2,y:2,description:"웨이트와 퍼스널 트레이닝을 제공하는 대형 체육관"},
+      {id:"boxing-studio",name:"어반 복싱",icon:"🥊",category:"gym",x:5,y:1,description:"복싱과 유산소 운동을 배우는 스튜디오"},
+      {id:"climbing-lab",name:"클라이밍 랩",icon:"🧗",category:"gym",x:9,y:2,description:"높은 실내 암벽을 함께 오르는 스포츠 공간"},
+      {id:"running-park",name:"서울숲 러닝코스",icon:"🏃",category:"date",x:9,y:5,description:"가볍게 달리거나 산책하기 좋은 공원 코스"},
+      {id:"protein-cafe",name:"프로틴 카페",icon:"🥤",category:"diet",x:3,y:5,description:"운동 후 건강한 음료와 식사를 즐기는 카페"}
+    ])
+  }),
+  jamsil:Object.freeze({
+    id:"jamsil",cityId:"seoul",name:"잠실 드림랜드",subtitle:"놀이기구와 호수의 불빛이 가득한 데이트 명소",theme:"amusement",width:12,height:8,start:{x:6,y:6},
+    locations:Object.freeze([
+      {id:"jamsil-station",name:"잠실역",icon:"🚇",category:"transport",x:6,y:6,description:"드림랜드 정문으로 이어지는 지하철역"},
+      {id:"dream-castle",name:"드림 캐슬",icon:"🏰",category:"amusement",x:2,y:2,description:"퍼레이드와 사진 촬영을 즐기는 놀이동산의 상징"},
+      {id:"roller-coaster",name:"스카이 코스터",icon:"🎢",category:"amusement",x:5,y:1,description:"호수 위를 빠르게 달리는 인기 롤러코스터"},
+      {id:"ferris-wheel",name:"별빛 관람차",icon:"🎡",category:"amusement",x:9,y:2,description:"서울 야경을 둘이 감상하는 대관람차"},
+      {id:"carousel",name:"문라이트 회전목마",icon:"🎠",category:"amusement",x:9,y:5,description:"따뜻한 조명 아래 추억을 남기는 회전목마"},
+      {id:"lake-promenade",name:"호수 산책로",icon:"🌙",category:"date",x:3,y:5,description:"축제 조명과 호수를 따라 걷는 데이트 코스"}
+    ])
+  }),
+  myeongdong:Object.freeze({
+    id:"myeongdong",cityId:"seoul",name:"명동 쇼핑거리",subtitle:"백화점과 패션 매장이 빛나는 서울 중심 상권",theme:"shopping",width:12,height:8,start:{x:6,y:6},
+    locations:Object.freeze([
+      {id:"myeongdong-station",name:"명동역",icon:"🚇",category:"transport",x:6,y:6,description:"명동 쇼핑거리 중심으로 이어지는 지하철역"},
+      {id:"central-department",name:"센트럴 백화점",icon:"🏬",category:"shopping",x:2,y:2,description:"패션·식품·명품 매장이 모인 대형 백화점"},
+      {id:"fashion-mall",name:"스타일 몰",icon:"👗",category:"shopping",x:5,y:1,description:"유행하는 옷과 액세서리를 고르는 패션몰"},
+      {id:"beauty-street",name:"뷰티 스트리트",icon:"💄",category:"shopping",x:9,y:2,description:"화장품과 향수를 체험하는 쇼핑 거리"},
+      {id:"city-cinema",name:"시티 시네마",icon:"🎬",category:"culture",x:9,y:5,description:"쇼핑 후 영화를 함께 보는 대형 영화관"},
+      {id:"department-food",name:"백화점 푸드홀",icon:"🍰",category:"cafe",x:3,y:5,description:"다양한 디저트와 식사를 즐기는 프리미엄 푸드홀"}
+    ])
+  }),
+  namsan:Object.freeze({
+    id:"namsan",cityId:"seoul",name:"남산 K타워",subtitle:"서울의 야경이 한눈에 펼쳐지는 산 위의 랜드마크",theme:"landmark",width:12,height:8,start:{x:6,y:6},
+    locations:Object.freeze([
+      {id:"namsan-station",name:"남산 케이블카역",icon:"🚠",category:"transport",x:6,y:6,description:"남산 정상으로 오르는 케이블카 승강장"},
+      {id:"k-tower",name:"남산 K타워",icon:"🗼",category:"landmark",x:2,y:2,description:"서울 전경을 360도로 감상하는 전망 타워"},
+      {id:"sky-observatory",name:"스카이 전망대",icon:"🔭",category:"landmark",x:5,y:1,description:"도시의 불빛과 별을 함께 바라보는 전망대"},
+      {id:"tower-restaurant",name:"클라우드 다이닝",icon:"🍽",category:"western",x:9,y:2,description:"서울 야경을 바라보며 식사하는 레스토랑"},
+      {id:"love-terrace",name:"연인의 테라스",icon:"💞",category:"date",x:9,y:5,description:"둘만의 사진과 추억을 남기는 야외 테라스"},
+      {id:"mountain-trail",name:"남산 산책길",icon:"🌲",category:"date",x:3,y:5,description:"숲과 야경 사이를 천천히 걷는 산책로"}
+    ])
+  }),
   busan:Object.freeze({
     id:"busan",cityId:"busan",name:"해운동",subtitle:"바다와 여행의 설렘이 이어지는 부산 해안 지구",theme:"coast",width:12,height:8,start:{x:5,y:6},
     locations:Object.freeze([
@@ -68,16 +135,16 @@ export const WORLD_MAPS = Object.freeze({
 
 export const WORLD_ATLAS = Object.freeze({
   nationwide:Object.freeze({id:"nationwide",name:"전국",subtitle:"서울과 부산을 잇는 여행 지도",destinations:["seoul","busan"]}),
-  seoul:Object.freeze({id:"seoul",name:"서울",subtitle:"동수동 생활권과 금수동 한강 상권",districts:["dongsu","geumsu"]}),
+  seoul:Object.freeze({id:"seoul",name:"서울",subtitle:"생활권·여자친구 동네·다섯 개의 번화가",districts:["dongsu","geumsu","yeonhui","hongdae","seongsu","jamsil","myeongdong","namsan"]}),
   busan:Object.freeze({id:"busan",name:"부산",subtitle:"해운대·광안리·서면 여행 생활권",districts:["busan"]})
 });
 
 export const TRANSPORT_OPTIONS = Object.freeze([
-  Object.freeze({id:"walk",name:"도보",icon:"🚶",cost:0,description:"천천히 골목을 걸어 이동"}),
-  Object.freeze({id:"bus",name:"버스",icon:"🚌",cost:1500,description:"정류장을 따라 편하게 이동"}),
-  Object.freeze({id:"subway",name:"지하철",icon:"🚇",cost:1400,description:"역세권을 빠르게 이동"}),
-  Object.freeze({id:"taxi",name:"택시",icon:"🚕",cost:8000,description:"원하는 장소 가까이 이동"}),
-  Object.freeze({id:"car",name:"고급 자가용",icon:"🚘",cost:0,requiresVehicle:true,description:"보유한 고급 세단으로 이동"})
+  Object.freeze({id:"walk",name:"도보",icon:"🚶",cost:0,minutes:10,steps:1,effects:{energy:-1,fatigue:1},description:"1칸 · 10분 · 에너지 -1"}),
+  Object.freeze({id:"bus",name:"버스",icon:"🚌",cost:1500,minutes:7,steps:2,effects:{},description:"2칸 · 7분 · 승차 ₩1,500"}),
+  Object.freeze({id:"subway",name:"지하철",icon:"🚇",cost:1400,minutes:5,steps:0,effects:{},fastTravel:"station",description:"역을 선택해 5분 만에 이동"}),
+  Object.freeze({id:"taxi",name:"택시",icon:"🚕",cost:8000,minutes:3,steps:0,effects:{},fastTravel:"location",description:"장소 바로 이동 · 거리별 요금"}),
+  Object.freeze({id:"car",name:"고급 자가용",icon:"🚘",cost:2500,minutes:4,steps:1,effects:{},requiresVehicle:true,description:"1칸 · 4분 · 주유·주차 ₩2,500"})
 ]);
 
 export function getRoadCells(mapOrId) {
@@ -139,13 +206,16 @@ export function migrateWorldState(value,player={}) {
   return merged;
 }
 
-export function moveWorldPlayer(world,dx,dy) {
+export function moveWorldPlayer(world,dx,dy,maxSteps=1) {
   const map=WORLD_MAPS[world.districtId]??WORLD_MAPS.dongsu;
   const stepX=Math.sign(Number(dx)||0),stepY=stepX?0:Math.sign(Number(dy)||0);
-  const nextX=clamp(world.x+stepX,0,map.width-1),nextY=clamp(world.y+stepY,0,map.height-1);
-  const moved=isRoadCell(map,nextX,nextY);
-  if(moved){world.x=nextX;world.y=nextY;}
-  return {x:world.x,y:world.y,moved};
+  let movedSteps=0;
+  for(let step=0;step<Math.max(1,Math.round(maxSteps));step+=1){
+    const nextX=clamp(world.x+stepX,0,map.width-1),nextY=clamp(world.y+stepY,0,map.height-1);
+    if((nextX===world.x&&nextY===world.y)||!isRoadCell(map,nextX,nextY))break;
+    world.x=nextX;world.y=nextY;movedSteps+=1;
+  }
+  return {x:world.x,y:world.y,moved:movedSteps>0,movedSteps};
 }
 
 export function selectWorldTransport(world,transportId) {

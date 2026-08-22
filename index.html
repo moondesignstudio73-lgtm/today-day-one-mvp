@@ -93,7 +93,7 @@
     <section id="gameScreen" class="game-screen hidden">
       <aside class="profile-panel panel">
         <div class="partner-head">
-          <div class="avatar" id="partnerAvatar">♥</div>
+          <div class="avatar partner-avatar"><img id="partnerAvatar" src="assets/characters/girlfriend-standing-2d.png?v=6" alt="여자친구 프로필 사진"></div>
           <div><span id="relationshipState" class="online">● 연애 중</span><h2 id="partnerName">서연</h2><p id="partnerBio">회사원 · 차분한 인상</p></div>
         </div>
         <div class="relationship">
@@ -123,10 +123,12 @@
             <button id="storyFullscreenButton" type="button" aria-pressed="false">FULLSCREEN</button>
           </nav>
           <div class="story-quick-hud" aria-label="현재 정보"><span id="quickLocation">집</span><b id="quickMoney">₩ 850,000</b></div>
-          <div id="actionGrid" class="action-grid vn-choices" aria-label="행동 선택지"></div>
+          <div class="action-selection-panel">
+            <div id="actionGrid" class="action-grid vn-choices" aria-label="행동 선택지"></div>
+            <button id="nextButton" class="next-button story-next-button" type="button" disabled>행동을 선택해 주세요</button>
+          </div>
           <div id="storyChoiceLayer" class="immersive-choices hidden" aria-label="스토리 선택지"></div>
           <div id="sceneTransition" class="scene-transition hidden" aria-live="polite"><span></span></div>
-          <button id="nextButton" class="next-button story-next-button" type="button" disabled>행동을 선택해 주세요</button>
           <div class="vn-dialogue" aria-live="polite">
             <span class="vn-nameplate" id="sceneTitle">첫날의 아침</span>
             <p id="sceneText">눈을 뜨자 어젯밤부터 연인이 된 그녀의 메시지가 와 있다. 오늘은 어떻게 시작할까?</p>
@@ -171,6 +173,7 @@
           <div class="world-clock"><b id="worldClock">23:10</b><button id="worldTransportButton" type="button"><small id="worldTransport">도보 이동</small></button></div>
         </header>
         <div id="worldMapCanvas" class="world-map-canvas" tabindex="0" aria-label="방향키 또는 화면 버튼으로 이동">
+          <div id="worldScenery" class="world-scenery" aria-hidden="true"></div>
           <div id="worldRoadLayer" class="world-road-layer" aria-hidden="true"></div>
           <div id="worldLocationLayer" class="world-location-layer"></div>
           <div id="worldPlayer" class="world-player" aria-label="내 캐릭터"><span><img id="worldPlayerSprite" src="assets/characters/map/PLAYER_BALANCED.png" alt=""><img id="worldVehicleSprite" src="assets/characters/map/VEHICLE_WEALTHY.png" alt=""></span><b id="worldPlayerName">나</b></div>
