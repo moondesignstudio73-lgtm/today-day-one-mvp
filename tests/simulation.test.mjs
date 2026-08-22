@@ -53,19 +53,26 @@ import { analyzePlayerBehavior, analyzeRelationshipState, createStoryProposalCon
 import { applyPlayerArchetype, createPlayerProfile, migratePlayerProfile, PLAYER_ARCHETYPES, validatePlayerProfile } from "../src/player-profile-data.mjs";
 import { ACTION_RESULT_ASSETS, getActionResultAsset, getVisibleActionEffects } from "../src/action-result-assets.mjs";
 
-assert.deepEqual(Object.keys(ACTION_RESULT_ASSETS).sort(),["coworker-lunch","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check"]);
+assert.deepEqual(Object.keys(ACTION_RESULT_ASSETS).sort(),["coworker-lunch","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"]);
 assert.ok(Object.values(ACTION_RESULT_ASSETS).every(asset=>existsSync(asset)));
 assert.equal(getActionResultAsset("focused-work"),"assets/action-results/focus-work.png");
 assert.equal(getActionResultAsset("early-sleep"),"assets/action-results/early-sleep.png");
 assert.equal(getActionResultAsset("sleep-in"),"assets/action-results/sleep-in.png");
 assert.equal(getActionResultAsset("morning-gym"),"assets/action-results/morning-gym.png");
 assert.equal(getActionResultAsset("morning-contact"),"assets/action-results/morning-contact.png");
+assert.equal(getActionResultAsset("temptation-secret"),"assets/action-results/coworker-drinks.png");
 assert.equal(getActionResultAsset("unknown-action"),null);
 assert.deepEqual(getVisibleActionEffects({money:45000,work:10,unknown:99,stress:0}),[
   {key:"money",label:"자산",value:45000},
   {key:"work",label:"업무 능력",value:10}
 ]);
-console.log("✓ 활동 결과 팝업 9종 이미지·효과 표시 매핑 검증 통과");
+assert.deepEqual(getVisibleActionEffects({npcInterest:12,npcTrust:8,trust:-20,conflict:12}),[
+  {key:"npcInterest",label:"상대 관심도",value:12},
+  {key:"npcTrust",label:"상대 신뢰",value:8},
+  {key:"trust",label:"신뢰도",value:-20},
+  {key:"conflict",label:"갈등",value:12}
+]);
+console.log("✓ 활동 결과 팝업 10종 이미지·효과 표시 매핑 검증 통과");
 
 assert.equal(PLAYER_ARCHETYPES.length,3);
 assert.ok(PLAYER_ARCHETYPES.every((entry)=>existsSync(entry.image)));

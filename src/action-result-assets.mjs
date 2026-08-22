@@ -7,7 +7,8 @@ export const ACTION_RESULT_ASSETS = Object.freeze({
   "coworker-lunch": "assets/action-results/lunch-coworkers.png",
   "stock-check": "assets/action-results/check-stocks.png",
   "manager-feedback": "assets/action-results/manager-feedback.png",
-  "early-sleep": "assets/action-results/early-sleep.png"
+  "early-sleep": "assets/action-results/early-sleep.png",
+  "temptation-secret": "assets/action-results/coworker-drinks.png"
 });
 
 export const ACTION_EFFECT_LABELS = Object.freeze({
@@ -22,7 +23,10 @@ export const ACTION_EFFECT_LABELS = Object.freeze({
   energy: "에너지",
   health: "건강",
   charm: "매력",
-  fashion: "패션"
+  fashion: "패션",
+  npcInterest: "상대 관심도",
+  npcTrust: "상대 신뢰",
+  conflict: "갈등"
 });
 
 export function getActionResultAsset(actionId) {
