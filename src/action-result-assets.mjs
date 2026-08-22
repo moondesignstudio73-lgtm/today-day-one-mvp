@@ -1,9 +1,13 @@
 export const ACTION_RESULT_ASSETS = Object.freeze({
+  "morning-contact": "assets/action-results/morning-contact.png",
+  "morning-gym": "assets/action-results/morning-gym.png",
+  "sleep-in": "assets/action-results/sleep-in.png",
   "focused-work": "assets/action-results/focus-work.png",
   "lunch-date": "assets/action-results/lunch-girlfriend.png",
   "coworker-lunch": "assets/action-results/lunch-coworkers.png",
   "stock-check": "assets/action-results/check-stocks.png",
-  "manager-feedback": "assets/action-results/manager-feedback.png"
+  "manager-feedback": "assets/action-results/manager-feedback.png",
+  "early-sleep": "assets/action-results/early-sleep.png"
 });
 
 export const ACTION_EFFECT_LABELS = Object.freeze({

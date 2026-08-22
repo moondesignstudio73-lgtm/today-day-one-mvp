@@ -43,7 +43,7 @@ import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
-import { getActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=1";
+import { getActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=2";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
