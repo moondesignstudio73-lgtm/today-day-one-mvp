@@ -1,3 +1,5 @@
+import { YUNA_BACKGROUNDS } from "../yuna-data.mjs";
+
 export const CHARACTER_ASSETS = {
   girlfriend:{
     expressions:{
@@ -28,7 +30,8 @@ export const BACKGROUND_ASSETS = {
   "home-night":"assets/backgrounds/home/BG_HOME_NIGHT_001.webp",
   "office-day":"assets/backgrounds/office/BG_OFFICE_DAY_001.webp",
   "cafe-rain-evening":"assets/backgrounds/cafe/BG_CAFE_RAIN_EVENING_001.webp",
-  "river-night":"assets/backgrounds/street/BG_RIVER_NIGHT_001.webp"
+  "river-night":"assets/backgrounds/street/BG_RIVER_NIGHT_001.webp",
+  ...YUNA_BACKGROUNDS
 };
 
 export function getCharacterSprite(character = "girlfriend", expression = "calm", pose = "standing", outfit = "default") {

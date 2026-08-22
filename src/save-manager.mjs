@@ -1,5 +1,6 @@
 import { validateState } from "./game-core.mjs";
-import { generateNpcs } from "./npc-manager.mjs";
+import { migrateNpcRoster } from "./npc-manager.mjs";
+import { migrateHeroineProfile } from "./girlfriend-manager.mjs";
 import { createInvestmentState } from "./investment-manager.mjs";
 import { createLotteryState } from "./lottery-manager.mjs";
 import { createAdvancedEconomyState } from "./economy-manager.mjs";
@@ -27,8 +28,9 @@ export class SaveManager {
     if (!raw) return null;
     try {
       const parsed = JSON.parse(raw);
+      migrateHeroineProfile(parsed.partner);
       migrateVisualState(parsed);
-      parsed.npcs ??= generateNpcs();
+      parsed.npcs=migrateNpcRoster(parsed.npcs);
       parsed.npcHistory ??= [];
       parsed.temptationHistory ??= [];
       parsed.rivalHistory ??= [];
@@ -41,6 +43,11 @@ export class SaveManager {
       parsed.futureScore ??= 0;
       parsed.pendingStoryId ??= null;
       parsed.cgCollection ??= [];
+      parsed.situationEventStates ??= {};
+      parsed.futureEventWeights ??= {};
+      parsed.microEventHistory ??= [];
+      parsed.eventRuntime ??= {activeEvent:null,scene:null,dialogueIndex:0,state:"IDLE",inputLock:{locked:false,owner:null,reason:null,lockedFor:0},eventQueue:[],microQueue:[],pendingEvent:null,triggerReason:[],assetStatus:"IDLE",checkpoint:null,lastError:null,logs:[]};
+      parsed.settings ??= {theaterMode:true};
       parsed.hiddenRoute ??= createHiddenRouteState(Math.random,false);
       parsed.investment ??= createInvestmentState();
       parsed.lottery ??= createLotteryState();

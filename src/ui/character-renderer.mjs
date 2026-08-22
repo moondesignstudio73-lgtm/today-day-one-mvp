@@ -1,4 +1,6 @@
 import { getCharacterAccessory, getCharacterSprite } from "../assets/asset-manifest.mjs";
+import { getEquippedHeroineOutfit } from "../heroine-data.mjs";
+import { getYunaExpressionAsset, getYunaOutfitAsset } from "../yuna-data.mjs";
 
 export function resolveCharacterExpression(state) {
   if (state.conflict >= 55 || state.trust < 320) return { tone:"tense", icon:"…", label:"긴장한 눈빛" };
@@ -22,15 +24,20 @@ export function resolveCharacterAccessory(state) {
 export function renderCharacter(image, state, accessoryImage, overrides = {}) {
   const expression = overrides.expressionId ? { tone:overrides.expressionId, icon:"✦", label:overrides.expressionId } : resolveCharacterExpression(state);
   const pose = overrides.poseId ?? resolveCharacterPose(state,expression);
-  const outfit = overrides.outfitId ?? resolveCharacterOutfit(state,expression);
+  const equippedOutfit=getEquippedHeroineOutfit(state);
+  const outfit = equippedOutfit?.outfitId ?? overrides.outfitId ?? resolveCharacterOutfit(state,expression);
   const accessory = resolveCharacterAccessory(state);
-  const source = getCharacterSprite("girlfriend",expression.tone,pose,outfit);
+  const yunaSpecialOutfit=state.partner.heroineId==="yuna"&&!equippedOutfit&&overrides.outfitId&&overrides.outfitId!=="uniform"?getYunaOutfitAsset(overrides.outfitId):null;
+  const yunaExpression=state.partner.heroineId==="yuna"&&!equippedOutfit&&!yunaSpecialOutfit&&overrides.expressionId?getYunaExpressionAsset(expression.tone):null;
+  const source = equippedOutfit?.characterWearingImage ?? yunaSpecialOutfit ?? yunaExpression ?? state.partner.referenceImage ?? getCharacterSprite("girlfriend",expression.tone,pose,outfit);
   const accessorySource = getCharacterAccessory("girlfriend",accessory);
   state.currentExpression = expression.tone;
   state.currentPose = pose;
   state.currentOutfit = outfit;
   state.currentAccessory = accessory;
   if (image && image.getAttribute("src") !== source) image.setAttribute("src",source);
+  const equippedInstance=(state.inventory ?? []).find(entry=>entry.owner === "girlfriend" && entry.equipped && entry.itemId === equippedOutfit?.id);
+  if (equippedInstance) equippedInstance.lastWorn=state.day;
   if (image) image.dataset.expression = expression.tone;
   if (image) image.dataset.pose = pose;
   if (image) image.dataset.outfit = outfit;

@@ -1,36 +1,45 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=2";
 import { SaveManager } from "./src/save-manager.mjs?v=2";
-import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./src/girlfriend-manager.mjs?v=2";
-import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs";
-import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs";
-import { getActionAvailability } from "./src/action-manager.mjs";
+import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./src/girlfriend-manager.mjs?v=5";
+import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=5";
+import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=5";
+import { resolveSituationEventChoice } from "./src/situation-event-manager.mjs?v=4";
+import { EventRuntimeManager } from "./src/event-runtime-manager.mjs?v=4";
+import { rollMicroEvents } from "./src/micro-event-manager.mjs?v=4";
+import { auditEventSystems } from "./src/event-audit.mjs?v=4";
+import { EVENT_DEFINITIONS } from "./src/events-data.mjs?v=4";
+import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=5";
+import { getActionAvailability, isActionVisible } from "./src/action-manager.mjs?v=5";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
 import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=2";
 import { acquireActionItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs";
-import { getItem, ITEMS } from "./src/items-data.mjs?v=3";
-import { giveGift } from "./src/gift-manager.mjs";
+import { getItem, ITEMS } from "./src/items-data.mjs?v=5";
+import { giveGift } from "./src/gift-manager.mjs?v=5";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
-import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs";
+import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs?v=5";
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs";
 import { analyzePlayHistory } from "./src/ending-manager.mjs";
-import { SoundManager } from "./src/sound-manager.mjs?v=3";
+import { SoundManager } from "./src/sound-manager.mjs?v=5";
 import { recordMemory } from "./src/memory-manager.mjs";
-import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs";
+import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=5";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
-import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs";
-import { getNpcSprite } from "./src/assets/asset-manifest.mjs";
-import { getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs";
+import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=5";
+import { getBackgroundAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=5";
+import { getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=5";
+import { STORY_SCENES } from "./src/story-data.mjs";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, resetForNextDay, spendNightTime } from "./src/night-manager.mjs";
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
+import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=5";
+import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -50,7 +59,15 @@ let autoMode = false;
 let autoAdvanceTimer = null;
 let immersiveScene = null;
 let sceneAdvanceTimer = null;
+const eventRuntime = new EventRuntimeManager({timeoutMs:5000,onWarning:warning=>{if(state){state.logs.push({time:`DAY ${state.day} · WATCHDOG`,text:`${warning.eventId} · ${warning.state} ${warning.elapsed}ms`});persistEventRuntime(true);}},onRecover:()=>{const layer=$("#sceneTransition");if(layer){layer.classList.remove("active");layer.classList.add("hidden");}if(immersiveScene)renderImmersiveStep();}});
+const runtimeWatchdogTimer=setInterval(()=>eventRuntime.watchdog(),1000);
 const modalFocusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
+const THEATER_SETTING_KEY="today-day-one-theater-mode";
+
+function persistEventRuntime(save=false){if(!state)return;state.eventRuntime=eventRuntime.snapshot();if(save)SaveManager.save(state);}
+function renderFullscreenButtons(){const active=Boolean(document.fullscreenElement)||document.body.classList.contains("theater-mode");for(const button of [$("#fullscreenButton"),$("#storyFullscreenButton")])if(button){button.setAttribute("aria-pressed",String(active));button.textContent=button.id==="storyFullscreenButton"?(active?"WINDOW":"FULLSCREEN"):(active?"▣ 창모드":"⛶ 전체화면");}}
+function setTheaterMode(enabled){document.body.classList.toggle("theater-mode",enabled);if(state){state.settings??={};state.settings.theaterMode=enabled;localStorage.setItem(THEATER_SETTING_KEY,String(enabled));SaveManager.save(state);}renderFullscreenButtons();}
+async function toggleFullscreen(event){event?.stopPropagation();if(document.fullscreenElement){await document.exitFullscreen();setTheaterMode(false);return;}if(document.body.classList.contains("theater-mode")){setTheaterMode(false);return;}try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else setTheaterMode(true);}catch{setTheaterMode(true);}renderFullscreenButtons();}
 
 function openModal() {
   if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
@@ -119,6 +136,7 @@ function typeDialogue(text) {
 }
 
 function handleDialogueAdvance() {
+  if(eventRuntime.input.snapshot().locked)return;
   if (finishDialogueTyping()) { sound.play("select"); return; }
   if (immersiveScene) advanceImmersiveScene();
 }
@@ -195,6 +213,8 @@ function openStoryScene(scene) {
 
 function startImmersiveScene(session) {
   if (!session?.sequence?.length) return;
+  const runtimeStart=eventRuntime.start({...session,sceneId:session.sequence.find(step=>step.backgroundId)?.label??session.id,triggerReason:session.triggerReason??[]});
+  if(!runtimeStart.started){persistEventRuntime(true);return;}
   if (sceneAdvanceTimer) clearTimeout(sceneAdvanceTimer);
   immersiveScene={...session,index:0,currentStep:null};
   $("#gameScreen").classList.add("story-mode");
@@ -203,6 +223,7 @@ function startImmersiveScene(session) {
   $("#actionGrid").classList.add("hidden");
   $("#nextButton").classList.add("hidden");
   applyScenePresentation(session.presentation);
+  eventRuntime.markAssets(session.presentation?.backgroundUrl?"READY":"FALLBACK");eventRuntime.transition("TRANSITIONING");persistEventRuntime(true);
   updateImmersiveCharacter(session.presentation.expressionId);
   renderImmersiveStep();
 }
@@ -212,6 +233,7 @@ function updateImmersiveCharacter(expressionId="calm") {
   const characterId=immersiveScene?.presentation?.characterId??"girlfriend";
   const npcSprite=characterId!=="girlfriend"?getNpcSprite(characterId):"";
   if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;return;}
+  if(characterId==="girlfriend"&&immersiveScene?.previewOutfitImage){character.src=immersiveScene.previewOutfitImage;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;return;}
   state.currentExpression=expressionId;
   renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId:immersiveScene?.presentation?.poseId,outfitId:immersiveScene?.presentation?.outfitId});
 }
@@ -220,17 +242,24 @@ function renderImmersiveStep() {
   if (!immersiveScene) return;
   const step=immersiveScene.sequence[immersiveScene.index++];
   immersiveScene.currentStep=step;
+  eventRuntime.setProgress({sequenceIndex:Math.max(0,immersiveScene.index-1),sceneId:step?.label??eventRuntime.active?.sceneId,dialogueIndex:Math.max(0,immersiveScene.index-1),backgroundId:step?.backgroundId??immersiveScene.presentation?.backgroundId,bgmId:step?.bgmId??null});persistEventRuntime(step?.type==="transition"||step?.type==="choice");
   $("#storyChoiceLayer").classList.add("hidden");
   $("#storyChoiceLayer").innerHTML="";
   if (!step || step.type === "sceneEnd") { finishImmersiveScene(); return; }
-  if (step.type === "transition") { showSceneTransition(step); return; }
-  if (step.type === "characterEnter") { $("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
+  if(step.backgroundId){
+    immersiveScene.presentation={...immersiveScene.presentation,backgroundId:step.backgroundId,backgroundUrl:getBackgroundAsset(step.backgroundId),characterId:step.characterId??immersiveScene.presentation.characterId,expressionId:step.expressionId??immersiveScene.presentation.expressionId,poseId:step.poseId??immersiveScene.presentation.poseId,outfitId:step.outfitId??immersiveScene.presentation.outfitId,weather:step.weather??immersiveScene.presentation.weather,timeOfDay:step.timeOfDay??immersiveScene.presentation.timeOfDay};
+    applyScenePresentation(immersiveScene.presentation);
+    if(step.bgmId)sound.playBgm(step.bgmId,state.day);
+  }
+  if (step.type === "transition") { if(eventRuntime.state!=="TRANSITIONING")eventRuntime.transition("TRANSITIONING",{sceneId:step.label});eventRuntime.input.lock(immersiveScene.id,"StoryTransition");showSceneTransition(step); return; }
+  if (step.type === "characterEnter") { updateImmersiveCharacter(step.expressionId??immersiveScene.presentation.expressionId);$("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
   if (step.type === "expressionChange") { updateImmersiveCharacter(step.expressionId); queueSceneStep(220); return; }
-  if (step.type === "choice") { renderImmersiveChoices(step.options); return; }
+  if (step.type === "choice") { if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime(true);renderImmersiveChoices(step.options); return; }
   if (step.expressionId) updateImmersiveCharacter(step.expressionId);
   $("#sceneTitle").textContent=step.type === "narration" ? "내레이션" : step.speaker;
   $("#visualNovelStage").classList.toggle("narration-mode",step.type === "narration");
   typeDialogue(step.text);
+  if(eventRuntime.state!=="WAITING_DIALOGUE")eventRuntime.transition("WAITING_DIALOGUE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime();
   scheduleAutoAdvance();
 }
 
@@ -238,7 +267,7 @@ function queueSceneStep(delay) { if(sceneAdvanceTimer)clearTimeout(sceneAdvanceT
 function showSceneTransition(step) {
   const layer=$("#sceneTransition");layer.className=`scene-transition ${step.style??"fade"}`;layer.querySelector("span").textContent=step.label??"";
   requestAnimationFrame(()=>layer.classList.add("active"));
-  sceneAdvanceTimer=setTimeout(()=>{layer.classList.remove("active");sceneAdvanceTimer=setTimeout(()=>{layer.classList.add("hidden");sceneAdvanceTimer=null;renderImmersiveStep();},360);},720);
+  sceneAdvanceTimer=setTimeout(()=>{layer.classList.remove("active");sceneAdvanceTimer=setTimeout(()=>{layer.classList.add("hidden");sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene?.id);if(eventRuntime.state==="TRANSITIONING")eventRuntime.transition("PLAYING");persistEventRuntime();renderImmersiveStep();},360);},720);
 }
 function renderImmersiveChoices(options=[]) {
   const layer=$("#storyChoiceLayer");
@@ -248,26 +277,37 @@ function renderImmersiveChoices(options=[]) {
 }
 function chooseImmersiveOption(choiceId) {
   if(!immersiveScene?.onChoice)return;
+  if(!eventRuntime.selectChoice(choiceId))return;
   const next=immersiveScene.onChoice(choiceId);
-  if(!next?.length)return;
+  if(!next?.length){eventRuntime.input.unlock(immersiveScene.id);eventRuntime.fail(new Error("Choice callback returned no sequence"),{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);finishImmersiveScene();return;}
   immersiveScene.sequence=next;immersiveScene.index=0;immersiveScene.currentStep=null;
+  eventRuntime.input.unlock(immersiveScene.id);eventRuntime.transition("PLAYING");persistEventRuntime(true);
   renderImmersiveStep();
 }
-function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentStep?.type==="choice")return;renderImmersiveStep(); }
-function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){immersiveScene.index=immersiveScene.sequence.indexOf(choice)+1;immersiveScene.currentStep=choice;renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
+function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentStep?.type==="choice"||eventRuntime.input.snapshot().locked)return;if(eventRuntime.state==="WAITING_DIALOGUE")eventRuntime.transition("PLAYING");renderImmersiveStep(); }
+function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){if(eventRuntime.state==="TRANSITIONING")eventRuntime.transition("PLAYING");if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");immersiveScene.index=immersiveScene.sequence.indexOf(choice)+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
 function finishImmersiveScene() {
-  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;immersiveScene=null;
+  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
   $("#visualNovelStage").classList.remove("narration-mode");$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
-  SaveManager.save(state);render();
+  SaveManager.save(state);render();const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);
+}
+
+function restoreEventCheckpoint(){
+  const saved=state?.eventRuntime;if(!saved?.activeEvent||!saved.checkpoint||state.storyFlags?.[`${saved.activeEvent}:COMPLETED`])return;
+  const situation=SITUATION_EVENTS.find(event=>event.id===saved.activeEvent);
+  if(situation){const index=Math.max(0,Number(saved.checkpoint.sequenceIndex)||0);openEventScene(situation,{resumeSequenceIndex:index});toast("진행 중이던 에피소드를 안전한 지점에서 복구했어요.");return;}
+  const story=getStoryScene(saved.activeEvent);if(story){openStoryScene(story);toast("진행 중이던 스토리를 Scene 시작점에서 복구했어요.");return;}
+  state.logs.push({time:`DAY ${state.day} · RECOVERY`,text:`알 수 없는 이벤트 ${saved.activeEvent}를 건너뛰고 안전 지점으로 복구했다.`});state.eventRuntime={...saved,activeEvent:null,state:"IDLE",checkpoint:null,inputLock:{locked:false,owner:null,reason:null,lockedFor:0}};SaveManager.save(state);
 }
 
 function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); renderAutoButton(); render(); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); const theater=state.settings?.theaterMode??localStorage.getItem(THEATER_SETTING_KEY)!=="false";document.body.classList.toggle("theater-mode",theater);renderAutoButton();renderFullscreenButtons();render();setTimeout(restoreEventCheckpoint,0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
 
 function render() {
   const p = state.partner, phase = phases[state.phase];
+  document.body.dataset.heroine=p.heroineId;document.documentElement.style.setProperty("--heroine-accent",p.uiAccent??"#ff91b5");
   $("#dayLabel").textContent = state.day; $("#phaseIcon").textContent = phase.icon;
   if (state.phase === 3) { renderNightHome(); return; }
   document.body.classList.add("ui-story-mode");
@@ -300,7 +340,7 @@ function render() {
   $("#vnEquipmentLayer").innerHTML = equippedItems.length ? `<small>NOW WEARING</small>${equippedItems.map(item=>`<span title="${escapeHtml(item.name)}">${item.icon}<b>${escapeHtml(item.name)}</b></span>`).join("")}` : "";
   const stats = [["체력",state.energy],["피로",state.fatigue],["건강",state.health],["스트레스",state.stress],[appearance.bonuses.attractiveness?`매력 +${appearance.bonuses.attractiveness}`:"매력",appearance.charm],[appearance.bonuses.fashion?`패션 +${appearance.bonuses.fashion}`:"패션",appearance.fashion],["자신감",state.confidence],["업무 능력",state.work],["사회성",state.social]];
   $("#statList").innerHTML = stats.map(([name,val])=>`<div class="stat"><div class="stat-head"><span>${name}</span><b>${Math.round(val)}</b></div><div class="stat-track"><i style="width:${clamp(val)}%;background:${name==='스트레스'?'#e5846d':''}"></i></div></div>`).join("");
-  $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>{ const availability=getActionAvailability(state,a); return `<button class="action-card ${state.selected===i?'selected':''} ${availability.available?'':'locked'}" data-index="${i}" ${availability.available?'':'disabled'}><span class="action-icon">${a.icon}</span><span class="cost">${availability.available?escapeHtml(a.tag):'🔒 '+escapeHtml(availability.reason)}</span><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.desc)}</p></button>`; }).join("");
+  $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>({a,i})).filter(({a})=>isActionVisible(state,a)).map(({a,i})=>{ const availability=getActionAvailability(state,a); return `<button class="action-card ${state.selected===i?'selected':''} ${availability.available?'':'locked'}" data-index="${i}" ${availability.available?'':'disabled'}><span class="action-icon">${a.icon}</span><span class="cost">${availability.available?escapeHtml(a.tag):'🔒 '+escapeHtml(availability.reason)}</span><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.desc)}</p></button>`; }).join("");
   $("#eventLog").innerHTML = state.logs.length ? state.logs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${l.time}</b><span>${l.text}</span></div>`).join("") : `<div class="log-item"><b>DAY 1</b><span>두 사람의 첫 번째 이야기가 시작되었습니다.</span></div>`;
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
@@ -314,7 +354,18 @@ function applyScenePresentation(presentation) {
   if(stage){stage.dataset.weather=presentation.weather;stage.dataset.timeOfDay=presentation.timeOfDay;}
   const backdrop=$("#vnBackdrop");
   if(backdrop&&backdrop.dataset.backgroundId!==presentation.backgroundId){backdrop.dataset.backgroundId=presentation.backgroundId;backdrop.style.backgroundImage=`linear-gradient(180deg,#1d203114 0 62%,#17182773 100%),url("${presentation.backgroundUrl}")`;}
+  verifyPresentationAsset(presentation,backdrop);
   const character=$("#vnCharacter");if(character)character.dataset.animation=presentation.animationId;
+}
+
+function verifyPresentationAsset(presentation,backdrop){
+  if(!presentation?.backgroundUrl||!backdrop){eventRuntime.markAssets("FALLBACK");return;}
+  const expectedId=presentation.backgroundId,image=new Image();let settled=false;
+  const settle=(status)=>{if(settled)return;settled=true;eventRuntime.markAssets(status);persistEventRuntime();};
+  const timeout=setTimeout(()=>settle("FALLBACK"),1500);
+  image.onload=()=>{clearTimeout(timeout);settle("READY");};
+  image.onerror=()=>{clearTimeout(timeout);if(backdrop.dataset.backgroundId===expectedId){const fallback=getBackgroundAsset("home-morning");backdrop.dataset.backgroundId="home-morning-fallback";backdrop.style.backgroundImage=`linear-gradient(180deg,#1d203114 0 62%,#17182773 100%),url("${fallback}")`;}settle("FALLBACK");};
+  image.src=presentation.backgroundUrl;
 }
 
 function renderNightHome() {
@@ -418,6 +469,7 @@ function applyAction() {
   const initiatedMessage = maybeGenerateInitiatedMessage(state);
   if (initiatedMessage) { state.logs.push({time:`DAY ${state.day} · MESSAGE`,text:`${state.partner.name}: ${initiatedMessage.text}`}); toast(`${state.partner.name}에게 메시지가 왔어요`); }
   if (finishedDay) { dailyEvent(); advanceStockMarket(state); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); runDailyStoryDirector(state,completedDay); SaveManager.save(state); if(state.day<=30)resetForNextDay(state); }
+  const microEvents=rollMicroEvents(state);microEvents.forEach(micro=>state.logs.push({time:`DAY ${micro.day} · MICRO`,text:micro.text}));if(microEvents.length)toast(microEvents.at(-1).text);
   const event = rollEvent(state);
   if (event) {
     state.logs.push({time:`DAY ${state.day} · EVENT`,text:`${event.title} — ${event.message}`});
@@ -450,19 +502,58 @@ function openDebug() {
   const keys = ["day","phase","appearanceSeed","money","health","energy","fatigue","stress","charm","fashion","confidence","work","social","affection","trust","excitement","attachment","conflict","relationshipStress"];
   const stateRows = keys.map(key=>`<div class="debug-stat"><span>${key}</span><b>${Math.round(state[key])}</b></div>`).join("");
   const personalityRows = Object.entries(state.partner.personality).map(([key,value])=>`<div class="debug-stat"><span>${key}</span><b>${value}</b></div>`).join("");
-  const eventRows = getEventDiagnostics(state).map(event=>`<div class="debug-event ${event.eligible?'':event.cooldownRemaining?'cooldown':'ineligible'}"><div><b>${event.title}</b><span>${Math.round(event.probability*100)}%</span></div><small>priority ${event.priority} · ${event.dailyLimitReached?'오늘 이벤트 한도 도달':event.cooldownRemaining?`cooldown ${event.cooldownRemaining}일`:event.conditionsMet?'발생 가능':'조건 불충족'}</small></div>`).join("");
+  const eventRows = getEventDiagnostics(state).map(event=>`<div class="debug-event ${event.eligible?'':event.cooldownRemaining?'cooldown':'ineligible'}"><div><b>${event.title}</b><span>${Math.round(event.probability*100)}%</span></div><small>priority ${event.priority} · ${event.dailyLimitReached?'오늘 이벤트 한도 도달':event.cooldownRemaining?`cooldown ${event.cooldownRemaining}일`:event.conditionsMet?'발생 가능':'조건 불충족'} · ${escapeHtml((event.eligible?event.triggerReasons:event.blockedReasons).join(' / ')||'기본 조건')}</small></div>`).join("");
   const director=state.storyDirector,analysis=director?.analyses?.at(-1),plan=director?.nextDayPlan;
   const threadRows=Object.entries(director?.threads??{}).sort((a,b)=>b[1]-a[1]).map(([id,value])=>`<div class="debug-stat"><span>${id}</span><b>${value}</b></div>`).join("")||`<p>첫 DAY 종료 후 분석됩니다.</p>`;
   const candidateRows=(plan?.eventCandidates??[]).map(candidate=>`<div class="debug-event ${candidate.blocked?'cooldown':''}"><div><b>${escapeHtml(candidate.title)}</b><span>${candidate.blocked?(candidate.blockedReason??"BLOCKED"):`${Math.round(candidate.finalProbability*100)}%`}</span></div><small>base ${Math.round(candidate.baseProbability*100)}% · ×${candidate.multiplier} · ${candidate.modifiers.map(item=>item.label).join(" · ")||"기본 가중치"}${candidate.cooldownRemaining?` · cooldown ${candidate.cooldownRemaining}`:''}</small></div>`).join("")||`<p>예약 후보가 없습니다.</p>`;
   const unresolvedRows=(director?.unresolvedEvents??[]).map(item=>`<div class="debug-event"><div><b>${item.id}</b><span>STAGE ${item.stage}</span></div><small>${item.type} · DAY ${item.originDay} · ${item.status}</small></div>`).join("")||`<p>미해결 사건이 없습니다.</p>`;
-  $("#modalContent").innerHTML=`<span class="eyebrow">DEVELOPER MODE</span><h2>Simulation Debug</h2><p>저장에는 영향을 주지 않는 읽기 전용 상태 패널입니다.</p><h3>Story Director · ${analysis?`DAY ${analysis.day}`:"WAITING"}</h3><div class="debug-grid"><div class="debug-stat"><span>Relationship</span><b>${analysis?.relationshipState??"-"}</b></div><div class="debug-stat"><span>Tension</span><b>${analysis?.narrativeTension??0}</b></div><div class="debug-stat"><span>Dominant</span><b>${director?.dominantThread??"-"}</b></div><div class="debug-stat"><span>Status</span><b>${director?.dominantStatus??"-"}</b></div><div class="debug-stat"><span>Next Seed</span><b>${plan?.seed??"-"}</b></div><div class="debug-stat"><span>Foreshadow</span><b>R${director?.foreshadowing?.rival??0} · T${director?.foreshadowing?.temptation??0} · L${director?.foreshadowing?.lie??0}</b></div></div><h3>Active Threads</h3><div class="debug-grid">${threadRows}</div><h3>Next DAY Event Candidates</h3><div class="debug-events">${candidateRows}</div><h3>Unresolved Events</h3><div class="debug-events">${unresolvedRows}</div><h3>Game State</h3><div class="debug-grid">${stateRows}</div><h3>${state.partner.name} · Hidden Personality</h3><div class="debug-grid">${personalityRows}</div><h3>Runtime Event Diagnostics</h3><div class="debug-events">${eventRows}</div>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">DEVELOPER MODE</span><h2>Simulation Debug</h2><p>저장에는 영향을 주지 않는 읽기 전용 상태 패널입니다.</p><div class="debug-launchers"><button id="characterManagerButton" class="primary-button" type="button">캐릭터 관리 · 히로인 ${HEROINE_PROFILES.length}명 · NPC ${state.npcs.length}명</button><button id="eventViewerButton" class="primary-button" type="button">Event Viewer · 에피소드 ${SITUATION_EVENTS.length}개</button><button id="eventInspectorButton" class="primary-button" type="button">Event Inspector · 실행 상태/큐/복구</button></div><h3>Story Director · ${analysis?`DAY ${analysis.day}`:"WAITING"}</h3><div class="debug-grid"><div class="debug-stat"><span>Relationship</span><b>${analysis?.relationshipState??"-"}</b></div><div class="debug-stat"><span>Tension</span><b>${analysis?.narrativeTension??0}</b></div><div class="debug-stat"><span>Dominant</span><b>${director?.dominantThread??"-"}</b></div><div class="debug-stat"><span>Status</span><b>${director?.dominantStatus??"-"}</b></div><div class="debug-stat"><span>Next Seed</span><b>${plan?.seed??"-"}</b></div><div class="debug-stat"><span>Foreshadow</span><b>R${director?.foreshadowing?.rival??0} · T${director?.foreshadowing?.temptation??0} · L${director?.foreshadowing?.lie??0}</b></div></div><h3>Active Threads</h3><div class="debug-grid">${threadRows}</div><h3>Next DAY Event Candidates</h3><div class="debug-events">${candidateRows}</div><h3>Unresolved Events</h3><div class="debug-events">${unresolvedRows}</div><h3>Game State</h3><div class="debug-grid">${stateRows}</div><h3>${state.partner.name} · Hidden Personality</h3><div class="debug-grid">${personalityRows}</div><h3>Runtime Event Diagnostics</h3><div class="debug-events">${eventRows}</div>`;
   openModal();
+  $("#characterManagerButton").addEventListener("click",openCharacterManager);
+  $("#eventViewerButton").addEventListener("click",openEventViewer);
+  $("#eventInspectorButton").addEventListener("click",openEventInspector);
+}
+
+function openEventInspector(){
+  const runtime=eventRuntime.snapshot();
+  const audit=auditEventSystems({storyScenes:STORY_SCENES,events:EVENT_DEFINITIONS,situationEvents:SITUATION_EVENTS});
+  const stateRows=[
+    ["ActiveEvent",runtime.activeEvent??"-"],["Scene",runtime.scene??"-"],["DialogueIndex",runtime.dialogueIndex],
+    ["State",runtime.state],["InputLock",runtime.inputLock.locked?`${runtime.inputLock.owner} · ${runtime.inputLock.reason}`:"UNLOCKED"],
+    ["EventQueue",runtime.eventQueue.join(", ")||"EMPTY"],["PendingEvent",runtime.pendingEvent??"-"],
+    ["StoryThread",state.storyDirector?.dominantThread??"-"],["NarrativeTension",state.storyDirector?.analyses?.at(-1)?.narrativeTension??0],
+    ["TriggerReason",runtime.triggerReason.join(" / ")||"-"],["AssetStatus",runtime.assetStatus],["SaveStatus",runtime.checkpoint?`CHECKPOINT ${runtime.checkpoint.savedAt}`:"NO CHECKPOINT"]
+  ].map(([label,value])=>`<div class="debug-stat"><span>${label}</span><b>${escapeHtml(value)}</b></div>`).join("");
+  const logRows=runtime.logs.slice().reverse().map(log=>`<div class="debug-event ${log.level==='error'?'ineligible':log.level==='warning'?'cooldown':''}"><div><b>${escapeHtml(log.state??log.code??log.level)}</b><span>${escapeHtml(log.eventId??'-')}</span></div><small>${escapeHtml(log.previousState??'-')} → ${escapeHtml(log.state??'-')} · scene ${escapeHtml(log.sceneId??'-')} · dialogue ${log.dialogueIndex??0}</small></div>`).join("")||"<p>아직 이벤트 런타임 로그가 없습니다.</p>";
+  const auditRows=audit.priority.slice(0,20).map(row=>`<div class="debug-event ${row.classification==='E_ERROR_RISK'?'ineligible':'cooldown'}"><div><b>${escapeHtml(row.id)}</b><span>${row.classification}</span></div><small>${escapeHtml(row.reasons.join(' / '))}</small></div>`).join("")||"<p>우선 수정 대상이 없습니다.</p>";
+  $("#modalContent").innerHTML=`<span class="eyebrow">DEBUG EVENT INSPECTOR</span><h2>Event Runtime</h2><p>이벤트 잠금, 큐, 체크포인트, 에셋 상태와 감사 결과를 한 화면에서 확인합니다.</p><div class="debug-grid">${stateRows}</div><h3>Audit Summary</h3><div class="debug-grid">${Object.entries(audit.counts).map(([key,value])=>`<div class="debug-stat"><span>${key}</span><b>${value}</b></div>`).join("")}</div><h3>Runtime Logs</h3><div class="debug-events">${logRows}</div><h3>Audit Priority</h3><div class="debug-events">${auditRows}</div>`;
+  openModal();
+}
+
+function openEventViewer() {
+  const eventOptions=SITUATION_EVENTS.map(event=>`<option value="${event.id}">${event.categoryLabel} · ${escapeHtml(event.title)}</option>`).join("");
+  const npcOptions=(state.npcs??[]).filter(npc=>npc.active).map(npc=>`<option value="${npc.id}">${escapeHtml(npc.name)} · ${escapeHtml(npc.role)}</option>`).join("");
+  const heroineOptions=HEROINE_PROFILES.map(profile=>`<option value="${profile.id}" ${profile.id===state.partner.heroineId?'selected':''}>${escapeHtml(profile.name)} · ${escapeHtml(profile.archetype)}</option>`).join("");
+  const outfitOptions=HEROINE_OUTFITS.filter(outfit=>outfit.heroineId===state.partner.heroineId).map(outfit=>`<option value="${outfit.id}">${escapeHtml(outfit.name)}</option>`).join("");
+  $("#modalContent").innerHTML=`<span class="eyebrow">DEBUG EVENT VIEWER</span><h2>상황 에피소드 강제 실행</h2><p>조건을 무시하고 Scene·NPC·히로인·의상을 바꿔 대화 진행과 선택 결과를 테스트합니다.</p><div class="event-viewer-form"><label>이벤트<select id="viewerEvent">${eventOptions}</select></label><label>시작 Scene<select id="viewerScene"><option value="0">Scene 1</option><option value="1">Scene 2</option><option value="2">Scene 3</option><option value="3">Scene 4 · NIGHT</option></select></label><label>등장 NPC<select id="viewerNpc">${npcOptions}</select></label><label>히로인<select id="viewerHeroine">${heroineOptions}</select></label><label>현재 의상<select id="viewerOutfit">${outfitOptions}</select></label><label class="event-viewer-check"><input id="viewerSkip" type="checkbox"> Dialogue Skip 버튼으로 Choice Test</label></div><div id="viewerSummary" class="event-viewer-summary"></div><button id="viewerLaunch" class="primary-button" type="button">조건 무시 실행 →</button>`;
+  openModal();
+  const refresh=()=>{const event=SITUATION_EVENTS.find(item=>item.id===$("#viewerEvent").value);$("#viewerSummary").innerHTML=`<b>${escapeHtml(event.title)}</b><span>${event.scenes.length} Scenes · ${event.scenes.reduce((sum,scene)=>sum+scene.dialogueTurns.length,0)} Turns · ${escapeHtml(event.startMood)} → ${escapeHtml(event.peakMood)} → ${escapeHtml(event.endMood)}</span><small>DAY ${event.dayRange[0]}–${event.dayRange[1]} · ${escapeHtml(event.location)} · ${escapeHtml(event.tensionLevel)} tension · ${event.choices.length} choices</small>`;};
+  $("#viewerEvent").addEventListener("change",refresh);refresh();
+  $("#viewerHeroine").addEventListener("change",()=>{$("#viewerOutfit").innerHTML=HEROINE_OUTFITS.filter(outfit=>outfit.heroineId===$("#viewerHeroine").value).map(outfit=>`<option value="${outfit.id}">${escapeHtml(outfit.name)}</option>`).join("");});
+  $("#viewerLaunch").addEventListener("click",()=>{const event=SITUATION_EVENTS.find(item=>item.id===$("#viewerEvent").value),sceneIndex=Number($("#viewerScene").value),npc=(state.npcs??[]).find(item=>item.id===$("#viewerNpc").value),heroine=HEROINE_PROFILES.find(item=>item.id===$("#viewerHeroine").value),outfit=HEROINE_OUTFITS.find(item=>item.id===$("#viewerOutfit").value);const preview=structuredClone(event);preview.scenes=preview.scenes.slice(sceneIndex).map(scene=>({...scene,characterIds:scene.characterIds.map(id=>id==="girlfriend"?"girlfriend":npc?.id??id),dialogueTurns:scene.dialogueTurns.map(turn=>({...turn,speaker:turn.speaker==="연인"?heroine?.name??state.partner.name:["서브 히로인","직장 동료","친구"].includes(turn.speaker)?npc?.name??turn.speaker:turn.speaker}))}));closeModal();openEventScene(preview,{debugPreview:true,previewOutfitImage:outfit?.characterWearingImage??heroine?.referenceImage,skipToChoice:$("#viewerSkip").checked});});
+}
+
+function openCharacterManager() {
+  const equipped=getEquippedHeroineOutfit(state);
+  const heroineCards=HEROINE_PROFILES.map(profile=>`<article class="character-admin-card ${profile.id===state.partner.heroineId?'active':''}"><img src="${profile.referenceImage}" alt="${escapeHtml(profile.name)}"><div><small>${escapeHtml(profile.id)} · ${escapeHtml(profile.archetype)}</small><b>${escapeHtml(profile.name)} · ${profile.age}세</b><span>${escapeHtml(profile.job)} · 의상 ${HEROINE_OUTFITS.filter(outfit=>outfit.heroineId===profile.id).length}종</span><em>${profile.id===state.partner.heroineId?`현재 히로인 · ${escapeHtml(equipped?.name??"기본 의상")}`:"다음 회차 후보"}</em></div></article>`).join("");
+  const npcCards=(state.npcs??[]).map(character=>{const status=getNpcRelationshipStatus(character);return `<article class="character-admin-card npc-admin ${character.active?'active':''}"><div><small>${escapeHtml(character.id)} · ${escapeHtml(character.category)}</small><b>${escapeHtml(character.name)} · ${escapeHtml(character.role)}</b><span>호감 ${character.affection} · 신뢰 ${character.trust} · ${escapeHtml(character.storyState)}</span><em>${character.active?'ACTIVE':'INACTIVE'} · ${escapeHtml(status.label)}</em></div></article>`;}).join("");
+  $("#modalContent").innerHTML=`<span class="eyebrow">CHARACTER DATABASE</span><h2>캐릭터 관리</h2><p>이번 회차 활성 NPC ${(state.npcs??[]).filter(character=>character.active).length}명 · 관계망 ${NPC_SOCIAL_GRAPH.length}개 · 현재 의상 ${escapeHtml(equipped?.outfitId??"DEFAULT")}</p><h3>히로인</h3><div class="character-admin-grid">${heroineCards}</div><h3>NPC Social Graph</h3><div class="character-admin-grid">${npcCards}</div>`;openModal();
 }
 
 function openInventory() {
   const bonuses = getEquipmentBonuses(state);
   const ownerLabel = { player:"내 아이템", gift:"선물 대기", girlfriend:`${state.partner.name} 소유` };
-  const cards = state.inventory.length ? state.inventory.map(instance=>{ const item=getItem(instance.itemId); const control=instance.owner==='player'?`<button class="equip-button" data-instance="${instance.instanceId}" ${instance.equipped?'disabled':''}>${instance.equipped?'장착 중':'장착'}</button>`:instance.owner==='gift'?`<button class="gift-button" data-gift="${instance.instanceId}">${state.partner.name}에게 선물</button>`:`<em>${instance.equipped?'사용 중':'보관 중'}</em>`; return `<div class="inventory-item"><div class="item-icon" aria-hidden="true">${item.icon}</div><div><small>${item.brand} · ${item.category}</small><b>${item.name}</b><span>${ownerLabel[instance.owner]} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span></div>${control}</div>`; }).join("") : `<p class="empty-inventory">아직 보유한 아이템이 없습니다.</p>`;
+  const cards = state.inventory.length ? state.inventory.map(instance=>{ const item=getItem(instance.itemId); const control=instance.owner==='player'?`<button class="equip-button" data-instance="${instance.instanceId}" ${instance.equipped?'disabled':''}>${instance.equipped?'장착 중':'장착'}</button>`:instance.owner==='gift'?`<button class="gift-button" data-gift="${instance.instanceId}">${state.partner.name}에게 선물</button>`:`<em>${instance.equipped?'사용 중':'보관 중'}</em>`; const visual=item.productImage?`<img class="inventory-product-image" src="${item.productImage}" alt="" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`; return `<div class="inventory-item">${visual}<div><small>${item.brand} · ${item.category}</small><b>${item.name}</b><span>${ownerLabel[instance.owner]} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span></div>${control}</div>`; }).join("") : `<p class="empty-inventory">아직 보유한 아이템이 없습니다.</p>`;
   $("#modalContent").innerHTML=`<span class="eyebrow">INVENTORY</span><h2>나의 가방</h2><p>장착 보너스 · 매력 +${bonuses.attractiveness} · 패션 +${bonuses.fashion}</p><div class="inventory-list">${cards}</div>`;
   openModal();
   document.querySelectorAll(".equip-button:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{ equipItem(state,button.dataset.instance); SaveManager.save(state); openInventory(); }));
@@ -471,8 +562,9 @@ function openInventory() {
 
 function openShop() {
   sound.playBgm("dateShopping",state.day);
-  const cards = ITEMS.map(item=>`<div class="shop-item"><div class="item-icon" aria-hidden="true">${item.icon}</div><div><small>${item.brand} · LUX ${item.luxuryLevel}</small><b>${item.name}</b><span>${item.category} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span><strong>${money(item.price)}</strong></div><div class="shop-actions"><button data-buy="${item.id}" data-owner="player">내 것</button><button data-buy="${item.id}" data-owner="gift">선물용</button></div></div>`).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">LIFESTYLE SHOP</span><h2>오늘의 상점</h2><p>보유 자산 ${money(state.money)} · 구매한 내 아이템은 바로 장착됩니다.</p><div class="shop-list">${cards}</div>`;
+  const visibleItems=ITEMS.filter(item=>item.category!=="heroine-outfit" || item.heroineId===state.partner.heroineId);
+  const cards = visibleItems.map(item=>{const heroineOutfit=item.category==="heroine-outfit",unlocked=!heroineOutfit||isOutfitUnlocked(state,item);const visual=item.productImage?`<img class="shop-product-image" src="${item.productImage}" alt="${escapeHtml(item.name)}" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`;const actions=heroineOutfit?`<button data-buy="${item.id}" data-owner="gift" ${unlocked?'':'disabled'}>${unlocked?`${state.partner.name} 선물용`:`DAY ${item.unlockConditions.day} 잠금`}</button>`:`<button data-buy="${item.id}" data-owner="player">내 것</button><button data-buy="${item.id}" data-owner="gift">선물용</button>`;return `<div class="shop-item ${heroineOutfit?'heroine-outfit-card':''}">${visual}<div><small>${item.brand} · ${item.rarity??`LUX ${item.luxuryLevel}`}</small><b>${escapeHtml(item.name)}</b><span>${escapeHtml((item.styleTags??item.preferenceTags).join(" · "))} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span><strong>${money(item.price)}</strong></div><div class="shop-actions">${actions}</div></div>`;}).join("");
+  $("#modalContent").innerHTML=`<span class="eyebrow">LIFESTYLE SHOP</span><h2>오늘의 상점</h2><p>보유 자산 ${money(state.money)} · ${state.partner.name} 전용 의상 10종이 관계 진행에 따라 해금됩니다.</p><div class="shop-list">${cards}</div>`;
   openModal();
   document.querySelectorAll("[data-buy]").forEach(button=>button.addEventListener("click",()=>{ const result=purchaseItem(state,button.dataset.buy,button.dataset.owner); if(!result.ok){toast(result.reason);return;} SaveManager.save(state); toast(`${result.item.name} 구매 완료`); openShop(); render(); }));
 }
@@ -495,7 +587,7 @@ function openCareer() {
 
 function openPeople() {
   const breakupRisk = calculateBreakupRisk(state);
-  const cards = state.npcs.map(npc=>{ const status=npc.relationshipType==='rival'?calculateRivalRisk(state,npc):getNpcRelationshipStatus(npc); const interest=npc.relationshipType==='rival'?`연인 관심 ${npc.interestInGirlfriend} · 위험 ${status.score}`:`내 관심 ${npc.interestInPlayer}`; const sprite=getNpcSprite(npc.id); return `<div class="npc-card${sprite?' illustrated':''}">${sprite?`<img src="${sprite}" alt="" aria-hidden="true">`:''}<div class="npc-details"><small>${npc.role}</small><b>${npc.name}</b><span>호감 ${npc.affection} · 신뢰 ${npc.trust} · ${interest}</span></div><em data-tone="${status.tone}">${status.label}</em></div>`; }).join("");
+  const cards = state.npcs.filter(npc=>npc.active).map(npc=>{ const status=npc.relationshipType==='rival'?calculateRivalRisk(state,npc):getNpcRelationshipStatus(npc); const interest=npc.relationshipType==='rival'?`연인 관심 ${npc.interestInGirlfriend} · 위험 ${status.score}`:`내 관심 ${npc.interestInPlayer}`; const sprite=getNpcSprite(npc.id); return `<div class="npc-card${sprite?' illustrated':''}">${sprite?`<img src="${sprite}" alt="" aria-hidden="true">`:''}<div class="npc-details"><small>${npc.role}</small><b>${npc.name}</b><span>호감 ${npc.affection} · 신뢰 ${npc.trust} · ${interest}</span></div><em data-tone="${status.tone}">${status.label}</em></div>`; }).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">HUMAN RELATIONSHIPS</span><h2>나의 인맥</h2><p>현재 연애 위기 ${breakupRisk.score} · ${breakupRisk.label}</p><div class="npc-list">${cards}</div>`;
   openModal();
 }
@@ -522,9 +614,11 @@ function openTemptation({ npc, level }) {
   startImmersiveScene({id:`temptation-${npc.instanceId}`,type:"temptation",presentation,sequence:createTemptationSceneSequence({npc,choices},message),onChoice:choiceId=>{const result=resolveTemptation(state,npc.instanceId,choiceId);if(!result)return null;state.logs.push({time:`DAY ${state.day} · CHOICE`,text:`${npc.name}에게 “${result.choice.label}”`});recordMemory(state,{type:"temptation",summary:`${npc.name}: ${result.choice.label}`,importance:5,tags:["유혹",choiceId]});SaveManager.save(state);return createTemptationReactionSequence(npc,choiceId);}});
 }
 
-function openEventScene(event) {
+function openEventScene(event,{debugPreview=false,previewOutfitImage=null,skipToChoice=false,resumeSequenceIndex=0}={}) {
   const presentation=resolveStoryPresentation({id:event.id,title:event.title,message:event.message,bgm:"theme"},state);
-  startImmersiveScene({id:event.id,type:"event",presentation,sequence:createEventSceneSequence(event)});
+  const sequence=createEventSceneSequence(event).slice(Math.max(0,resumeSequenceIndex));
+  startImmersiveScene({id:event.id,type:"event",presentation,sequence,previewOutfitImage,triggerReason:event.record?.triggerReason??[],onChoice:event.scenes?.length?choiceId=>{const result=resolveSituationEventChoice(state,event,choiceId);if(!result)return null;state.logs.push({time:`DAY ${state.day} · EPISODE`,text:`${event.title} · ${result.choice.label}`});SaveManager.save(state);return [{type:"expressionChange",expressionId:choiceId==="risk"?"tense":"smile"},{type:"dialogue",speaker:event.scenes.at(-1).dialogueTurns.find(turn=>turn.type==="dialogue")?.speaker??state.partner.name,text:result.choice.memory,expressionId:choiceId==="risk"?"tense":"smile"},{type:"narration",text:"이 선택은 기억과 다음 사건의 가능성에 남았다."},{type:"sceneEnd"}];}:null,debugPreview});
+  if(skipToChoice)setTimeout(()=>skipImmersiveScene(new Event("click")),0);
 }
 
 function openInvestment() {
@@ -578,5 +672,9 @@ $("#storyChoiceLayer").addEventListener("click",event=>{event.stopPropagation();
 $("#visualNovelStage").addEventListener("keydown",event=>{ if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });
 $("#autoButton").addEventListener("click",toggleAutoMode);
 $("#skipButton").addEventListener("click",skipImmersiveScene);
+$("#fullscreenButton").addEventListener("click",toggleFullscreen);
+$("#storyFullscreenButton").addEventListener("click",toggleFullscreen);
 $("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
 document.addEventListener("keydown", handleModalKeydown);
+document.addEventListener("fullscreenchange",renderFullscreenButtons);
+window.addEventListener("beforeunload",()=>clearInterval(runtimeWatchdogTimer));

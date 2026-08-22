@@ -1,4 +1,5 @@
 import { HIDDEN_ROUTE_SCENES } from "./hidden-route-data.mjs";
+import { HEROINE_STORY_SCENES } from "./heroine-data.mjs";
 
 const STANDARD_STORY_SCENES = [
   {
@@ -175,7 +176,7 @@ const STANDARD_STORY_SCENES = [
   }
 ];
 
-export const STORY_SCENES = [...STANDARD_STORY_SCENES,...HIDDEN_ROUTE_SCENES];
+export const STORY_SCENES = [...STANDARD_STORY_SCENES,...HIDDEN_ROUTE_SCENES,...HEROINE_STORY_SCENES];
 
 export function validateStoryData(scenes = STORY_SCENES) {
   const ids = new Set();

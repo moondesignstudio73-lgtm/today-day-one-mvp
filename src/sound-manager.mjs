@@ -20,7 +20,8 @@ export const BGM_TRACKS = {
   theme:["assets/audio/bgm/theme-1.mp3","assets/audio/bgm/theme-2.mp3"],
   dateShopping:["assets/audio/bgm/date-shopping-1.mp3","assets/audio/bgm/date-shopping-2.mp3"],
   crisis:["assets/audio/bgm/relationship-crisis-1.mp3","assets/audio/bgm/relationship-crisis-2.mp3"],
-  ending:["assets/audio/bgm/ending-1.mp3","assets/audio/bgm/ending-2.mp3"]
+  ending:["assets/audio/bgm/ending-1.mp3","assets/audio/bgm/ending-2.mp3"],
+  schoolYouth:["assets/audio/bgm/daily-2.mp3","assets/audio/bgm/theme-1.mp3"]
 };
 
 export const SCENE_BGM_CATEGORIES = {

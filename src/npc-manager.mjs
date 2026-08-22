@@ -1,45 +1,71 @@
-import { NPC_ACTION_RULES, NPC_ARCHETYPES, NPC_NAMES } from "./npcs-data.mjs";
+import { NPC_ACTION_RULES, NPC_ARCHETYPES } from "./npcs-data.mjs";
+import { recordMemory } from "./memory-manager.mjs";
 
 const randomInt = (random, min, max) => min + Math.floor(random() * (max - min + 1));
+const ACTIVE_QUOTAS = { office:5, friend:3, rival:2, life:4 };
+const CORE_IDS = new Set(["female-coworker","team-lead","best-friend","male-rival"]);
+
+function selectActiveIds(random) {
+  const selected=new Set(CORE_IDS);
+  for (const [category,quota] of Object.entries(ACTIVE_QUOTAS)) {
+    const pool=NPC_ARCHETYPES.filter(character=>character.category===category && !selected.has(character.id));
+    for (let index=pool.length-1;index>0;index--) { const swap=Math.floor(random()*(index+1)); [pool[index],pool[swap]]=[pool[swap],pool[index]]; }
+    const already=[...selected].filter(id=>NPC_ARCHETYPES.find(character=>character.id===id)?.category===category).length;
+    pool.slice(0,Math.max(0,quota-already)).forEach(character=>selected.add(character.id));
+  }
+  return selected;
+}
 
 export function generateNpcs(random = Math.random) {
-  const names = [...NPC_NAMES];
-  return NPC_ARCHETYPES.map((archetype, index) => {
-    const nameIndex = Math.min(names.length - 1, Math.floor(random() * names.length));
-    const [name] = names.splice(nameIndex, 1);
-    const attraction = Math.max(0, Math.min(100, archetype.baseAttraction + randomInt(random, -12, 12)));
-    return { ...structuredClone(archetype), instanceId:`npc-${index + 1}`, name, affection:randomInt(random, 25, 45), trust:randomInt(random, 25, 50), attraction, interestInPlayer:archetype.interestTarget === "player" ? attraction : randomInt(random, 0, 18), interestInGirlfriend:archetype.interestTarget === "girlfriend" ? attraction : randomInt(random, 0, 18) };
+  const activeIds=selectActiveIds(random);
+  return NPC_ARCHETYPES.map((archetype,index) => {
+    const attraction=Math.max(0,Math.min(100,archetype.baseAttraction+randomInt(random,-10,10)));
+    return {
+      ...structuredClone(archetype), instanceId:`npc-${archetype.id}`, active:activeIds.has(archetype.id), storyState:"available",
+      affection:Math.max(0,Math.min(100,archetype.affinityToPlayer+randomInt(random,-5,8))),
+      heroineAffinity:Math.max(0,Math.min(100,archetype.affinityToHeroine+randomInt(random,-5,8))), trust:Math.max(0,Math.min(100,archetype.baseTrust+randomInt(random,-5,10))), attraction,
+      interestInPlayer:archetype.interestTarget === "player" ? attraction : randomInt(random,0,18),
+      interestInGirlfriend:archetype.interestTarget === "girlfriend" ? attraction : randomInt(random,0,18)
+    };
+  });
+}
+
+export function migrateNpcRoster(npcs, random = Math.random) {
+  const generated=generateNpcs(random);
+  if (!Array.isArray(npcs) || !npcs.length) return generated;
+  const byId=new Map(npcs.map(character=>[character.id,character]));
+  return generated.map(character=>{
+    const previous=byId.get(character.id);
+    if (!previous) return character;
+    return { ...character,...previous,instanceId:previous.instanceId || character.instanceId,active:typeof previous.active === "boolean" ? previous.active : true,storyState:previous.storyState ?? "available" };
   });
 }
 
 export function validateNpcs(npcs) {
   if (!Array.isArray(npcs) || npcs.length !== NPC_ARCHETYPES.length) return false;
-  const ids = new Set();
-  return npcs.every(npc => typeof npc.instanceId === "string" && !ids.has(npc.instanceId) && ids.add(npc.instanceId) && typeof npc.name === "string" && typeof npc.role === "string" && ["affection","trust","attraction","interestInPlayer","interestInGirlfriend"].every(key => Number.isFinite(npc[key]) && npc[key] >= 0 && npc[key] <= 100));
+  const ids=new Set();
+  return npcs.every(character=>typeof character.instanceId === "string" && !ids.has(character.instanceId) && ids.add(character.instanceId) && typeof character.name === "string" && typeof character.role === "string" && typeof character.active === "boolean" && typeof character.storyState === "string" && ["affection","trust","attraction","interestInPlayer","interestInGirlfriend"].every(key=>Number.isFinite(character[key]) && character[key]>=0 && character[key]<=100));
 }
 
 export function applyNpcActionEffects(state, action) {
-  const rule = NPC_ACTION_RULES.find(entry => entry.actionId === action.id);
+  const rule=NPC_ACTION_RULES.find(entry=>entry.actionId===action.id);
   if (!rule) return null;
-  const npc = (state.npcs ?? []).find(entry => entry.id === rule.npcId);
-  if (!npc) return null;
-  for (const [key, amount] of Object.entries(rule.effects)) npc[key] = Math.max(0, Math.min(100, (npc[key] ?? 0) + amount));
-  state.npcHistory ??= [];
-  const record = { day:state.day, phase:state.phase, actionId:action.id, npcId:npc.instanceId, effects:{ ...rule.effects } };
+  const character=(state.npcs ?? []).find(entry=>entry.id===rule.npcId && entry.active !== false);
+  if (!character) return null;
+  for (const [key,amount] of Object.entries(rule.effects)) character[key]=Math.max(0,Math.min(100,(character[key] ?? 0)+amount));
+  state.npcHistory ??=[];
+  const record={ day:state.day,phase:state.phase,actionId:action.id,npcId:character.instanceId,effects:{...rule.effects} };
   state.npcHistory.push(record);
-  return { npc, record };
+  recordMemory(state,{type:"npc",summary:`${character.name} · ${action.title}`,importance:2,tags:["NPC",character.id,action.tag]});
+  return { npc:character,record };
 }
 
-export function getNpcRelationshipStatus(npc) {
-  if (npc.relationshipType === "coworker") {
-    if (npc.interestInPlayer >= 75) return { label:"비밀 만남 직전", tone:"danger" };
-    if (npc.interestInPlayer >= 60) return { label:"술자리 제안", tone:"warning" };
-    if (npc.interestInPlayer >= 45) return { label:"개인 연락", tone:"interest" };
-  }
-  if (npc.relationshipType === "rival") {
-    if (npc.interestInGirlfriend >= 75) return { label:"적극적인 접근", tone:"danger" };
-    if (npc.interestInGirlfriend >= 55) return { label:"경계할 관계", tone:"warning" };
-  }
-  if (npc.trust >= 60) return { label:"믿을 수 있는 사이", tone:"safe" };
-  return { label:"아직 어색한 사이", tone:"neutral" };
+export function getNpcRelationshipStatus(character) {
+  if (character.active === false) return {label:"이번 회차 미등장",tone:"neutral"};
+  if (["coworker","admirer","ex"].includes(character.relationshipType) && character.interestInPlayer >= 75) return {label:"비밀 만남 직전",tone:"danger"};
+  if (["coworker","admirer","ex"].includes(character.relationshipType) && character.interestInPlayer >= 55) return {label:"개인적인 관심",tone:"interest"};
+  if (["rival","admirer","ex"].includes(character.relationshipType) && character.interestInGirlfriend >= 75) return {label:"적극적인 접근",tone:"danger"};
+  if (["rival","admirer","ex"].includes(character.relationshipType) && character.interestInGirlfriend >= 55) return {label:"경계할 관계",tone:"warning"};
+  if (character.trust >= 60) return {label:"믿을 수 있는 사이",tone:"safe"};
+  return {label:"아직 어색한 사이",tone:"neutral"};
 }

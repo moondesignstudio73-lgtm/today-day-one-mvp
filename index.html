@@ -42,6 +42,7 @@
         <button id="historyButton" class="text-button hidden" type="button">기록</button>
         <button id="saveButton" class="text-button hidden" type="button">저장</button>
         <button id="loadButton" class="text-button" type="button">불러오기</button>
+        <button id="fullscreenButton" class="text-button hidden" type="button" aria-pressed="false">⛶ 전체화면</button>
         <button id="soundButton" class="icon-button sound-button" type="button" aria-pressed="false" title="효과음 켜기">♪ OFF</button>
         <button id="resetButton" class="icon-button" type="button" title="새 게임">↻</button>
       </div>
@@ -96,6 +97,7 @@
             <button id="autoButton" type="button" aria-pressed="false">AUTO OFF</button>
             <button id="skipButton" class="hidden" type="button">SKIP</button>
             <button id="storyHistoryButton" type="button">LOG</button>
+            <button id="storyFullscreenButton" type="button" aria-pressed="false">FULLSCREEN</button>
           </nav>
           <div class="story-quick-hud" aria-label="현재 정보"><span id="quickLocation">집</span><b id="quickMoney">₩ 850,000</b></div>
           <div id="actionGrid" class="action-grid vn-choices" aria-label="행동 선택지"></div>
@@ -148,6 +150,6 @@
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=23"></script>
+  <script type="module" src="game.js?v=24"></script>
 </body>
 </html>

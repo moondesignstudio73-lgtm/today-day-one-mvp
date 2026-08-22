@@ -33,6 +33,11 @@ export const ACTIONS = {
   ]
 };
 
+Object.assign(ACTIONS.evening.find(action=>action.id==="dinner-date"),{excludedHeroineIds:["yuna"]});
+Object.assign(ACTIONS.evening.find(action=>action.id==="coworker-drinks"),{excludedHeroineIds:["yuna"]});
+ACTIONS.day.push({id:"yuna-library-study",icon:"📚",title:"유나와 도서관 공부",desc:"시험과 진로 이야기를 나누며 함께 문제를 푼다.",costLabel:"₩8,000",timeCost:1,heroineIds:["yuna"],requirements:[{stat:"money",operator:">=",value:8000,message:"자산 ₩8,000 이상 필요"}],effects:{money:-8000,affection:14,trust:14,stress:-4,energy:-4},tag:"데이트"});
+ACTIONS.evening.push({id:"yuna-after-school-snack",icon:"🍢",title:"유나와 방과 후 분식",desc:"분식집에서 오늘 학교에서 있었던 일을 듣는다.",costLabel:"₩16,000",timeCost:1,heroineIds:["yuna"],requirements:[{stat:"money",operator:">=",value:16000,message:"자산 ₩16,000 이상 필요"}],effects:{money:-16000,affection:20,trust:9,excitement:8,stress:-7},tag:"데이트"});
+
 export function validateActionData(actions = ACTIONS, phases = PHASES) {
   const ids = new Set();
   return phases.every(phase => Array.isArray(actions[phase.key]) && actions[phase.key].every(action => {

@@ -1,4 +1,5 @@
 import { getMemoryContext } from "./memory-manager.mjs";
+import { getItem } from "./items-data.mjs";
 
 export function buildConversationContext(state) {
   const recentActions = (state.actionHistory ?? []).slice(-6).map(entry => ({ day:entry.day, actionId:entry.actionId, tag:entry.tag }));
@@ -11,9 +12,11 @@ export function buildConversationContext(state) {
     user:String(turn.user ?? "").slice(0, 120),
     assistant:String(turn.assistant ?? "").slice(0, 180)
   }));
+  const wornInstance=(state.inventory ?? []).find(entry=>entry.owner === "girlfriend" && entry.equipped && getItem(entry.itemId)?.category === "heroine-outfit");
+  const wornOutfit=wornInstance ? getItem(wornInstance.itemId) : null;
   return {
     day:state.day, phase:state.phase,
-    girlfriend:{ name:state.partner.name, bio:state.partner.bio, personality:{ ...state.partner.personality } },
+    girlfriend:{ name:state.partner.name, bio:state.partner.bio, heroineId:state.partner.heroineId, age:state.partner.age, ageCategory:state.partner.ageCategory, studentSafe:Boolean(state.partner.studentSafe), archetype:state.partner.archetype, aiVoice:state.partner.aiVoice, messageVoice:state.partner.messageVoice??null, personality:{ ...state.partner.personality }, currentOutfit:wornOutfit ? { outfitId:wornOutfit.outfitId,name:wornOutfit.name,styleTags:[...wornOutfit.styleTags],giftedByPlayer:Boolean(wornInstance.giftedByPlayer),lastWorn:wornInstance.lastWorn ?? wornInstance.givenDay } : null },
     relationship:{ affection:state.affection, trust:state.trust, excitement:state.excitement, attachment:state.attachment, conflict:state.conflict, stress:state.relationshipStress },
     player:{ money:state.money, health:state.health, energy:state.energy, fatigue:state.fatigue, stress:state.stress, charm:state.charm, fashion:state.fashion, confidence:state.confidence, job:state.job.name, jobLevel:state.jobLevel },
     recentActions, recentEvents, recentGifts, recentTemptations, recentConversation, recentInitiatedMessages:(state.initiatedMessages ?? []).slice(-3), importantMemories:getMemoryContext(state)

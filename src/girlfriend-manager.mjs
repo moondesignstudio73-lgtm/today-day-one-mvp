@@ -1,8 +1,5 @@
-const NAMES = ["서연", "하린", "지우", "다은", "소민", "유나"];
-const JOBS = ["회사원", "대학생", "디자이너", "마케터", "프리랜서"];
-const IMPRESSIONS = ["차분한 인상", "솔직한 성격", "자유로운 영혼", "따뜻한 미소", "도도한 분위기"];
-
 import { createCharacterAppearance, validateCharacterAppearance } from "./character-appearance.mjs";
+import { getHeroineProfile, HEROINE_PROFILES } from "./heroine-data.mjs";
 
 export const PERSONALITY_KEYS = [
   "contactImportance", "jealousy", "materialism", "romanticism", "independence",
@@ -39,15 +36,18 @@ export function traitLabel(value) {
 }
 
 export function generateGirlfriend(random = Math.random) {
-  const personality = Object.fromEntries(PERSONALITY_KEYS.map(key => [key, randomInt(random, 8, 92)]));
-  const id = `girlfriend-${randomInt(random, 100000, 999999)}`;
-  const name = NAMES[randomInt(random, 0, NAMES.length - 1)];
-  const bio = `${JOBS[randomInt(random, 0, JOBS.length - 1)]} · ${IMPRESSIONS[randomInt(random, 0, IMPRESSIONS.length - 1)]}`;
+  const runPersonality=Object.fromEntries(PERSONALITY_KEYS.map(key=>[key,randomInt(random,8,92)]));
+  const serial=randomInt(random,100000,999999);
+  const profile=HEROINE_PROFILES[randomInt(random,0,HEROINE_PROFILES.length-1)];
+  randomInt(random,0,4); randomInt(random,0,4);
+  const personality=Object.fromEntries(PERSONALITY_KEYS.map(key=>[key,Math.round(runPersonality[key]*0.75+profile.personality[key]*0.25)]));
+  const id=`heroine-${profile.id}-${serial}`;
   const appearanceSeed = randomInt(random, 1, 2147483646);
   return {
-    id,
-    name,
-    bio,
+    id, heroineId:profile.id, name:profile.name, bio:profile.bio, age:profile.age, ageCategory:profile.ageCategory, job:profile.job, height:profile.height, bodyType:profile.bodyType,
+    archetype:profile.archetype, hiddenTrait:profile.hiddenTrait, preferredDates:[...profile.preferredDates], dislikedActions:[...profile.dislikedActions],
+    preferredGifts:[...profile.preferredGifts], fashionPreferences:{...profile.fashionPreferences}, rivalReaction:profile.rivalReaction,
+    conflictStyle:profile.conflictStyle, reconciliationStyle:profile.reconciliationStyle, aiVoice:profile.aiVoice, referenceImage:profile.referenceImage, uiAccent:profile.uiAccent, studentSafe:Boolean(profile.studentSafe), messageVoice:structuredClone(profile.messageVoice??null), excludedEventTags:[...(profile.excludedEventTags??[])],
     personality,
     appearanceSeed,
     characterAppearance:createCharacterAppearance(appearanceSeed),
@@ -59,9 +59,20 @@ export function generateGirlfriend(random = Math.random) {
   };
 }
 
+export function migrateHeroineProfile(partner) {
+  if (!partner || typeof partner !== "object") return partner;
+  const seed=Number(partner.appearanceSeed) || [...String(partner.id ?? "")].reduce((sum,char)=>sum+char.charCodeAt(0),0);
+  const profile=getHeroineProfile(partner.heroineId) ?? HEROINE_PROFILES[Math.abs(seed)%HEROINE_PROFILES.length];
+  partner.heroineId=profile.id;
+  for (const key of ["age","ageCategory","job","height","bodyType","archetype","hiddenTrait","rivalReaction","conflictStyle","reconciliationStyle","aiVoice","referenceImage","uiAccent","studentSafe","messageVoice","excludedEventTags"]) partner[key] ??= structuredClone(profile[key]);
+  partner.preferredDates ??=[...profile.preferredDates]; partner.dislikedActions ??=[...profile.dislikedActions]; partner.preferredGifts ??=[...profile.preferredGifts]; partner.fashionPreferences ??={...profile.fashionPreferences};
+  return partner;
+}
+
 export function validateGirlfriend(girlfriend) {
   if (!girlfriend || typeof girlfriend !== "object") return false;
   if (typeof girlfriend.id !== "string" || typeof girlfriend.name !== "string" || typeof girlfriend.bio !== "string") return false;
+  if (!getHeroineProfile(girlfriend.heroineId) || !Array.isArray(girlfriend.preferredDates) || !Array.isArray(girlfriend.dislikedActions) || !girlfriend.fashionPreferences || typeof girlfriend.aiVoice !== "string") return false;
   if (!girlfriend.personality || typeof girlfriend.personality !== "object") return false;
   if (!Number.isInteger(girlfriend.appearanceSeed) || !validateCharacterAppearance(girlfriend.characterAppearance)) return false;
   const keys = Object.keys(girlfriend.personality);

@@ -21,6 +21,8 @@ export function getEligibleStoryScenes(state, scenes = STORY_SCENES) {
   const history = state.storyHistory ?? [];
   if (history.some(record => record.day === state.day)) return [];
   return scenes.filter(scene => {
+    if (scene.heroineIds && !scene.heroineIds.includes(state.partner.heroineId)) return false;
+    if (state.partner.heroineId === "yuna" && !scene.studentSafe && !scene.heroineIds?.includes("yuna")) return false;
     if (history.some(record => record.sceneId === scene.id)) return false;
     if (state.day < scene.window[0] || state.day > scene.window[1]) return false;
     if (scene.requires && !hasStoryChoice(state,scene.requires)) return false;

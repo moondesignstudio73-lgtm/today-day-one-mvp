@@ -1,4 +1,7 @@
-export const ITEMS = [
+import { HEROINE_OUTFITS } from "./heroine-data.mjs";
+import { YUNA_GIFT_ITEMS } from "./yuna-data.mjs";
+
+const BASE_ITEMS = [
   { id:"linen-shirt", icon:"👔", name:"루미에르 린넨 셔츠", brand:"Lumière", category:"clothes", price:55000, luxuryLevel:1, attractivenessBonus:3, fashionBonus:8, preferenceTags:["미니멀","데일리"] },
   { id:"rose-parfum", icon:"🌹", name:"로지에 블룸 향수", brand:"Rosier", category:"perfume", price:75000, luxuryLevel:2, attractivenessBonus:4, fashionBonus:2, preferenceTags:["로맨틱","향수"] },
   { id:"urban-sneakers", icon:"👟", name:"노바 어반 스니커즈", brand:"Nova", category:"shoes", price:89000, luxuryLevel:2, attractivenessBonus:3, fashionBonus:7, preferenceTags:["캐주얼"] },
@@ -11,6 +14,8 @@ export const ITEMS = [
   { id:"skyline-studio", icon:"🏙️", name:"스카이라인 리버뷰 스튜디오", brand:"Skyline Living", category:"home", price:24000000, luxuryLevel:7, attractivenessBonus:12, fashionBonus:10, preferenceTags:["주거","안정","럭셔리"] }
 ];
 
+export const ITEMS = [...BASE_ITEMS,...YUNA_GIFT_ITEMS,...HEROINE_OUTFITS];
+
 export function getItem(itemId) {
   return ITEMS.find(item => item.id === itemId) ?? null;
 }
@@ -20,6 +25,6 @@ export function validateItemData(items = ITEMS) {
   return items.every(item => {
     if (typeof item.id !== "string" || ids.has(item.id)) return false;
     ids.add(item.id);
-    return typeof item.icon === "string" && item.icon.length > 0 && typeof item.name === "string" && typeof item.brand === "string" && typeof item.category === "string" && Number.isFinite(item.price) && item.price >= 0 && Number.isFinite(item.luxuryLevel) && Number.isFinite(item.attractivenessBonus) && Number.isFinite(item.fashionBonus) && Array.isArray(item.preferenceTags);
+    return typeof item.icon === "string" && item.icon.length > 0 && typeof item.name === "string" && typeof item.brand === "string" && typeof item.category === "string" && Number.isFinite(item.price) && item.price >= 0 && Number.isFinite(item.luxuryLevel) && Number.isFinite(item.attractivenessBonus) && Number.isFinite(item.fashionBonus) && Array.isArray(item.preferenceTags) && (item.category !== "heroine-outfit" || (typeof item.heroineId === "string" && typeof item.outfitId === "string" && typeof item.productImage === "string" && typeof item.characterWearingImage === "string"));
   });
 }

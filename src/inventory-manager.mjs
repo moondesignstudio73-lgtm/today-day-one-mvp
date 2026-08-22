@@ -1,5 +1,6 @@
 import { getItem } from "./items-data.mjs";
 import { recordTransaction } from "./economy-manager.mjs";
+import { isOutfitUnlocked } from "./heroine-data.mjs";
 
 export function addItem(state, itemId, owner = "player", source = "shopping") {
   const item = getItem(itemId);
@@ -48,6 +49,9 @@ export function acquireActionItem(state, action) {
 export function purchaseItem(state, itemId, owner = "player") {
   const item = getItem(itemId);
   if (!item) return { ok:false, reason:"존재하지 않는 아이템입니다." };
+  if (item.category === "heroine-outfit" && owner !== "gift") return {ok:false,reason:"히로인 의상은 선물용으로 구매해 주세요."};
+  if (item.category === "heroine-outfit" && item.heroineId !== state.partner.heroineId) return {ok:false,reason:`${state.partner.name}의 체형과 취향에 맞는 의상이 아닙니다.`};
+  if (item.category === "heroine-outfit" && !isOutfitUnlocked(state,item)) return {ok:false,reason:"아직 잠겨 있는 특별 의상입니다."};
   if (state.money < item.price) return { ok:false, reason:"구매할 돈이 부족합니다." };
   recordTransaction(state, { category:"shopping", label:`${item.name} 구매`, amount:-item.price });
   const instance = addItem(state, itemId, owner, "store");

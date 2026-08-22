@@ -1,4 +1,6 @@
-export const EVENT_DEFINITIONS = [
+import { SITUATION_EVENTS } from "./situation-events-data.mjs";
+
+const BASE_EVENT_DEFINITIONS = [
   {
     id: "sudden-overtime",
     title: "퇴근 직전의 긴급 업무",
@@ -157,6 +159,8 @@ export const EVENT_DEFINITIONS = [
     effects: { money: 180000, stress: -8 }
   }
 ];
+
+export const EVENT_DEFINITIONS=[...BASE_EVENT_DEFINITIONS.map(event=>({...event,kind:"micro"})),...SITUATION_EVENTS.map(event=>({...event,kind:"story"}))];
 
 const VALID_OPERATORS = new Set([">=", "<=", ">", "<", "=="]);
 
