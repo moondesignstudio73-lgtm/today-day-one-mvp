@@ -472,7 +472,7 @@ function renderGirlfriendSetup() {
     renderGirlfriendSetup();
   }));
   $("#rollGirlfriendTraits")?.addEventListener("click",(event)=>runRoll(event.currentTarget,$("#girlfriendTraitRoll"),MBTI_TYPES,()=>{rerollGirlfriendPersonality(onboarding.partner);onboarding.partner.mbti=MBTI_TYPES[Math.floor(Math.random()*MBTI_TYPES.length)];onboarding.girlfriendTraitsReady=true;setTimeout(renderGirlfriendSetup,120);return onboarding.partner.mbti;}));
-  $("#rollGirlfriendJob")?.addEventListener("click",(event)=>{const careers=GIRLFRIEND_JOBS.filter((career)=>career.id!=="high-school-senior");runRoll(event.currentTarget,$("#girlfriendJobRoll"),careers.map((career)=>career.name),()=>{const selected=structuredClone(careers[Math.floor(Math.random()*careers.length)]);selected.heroineId=onboarding.partner.heroineId;onboarding.partner.career=selected;onboarding.partner.job=selected.name;onboarding.girlfriendJobReady=true;setTimeout(renderGirlfriendSetup,120);return selected.name;});});
+  $("#rollGirlfriendJob")?.addEventListener("click",(event)=>{const careers=GIRLFRIEND_JOBS.filter((career)=>career.id!=="high-school-senior"&&career.id!==onboarding.partner.career?.id);runRoll(event.currentTarget,$("#girlfriendJobRoll"),careers.map((career)=>career.name),()=>{const selected=structuredClone(careers[Math.floor(Math.random()*careers.length)]);selected.heroineId=onboarding.partner.heroineId;onboarding.partner.career=selected;onboarding.partner.job=selected.name;onboarding.girlfriendJobReady=true;setTimeout(renderGirlfriendSetup,120);return selected.name;});});
   $("#girlfriendSetupNext")?.addEventListener("click",renderPlayerSetup);
 }
 
@@ -560,7 +560,7 @@ function render() {
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
-  typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerBio").textContent = p.bio;
+  typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerBio").textContent = `${p.career?.name ?? p.job} · ${p.archetype}`;
   $("#partnerAvatar").src = `${getGirlfriendVisual(p.visualId).previewImage}?v=6`;
   $("#partnerAvatar").alt = `${p.name} 프로필 사진`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));
@@ -571,7 +571,7 @@ function render() {
   $("#affectionBar").style.width = `${state.affection/10}%`; $("#trustBar").style.width = `${state.trust/10}%`;
   const traitRows = getVisibleTraitRows(state); const revealedCount = traitRows.filter(row => row.revealed).length;
   $("#moneyValue").textContent = money(state.money); $("#jobValue").textContent = `${state.player.name} · ${state.job.name} · Lv.${state.jobLevel}`; $("#traitProgress").textContent = `${revealedCount} / 5`;
-  $("#quickMoney").textContent = money(state.money);
+  $("#quickPlayerName").textContent = state.player?.name ?? "나";
   $("#quickLocation").textContent = ({morning:"집",day:isWeekend(state.day)?"동네":"회사",evening:"도심"})[phase.key] ?? "현재 위치";
   $("#lifeStatus").textContent = state.fatigue >= 70 ? "피로가 누적되는 중" : state.stress > 75 ? "한계에 가까움" : state.energy < 25 ? "휴식이 필요함" : state.confidence >= 70 ? "자신감이 넘치는 중" : state.affection > 750 ? "사랑이 깊어지는 중" : "나쁘지 않은 하루";
   $("#traitList").innerHTML = traitRows.map(row => row.revealed ? `<div class="trait"><span>${row.name}</span><b>${row.value}</b></div>` : `<div class="trait locked"><span>${row.name}</span><b>${row.confidence ? `${row.hint} · ${row.confidence}%` : "???"}</b></div>`).join("");
