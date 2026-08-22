@@ -9,7 +9,7 @@ import { rollMicroEvents } from "./src/micro-event-manager.mjs?v=4";
 import { auditEventSystems } from "./src/event-audit.mjs?v=4";
 import { EVENT_DEFINITIONS } from "./src/events-data.mjs?v=4";
 import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=5";
-import { getActionAvailability, isActionVisible } from "./src/action-manager.mjs?v=5";
+import { getActionAvailability, getWeekdayName, isActionVisible, isWeekend } from "./src/action-manager.mjs?v=5";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
@@ -294,7 +294,7 @@ function openGameMenu() {
   const appMarkup = apps.map(([id,icon,label,detail,tone])=>`<button class="phone-app" type="button" data-menu-action="${id}"><span class="phone-app-icon" data-tone="${tone}" aria-hidden="true">${icon}</span><b>${label}</b><small>${escapeHtml(detail)}</small></button>`).join("");
   const dockMarkup = dock.map(([id,icon,label])=>`<button type="button" data-menu-action="${id}"><span aria-hidden="true">${icon}</span><b>${label}</b></button>`).join("");
   $("#modal").classList.add("phone-menu-active");
-  $("#modalContent").innerHTML=`<article class="phone-menu ${isNight?"":"story-system-menu"}" aria-label="${isNight?"야간 스마트폰":"스토리 시스템 메뉴"}"><div class="phone-status"><b>${isNight?formatNightTime(state.nightState.minutes):phases[state.phase].time}</b><span>DAY ${state.day} · ${battery}% ▰</span></div><div class="phone-island" aria-hidden="true"></div><header class="phone-menu-hero"><small>${isNight?"NIGHT TIME · 나의 방":"STORY MODE · SYSTEM"}</small><strong>${isNight?`${state.partner.name}에게 알림이 왔어요`:"이야기를 잠시 멈췄어요"}</strong><span>${isNight?money(state.money):"저장 · 기록 · 설정만 확인할 수 있어요"}</span></header><div class="phone-app-grid">${appMarkup}</div><div class="phone-dock">${dockMarkup}</div><div class="phone-home-indicator" aria-hidden="true"></div></article>`;
+  $("#modalContent").innerHTML=`<article class="phone-menu ${isNight?"":"story-system-menu"}" aria-label="${isNight?"야간 스마트폰":"스토리 시스템 메뉴"}"><div class="phone-status"><b>${isNight?formatNightTime(state.nightState.minutes):phases[state.phase].time}</b><span>DAY ${state.day} · ${getWeekdayName(state.day)} · ${battery}% ▰</span></div><div class="phone-island" aria-hidden="true"></div><header class="phone-menu-hero"><small>${isNight?"NIGHT TIME · 나의 방":"STORY MODE · SYSTEM"}</small><strong>${isNight?`${state.partner.name}에게 알림이 왔어요`:"이야기를 잠시 멈췄어요"}</strong><span>${isNight?money(state.money):"저장 · 기록 · 설정만 확인할 수 있어요"}</span></header><div class="phone-app-grid">${appMarkup}</div><div class="phone-dock">${dockMarkup}</div><div class="phone-home-indicator" aria-hidden="true"></div></article>`;
   openModal();
   const nightApp = (minutes,label,callback) => () => { const result=spendNightTime(state,minutes,label); if(!result.ok){toast(result.reason);openGameMenu();return;} callback(); SaveManager.save(state); };
   const actions = { inventory:openInventory, shop:isNight?nightApp(20,"온라인 쇼핑",openShop):openShop, finance:openFinance, career:openCareer, people:openPeople, investment:isNight?nightApp(20,"투자 확인",openInvestment):openInvestment, history:openDialogueHistory, gallery:openCgGallery, message:nightApp(10,"메시지",()=>{state.nightState.messagesRead=true;openChat();}), call:nightApp(30,"전화",openChat), sns:nightApp(20,"SNS",openSns), schedule:openSchedule, todaylog:openTodayLog, report:openDailyReport, speed:()=>{dialogueSpeedIndex=(dialogueSpeedIndex+1)%dialogueSpeeds.length;localStorage.setItem("today-day-one-dialogue-speed",String(dialogueSpeedIndex));toast(`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`);openGameMenu();}, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
@@ -538,7 +538,7 @@ function withParticle(word, consonantParticle, vowelParticle) { const last=Strin
 function render() {
   const p = state.partner, phase = phases[state.phase];
   document.body.dataset.heroine=p.heroineId;document.documentElement.style.setProperty("--heroine-accent",p.uiAccent??"#ff91b5");
-  $("#dayLabel").textContent = state.day; $("#phaseIcon").textContent = phase.icon;
+  $("#dayLabel").textContent = `${state.day} · ${getWeekdayName(state.day)}`; $("#phaseIcon").textContent = phase.icon;
   if (state.phase === 3) { if(state.world?.mode==="district")renderWorldMap();else renderNightHome(); return; }
   document.body.classList.add("ui-classic-mode");
   document.body.classList.remove("ui-story-mode");
@@ -566,7 +566,7 @@ function render() {
   const traitRows = getVisibleTraitRows(state); const revealedCount = traitRows.filter(row => row.revealed).length;
   $("#moneyValue").textContent = money(state.money); $("#jobValue").textContent = `${state.player.name} · ${state.job.name} · Lv.${state.jobLevel}`; $("#traitProgress").textContent = `${revealedCount} / 5`;
   $("#quickMoney").textContent = money(state.money);
-  $("#quickLocation").textContent = ({morning:"집",day:"회사",evening:"도심"})[phase.key] ?? "현재 위치";
+  $("#quickLocation").textContent = ({morning:"집",day:isWeekend(state.day)?"동네":"회사",evening:"도심"})[phase.key] ?? "현재 위치";
   $("#lifeStatus").textContent = state.fatigue >= 70 ? "피로가 누적되는 중" : state.stress > 75 ? "한계에 가까움" : state.energy < 25 ? "휴식이 필요함" : state.confidence >= 70 ? "자신감이 넘치는 중" : state.affection > 750 ? "사랑이 깊어지는 중" : "나쁘지 않은 하루";
   $("#traitList").innerHTML = traitRows.map(row => row.revealed ? `<div class="trait"><span>${row.name}</span><b>${row.value}</b></div>` : `<div class="trait locked"><span>${row.name}</span><b>${row.confidence ? `${row.hint} · ${row.confidence}%` : "???"}</b></div>`).join("");
   const appearance = getEffectiveAppearance(state);
@@ -619,7 +619,7 @@ function renderNightHome() {
   roomScene.style.backgroundPosition="center";
   $(".night-home-header h2").textContent=home.homeName;
   $("#nightClock").textContent = formatNightTime(night.minutes);
-  $("#nightDayLabel").textContent = `DAY ${state.day}`;
+  $("#nightDayLabel").textContent = `DAY ${state.day} · ${getWeekdayName(state.day)}`;
   $("#phoneBadge").classList.toggle("hidden",night.messagesRead);
   $("#nightHomeTip").textContent = night.activities.length ? `오늘 밤: ${night.activities.map(item=>item.label).join(" · ")}` : "밤 활동은 시간을 사용합니다. 늦게 잘수록 내일 더 피곤해져요.";
   const soundKey = `${state.day}-night-home`;
@@ -636,7 +636,7 @@ function renderWorldMap() {
   $("#worldCityLabel").textContent=`${map.cityId.toUpperCase()} · ${map.theme==="premium"?"PREMIUM DISTRICT":map.theme==="coast"?"COAST DISTRICT":"LOCAL DISTRICT"}`;
   $("#worldMapTitle").textContent=map.name;$("#worldMapSubtitle").textContent=map.subtitle;
   const transport=TRANSPORT_OPTIONS.find(option=>option.id===world.transport)??TRANSPORT_OPTIONS[0];
-  $("#worldClock").textContent=formatNightTime(night.minutes);$("#worldTransport").textContent=`${transport.icon} ${transport.name}${world.transportConfirmed?"":" 선택 필요"}`;
+  $("#worldClock").textContent=`${formatNightTime(night.minutes)} · ${getWeekdayName(state.day)}`;$("#worldTransport").textContent=`${transport.icon} ${transport.name}${world.transportConfirmed?"":" 선택 필요"}`;
   const canvas=$("#worldMapCanvas");canvas.dataset.theme=map.theme;canvas.dataset.district=map.id;
   $("#worldScenery").innerHTML=getWorldSceneryMarkup(map);
   $("#worldRoadLayer").innerHTML=getRoadCells(map).map(cell=>`<i class="world-road-cell" style="--map-x:${cell.x/(map.width-1)*100}%;--map-y:${cell.y/(map.height-1)*100}%"></i>`).join("");
@@ -776,13 +776,13 @@ function openDailyReport() {
   const mood=(state.affection-(state.dayStartSnapshot?.affection??state.affection))+(state.trust-(state.dayStartSnapshot?.trust??state.trust));
   const ledger=(state.economyLedger??[]).filter(entry=>entry.day===state.day).map(entry=>`<li><span>${escapeHtml(entry.label)}</span><b>${entry.amount>=0?'+':''}${money(entry.amount)}</b></li>`).join("")||"<li><span>별도 거래 없음</span><b>—</b></li>";
   const traits=getVisibleTraitRows(state).map(row=>`<div class="report-row"><span>${escapeHtml(row.name)}</span><b>${escapeHtml(row.revealed?row.value:row.hint||"아직 잘 모르겠다")}</b>${row.revealed?'<em class="up">알아냄</em>':'<em>???</em>'}</div>`).join("");
-  $("#modalContent").innerHTML=`<article class="daily-report"><span class="eyebrow">DAY ${state.day} REPORT</span><h2>오늘 하루의 기록</h2><p>${mood>8?`${withParticle(state.partner.name,"과","와")} 조금 더 가까워진 하루였어요.`:mood<0?`${state.partner.name}의 마음에 조금 신경 쓰이는 것이 남았어요.`:"평온하지만 여운이 남는 하루였어요."}</p><h3>생활과 성장</h3><div class="report-list">${statRows}</div><h3>${escapeHtml(withParticle(state.partner.name,"과","와"))}의 관계</h3><div class="report-list">${relationRows}</div><h3>지금까지 알아낸 ${escapeHtml(state.partner.name)}</h3><div class="report-list">${traits}</div><h3>오늘의 수입과 지출</h3><ul class="report-ledger">${ledger}</ul></article>`;
+  $("#modalContent").innerHTML=`<article class="daily-report"><span class="eyebrow">DAY ${state.day} · ${getWeekdayName(state.day)} REPORT</span><h2>오늘 하루의 기록</h2><p>${mood>8?`${withParticle(state.partner.name,"과","와")} 조금 더 가까워진 하루였어요.`:mood<0?`${state.partner.name}의 마음에 조금 신경 쓰이는 것이 남았어요.`:"평온하지만 여운이 남는 하루였어요."}</p><h3>생활과 성장</h3><div class="report-list">${statRows}</div><h3>${escapeHtml(withParticle(state.partner.name,"과","와"))}의 관계</h3><div class="report-list">${relationRows}</div><h3>지금까지 알아낸 ${escapeHtml(state.partner.name)}</h3><div class="report-list">${traits}</div><h3>오늘의 수입과 지출</h3><ul class="report-ledger">${ledger}</ul></article>`;
   openModal();
 }
 
 function openTodayLog() {
   const rows=(state.logs??[]).filter(entry=>entry.time.includes(`DAY ${state.day}`)).map(entry=>`<div class="history-entry"><small>${escapeHtml(entry.time)}</small><p>${escapeHtml(entry.text)}</p></div>`).join("")||"<p>오늘 기록이 아직 없어요.</p>";
-  $("#modalContent").innerHTML=`<span class="eyebrow">TODAY'S RECORD</span><h2>DAY ${state.day} 오늘의 기록</h2><div class="dialogue-history">${rows}</div>`;openModal();
+  $("#modalContent").innerHTML=`<span class="eyebrow">TODAY'S RECORD</span><h2>DAY ${state.day} · ${getWeekdayName(state.day)} 오늘의 기록</h2><div class="dialogue-history">${rows}</div>`;openModal();
 }
 
 function openSns() {
@@ -790,7 +790,7 @@ function openSns() {
   $("#modalContent").innerHTML=`<article class="sns-feed"><span class="eyebrow">SOCIAL FEED · NOW</span><h2>${escapeHtml(state.partner.name)}의 오늘</h2><div class="sns-post"><b>${escapeHtml(state.partner.name)} ♥</b><p>${close?'“오늘은 오래 기억하고 싶은 날 🤍”':'“길었던 하루. 이제야 조금 쉬는 중.”'}</p><small>♥ ${87+state.day*4} · 댓글 ${2+state.day%5}</small></div><p class="sns-hint">${state.npcs?.some(npc=>npc.relationshipType==='rival')?'낯익은 계정이 좋아요를 남겼다. 누구인지 조금 신경 쓰인다.':'친구들의 평범한 밤이 피드에 흐르고 있다.'}</p></article>`;openModal();
 }
 
-function openSchedule() { $("#modalContent").innerHTML=`<span class="eyebrow">30 DAYS CALENDAR</span><h2>우리의 일정</h2><div class="schedule-card"><b>DAY ${state.day}</b><span>오늘의 일정을 마무리하는 중</span></div><div class="schedule-card"><b>DAY ${Math.min(30,state.day+1)}</b><span>내일의 선택은 아직 정해지지 않았어요.</span></div>`;openModal(); }
+function openSchedule() { const tomorrow=Math.min(30,state.day+1);$("#modalContent").innerHTML=`<span class="eyebrow">30 DAYS CALENDAR</span><h2>우리의 일정</h2><div class="schedule-card"><b>DAY ${state.day} · ${getWeekdayName(state.day)}</b><span>오늘의 일정을 마무리하는 중</span></div><div class="schedule-card"><b>DAY ${tomorrow} · ${getWeekdayName(tomorrow)}</b><span>내일의 선택은 아직 정해지지 않았어요.</span></div>`;openModal(); }
 
 function openCgGallery() {
   const unlocked=state.cgCollection??[];
@@ -800,7 +800,8 @@ function openCgGallery() {
 }
 
 function openNightPc() {
-  $("#modalContent").innerHTML=`<span class="eyebrow">MY COMPUTER · 60 MIN</span><h2>컴퓨터로 무엇을 할까?</h2><div class="pc-actions"><button data-pc-action="game">🎮 게임하기<small>스트레스 완화 · 피로 증가</small></button><button data-pc-action="study">📚 자기계발<small>업무 능력 증가 · 피로 증가</small></button><button data-pc-action="work">💼 야간 업무<small>수입 증가 · 스트레스 증가</small></button></div>`;openModal();
+  const workButton=isWeekend(state.day)?"":`<button data-pc-action="work">💼 야간 업무<small>수입 증가 · 스트레스 증가</small></button>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">MY COMPUTER · 60 MIN</span><h2>컴퓨터로 무엇을 할까?</h2><div class="pc-actions"><button data-pc-action="game">🎮 게임하기<small>스트레스 완화 · 피로 증가</small></button><button data-pc-action="study">📚 자기계발<small>업무 능력 증가 · 피로 증가</small></button>${workButton}</div>`;openModal();
   document.querySelectorAll("[data-pc-action]").forEach(button=>button.addEventListener("click",()=>{const result=spendNightTime(state,60,button.textContent.trim().split(" ")[1]||"PC 활동");if(!result.ok){toast(result.reason);return;}const id=button.dataset.pcAction;const effects=id==="game"?{stress:-10,fatigue:8,energy:-5}:id==="study"?{work:6,confidence:3,fatigue:9,energy:-7}:{money:50000,work:5,stress:10,fatigue:12,energy:-10};applyEffects(state,effects);if(effects.money)appendTransaction(state,{category:"night-work",label:"야간 업무",amount:effects.money});SaveManager.save(state);closeModal();render();toast(`${result.time} · 밤 활동을 마쳤어요.`);}));
 }
 
@@ -833,10 +834,11 @@ function applyAction() {
   if ((action.effects.money ?? 0) < 0 && state.money + action.effects.money < 0) { toast("돈이 부족해 이 행동을 할 수 없어요."); return; }
   const consequence = calculateActionEffects(state, action);
   const fx = consequence.effects;
-  if (action.random) { const win = Math.random() > .48; fx.money = win ? Math.round(40000+Math.random()*90000) : -Math.round(25000+Math.random()*70000); toast(win ? `투자 성공! ${money(fx.money)}` : `투자 손실 ${money(Math.abs(fx.money))}`); }
+  if (action.random) { const win = Math.random() > .48, leverage=state.player?.archetypeId==="wealthy"?10:1; fx.money = (win ? Math.round(40000+Math.random()*90000) : -Math.round(25000+Math.random()*70000))*leverage; toast(win ? `투자 성공${leverage>1?" · 부자 특전 ×10":""}! ${money(fx.money)}` : `투자 손실${leverage>1?" · 부자 특전 ×10":""} ${money(Math.abs(fx.money))}`); }
   applyEffects(state, fx);
   if (fx.money) appendTransaction(state, { category:"action", label:action.title, amount:Math.round(fx.money) });
   const acquiredItem = acquireActionItem(state, action);
+  if (acquiredItem && getItem(acquiredItem.itemId)?.category==="car" && acquiredItem.owner==="player" && state.world) { state.world.ownedVehicleId=acquiredItem.itemId;state.world.transport="car";state.world.transportConfirmed=true; }
   if (acquiredItem) { const giftResult=action.autoGift?giveGift(state,acquiredItem.instanceId):null; toast(giftResult?`${giftResult.item.name} 선물 · “${giftResult.reaction.reaction}”`:`${getItem(acquiredItem.itemId).name} 획득${acquiredItem.equipped?' · 장착 완료':''}`); }
   const promotion = addJobProgress(state, action, fx);
   if (promotion) toast(`승진! 직업 레벨 ${promotion.level} · 수입 보정 상승`);
@@ -1019,8 +1021,9 @@ function openEventScene(event,{debugPreview=false,previewOutfitImage=null,skipTo
 function openInvestment() {
   const portfolio=getPortfolioSummary(state);
   const lottery=getLotterySummary(state);
+  const wealthyLeverage=state.player?.archetypeId==="wealthy"?`<p class="career-tip"><b>부자 캐릭터 특전:</b> 주가 상승과 하락이 모두 10배로 적용됩니다.</p>`:"";
   const cards=state.investment.market.map(stock=>{ const holding=state.investment.holdings[stock.id]; return `<div class="stock-card"><div><small>${stock.risk.toUpperCase()} RISK · ${stock.changeRate>=0?'+':''}${stock.changeRate}%</small><b>${stock.name}</b><span>${money(stock.price)} · 보유 ${holding?.quantity??0}주${holding?` · 평균 ${money(holding.averageCost)}`:''}</span></div><div class="stock-actions"><button data-stock-buy="${stock.id}">1주 매수</button><button data-stock-sell="${stock.id}" ${holding?'':'disabled'}>1주 매도</button></div></div>`; }).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">VIRTUAL MARKET</span><h2>오늘의 투자</h2><p>보유 자산 ${money(state.money)} · 평가금액 ${money(portfolio.marketValue)} · 손익 ${portfolio.profitLoss>=0?'+':''}${money(portfolio.profitLoss)}</p><div class="stock-list">${cards}</div><div class="lottery-card"><div><small>INSTANT LOTTERY · DAY ${state.day}</small><b>오늘의 행운 복권</b><span>1장 ${money(LOTTERY_TICKET_PRICE)} · 오늘 ${lottery.today}/${DAILY_TICKET_LIMIT}장 · 누적 손익 ${lottery.net>=0?'+':''}${money(lottery.net)}</span></div><button id="lotteryBuyButton" ${lottery.today>=DAILY_TICKET_LIMIT||state.money<LOTTERY_TICKET_PRICE?'disabled':''}>한 장 긁기</button></div>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">VIRTUAL MARKET</span><h2>오늘의 투자</h2>${wealthyLeverage}<p>보유 자산 ${money(state.money)} · 평가금액 ${money(portfolio.marketValue)} · 손익 ${portfolio.profitLoss>=0?'+':''}${money(portfolio.profitLoss)}</p><div class="stock-list">${cards}</div><div class="lottery-card"><div><small>INSTANT LOTTERY · DAY ${state.day}</small><b>오늘의 행운 복권</b><span>1장 ${money(LOTTERY_TICKET_PRICE)} · 오늘 ${lottery.today}/${DAILY_TICKET_LIMIT}장 · 누적 손익 ${lottery.net>=0?'+':''}${money(lottery.net)}</span></div><button id="lotteryBuyButton" ${lottery.today>=DAILY_TICKET_LIMIT||state.money<LOTTERY_TICKET_PRICE?'disabled':''}>한 장 긁기</button></div>`;
   openModal();
   document.querySelectorAll("[data-stock-buy]").forEach(button=>button.addEventListener("click",()=>{const result=buyStock(state,button.dataset.stockBuy);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openInvestment();}));
   document.querySelectorAll("[data-stock-sell]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{const result=sellStock(state,button.dataset.stockSell);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openInvestment();}));

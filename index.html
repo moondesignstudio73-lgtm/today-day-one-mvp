@@ -108,6 +108,13 @@
       </aside>
 
       <section class="play-panel">
+        <nav class="story-toolbar" aria-label="스토리 메뉴">
+          <button id="storyMenuButton" type="button">MENU</button>
+          <button id="autoButton" type="button" aria-pressed="false">AUTO OFF</button>
+          <button id="skipButton" class="hidden" type="button">SKIP</button>
+          <button id="storyHistoryButton" type="button">LOG</button>
+          <button id="storyFullscreenButton" type="button" aria-pressed="false">FULLSCREEN</button>
+        </nav>
         <div class="vn-stage panel" id="visualNovelStage" role="button" tabindex="0" aria-label="대화 전체 표시">
           <div class="vn-backdrop" id="vnBackdrop" aria-hidden="true"></div>
           <img class="vn-character" id="vnCharacter" src="assets/characters/girlfriend-standing-2d.png" alt="" aria-hidden="true">
@@ -115,13 +122,6 @@
           <div id="vnExpressionLayer" class="vn-expression-layer" aria-live="polite"></div>
           <div id="vnEquipmentLayer" class="vn-equipment-layer" aria-live="polite"></div>
           <div class="vn-scene-meta"><span class="eyebrow" id="phaseLabel">MORNING · 아침</span><span class="clock" id="clockLabel">08:00</span></div>
-          <nav class="story-toolbar" aria-label="스토리 메뉴">
-            <button id="storyMenuButton" type="button">MENU</button>
-            <button id="autoButton" type="button" aria-pressed="false">AUTO OFF</button>
-            <button id="skipButton" class="hidden" type="button">SKIP</button>
-            <button id="storyHistoryButton" type="button">LOG</button>
-            <button id="storyFullscreenButton" type="button" aria-pressed="false">FULLSCREEN</button>
-          </nav>
           <div class="story-quick-hud" aria-label="현재 정보"><span id="quickLocation">집</span><b id="quickMoney">₩ 850,000</b></div>
           <div class="action-selection-panel">
             <div id="actionGrid" class="action-grid vn-choices" aria-label="행동 선택지"></div>

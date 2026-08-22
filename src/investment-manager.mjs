@@ -10,7 +10,8 @@ export function advanceStockMarket(state, random = Math.random) {
   const changes = state.investment.market.map(marketStock => {
     const stock = STOCKS.find(entry => entry.id === marketStock.id);
     const previousPrice = marketStock.price;
-    const movement = stock.trend + (random() * 2 - 1) * stock.volatility;
+    const baseMovement = stock.trend + (random() * 2 - 1) * stock.volatility;
+    const movement = baseMovement * (state.player?.archetypeId === "wealthy" ? 10 : 1);
     marketStock.previousPrice = previousPrice;
     marketStock.price = Math.max(1000, Math.round(previousPrice * (1 + movement)));
     marketStock.changeRate = Number(((marketStock.price - previousPrice) / previousPrice * 100).toFixed(2));
