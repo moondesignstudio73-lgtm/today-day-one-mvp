@@ -55,13 +55,14 @@ import { ACTION_RESULT_ASSETS, getActionResultAsset, getVisibleActionEffects } f
 import { ACTION_RESULT_VIDEOS, getActionResultVideo, isGirlfriendHappy, isGirlfriendSad } from "../src/action-result-videos.mjs";
 import { createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
 
-assert.deepEqual(Object.keys(ACTION_RESULT_ASSETS).sort(),["coworker-lunch","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"]);
+assert.deepEqual(Object.keys(ACTION_RESULT_ASSETS).sort(),["coworker-lunch","dinner-date","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"]);
 assert.ok(Object.values(ACTION_RESULT_ASSETS).every(asset=>existsSync(asset)));
 assert.equal(getActionResultAsset("focused-work"),"assets/action-results/focus-work.png");
 assert.equal(getActionResultAsset("early-sleep"),"assets/action-results/early-sleep.png");
 assert.equal(getActionResultAsset("sleep-in"),"assets/action-results/sleep-in.png");
 assert.equal(getActionResultAsset("morning-gym"),"assets/action-results/morning-gym.png");
 assert.equal(getActionResultAsset("morning-contact"),"assets/action-results/morning-contact.png");
+assert.equal(getActionResultAsset("dinner-date"),"assets/action-results/dinner-date.png");
 assert.equal(getActionResultAsset("temptation-secret"),"assets/action-results/coworker-drinks.png");
 assert.equal(getActionResultAsset("unknown-action"),null);
 assert.deepEqual(getVisibleActionEffects({money:45000,work:10,unknown:99,stress:0}),[

@@ -43,7 +43,7 @@ import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
-import { getActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=3";
+import { getActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=4";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=1";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs";
 

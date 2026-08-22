@@ -4,6 +4,7 @@ export const ACTION_RESULT_ASSETS = Object.freeze({
   "sleep-in": "assets/action-results/sleep-in.png",
   "focused-work": "assets/action-results/focus-work.png",
   "lunch-date": "assets/action-results/lunch-girlfriend.png",
+  "dinner-date": "assets/action-results/dinner-date.png",
   "coworker-lunch": "assets/action-results/lunch-coworkers.png",
   "stock-check": "assets/action-results/check-stocks.png",
   "manager-feedback": "assets/action-results/manager-feedback.png",
