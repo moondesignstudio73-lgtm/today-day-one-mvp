@@ -1,6 +1,7 @@
 import { getCharacterAccessory, getCharacterSprite } from "../assets/asset-manifest.mjs";
 import { getEquippedHeroineOutfit } from "../heroine-data.mjs";
 import { getYunaExpressionAsset, getYunaOutfitAsset } from "../yuna-data.mjs";
+import { getGirlfriendVisualAsset } from "../girlfriend-visual-data.mjs";
 
 export function resolveCharacterExpression(state) {
   if (state.conflict >= 55 || state.trust < 320) return { tone:"tense", icon:"…", label:"긴장한 눈빛" };
@@ -29,7 +30,7 @@ export function renderCharacter(image, state, accessoryImage, overrides = {}) {
   const accessory = resolveCharacterAccessory(state);
   const yunaSpecialOutfit=state.partner.heroineId==="yuna"&&!equippedOutfit&&overrides.outfitId&&overrides.outfitId!=="uniform"?getYunaOutfitAsset(overrides.outfitId):null;
   const yunaExpression=state.partner.heroineId==="yuna"&&!equippedOutfit&&!yunaSpecialOutfit&&overrides.expressionId?getYunaExpressionAsset(expression.tone):null;
-  const source = equippedOutfit?.characterWearingImage ?? yunaSpecialOutfit ?? yunaExpression ?? state.partner.referenceImage ?? getCharacterSprite("girlfriend",expression.tone,pose,outfit);
+  const source = getGirlfriendVisualAsset(state.partner.visualId,expression.tone,pose,outfit) ?? equippedOutfit?.characterWearingImage ?? yunaSpecialOutfit ?? yunaExpression ?? state.partner.referenceImage ?? getCharacterSprite("girlfriend",expression.tone,pose,outfit);
   const accessorySource = getCharacterAccessory("girlfriend",accessory);
   state.currentExpression = expression.tone;
   state.currentPose = pose;

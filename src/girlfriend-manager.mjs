@@ -1,6 +1,7 @@
 import { createCharacterAppearance, validateCharacterAppearance } from "./character-appearance.mjs";
 import { getHeroineProfile, HEROINE_PROFILES } from "./heroine-data.mjs";
 import { createGirlfriendCareer, migrateGirlfriendCareer, validateGirlfriendCareer } from "./girlfriend-jobs-data.mjs";
+import { DEFAULT_GIRLFRIEND_VISUAL_ID, lockGirlfriendToIntroVisual } from "./girlfriend-visual-data.mjs";
 
 export const PERSONALITY_KEYS = [
   "contactImportance", "jealousy", "materialism", "romanticism", "independence",
@@ -45,7 +46,7 @@ export function generateGirlfriend(random = Math.random) {
   const id=`heroine-${profile.id}-${serial}`;
   const appearanceSeed = randomInt(random, 1, 2147483646);
   return {
-    id, heroineId:profile.id, name:profile.name, bio:profile.bio, age:profile.age, ageCategory:profile.ageCategory, job:profile.job, career:createGirlfriendCareer(profile.id), height:profile.height, bodyType:profile.bodyType,
+    id, heroineId:profile.id, visualId:DEFAULT_GIRLFRIEND_VISUAL_ID, name:profile.name, bio:profile.bio, age:profile.age, ageCategory:profile.ageCategory, job:profile.job, career:createGirlfriendCareer(profile.id), height:profile.height, bodyType:profile.bodyType,
     archetype:profile.archetype, hiddenTrait:profile.hiddenTrait, preferredDates:[...profile.preferredDates], dislikedActions:[...profile.dislikedActions],
     preferredGifts:[...profile.preferredGifts], fashionPreferences:{...profile.fashionPreferences}, rivalReaction:profile.rivalReaction,
     conflictStyle:profile.conflictStyle, reconciliationStyle:profile.reconciliationStyle, aiVoice:profile.aiVoice, referenceImage:profile.referenceImage, uiAccent:profile.uiAccent, studentSafe:Boolean(profile.studentSafe), messageVoice:structuredClone(profile.messageVoice??null), excludedEventTags:[...(profile.excludedEventTags??[])],
@@ -67,7 +68,7 @@ export function createGirlfriendFromProfile(profileId, random = Math.random) {
   const serial = randomInt(random, 100000, 999999);
   const appearanceSeed = randomInt(random, 1, 2147483646);
   return {
-    id: `heroine-${profile.id}-${serial}`, heroineId: profile.id, name: profile.name, bio: profile.bio, age: profile.age, ageCategory: profile.ageCategory, job: profile.job, career: createGirlfriendCareer(profile.id), height: profile.height, bodyType: profile.bodyType,
+    id: `heroine-${profile.id}-${serial}`, heroineId: profile.id, visualId:DEFAULT_GIRLFRIEND_VISUAL_ID, name: profile.name, bio: profile.bio, age: profile.age, ageCategory: profile.ageCategory, job: profile.job, career: createGirlfriendCareer(profile.id), height: profile.height, bodyType: profile.bodyType,
     archetype: profile.archetype, hiddenTrait: profile.hiddenTrait, preferredDates: [...profile.preferredDates], dislikedActions: [...profile.dislikedActions],
     preferredGifts: [...profile.preferredGifts], fashionPreferences: { ...profile.fashionPreferences }, rivalReaction: profile.rivalReaction,
     conflictStyle: profile.conflictStyle, reconciliationStyle: profile.reconciliationStyle, aiVoice: profile.aiVoice, referenceImage: profile.referenceImage, uiAccent: profile.uiAccent, studentSafe: Boolean(profile.studentSafe), messageVoice: structuredClone(profile.messageVoice ?? null), excludedEventTags: [...(profile.excludedEventTags ?? [])],
@@ -99,6 +100,7 @@ export function migrateHeroineProfile(partner) {
   const seed=Number(partner.appearanceSeed) || [...String(partner.id ?? "")].reduce((sum,char)=>sum+char.charCodeAt(0),0);
   const profile=getHeroineProfile(partner.heroineId) ?? HEROINE_PROFILES[Math.abs(seed)%HEROINE_PROFILES.length];
   partner.heroineId=profile.id;
+  lockGirlfriendToIntroVisual(partner);
   for (const key of ["age","ageCategory","job","height","bodyType","archetype","hiddenTrait","rivalReaction","conflictStyle","reconciliationStyle","aiVoice","referenceImage","uiAccent","studentSafe","messageVoice","excludedEventTags"]) partner[key] ??= structuredClone(profile[key]);
   partner.preferredDates ??=[...profile.preferredDates]; partner.dislikedActions ??=[...profile.dislikedActions]; partner.preferredGifts ??=[...profile.preferredGifts]; partner.fashionPreferences ??={...profile.fashionPreferences};
   migrateGirlfriendCareer(partner);
@@ -107,7 +109,7 @@ export function migrateHeroineProfile(partner) {
 
 export function validateGirlfriend(girlfriend) {
   if (!girlfriend || typeof girlfriend !== "object") return false;
-  if (typeof girlfriend.id !== "string" || typeof girlfriend.name !== "string" || typeof girlfriend.bio !== "string") return false;
+  if (typeof girlfriend.id !== "string" || typeof girlfriend.visualId !== "string" || typeof girlfriend.name !== "string" || typeof girlfriend.bio !== "string") return false;
   if (!getHeroineProfile(girlfriend.heroineId) || !validateGirlfriendCareer(girlfriend.career) || !Array.isArray(girlfriend.preferredDates) || !Array.isArray(girlfriend.dislikedActions) || !girlfriend.fashionPreferences || typeof girlfriend.aiVoice !== "string") return false;
   if (!girlfriend.personality || typeof girlfriend.personality !== "object") return false;
   if (!Number.isInteger(girlfriend.appearanceSeed) || !validateCharacterAppearance(girlfriend.characterAppearance)) return false;

@@ -5,6 +5,7 @@ export const PLAYER_ARCHETYPES = [
     id: "balanced",
     name: "기본 캐릭터",
     image: "assets/players/balanced.png",
+    mapImage: "assets/characters/map/PLAYER_BALANCED.png",
     premium: false,
     appearanceRating: "보통",
     abilityRating: "보통",
@@ -16,6 +17,7 @@ export const PLAYER_ARCHETYPES = [
     id: "handsome",
     name: "잘생긴 캐릭터",
     image: "assets/players/handsome.png",
+    mapImage: "assets/characters/map/PLAYER_HANDSOME.png",
     premium: true,
     appearanceRating: "최상",
     abilityRating: "보통",
@@ -27,6 +29,7 @@ export const PLAYER_ARCHETYPES = [
     id: "wealthy",
     name: "부자 캐릭터",
     image: "assets/players/wealthy.png",
+    mapImage: "assets/characters/map/PLAYER_WEALTHY.png",
     premium: true,
     appearanceRating: "보통",
     abilityRating: "상",
@@ -51,6 +54,7 @@ export function createPlayerProfile(archetypeId = "balanced", name = "나") {
     archetypeId: archetype.id,
     archetypeName: archetype.name,
     image: archetype.image,
+    mapImage: archetype.mapImage,
     premium: archetype.premium,
     appearanceRating: archetype.appearanceRating,
     abilityRating: archetype.abilityRating
@@ -73,6 +77,6 @@ export function validatePlayerProfile(value) {
   return Boolean(value) && typeof value === "object" &&
     Array.from(value.name ?? "").length >= 1 && Array.from(value.name ?? "").length <= 3 &&
     PLAYER_ARCHETYPES.some((entry) => entry.id === value.archetypeId) &&
-    ["archetypeName", "image", "appearanceRating", "abilityRating"].every((key) => typeof value[key] === "string") &&
+    ["archetypeName", "image", "mapImage", "appearanceRating", "abilityRating"].every((key) => typeof value[key] === "string") &&
     typeof value.premium === "boolean";
 }

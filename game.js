@@ -42,6 +42,7 @@ import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUn
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
+import { getGirlfriendVisual } from "./src/girlfriend-visual-data.mjs";
 import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
 import { getActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=4";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=1";
@@ -417,7 +418,7 @@ function renderGirlfriendSetup() {
   const candidates = HEROINE_PROFILES.slice(0,3);
   $("#onboardingContent").innerHTML = `
     <header class="setup-heading"><span>GIRLFRIEND SELECT</span><h1>여자친구 캐릭터 선택</h1><p>첫 번째 캐릭터를 선택한 뒤 이름, 성향, 직업을 하나씩 확인하세요.</p></header>
-    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>`<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${profile.referenceImage}" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`).join("")}</div>
+    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>`<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${getGirlfriendVisual().previewImage}" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`).join("")}</div>
     <div class="roll-panel ${onboarding.partner?"":"locked"}">
       <div class="roll-row"><div><small>NAME</small><b id="girlfriendNameRoll">${onboarding.girlfriendNameReady?escapeHtml(onboarding.partner.name):"버튼을 눌러 이름 확인"}</b></div><button id="rollGirlfriendName" type="button" ${onboarding.partner?"":"disabled"}>이름 랜덤 선택</button></div>
       <div class="roll-row"><div><small>PERSONALITY & STATS</small><b id="girlfriendTraitRoll">${onboarding.girlfriendTraitsReady?personalitySummary(onboarding.partner):"숨겨진 성향과 수치"}</b></div><button id="rollGirlfriendTraits" type="button" ${onboarding.partner?"":"disabled"}>성향 랜덤 선택</button></div>
@@ -602,6 +603,7 @@ function renderWorldMap() {
   $("#worldRoadLayer").innerHTML=getRoadCells(map).map(cell=>`<i class="world-road-cell" style="--map-x:${cell.x/(map.width-1)*100}%;--map-y:${cell.y/(map.height-1)*100}%"></i>`).join("");
   $("#worldLocationLayer").innerHTML=map.locations.map(location=>`<button class="world-location ${world.discoveredLocations.includes(location.id)?"discovered":""}" type="button" data-world-location="${escapeHtml(location.id)}" style="--map-x:${location.x/(map.width-1)*100}%;--map-y:${location.y/(map.height-1)*100}%"><span>${location.icon}</span><b>${escapeHtml(location.name)}</b><small>${escapeHtml(location.category)}</small></button>`).join("");
   const player=$("#worldPlayer");player.style.setProperty("--map-x",String(world.x/(map.width-1)));player.style.setProperty("--map-y",String(world.y/(map.height-1)));player.dataset.transport=world.transport;player.dataset.archetype=state.player?.archetypeId??"balanced";$("#worldPlayerName").textContent=state.player?.name??"나";
+  $("#worldPlayerSprite").src=state.player?.mapImage??"assets/characters/map/PLAYER_BALANCED.png";
   const nearby=getNearbyLocation(world);const enter=$("#enterLocationButton");
   if(nearby){$("#nearbyLocation").innerHTML=`<b>${escapeHtml(nearby.name)}</b><span>${escapeHtml(nearby.description)}</span>`;enter.disabled=false;enter.textContent=nearby.category==="home"?"귀가하기":"장소 입장";enter.dataset.locationId=nearby.id;}
   else{$("#nearbyLocation").innerHTML="<b>동네를 둘러보세요</b><span>장소 가까이 이동하면 입장할 수 있습니다.</span>";enter.disabled=true;enter.textContent="장소 입장";delete enter.dataset.locationId;}

@@ -53,6 +53,7 @@ import { analyzePlayerBehavior, analyzeRelationshipState, createStoryProposalCon
 import { applyPlayerArchetype, createPlayerProfile, migratePlayerProfile, PLAYER_ARCHETYPES, validatePlayerProfile } from "../src/player-profile-data.mjs";
 import { ACTION_RESULT_ASSETS, getActionResultAsset, getVisibleActionEffects } from "../src/action-result-assets.mjs";
 import { ACTION_RESULT_VIDEOS, getActionResultVideo, isGirlfriendHappy, isGirlfriendSad } from "../src/action-result-videos.mjs";
+import { DEFAULT_GIRLFRIEND_VISUAL_ID, getGirlfriendVisual, getGirlfriendVisualAsset, selectGirlfriendVisual } from "../src/girlfriend-visual-data.mjs";
 import { createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
 
 assert.deepEqual(Object.keys(ACTION_RESULT_ASSETS).sort(),["coworker-lunch","dinner-date","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"]);
@@ -134,6 +135,9 @@ console.log("✓ 캐릭터별 방·도로 제한 이동·남자/고급차 마커
 
 assert.equal(PLAYER_ARCHETYPES.length,3);
 assert.ok(PLAYER_ARCHETYPES.every((entry)=>existsSync(entry.image)));
+assert.ok(PLAYER_ARCHETYPES.every((entry)=>existsSync(entry.mapImage)));
+assert.equal(createPlayerProfile("handsome","민준").mapImage,"assets/characters/map/PLAYER_HANDSOME.png");
+assert.equal(createPlayerProfile("wealthy","민준").mapImage,"assets/characters/map/PLAYER_WEALTHY.png");
 assert.equal(existsSync("assets/video/intro.mp4"),true);
 assert.equal(existsSync("assets/video/intro2.mp4"),true);
 const selectedPartner=createGirlfriendFromProfile("haeun",()=>0.5);
@@ -202,7 +206,11 @@ const fakeImage={attributes:new Map(),dataset:{},getAttribute(name){return this.
 const fakeAccessory={attributes:new Map(),dataset:{},hidden:true,getAttribute(name){return this.attributes.get(name)??null;},setAttribute(name,value){this.attributes.set(name,value);}};
 renderCharacter(fakeImage,presentationState,fakeAccessory,{expressionId:"smile",poseId:"standing",outfitId:"default"});
 assert.equal(fakeImage.dataset.expression,"smile");
-assert.match(fakeImage.getAttribute("src"),new RegExp(`assets/heroines/${presentationState.partner.heroineId}/`));
+assert.equal(presentationState.partner.visualId,DEFAULT_GIRLFRIEND_VISUAL_ID);
+assert.equal(fakeImage.getAttribute("src"),"assets/characters/girlfriend-standing-smile-2d.png");
+assert.equal(getGirlfriendVisual().previewImage,"assets/characters/girlfriend-standing-2d.png");
+assert.equal(getGirlfriendVisualAsset(DEFAULT_GIRLFRIEND_VISUAL_ID,"calm","phone","default"),"assets/characters/girlfriend-phone-calm-2d.png");
+assert.equal(selectGirlfriendVisual(presentationState.partner,"future-unknown"),DEFAULT_GIRLFRIEND_VISUAL_ID);
 console.log("✓ 팝업 없는 데이터 기반 스토리 Scene 시퀀스 검증 통과");
 const directorState=createInitialState(partner,()=>0.5);
 directorState.day=13;directorState.trust=350;directorState.affection=780;directorState.stress=76;directorState.relationshipStress=48;
@@ -1070,7 +1078,7 @@ assert.equal(getEquippedHeroineOutfit(outfitGiftState).id,heroineOutfits[0].id);
 assert.equal(buildConversationContext(outfitGiftState).girlfriend.currentOutfit.outfitId,heroineOutfits[0].outfitId);
 const outfitImage={attributes:new Map(),dataset:{},getAttribute(name){return this.attributes.get(name)??null;},setAttribute(name,value){this.attributes.set(name,value);}};
 renderCharacter(outfitImage,outfitGiftState,null,{expressionId:"smile"});
-assert.equal(outfitImage.getAttribute("src"),heroineOutfits[0].characterWearingImage);
+assert.equal(outfitImage.getAttribute("src"),"assets/characters/girlfriend-standing-smile-2d.png");
 console.log("✓ 물질·선물·낭만 성향별 선물 반응과 여자친구 장착 검증 통과");
 const selfState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
 const initialConfidence = selfState.confidence;
@@ -1183,7 +1191,7 @@ assert.equal(yunaContext.girlfriend.studentSafe,true);
 assert.equal(yunaContext.girlfriend.ageCategory,"high-school-senior");
 const yunaImage={attributes:new Map(),dataset:{},getAttribute(name){return this.attributes.get(name)??null;},setAttribute(name,value){this.attributes.set(name,value);}};
 renderCharacter(yunaImage,yunaState,null,{expressionId:"embarrassed",outfitId:"uniform"});
-assert.equal(yunaImage.getAttribute("src"),getYunaExpressionAsset("embarrassed"));
+assert.equal(yunaImage.getAttribute("src"),"assets/characters/girlfriend-standing-2d.png");
 const yunaFirst=YUNA_STORY_EVENTS[0];
 triggerEvent(yunaState,yunaFirst);const yunaResolution=resolveSituationEventChoice(yunaState,yunaFirst,"listen");
 assert.equal(yunaResolution.status,"COMPLETED");
