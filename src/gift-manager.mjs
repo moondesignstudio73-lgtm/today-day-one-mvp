@@ -1,6 +1,8 @@
 import { applyEffects } from "./game-core.mjs";
 import { getItem } from "./items-data.mjs";
 
+const ALWAYS_EQUIPPED_GIFTS = new Set(["mini-bag","silver-necklace","aurora-phone","rose-parfum"]);
+
 export function calculateGiftReaction(state, item) {
   const personality = state.partner.personality;
   const materialScore = item.luxuryLevel * 6 * (personality.materialism / 100);
@@ -27,6 +29,7 @@ export function giveGift(state, instanceId) {
   if (item.heroineIds?.length && !item.heroineIds.includes(state.partner.heroineId)) return null;
   if (state.partner.heroineId === "yuna" && item.adultOnly) return null;
   const reaction = calculateGiftReaction(state, item);
+  if (item.category === "heroine-outfit" || ALWAYS_EQUIPPED_GIFTS.has(item.id)) reaction.willEquip = true;
   instance.owner = "girlfriend";
   instance.givenDay = state.day;
   instance.giftedByPlayer = true;

@@ -1,4 +1,4 @@
-import { getCharacterAccessory, getCharacterSprite } from "../assets/asset-manifest.mjs";
+import { getCharacterAccessory, getCharacterSprite, getGiftVisualAsset } from "../assets/asset-manifest.mjs";
 import { getEquippedHeroineOutfit } from "../heroine-data.mjs";
 import { getYunaExpressionAsset, getYunaOutfitAsset } from "../yuna-data.mjs";
 import { getGirlfriendVisualAsset } from "../girlfriend-visual-data.mjs";
@@ -19,6 +19,8 @@ export function resolveCharacterOutfit(state, expression = resolveCharacterExpre
 }
 
 export function resolveCharacterAccessory(state) {
+  const visualGift=[...(state.inventory ?? [])].reverse().find(entry=>entry.owner==="girlfriend"&&entry.equipped&&getGiftVisualAsset(entry.itemId));
+  if (visualGift) return visualGift.itemId;
   return state.characterAppearance?.accessory === "ribbon-pin" ? "ribbon-pin" : "none";
 }
 
@@ -30,8 +32,8 @@ export function renderCharacter(image, state, accessoryImage, overrides = {}) {
   const accessory = resolveCharacterAccessory(state);
   const yunaSpecialOutfit=state.partner.heroineId==="yuna"&&!equippedOutfit&&overrides.outfitId&&overrides.outfitId!=="uniform"?getYunaOutfitAsset(overrides.outfitId):null;
   const yunaExpression=state.partner.heroineId==="yuna"&&!equippedOutfit&&!yunaSpecialOutfit&&overrides.expressionId?getYunaExpressionAsset(expression.tone):null;
-  const source = getGirlfriendVisualAsset(state.partner.visualId,expression.tone,pose,outfit) ?? equippedOutfit?.characterWearingImage ?? yunaSpecialOutfit ?? yunaExpression ?? state.partner.referenceImage ?? getCharacterSprite("girlfriend",expression.tone,pose,outfit);
-  const accessorySource = getCharacterAccessory("girlfriend",accessory);
+  const source = equippedOutfit?.characterWearingImage ?? yunaSpecialOutfit ?? yunaExpression ?? getGirlfriendVisualAsset(state.partner.visualId,expression.tone,pose,outfit) ?? state.partner.referenceImage ?? getCharacterSprite("girlfriend",expression.tone,pose,outfit);
+  const accessorySource = getGiftVisualAsset(accessory) || getCharacterAccessory("girlfriend",accessory);
   state.currentExpression = expression.tone;
   state.currentPose = pose;
   state.currentOutfit = outfit;

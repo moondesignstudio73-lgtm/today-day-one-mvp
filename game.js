@@ -16,7 +16,7 @@ import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
 import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, getPaycheckRange, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=6";
 import { acquireActionItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs?v=6";
 import { getItem, ITEMS } from "./src/items-data.mjs?v=5";
-import { giveGift } from "./src/gift-manager.mjs?v=5";
+import { giveGift } from "./src/gift-manager.mjs?v=7";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
@@ -30,8 +30,8 @@ import { SoundManager } from "./src/sound-manager.mjs?v=5";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
-import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=5";
-import { getBackgroundAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=5";
+import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=7";
+import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=9";
 import { getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=5";
 import { STORY_SCENES } from "./src/story-data.mjs";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, resetForNextDay, spendNightTime } from "./src/night-manager.mjs";
@@ -44,7 +44,7 @@ import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { getGirlfriendVisual } from "./src/girlfriend-visual-data.mjs";
 import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
-import { getActionResultAsset, getOneTimeActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=5";
+import { getActionResultAsset, getOneTimeActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=6";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=1";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs";
 
@@ -347,11 +347,23 @@ function startImmersiveScene(session) {
 function updateImmersiveCharacter(expressionId="calm") {
   const character=$("#vnCharacter");
   const characterId=immersiveScene?.presentation?.characterId??"girlfriend";
+  updateGiftVehicleLayer(characterId);
   const npcSprite=characterId!=="girlfriend"?getNpcSprite(characterId):"";
   if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;return;}
   if(characterId==="girlfriend"&&immersiveScene?.previewOutfitImage){character.src=immersiveScene.previewOutfitImage;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;return;}
   state.currentExpression=expressionId;
   renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId:immersiveScene?.presentation?.poseId,outfitId:immersiveScene?.presentation?.outfitId});
+}
+
+function updateGiftVehicleLayer(characterId="girlfriend") {
+  const layer=$("#vnGiftVehicleLayer");
+  if(!layer||!state)return;
+  const giftedVehicle=[...(state.inventory??[])].reverse().find(entry=>entry.owner==="girlfriend"&&getGiftVehicleAsset(entry.itemId));
+  const asset=giftedVehicle?getGiftVehicleAsset(giftedVehicle.itemId):"";
+  const show=Boolean(asset&&state.phase===2&&characterId==="girlfriend");
+  layer.hidden=!show;
+  layer.dataset.item=giftedVehicle?.itemId??"";
+  if(show&&layer.getAttribute("src")!==asset)layer.src=asset;
 }
 
 function renderImmersiveStep() {
@@ -564,6 +576,7 @@ function render() {
   $("#partnerAvatar").src = `${getGirlfriendVisual(p.visualId).previewImage}?v=6`;
   $("#partnerAvatar").alt = `${p.name} 프로필 사진`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));
+  updateGiftVehicleLayer("girlfriend");
   $("#vnExpressionLayer").className=`vn-expression-layer ${expression.tone}`;
   $("#vnExpressionLayer").innerHTML=`<span aria-hidden="true">${expression.icon}</span><b>${expression.label}</b>`;
   const relationship = getRelationshipState(state); $("#relationshipState").textContent = `● ${relationship.label}`; $("#relationshipState").dataset.tone = relationship.tone; $("#relationshipState").title = relationship.description;
@@ -964,7 +977,7 @@ function openShop() {
   $("#modalContent").innerHTML=`<span class="eyebrow">LIFESTYLE SHOP</span><h2>오늘의 상점</h2><p>보유 자산 ${money(state.money)} · ${state.partner.name} 전용 의상 10종이 관계 진행에 따라 해금됩니다.</p><div class="shop-list">${cards}</div>`;
   openModal();
   if (state.job?.id === "used-car-dealer") $("#modalContent").insertAdjacentHTML("afterbegin", `<p class="career-tip"><b>딜러 네트워크 적용:</b> ${escapeHtml(state.partner.name)}에게 선물할 차량은 결제 시 12% 자동 할인됩니다.</p>`);
-  document.querySelectorAll("[data-buy]").forEach(button=>button.addEventListener("click",()=>{ const result=purchaseItem(state,button.dataset.buy,button.dataset.owner); if(!result.ok){toast(result.reason);return;} SaveManager.save(state); toast(`${result.item.name} 구매 완료`); openShop(); render(); }));
+  document.querySelectorAll("[data-buy]").forEach(button=>button.addEventListener("click",()=>{ const result=purchaseItem(state,button.dataset.buy,button.dataset.owner); if(!result.ok){toast(result.reason);return;} const outfitGift=result.item.category==="heroine-outfit"?giveGift(state,result.instance.instanceId):null; if(outfitGift){state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${outfitGift.item.name} 선물 · 바로 착용`});recordMemory(state,{type:"gift",summary:`${outfitGift.item.name} 의상 선물`,importance:4,tags:["선물","의상",outfitGift.item.id]});} SaveManager.save(state); render(); openShop(); toast(outfitGift?`${state.partner.name}에게 선물 완료 · 새 의상 착용`:`${result.item.name} 구매 완료`); }));
 }
 
 function openFinance() {

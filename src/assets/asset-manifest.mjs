@@ -21,9 +21,38 @@ export const CHARACTER_ASSETS = {
 };
 
 export const NPC_ASSETS = {
-  "female-coworker":"assets/npcs/female-coworker-2d.png",
-  "male-rival":"assets/npcs/male-rival-2d.png"
+  "female-coworker":"assets/npcs/female-coworker-clean.png",
+  "office-rookie":"assets/npcs/office-rookie-clean.png",
+  "male-rival":"assets/npcs/male-rival-clean.png"
 };
+
+export const GIFT_VISUAL_ASSETS = Object.freeze({
+  "mini-bag":"assets/items/visual-gifts/mini-bag.png",
+  "silver-necklace":"assets/items/visual-gifts/silver-necklace.png",
+  "aurora-phone":"assets/items/visual-gifts/aurora-phone.png",
+  "rose-parfum":"assets/items/visual-gifts/rose-parfum.png"
+});
+
+export const GIFT_VEHICLE_ASSETS = Object.freeze({
+  "solstice-ev":"assets/items/visual-gifts/solstice-ev.png"
+});
+
+const FEMALE_NPC_IDS = new Set([
+  "female-coworker","office-rookie","client-manager","office-gossip",
+  "heroine-best-friend","female-friend","investor-friend","love-advisor",
+  "player-ex","ambitious-admirer","cafe-staff","edit-shop-staff",
+  "hospital-nurse","asset-advisor"
+]);
+
+const MALE_NPC_IDS = new Set([
+  "team-lead","office-best-male","office-rival","office-partner","office-party",
+  "executive-director","best-friend","male-friend","college-friend","drinking-friend",
+  "male-rival","heroine-senior","heroine-ex","gentle-admirer","gym-trainer",
+  "real-estate-agent"
+]);
+
+const FEMALE_NPC_FALLBACK = "assets/npcs/female-coworker-clean.png";
+const MALE_NPC_FALLBACK = "assets/npcs/male-support-clean.png";
 
 export const BACKGROUND_ASSETS = {
   "home-morning":"assets/backgrounds/morning-studio-2d.png",
@@ -47,7 +76,18 @@ export function getCharacterAccessory(character = "girlfriend", accessory = "non
 }
 
 export function getNpcSprite(npcId = "") {
-  return NPC_ASSETS[npcId] ?? "";
+  if (NPC_ASSETS[npcId]) return NPC_ASSETS[npcId];
+  if (FEMALE_NPC_IDS.has(npcId)) return FEMALE_NPC_FALLBACK;
+  if (MALE_NPC_IDS.has(npcId)) return MALE_NPC_FALLBACK;
+  return MALE_NPC_FALLBACK;
+}
+
+export function getGiftVisualAsset(itemId = "") {
+  return GIFT_VISUAL_ASSETS[itemId] ?? "";
+}
+
+export function getGiftVehicleAsset(itemId = "") {
+  return GIFT_VEHICLE_ASSETS[itemId] ?? "";
 }
 
 export function getBackgroundAsset(backgroundId = "home-morning") {
