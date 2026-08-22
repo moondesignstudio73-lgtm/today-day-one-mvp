@@ -1,6 +1,6 @@
-import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=2";
-import { SaveManager } from "./src/save-manager.mjs?v=2";
-import { generateGirlfriend, getVisibleTraitRows, observePersonality } from "./src/girlfriend-manager.mjs?v=5";
+import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=3";
+import { SaveManager } from "./src/save-manager.mjs?v=7";
+import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=7";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=5";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=5";
 import { resolveSituationEventChoice } from "./src/situation-event-manager.mjs?v=4";
@@ -21,14 +21,14 @@ import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manag
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
-import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs?v=5";
+import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs?v=7";
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs";
 import { analyzePlayHistory } from "./src/ending-manager.mjs";
 import { SoundManager } from "./src/sound-manager.mjs?v=5";
 import { recordMemory } from "./src/memory-manager.mjs";
-import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=5";
+import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=5";
 import { getBackgroundAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=5";
@@ -40,11 +40,15 @@ import { createEventSceneSequence, createStoryReactionSequence, createStoryScene
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
 import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=5";
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
+import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
+import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
+import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
 
 let state;
+let onboarding = null;
 const sound = new SoundManager();
 let modalReturnFocus = null;
 let dialogueTimer = null;
@@ -300,8 +304,111 @@ function restoreEventCheckpoint(){
   state.logs.push({time:`DAY ${state.day} · RECOVERY`,text:`알 수 없는 이벤트 ${saved.activeEvent}를 건너뛰고 안전 지점으로 복구했다.`});state.eventRuntime={...saved,activeEvent:null,state:"IDLE",checkpoint:null,inputLock:{locked:false,owner:null,reason:null,lockedFor:0}};SaveManager.save(state);
 }
 
-function startGame() { state = createInitialState(generateGirlfriend()); showGame(); SaveManager.save(state); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); const theater=state.settings?.theaterMode??localStorage.getItem(THEATER_SETTING_KEY)!=="false";document.body.classList.toggle("theater-mode",theater);renderAutoButton();renderFullscreenButtons();render();setTimeout(restoreEventCheckpoint,0); }
+const GIRLFRIEND_NAMES = ["서연", "하은", "수아", "지아", "아린", "유진", "나리", "유리"];
+const PERSONALITY_LABELS = { romanticism:"로맨틱", independence:"독립적", loyalty:"한결같음", emotionalSensitivity:"섬세함", socialPreference:"사교적", contactImportance:"연락 중시" };
+
+function setOnboardingProgress(step, total = 3) {
+  $("#onboardingStepLabel").textContent = `STEP ${step} / ${total}`;
+  $("#onboardingProgressBar").style.width = `${step / total * 100}%`;
+}
+
+function runRoll(button, output, samples, finalize) {
+  button.disabled = true;
+  let index = 0;
+  const timer = setInterval(() => { output.textContent = samples[index++ % samples.length]; }, 75);
+  setTimeout(() => {
+    clearInterval(timer);
+    output.textContent = finalize();
+    button.disabled = false;
+  }, 900);
+}
+
+function personalitySummary(partner) {
+  return Object.entries(partner.personality)
+    .filter(([key]) => PERSONALITY_LABELS[key])
+    .sort((a,b) => b[1] - a[1]).slice(0,3)
+    .map(([key,value]) => `${PERSONALITY_LABELS[key]} ${value}`).join(" · ");
+}
+
+function beginOnboarding() {
+  onboarding = { step:1, partner:null, girlfriendNameReady:false, girlfriendTraitsReady:false, girlfriendJobReady:false, playerArchetype:null, playerName:"", playerJob:null, previewState:null };
+  $("#introScreen").classList.add("hidden");
+  $("#onboardingScreen").classList.remove("hidden");
+  renderGirlfriendSetup();
+}
+
+function renderGirlfriendSetup() {
+  setOnboardingProgress(1);
+  const candidates = HEROINE_PROFILES.slice(0,3);
+  $("#onboardingContent").innerHTML = `
+    <header class="setup-heading"><span>GIRLFRIEND SELECT</span><h1>여자친구 캐릭터 선택</h1><p>첫 번째 캐릭터를 선택한 뒤 이름, 성향, 직업을 하나씩 확인하세요.</p></header>
+    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>`<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${profile.referenceImage}" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`).join("")}</div>
+    <div class="roll-panel ${onboarding.partner?"":"locked"}">
+      <div class="roll-row"><div><small>NAME</small><b id="girlfriendNameRoll">${onboarding.girlfriendNameReady?escapeHtml(onboarding.partner.name):"버튼을 눌러 이름 확인"}</b></div><button id="rollGirlfriendName" type="button" ${onboarding.partner?"":"disabled"}>이름 랜덤 선택</button></div>
+      <div class="roll-row"><div><small>PERSONALITY & STATS</small><b id="girlfriendTraitRoll">${onboarding.girlfriendTraitsReady?personalitySummary(onboarding.partner):"숨겨진 성향과 수치"}</b></div><button id="rollGirlfriendTraits" type="button" ${onboarding.partner?"":"disabled"}>성향 랜덤 선택</button></div>
+      <div class="roll-row"><div><small>CAREER</small><b id="girlfriendJobRoll">${onboarding.girlfriendJobReady?escapeHtml(onboarding.partner.career.name):"여자친구의 직업"}</b></div><button id="rollGirlfriendJob" type="button" ${onboarding.partner?"":"disabled"}>직업 랜덤 선택</button></div>
+    </div>
+    <button id="girlfriendSetupNext" class="primary-button setup-next" type="button" ${onboarding.girlfriendNameReady&&onboarding.girlfriendTraitsReady&&onboarding.girlfriendJobReady?"":"disabled"}>나의 캐릭터 선택으로</button>`;
+  document.querySelectorAll("[data-heroine]").forEach((button)=>button.addEventListener("click",()=>{
+    onboarding.partner=createGirlfriendFromProfile(button.dataset.heroine);
+    onboarding.girlfriendNameReady=onboarding.girlfriendTraitsReady=onboarding.girlfriendJobReady=false;
+    renderGirlfriendSetup();
+  }));
+  $("#rollGirlfriendName")?.addEventListener("click",(event)=>runRoll(event.currentTarget,$("#girlfriendNameRoll"),GIRLFRIEND_NAMES,()=>{onboarding.partner.name=GIRLFRIEND_NAMES[Math.floor(Math.random()*GIRLFRIEND_NAMES.length)];onboarding.girlfriendNameReady=true;setTimeout(renderGirlfriendSetup,120);return onboarding.partner.name;}));
+  $("#rollGirlfriendTraits")?.addEventListener("click",(event)=>runRoll(event.currentTarget,$("#girlfriendTraitRoll"),["분석 중...","성향 조합 중...","숨겨진 마음 확인 중..."],()=>{rerollGirlfriendPersonality(onboarding.partner);onboarding.girlfriendTraitsReady=true;setTimeout(renderGirlfriendSetup,120);return personalitySummary(onboarding.partner);}));
+  $("#rollGirlfriendJob")?.addEventListener("click",(event)=>{const careers=GIRLFRIEND_JOBS.filter((career)=>career.id!=="high-school-senior");runRoll(event.currentTarget,$("#girlfriendJobRoll"),careers.map((career)=>career.name),()=>{const selected=structuredClone(careers[Math.floor(Math.random()*careers.length)]);selected.heroineId=onboarding.partner.heroineId;onboarding.partner.career=selected;onboarding.partner.job=selected.name;onboarding.girlfriendJobReady=true;setTimeout(renderGirlfriendSetup,120);return selected.name;});});
+  $("#girlfriendSetupNext")?.addEventListener("click",renderPlayerSetup);
+}
+
+function selectPlayerArchetype(id) {
+  onboarding.playerArchetype = id;
+  renderPlayerSetup();
+}
+
+function showPremiumConfirmation(archetype) {
+  const overlay=document.createElement("div");
+  overlay.className="premium-confirm-overlay";
+  overlay.innerHTML=`<div class="premium-confirm"><span>PREMIUM CHARACTER</span><h2>${escapeHtml(archetype.name)}</h2><p>유료 캐릭터 선택 팝업입니다. 현재 데모에서는 결제 없이 선택 확인만 진행합니다.</p><div><button data-cancel type="button">취소</button><button data-confirm type="button">확인하고 선택</button></div></div>`;
+  $("#onboardingContent").append(overlay);
+  overlay.querySelector("[data-cancel]").addEventListener("click",()=>overlay.remove());
+  overlay.querySelector("[data-confirm]").addEventListener("click",()=>selectPlayerArchetype(archetype.id));
+}
+
+function renderPlayerSetup() {
+  onboarding.step=2; setOnboardingProgress(2);
+  $("#onboardingContent").innerHTML=`
+    <header class="setup-heading"><span>PLAYER SETUP</span><h1>나의 생김새 선택</h1><p>외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다.</p></header>
+    <div class="setup-card-grid player-select-grid">${PLAYER_ARCHETYPES.map((entry)=>`<button class="setup-character-card ${onboarding.playerArchetype===entry.id?"selected":""}" data-player="${entry.id}" type="button"><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.premium?" · PREMIUM":""}</strong><span>능력 ${entry.abilityRating} · 외모 ${entry.appearanceRating}</span><small>${entry.description}</small></button>`).join("")}</div>
+    <div class="player-input-panel"><label for="playerNameInput">내 이름 <small>최대 3글자</small></label><input id="playerNameInput" maxlength="3" value="${escapeHtml(onboarding.playerName)}" placeholder="이름" autocomplete="off"><div class="roll-row"><div><small>MY CAREER</small><b id="playerJobRoll">${onboarding.playerJob?escapeHtml(onboarding.playerJob.name):"버튼을 눌러 직업 선택"}</b></div><button id="rollPlayerJob" type="button">내 직업 랜덤 선택</button></div></div>
+    <button id="playerSetupNext" class="primary-button setup-next" type="button" ${onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob?"":"disabled"}>최종 결과 확인</button>`;
+  document.querySelectorAll("[data-player]").forEach((button)=>button.addEventListener("click",()=>{const archetype=PLAYER_ARCHETYPES.find((entry)=>entry.id===button.dataset.player);if(archetype.premium)showPremiumConfirmation(archetype);else selectPlayerArchetype(archetype.id);}));
+  $("#playerNameInput").addEventListener("input",(event)=>{onboarding.playerName=Array.from(event.target.value.trim()).slice(0,3).join("");event.target.value=onboarding.playerName;$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);});
+  $("#rollPlayerJob").addEventListener("click",(event)=>runRoll(event.currentTarget,$("#playerJobRoll"),JOBS.map((job)=>job.name),()=>{onboarding.playerJob=generateJob();$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName);return onboarding.playerJob.name;}));
+  $("#playerSetupNext").addEventListener("click",renderSetupSummary);
+}
+
+function renderSetupSummary() {
+  onboarding.step=3; setOnboardingProgress(3);
+  const player=createPlayerProfile(onboarding.playerArchetype,onboarding.playerName);
+  onboarding.previewState=createInitialState(onboarding.partner,Math.random,{player,job:onboarding.playerJob});
+  const preview=onboarding.previewState;
+  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>FINAL PROFILE</span><h1>${escapeHtml(player.name)}의 30일이 시작됩니다</h1><p>선택한 설정은 저장 데이터와 모든 게임 시스템에 적용됩니다.</p></header><div class="setup-summary"><img src="${player.image}" alt="${escapeHtml(player.name)}"><div><span>${escapeHtml(player.archetypeName)}</span><h2>${escapeHtml(player.name)}</h2><dl><div><dt>직업</dt><dd>${escapeHtml(preview.job.name)}</dd></div><div><dt>초기 자금</dt><dd>${money(preview.money)}</dd></div><div><dt>매력 / 패션</dt><dd>${preview.charm} / ${preview.fashion}</dd></div><div><dt>업무 / 사교</dt><dd>${preview.work} / ${preview.social}</dd></div></dl></div><div class="summary-partner"><small>GIRLFRIEND</small><strong>${escapeHtml(preview.partner.name)}</strong><span>${escapeHtml(preview.partner.career.name)}</span><p>${personalitySummary(preview.partner)}</p></div></div><button id="openIntroButton" class="primary-button setup-next" type="button">다음 · 프롤로그 보기</button>`;
+  $("#openIntroButton").addEventListener("click",openStoryIntro);
+}
+
+function openStoryIntro() {
+  $("#onboardingScreen").classList.add("hidden");
+  $("#storyIntroScreen").classList.remove("hidden");
+  const video=$("#introVideo");
+  video.currentTime=0;
+  $("#introGameStartButton").disabled=true;
+  video.play().catch(()=>{$("#introPlaybackHint").textContent="재생 버튼을 눌러 프롤로그를 감상해 주세요.";});
+}
+
+function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
+function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
+function startGame() { beginOnboarding(); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); const theater=state.settings?.theaterMode??localStorage.getItem(THEATER_SETTING_KEY)!=="false";document.body.classList.toggle("theater-mode",theater);renderAutoButton();renderFullscreenButtons();render();setTimeout(restoreEventCheckpoint,0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
 
@@ -330,7 +437,7 @@ function render() {
   $("#affectionValue").textContent = Math.round(state.affection); $("#trustValue").textContent = Math.round(state.trust);
   $("#affectionBar").style.width = `${state.affection/10}%`; $("#trustBar").style.width = `${state.trust/10}%`;
   const traitRows = getVisibleTraitRows(state); const revealedCount = traitRows.filter(row => row.revealed).length;
-  $("#moneyValue").textContent = money(state.money); $("#jobValue").textContent = `${state.job.name} · Lv.${state.jobLevel}`; $("#traitProgress").textContent = `${revealedCount} / 5`;
+  $("#moneyValue").textContent = money(state.money); $("#jobValue").textContent = `${state.player.name} · ${state.job.name} · Lv.${state.jobLevel}`; $("#traitProgress").textContent = `${revealedCount} / 5`;
   $("#quickMoney").textContent = money(state.money);
   $("#quickLocation").textContent = ({morning:"집",day:"회사",evening:"도심"})[phase.key] ?? "현재 위치";
   $("#lifeStatus").textContent = state.fatigue >= 70 ? "피로가 누적되는 중" : state.stress > 75 ? "한계에 가까움" : state.energy < 25 ? "휴식이 필요함" : state.confidence >= 70 ? "자신감이 넘치는 중" : state.affection > 750 ? "사랑이 깊어지는 중" : "나쁘지 않은 하루";
@@ -591,8 +698,10 @@ function openCareer() {
 
 function openPeople() {
   const breakupRisk = calculateBreakupRisk(state);
+  const career=state.partner.career;
+  const partnerCard=career?`<div class="npc-card partner-career-card"><div class="npc-details"><small>MY PARTNER · ${escapeHtml(career.workplace)}</small><b>${escapeHtml(state.partner.name)} · ${escapeHtml(career.name)}</b><span>${escapeHtml(career.workPattern)} · 월수입 ${money(career.incomeRange[0])}~${money(career.incomeRange[1])}</span><span><strong>${escapeHtml(career.perkName)}</strong> · ${escapeHtml(career.perkDescription)}</span><em>목표 · ${escapeHtml(career.careerGoal)}</em></div></div>`:"";
   const cards = state.npcs.filter(npc=>npc.active).map(npc=>{ const status=npc.relationshipType==='rival'?calculateRivalRisk(state,npc):getNpcRelationshipStatus(npc); const interest=npc.relationshipType==='rival'?`연인 관심 ${npc.interestInGirlfriend} · 위험 ${status.score}`:`내 관심 ${npc.interestInPlayer}`; const sprite=getNpcSprite(npc.id); return `<div class="npc-card${sprite?' illustrated':''}">${sprite?`<img src="${sprite}" alt="" aria-hidden="true">`:''}<div class="npc-details"><small>${npc.role}</small><b>${npc.name}</b><span>호감 ${npc.affection} · 신뢰 ${npc.trust} · ${interest}</span></div><em data-tone="${status.tone}">${status.label}</em></div>`; }).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">HUMAN RELATIONSHIPS</span><h2>나의 인맥</h2><p>현재 연애 위기 ${breakupRisk.score} · ${breakupRisk.label}</p><div class="npc-list">${cards}</div>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">HUMAN RELATIONSHIPS</span><h2>나의 인맥</h2><p>현재 연애 위기 ${breakupRisk.score} · ${breakupRisk.label}</p>${partnerCard}<h3>주변 인물</h3><div class="npc-list">${cards}</div>`;
   openModal();
 }
 
@@ -679,6 +788,9 @@ $("#skipButton").addEventListener("click",skipImmersiveScene);
 $("#fullscreenButton").addEventListener("click",toggleFullscreen);
 $("#storyFullscreenButton").addEventListener("click",toggleFullscreen);
 $("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
+$("#introVideo").addEventListener("ended",()=>unlockIntroStart());
+$("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();unlockIntroStart("프롤로그를 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
+$("#introGameStartButton").addEventListener("click",finishOnboarding);
 document.addEventListener("keydown", handleModalKeydown);
 document.addEventListener("fullscreenchange",renderFullscreenButtons);
 window.addEventListener("beforeunload",()=>clearInterval(runtimeWatchdogTimer));

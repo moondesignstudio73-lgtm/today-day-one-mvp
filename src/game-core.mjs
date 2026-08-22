@@ -1,5 +1,5 @@
-import { validateGirlfriend } from "./girlfriend-manager.mjs";
-import { generateJob, getJobStartingState, validateJob } from "./jobs-data.mjs";
+import { validateGirlfriend } from "./girlfriend-manager.mjs?v=7";
+import { generateJob, getJobStartingState, validateJob } from "./jobs-data.mjs?v=6";
 import { generateNpcs, validateNpcs } from "./npc-manager.mjs";
 import { validateMemories } from "./memory-manager.mjs";
 import { createInvestmentState, validateInvestmentState } from "./investment-manager.mjs";
@@ -10,6 +10,7 @@ import { createVisualState, validateCharacterAppearance } from "./character-appe
 import { createHiddenRouteState, validateHiddenRouteState } from "./hidden-route-manager.mjs";
 import { createDaySnapshot } from "./night-manager.mjs";
 import { createStoryDirectorState, validateStoryDirectorState } from "./dynamic-story-director.mjs";
+import { applyPlayerArchetype, createPlayerProfile, validatePlayerProfile } from "./player-profile-data.mjs";
 
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
@@ -18,15 +19,17 @@ export function clamp(value, min = 0, max = 100) {
   return Math.max(min, Math.min(max, Number(value) || 0));
 }
 
-export function createInitialState(partner, random = Math.random) {
-  const selectedJob = generateJob(random);
-  const jobStart = getJobStartingState(selectedJob, random);
+export function createInitialState(partner, random = Math.random, setup = {}) {
+  const selectedJob = setup.job ? structuredClone(setup.job) : generateJob(random);
+  const player = setup.player ? structuredClone(setup.player) : createPlayerProfile();
+  const jobStart = applyPlayerArchetype(getJobStartingState(selectedJob, random), player);
   const state = {
     version: 1,
     day: 1,
     phase: 0,
     selected: null,
     partner,
+    player,
     ...createVisualState(partner),
     job: selectedJob,
     jobLevel: 1,
@@ -122,6 +125,7 @@ export function validateState(value) {
   if (value.version !== 1 || !Number.isInteger(value.day) || !Number.isInteger(value.phase)) return false;
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
   if (!validateGirlfriend(value.partner)) return false;
+  if (!validatePlayerProfile(value.player)) return false;
   if (!Number.isInteger(value.appearanceSeed) || !validateCharacterAppearance(value.characterAppearance) || !Array.isArray(value.equippedVisualLayers) || typeof value.currentExpression !== "string" || typeof value.currentPose !== "string" || typeof value.currentOutfit !== "string" || typeof value.currentAccessory !== "string" || typeof value.currentBackground !== "string") return false;
   if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !validateAdvancedEconomyState(value.finance) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment || !validateNpcs(value.npcs) || !Array.isArray(value.npcHistory) || !Array.isArray(value.temptationHistory) || !Array.isArray(value.rivalHistory) || !validateMemories(value.memories) || !Array.isArray(value.initiatedMessages) || !Array.isArray(value.conversationHistory) || !validateInvestmentState(value.investment) || !validateLotteryState(value.lottery)) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices) || !value.situationEventStates || !value.futureEventWeights || !Array.isArray(value.microEventHistory) || !value.eventRuntime || !value.settings) return false;

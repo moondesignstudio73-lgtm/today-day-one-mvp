@@ -16,15 +16,16 @@ export function buildConversationContext(state) {
   const wornOutfit=wornInstance ? getItem(wornInstance.itemId) : null;
   return {
     day:state.day, phase:state.phase,
-    girlfriend:{ name:state.partner.name, bio:state.partner.bio, heroineId:state.partner.heroineId, age:state.partner.age, ageCategory:state.partner.ageCategory, studentSafe:Boolean(state.partner.studentSafe), archetype:state.partner.archetype, aiVoice:state.partner.aiVoice, messageVoice:state.partner.messageVoice??null, personality:{ ...state.partner.personality }, currentOutfit:wornOutfit ? { outfitId:wornOutfit.outfitId,name:wornOutfit.name,styleTags:[...wornOutfit.styleTags],giftedByPlayer:Boolean(wornInstance.giftedByPlayer),lastWorn:wornInstance.lastWorn ?? wornInstance.givenDay } : null },
+    girlfriend:{ name:state.partner.name, bio:state.partner.bio, heroineId:state.partner.heroineId, age:state.partner.age, ageCategory:state.partner.ageCategory, studentSafe:Boolean(state.partner.studentSafe), archetype:state.partner.archetype, aiVoice:state.partner.aiVoice, messageVoice:state.partner.messageVoice??null, career:structuredClone(state.partner.career??null), personality:{ ...state.partner.personality }, currentOutfit:wornOutfit ? { outfitId:wornOutfit.outfitId,name:wornOutfit.name,styleTags:[...wornOutfit.styleTags],giftedByPlayer:Boolean(wornInstance.giftedByPlayer),lastWorn:wornInstance.lastWorn ?? wornInstance.givenDay } : null },
     relationship:{ affection:state.affection, trust:state.trust, excitement:state.excitement, attachment:state.attachment, conflict:state.conflict, stress:state.relationshipStress },
-    player:{ money:state.money, health:state.health, energy:state.energy, fatigue:state.fatigue, stress:state.stress, charm:state.charm, fashion:state.fashion, confidence:state.confidence, job:state.job.name, jobLevel:state.jobLevel },
+    player:{ name:state.player?.name??"나", archetype:state.player?.archetypeName??"기본 캐릭터", appearanceRating:state.player?.appearanceRating??"보통", money:state.money, health:state.health, energy:state.energy, fatigue:state.fatigue, stress:state.stress, charm:state.charm, fashion:state.fashion, confidence:state.confidence, job:state.job.name, jobLevel:state.jobLevel },
     recentActions, recentEvents, recentGifts, recentTemptations, recentConversation, recentInitiatedMessages:(state.initiatedMessages ?? []).slice(-3), importantMemories:getMemoryContext(state)
   };
 }
 
 export function getContextualOpening(context) {
   const name = context.girlfriend.name;
+  const playerName = context.player.name ?? "자기";
   const initiated = context.recentInitiatedMessages?.at(-1);
   if (initiated?.day === context.day) return `${name}: ${initiated.text}`;
   const latestTemptation = context.recentTemptations.at(-1);
@@ -33,7 +34,7 @@ export function getContextualOpening(context) {
   if (context.relationship.trust < 350) return `${name}: 오늘은 왜 이렇게 연락이 늦었어? 솔직하게 말해 줘.`;
   if (context.player.fatigue >= 70) return `${name}: 많이 지쳐 보여. 오늘은 무리하지 않았으면 좋겠어.`;
   if (context.relationship.affection > 700) return `${name}: 오늘 네 목소리 듣고 싶었는데, 잘 지냈어?`;
-  return `${name}: 뭐 해? 오늘 하루는 어땠어?`;
+  return `${name}: ${playerName}, 뭐 해? 오늘 하루는 어땠어?`;
 }
 
 export function generateContextualReply(context, message) {

@@ -1,6 +1,6 @@
-import { validateState } from "./game-core.mjs";
+import { validateState } from "./game-core.mjs?v=3";
 import { migrateNpcRoster } from "./npc-manager.mjs";
-import { migrateHeroineProfile } from "./girlfriend-manager.mjs";
+import { migrateHeroineProfile } from "./girlfriend-manager.mjs?v=6";
 import { createInvestmentState } from "./investment-manager.mjs";
 import { createLotteryState } from "./lottery-manager.mjs";
 import { createAdvancedEconomyState } from "./economy-manager.mjs";
@@ -8,7 +8,8 @@ import { migrateVisualState } from "./character-appearance.mjs";
 import { createHiddenRouteState } from "./hidden-route-manager.mjs";
 import { createDaySnapshot } from "./night-manager.mjs";
 import { migrateStoryDirectorState } from "./dynamic-story-director.mjs";
-import { migrateJob } from "./jobs-data.mjs";
+import { migrateJob } from "./jobs-data.mjs?v=6";
+import { migratePlayerProfile } from "./player-profile-data.mjs";
 
 export class SaveManager {
   static key = "today-day-one.save.v1";
@@ -30,6 +31,7 @@ export class SaveManager {
     try {
       const parsed = JSON.parse(raw);
       parsed.job = migrateJob(parsed.job);
+      parsed.player = migratePlayerProfile(parsed.player);
       migrateHeroineProfile(parsed.partner);
       migrateVisualState(parsed);
       parsed.npcs=migrateNpcRoster(parsed.npcs);
