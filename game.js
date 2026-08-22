@@ -49,6 +49,8 @@ const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&"
 
 let state;
 let onboarding = null;
+const INTRO_VIDEO_PLAYLIST = ["assets/video/intro.mp4", "assets/video/intro2.mp4"];
+let introVideoIndex = 0;
 const sound = new SoundManager();
 let modalReturnFocus = null;
 let dialogueTimer = null;
@@ -400,9 +402,22 @@ function openStoryIntro() {
   $("#onboardingScreen").classList.add("hidden");
   $("#storyIntroScreen").classList.remove("hidden");
   const video=$("#introVideo");
-  video.currentTime=0;
+  introVideoIndex=0;
+  video.src=INTRO_VIDEO_PLAYLIST[introVideoIndex];
+  video.load();
   $("#introGameStartButton").disabled=true;
+  $("#introPlaybackHint").textContent="프롤로그 1 / 2를 재생하고 있습니다.";
   video.play().catch(()=>{$("#introPlaybackHint").textContent="재생 버튼을 눌러 프롤로그를 감상해 주세요.";});
+}
+
+function playNextIntroVideo() {
+  const video=$("#introVideo");
+  if (introVideoIndex >= INTRO_VIDEO_PLAYLIST.length - 1) { unlockIntroStart(); return; }
+  introVideoIndex += 1;
+  video.src=INTRO_VIDEO_PLAYLIST[introVideoIndex];
+  video.load();
+  $("#introPlaybackHint").textContent=`프롤로그 ${introVideoIndex + 1} / ${INTRO_VIDEO_PLAYLIST.length}를 재생하고 있습니다.`;
+  video.play().catch(()=>{$("#introPlaybackHint").textContent="다음 프롤로그의 재생 버튼을 눌러 주세요.";});
 }
 
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
@@ -788,8 +803,8 @@ $("#skipButton").addEventListener("click",skipImmersiveScene);
 $("#fullscreenButton").addEventListener("click",toggleFullscreen);
 $("#storyFullscreenButton").addEventListener("click",toggleFullscreen);
 $("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
-$("#introVideo").addEventListener("ended",()=>unlockIntroStart());
-$("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();unlockIntroStart("프롤로그를 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
+$("#introVideo").addEventListener("ended",playNextIntroVideo);
+$("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();introVideoIndex=INTRO_VIDEO_PLAYLIST.length-1;unlockIntroStart("프롤로그 영상을 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
 $("#introGameStartButton").addEventListener("click",finishOnboarding);
 document.addEventListener("keydown", handleModalKeydown);
 document.addEventListener("fullscreenchange",renderFullscreenButtons);

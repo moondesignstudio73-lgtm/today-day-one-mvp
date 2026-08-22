@@ -55,6 +55,7 @@ import { applyPlayerArchetype, createPlayerProfile, migratePlayerProfile, PLAYER
 assert.equal(PLAYER_ARCHETYPES.length,3);
 assert.ok(PLAYER_ARCHETYPES.every((entry)=>existsSync(entry.image)));
 assert.equal(existsSync("assets/video/intro.mp4"),true);
+assert.equal(existsSync("assets/video/intro2.mp4"),true);
 const selectedPartner=createGirlfriendFromProfile("haeun",()=>0.5);
 assert.equal(selectedPartner.heroineId,"haeun");
 rerollGirlfriendPersonality(selectedPartner,()=>0.8);
