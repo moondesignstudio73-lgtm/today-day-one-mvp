@@ -1007,7 +1007,7 @@ function dailyEvent(completedDay) { if(completedDay%5===0){ const good=Math.rand
 function openChat(mode="message") {
   if(!["message","call"].includes(mode))mode="message";
   const context=buildConversationContext(state),greeting=getContextualOpening(context).replace(`${state.partner.name}: `,"");
-  activeConversation={mode,turn:0,topic:"opening",lastQuestionId:inferConversationQuestion(greeting),lastUserMessage:null,recentReplyIds:[],variantSeed:(state.day+state.phase+state.conversationHistory.length)%7,messages:[{speaker:"her",text:greeting}],effects:{affection:0,trust:0,conflict:0,relationshipStress:0},hostile:false};
+  activeConversation={mode,turn:0,topic:"opening",lastQuestionId:inferConversationQuestion(greeting),lastUserMessage:null,recentReplyIds:[],variantSeed:(state.day+state.phase+state.conversationHistory.length)%7,messages:[{speaker:"her",text:greeting}],effects:{},hostile:false};
   renderConversationSession();openModal();
 }
 function renderConversationSession(){
@@ -1030,18 +1030,18 @@ async function chatReply(message){
   }
   if(!response){renderConversationSession();return;}
   const scale=activeConversation.turn>=7?0:activeConversation.turn>=4?.5:1,effects=Object.fromEntries(Object.entries(response.effects??{}).map(([key,value])=>[key,Math.round(value*(analysis.level==="hostile"?1:scale))]));
-  applyEffects(state,effects);for(const key of Object.keys(activeConversation.effects))activeConversation.effects[key]+=effects[key]??0;
+  for(const [key,value] of Object.entries(effects))activeConversation.effects[key]=(activeConversation.effects[key]??0)+value;
   activeConversation.messages.push({speaker:"me",text:message},{speaker:"her",text:response.text});activeConversation.turn+=1;
   activeConversation.lastUserMessage=message;activeConversation.topic=response.topic??activeConversation.topic;activeConversation.lastQuestionId=inferConversationQuestion(response.text);const replyId=response.replyId??response.id;if(replyId){activeConversation.recentReplyIds.push(replyId);activeConversation.recentReplyIds=activeConversation.recentReplyIds.slice(-12);}
   recordConversationTurn(state,message,response.text,{mode:activeConversation.mode,tone:analysis.level});
   state.logs.push({time:`DAY ${state.day} · ${activeConversation.mode==='call'?'CALL':'MESSAGE'}`,text:analysis.level==='hostile'?`${state.partner.name}에게 공격적인 말을 해 관계가 크게 나빠졌다.`:`${state.partner.name}와 대화 · ${message.slice(0,32)}`});
-  SaveManager.save(state);render();
+  SaveManager.save(state);
   if(response.forceEnd||activeConversation.turn>=10){finishConversation(response.forceEnd?"상대가 상처를 받아 대화를 종료했습니다.":"오늘 나눌 이야기를 충분히 나누었습니다.");return;}renderConversationSession();
 }
 function finishConversation(reason=""){
-  if(!activeConversation)return;const session=activeConversation,positive=session.effects.affection+session.effects.trust,summary=session.hostile?"상처와 실망이 남은 대화":positive>=12?"서로의 마음이 가까워진 대화":positive>0?"잔잔하게 마음을 나눈 대화":"조심스러운 대화";
-  recordMemory(state,{type:"conversation",summary:`${state.partner.name}와 ${session.mode==='call'?'통화':'메시지'} · ${summary}`,importance:session.hostile?5:3,tags:["대화",session.mode,session.hostile?"갈등":"교감"]});SaveManager.save(state);activeConversation=null;
-  $("#modalContent").innerHTML=`<span class="eyebrow">CONVERSATION RESULT</span><h2>${escapeHtml(summary)}</h2>${reason?`<p class="conversation-end-reason">${escapeHtml(reason)}</p>`:""}<div class="conversation-result-grid"><div><span>대화 횟수</span><b>${session.turn}턴</b></div><div><span>호감도</span><b class="${session.effects.affection>=0?'up':'down'}">${session.effects.affection>=0?'+':''}${session.effects.affection}</b></div><div><span>신뢰도</span><b class="${session.effects.trust>=0?'up':'down'}">${session.effects.trust>=0?'+':''}${session.effects.trust}</b></div><div><span>관계 스트레스</span><b class="${session.effects.relationshipStress<=0?'up':'down'}">${session.effects.relationshipStress>=0?'+':''}${session.effects.relationshipStress}</b></div></div><button id="conversationResultClose" class="primary-button" type="button">확인</button>`;$("#conversationResultClose").addEventListener("click",closeModal);
+  if(!activeConversation)return;const session=activeConversation;session.effects=Object.fromEntries(Object.entries(session.effects).map(([key,value])=>[key,Math.max(-3,Math.min(3,Math.round(value)))]));applyEffects(state,session.effects);const effect=key=>session.effects[key]??0,positive=effect("affection")+effect("trust"),summary=session.hostile?"상처와 실망이 남은 대화":positive>=4?"서로의 마음이 가까워진 대화":positive>0?"잔잔하게 마음을 나눈 대화":"조심스러운 대화";
+  recordMemory(state,{type:"conversation",summary:`${state.partner.name}와 ${session.mode==='call'?'통화':'메시지'} · ${summary}`,importance:session.hostile?5:3,tags:["대화",session.mode,session.hostile?"갈등":"교감"]});SaveManager.save(state);render();activeConversation=null;
+  $("#modalContent").innerHTML=`<span class="eyebrow">CONVERSATION RESULT</span><h2>${escapeHtml(summary)}</h2>${reason?`<p class="conversation-end-reason">${escapeHtml(reason)}</p>`:""}<div class="conversation-result-grid"><div><span>대화 횟수</span><b>${session.turn}턴</b></div><div><span>호감도</span><b class="${effect('affection')>=0?'up':'down'}">${effect('affection')>=0?'+':''}${effect('affection')}</b></div><div><span>신뢰도</span><b class="${effect('trust')>=0?'up':'down'}">${effect('trust')>=0?'+':''}${effect('trust')}</b></div><div><span>관계 스트레스</span><b class="${effect('relationshipStress')<=0?'up':'down'}">${effect('relationshipStress')>=0?'+':''}${effect('relationshipStress')}</b></div></div><p class="conversation-effect-limit">대화 한 번의 수치 변화는 항목별 최대 ±3입니다.</p><button id="conversationResultClose" class="primary-button" type="button">확인</button>`;$("#conversationResultClose").addEventListener("click",closeModal);
 }
 
 function openDebug() {
