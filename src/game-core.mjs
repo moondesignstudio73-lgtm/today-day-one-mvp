@@ -24,6 +24,16 @@ export function createInitialState(partner, random = Math.random, setup = {}) {
   const selectedJob = setup.job ? structuredClone(setup.job) : generateJob(random);
   const player = setup.player ? structuredClone(setup.player) : createPlayerProfile();
   const jobStart = applyPlayerArchetype(getJobStartingState(selectedJob, random), player);
+  let initialAffection = 500 + Math.floor(random() * 41);
+  let initialTrust = 480 + Math.floor(random() * 41);
+  if (player.archetypeId === "wealthy") initialTrust = Math.max(0, initialTrust - 200);
+  if (player.archetypeId === "handsome") initialTrust = Math.max(0, initialTrust - 300);
+  if (player.archetypeId === "balanced" && selectedJob.id === "day-laborer") {
+    initialAffection = 300 + Math.floor(random() * 100);
+    initialTrust = 500 + Math.floor(random() * 100);
+  }
+  const initialStress = player.archetypeId === "wealthy" ? 80 : jobStart.stress;
+  const initialFatigue = player.archetypeId === "handsome" ? 30 : player.archetypeId === "balanced" && selectedJob.id === "day-laborer" ? 50 : jobStart.fatigue;
   const state = {
     version: 1,
     day: 1,
@@ -61,8 +71,8 @@ export function createInitialState(partner, random = Math.random, setup = {}) {
     revealed: 0,
     revealedTraits: [],
     observations: {},
-    affection: 500 + Math.floor(random() * 41),
-    trust: 480 + Math.floor(random() * 41),
+    affection: initialAffection,
+    trust: initialTrust,
     excitement: 500,
     attachment: 450,
     conflict: 0,
@@ -70,8 +80,8 @@ export function createInitialState(partner, random = Math.random, setup = {}) {
     money: jobStart.money,
     health: jobStart.health,
     energy: jobStart.energy,
-    stress: jobStart.stress,
-    fatigue: jobStart.fatigue,
+    stress: initialStress,
+    fatigue: initialFatigue,
     charm: jobStart.charm,
     fashion: jobStart.fashion,
     confidence: jobStart.confidence,
