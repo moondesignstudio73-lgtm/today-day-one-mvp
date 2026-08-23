@@ -47,6 +47,12 @@ const styleByHeroine = {
   ara:["캐주얼","스트리트","스포티"], yuri:["다크","엘레강트","빈티지"]
 };
 
+const HAEUN_OUTFIT_VIDEOS = Object.freeze({
+  3:"assets/heroines/haeun/videos/03_transparent.webm",
+  5:"assets/heroines/haeun/videos/05_transparent.webm",
+  8:"assets/heroines/haeun/videos/08_transparent.webm"
+});
+
 export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=="yuna").flatMap(profile => outfitKinds.map(([kind,label,day,price,tag],index) => ({
   id:`outfit-${profile.id}-${String(index + 1).padStart(2,"0")}`, outfitId:`OUTFIT_${profile.id.toUpperCase()}_${kind.toUpperCase()}_${String(index + 1).padStart(3,"0")}`,
   icon:"👗", name:`${profile.name} · ${label}`, brand:"Atelier One Day", category:"heroine-outfit", heroineId:profile.id,
@@ -55,7 +61,7 @@ export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=
   unlockConditions:{day, affection:index >= 8 ? 650 : index >= 6 ? 560 : 0, trust:index === 9 ? 600 : 0},
   productImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`,
   characterWearingImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`,
-  characterWearingVideo:profile.id === "haeun" && index === 2 ? "assets/heroines/haeun/videos/03_transparent.webm" : null
+  characterWearingVideo:profile.id === "haeun" ? HAEUN_OUTFIT_VIDEOS[index + 1] ?? null : null
 }))),...YUNA_OUTFITS];
 
 const mainBeats = ["첫 번째 약속","일과 사랑의 경계","예상 밖의 데이트","친구에게 소개하는 날","처음 드러난 약점","서로의 돈 이야기","라이벌의 등장","크게 부딪힌 밤","다시 손을 잡는 방법","우리의 다음 계절"];
