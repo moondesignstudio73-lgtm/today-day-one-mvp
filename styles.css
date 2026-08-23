@@ -424,6 +424,9 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
   box-shadow:none;
   backdrop-filter:none;
 }
+
+/* Photo album expanded video layer */
+.video-album-card>div{display:grid;gap:6px}.album-video-expand{justify-self:start;margin-top:4px;padding:8px 13px;border:1px solid #d8c8d7;border-radius:999px;background:#fff;color:#7a4260;font-weight:800;cursor:pointer}.album-video-expand:hover{border-color:#c04d76;background:#fff2f7}.album-video-layer{position:fixed;z-index:300;display:grid;place-items:center;inset:0;padding:4vh 4vw;background:#100b15de;backdrop-filter:blur(12px)}.album-video-stage{position:relative;display:grid;place-items:center;width:80vw;height:80vh;border:1px solid #ffffff35;border-radius:24px;background:#09070c;box-shadow:0 35px 100px #000b;overflow:hidden}.album-video-stage video{display:block;width:100%;height:100%;object-fit:contain;background:#000}.album-video-stage strong{position:absolute;right:70px;bottom:18px;left:24px;overflow:hidden;color:#fff;text-shadow:0 2px 8px #000;white-space:nowrap;text-overflow:ellipsis}.album-video-close{position:absolute;z-index:2;top:15px;right:15px;width:44px;height:44px;border:1px solid #ffffff55;border-radius:50%;background:#16111dcc;color:#fff;font-size:30px;line-height:1;cursor:pointer}.album-video-close:hover{background:#c04d76}@media(max-width:700px){.album-video-layer{padding:2vh 2vw}.album-video-stage{width:94vw;height:80vh;border-radius:18px}}
 .night-room-scene{inset:104px 0 55px}
 .night-room-scene .room-phone{left:24%;bottom:14%}
 .night-room-scene .room-pc{left:11%;bottom:33%}

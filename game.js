@@ -230,6 +230,10 @@ function confirmActionResult() {
 }
 
 function handleModalKeydown(event) {
+  const albumVideoLayer=document.querySelector(".album-video-layer");
+  if(albumVideoLayer&&event.key==="Escape"){
+    event.preventDefault();closeAlbumVideoLayer();return;
+  }
   const modal = $("#modal");
   if (modal.classList.contains("hidden")) return;
   if (event.key === "Escape") {
@@ -597,6 +601,9 @@ function showGame() { state.actionHistory ??= []; $("#introScreen").classList.ad
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
 
+function getLogDay(entry){const match=String(entry?.time??"").match(/^DAY\s+(\d+)(?:\s|$)/);return match?Number(match[1]):null;}
+function getTodayLogs(){return (state?.logs??[]).filter(entry=>getLogDay(entry)===state.day);}
+
 function render() {
   const p = state.partner, phase = phases[state.phase];
   document.body.dataset.heroine=p.heroineId;document.documentElement.style.setProperty("--heroine-accent",p.uiAccent??"#ff91b5");
@@ -638,7 +645,8 @@ function render() {
   const stats = [["체력",state.energy],["피로",state.fatigue],["건강",state.health],["스트레스",state.stress],[appearance.bonuses.attractiveness?`매력 +${appearance.bonuses.attractiveness}`:"매력",appearance.charm],[appearance.bonuses.fashion?`패션 +${appearance.bonuses.fashion}`:"패션",appearance.fashion],["자신감",state.confidence],["업무 능력",state.work],["사회성",state.social]];
   $("#statList").innerHTML = stats.map(([name,val])=>`<div class="stat"><div class="stat-head"><span>${name}</span><b>${Math.round(val)}</b></div><div class="stat-track"><i style="width:${clamp(val)}%;background:${name==='스트레스'?'#e5846d':''}"></i></div></div>`).join("");
   $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>({a,i})).filter(({a})=>isActionVisible(state,a)).map(({a,i})=>{ const availability=getActionAvailability(state,a); return `<button class="action-card ${state.selected===i?'selected':''} ${availability.available?'':'locked'}" data-index="${i}" ${availability.available?'':'disabled'}><span class="action-icon">${a.icon}</span><span class="cost">${availability.available?escapeHtml(a.tag):'🔒 '+escapeHtml(availability.reason)}</span><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.desc)}</p></button>`; }).join("");
-  $("#eventLog").innerHTML = state.logs.length ? state.logs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${l.time}</b><span>${l.text}</span></div>`).join("") : `<div class="log-item"><b>DAY 1</b><span>두 사람의 첫 번째 이야기가 시작되었습니다.</span></div>`;
+  const todayLogs=getTodayLogs();
+  $("#eventLog").innerHTML = todayLogs.length ? todayLogs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${escapeHtml(l.time)}</b><span>${escapeHtml(l.text)}</span></div>`).join("") : `<div class="log-item"><b>DAY ${state.day}</b><span>오늘의 첫 선택을 기다리고 있습니다.</span></div>`;
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
   const nextPhase=phases[Math.min(state.phase+1,phases.length-1)];
@@ -879,7 +887,7 @@ function openDailyReport() {
 }
 
 function openTodayLog() {
-  const rows=(state.logs??[]).filter(entry=>entry.time.includes(`DAY ${state.day}`)).map(entry=>`<div class="history-entry"><small>${escapeHtml(entry.time)}</small><p>${escapeHtml(entry.text)}</p></div>`).join("")||"<p>오늘 기록이 아직 없어요.</p>";
+  const rows=getTodayLogs().map(entry=>`<div class="history-entry"><small>${escapeHtml(entry.time)}</small><p>${escapeHtml(entry.text)}</p></div>`).join("")||"<p>오늘 기록이 아직 없어요.</p>";
   $("#modalContent").innerHTML=`<span class="eyebrow">TODAY'S RECORD</span><h2>DAY ${state.day} · ${getWeekdayName(state.day)} 오늘의 기록</h2><div class="dialogue-history">${rows}</div>`;openModal();
 }
 
@@ -894,11 +902,15 @@ function openCgGallery(activeTab="photos") {
   const photos=state.cgCollection??[];
   const videos=state.videoCollection??[];
   const photoCards=photos.length?photos.map(entry=>`<button class="cg-card album-card" type="button" data-album-photo="${escapeHtml(entry.image)}" data-album-title="${escapeHtml(entry.title)}"><img src="${entry.image}" alt="${escapeHtml(entry.title)}" loading="lazy"><div><small>DAY ${entry.day}${entry.type==="action"?" · 함께한 행동":" · STORY"}</small><b>${escapeHtml(entry.title)}</b></div></button>`).join(""):`<p class="album-empty">여자친구와 함께 행동하거나 중요한 장면을 보면 사진이 저장됩니다.</p>`;
-  const videoCards=videos.length?videos.map(entry=>`<article class="cg-card video-album-card"><video src="${entry.video}" ${entry.poster?`poster="${entry.poster}"`:""} controls playsinline preload="metadata" aria-label="${escapeHtml(entry.title)} 영상"></video><div><small>DAY ${entry.day} · HAPPY VIDEO</small><b>${escapeHtml(entry.title)}</b></div></article>`).join(""):`<p class="album-empty">여자친구와 행복한 행동 중 영상이 등장하면 이곳에 저장됩니다.</p>`;
+  const videoCards=videos.length?videos.map((entry,index)=>`<article class="cg-card video-album-card"><video src="${entry.video}" ${entry.poster?`poster="${entry.poster}"`:""} controls playsinline preload="metadata" aria-label="${escapeHtml(entry.title)} 영상"></video><div><small>DAY ${entry.day} · HAPPY VIDEO</small><b>${escapeHtml(entry.title)}</b><button class="album-video-expand" type="button" data-album-video="${index}">크게 보기</button></div></article>`).join(""):`<p class="album-empty">여자친구와 행복한 행동 중 영상이 등장하면 이곳에 저장됩니다.</p>`;
   $("#modalContent").innerHTML=`<span class="eyebrow">PHOTO ALBUM</span><h2>우리의 포토 앨범</h2><p>여자친구와 함께한 사진 ${photos.length}장 · 행복한 시간 영상 ${videos.length}개</p><div class="album-tabs" role="tablist"><button type="button" data-album-tab="photos" class="${activeTab==="photos"?"active":""}">사진 앨범 · ${photos.length}</button><button type="button" data-album-tab="videos" class="${activeTab==="videos"?"active":""}">동영상 앨범 · ${videos.length}</button></div><div class="cg-gallery album-panel">${activeTab==="videos"?videoCards:photoCards}</div>`;openModal();
   document.querySelectorAll("[data-album-tab]").forEach(button=>button.addEventListener("click",()=>openCgGallery(button.dataset.albumTab)));
   document.querySelectorAll("[data-album-photo]").forEach(button=>button.addEventListener("click",()=>{$("#modalContent").innerHTML=`<button class="album-back" type="button">← 포토 앨범</button><figure class="album-photo-viewer"><img src="${button.dataset.albumPhoto}" alt="${escapeHtml(button.dataset.albumTitle)}"><figcaption>${escapeHtml(button.dataset.albumTitle)}</figcaption></figure>`;$(".album-back").addEventListener("click",()=>openCgGallery("photos"));}));
+  document.querySelectorAll("[data-album-video]").forEach(button=>button.addEventListener("click",()=>openAlbumVideoLayer(videos[Number(button.dataset.albumVideo)])));
 }
+
+function closeAlbumVideoLayer(){const layer=document.querySelector(".album-video-layer");if(!layer)return;layer.querySelector("video")?.pause();layer.remove();}
+function openAlbumVideoLayer(entry){if(!entry)return;closeAlbumVideoLayer();const layer=document.createElement("div");layer.className="album-video-layer";layer.setAttribute("role","dialog");layer.setAttribute("aria-modal","true");layer.setAttribute("aria-label",`${entry.title} 크게 보기`);layer.innerHTML=`<div class="album-video-stage"><button class="album-video-close" type="button" aria-label="영상 크게 보기 닫기">×</button><video src="${entry.video}" ${entry.poster?`poster="${entry.poster}"`:""} controls autoplay playsinline preload="auto" aria-label="${escapeHtml(entry.title)} 영상"></video><strong>${escapeHtml(entry.title)}</strong></div>`;document.body.append(layer);layer.querySelector(".album-video-close").addEventListener("click",closeAlbumVideoLayer);layer.addEventListener("click",event=>{if(event.target===layer)closeAlbumVideoLayer();});layer.querySelector(".album-video-close").focus();layer.querySelector("video").play().catch(()=>{});}
 
 function openNightPc() {
   const workButton=isWeekend(state.day)?"":`<button data-pc-action="work">💼 야간 업무<small>수입 증가 · 스트레스 증가</small></button>`;
@@ -964,7 +976,7 @@ function applyAction() {
   advanceTime(state);
   const initiatedMessage = eventsUnlocked ? maybeGenerateInitiatedMessage(state) : null;
   if (initiatedMessage) { state.logs.push({time:`DAY ${state.day} · MESSAGE`,text:`${state.partner.name}: ${initiatedMessage.text}`}); toast(`${state.partner.name}에게 메시지가 왔어요`); }
-  if (finishedDay) { dailyEvent(); advanceStockMarket(state); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); runDailyStoryDirector(state,completedDay); SaveManager.save(state); if(state.day<=30){resetForNextDay(state);resetWorldForNextDay();} }
+  if (finishedDay) { dailyEvent(completedDay); advanceStockMarket(state); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); runDailyStoryDirector(state,completedDay); SaveManager.save(state); if(state.day<=30){resetForNextDay(state);resetWorldForNextDay();} }
   const microEvents=eventsUnlocked?rollMicroEvents(state):[];microEvents.forEach(micro=>state.logs.push({time:`DAY ${micro.day} · MICRO`,text:micro.text}));
   const event = eventsUnlocked?rollEvent(state):null;
   if (event) {
@@ -987,7 +999,7 @@ function applyAction() {
 }
 
 function resultText(a) { if(a.tag==="데이트") return `${state.partner.name}의 표정이 한결 밝아졌다.`; if(a.tag==="성공") return "미래를 위한 한 걸음을 내디뎠다."; if(a.tag==="유혹") return "새로운 인연의 기척이 느껴진다."; if(a.tag==="연락") return "짧은 대화가 두 사람을 조금 더 가깝게 했다."; return "선택의 결과가 하루에 남았다."; }
-function dailyEvent() { if(state.day%5===0){ const good=Math.random()>.45; const amount=good?60000:-35000; const label=good?"예상하지 못한 성과급":"갑작스러운 생활비 지출"; recordTransaction(state,{category:"event",label,amount}); state.logs.push({time:`DAY ${state.day}`,text:`${label}${good?"이 들어왔다.":"이 생겼다."}`}); } if(state.day%7===0){state.affection=clamp(state.affection-18,0,1000);state.trust=clamp(state.trust-8,0,1000);} }
+function dailyEvent(completedDay) { if(completedDay%5===0){ const good=Math.random()>.45; const amount=good?60000:-35000; const label=good?"예상하지 못한 성과급":"갑작스러운 생활비 지출"; recordTransaction(state,{day:completedDay,category:"event",label,amount}); state.logs.push({time:`DAY ${completedDay} · EVENT`,text:`${label}${good?"이 들어왔다.":"이 생겼다."}`}); } if(completedDay%7===0){state.affection=clamp(state.affection-18,0,1000);state.trust=clamp(state.trust-8,0,1000);state.logs.push({time:`DAY ${completedDay} · RELATIONSHIP`,text:"연락이 뜸했던 영향으로 호감도와 신뢰도가 낮아졌다."});} }
 
 function openChat() {
   const context = buildConversationContext(state);
