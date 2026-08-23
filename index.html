@@ -44,7 +44,7 @@
         <button id="saveButton" class="text-button hidden" type="button">저장</button>
         <button id="loadButton" class="text-button" type="button">불러오기</button>
         <button id="fullscreenButton" class="text-button hidden" type="button" aria-pressed="false">⛶ 전체화면</button>
-        <button id="soundButton" class="icon-button sound-button" type="button" aria-pressed="false" title="효과음 켜기">♪ OFF</button>
+        <button id="soundButton" class="icon-button sound-button" type="button" aria-pressed="false" aria-label="사운드 켜기" title="사운드 켜기">🔇</button>
         <button id="resetButton" class="icon-button" type="button" title="새 게임">↻</button>
       </div>
     </header>
@@ -143,6 +143,10 @@
       </section>
 
       <aside class="life-panel panel">
+        <div class="player-profile-card">
+          <img id="playerProfileImage" src="assets/players/balanced.png" alt="남자 주인공">
+          <div><small>PLAYER</small><strong id="playerProfileName">나</strong><b id="playerProfileJob">직업</b></div>
+        </div>
         <div class="section-title"><h3>나의 하루</h3><span id="lifeStatus">괜찮은 시작</span></div>
         <div class="money-card"><small>보유 자산</small><strong id="moneyValue">₩ 850,000</strong><span id="jobValue">주니어 기획자</span></div>
         <div id="statList" class="stat-list"></div>
@@ -217,6 +221,6 @@
     </article>
   </section>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=49"></script>
+  <script type="module" src="game.js?v=50"></script>
 </body>
 </html>

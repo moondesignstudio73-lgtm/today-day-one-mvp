@@ -246,7 +246,7 @@ function handleModalKeydown(event) {
   focusable[getWrappedFocusIndex(currentIndex, focusable.length, event.shiftKey)].focus();
 }
 
-function renderSoundButton(){ const button=$("#soundButton");button.textContent=sound.enabled?"♪ ON":"♪ OFF";button.setAttribute("aria-pressed",String(sound.enabled));button.title=sound.enabled?"효과음 끄기":"효과음 켜기"; }
+function renderSoundButton(){ const button=$("#soundButton");const label=sound.enabled?"사운드 끄기":"사운드 켜기";button.textContent=sound.enabled?"🔊":"🔇";button.setAttribute("aria-pressed",String(sound.enabled));button.setAttribute("aria-label",label);button.title=label; }
 
 function finishDialogueTyping() {
   if (!dialogueTimer) return false;
@@ -578,7 +578,7 @@ function playNextIntroVideo() {
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
 function startGame() { beginOnboarding(); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); const theater=state.settings?.theaterMode??localStorage.getItem(THEATER_SETTING_KEY)!=="false";document.body.classList.toggle("theater-mode",theater);renderAutoButton();renderFullscreenButtons();render();setTimeout(restoreEventCheckpoint,0); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(restoreEventCheckpoint,0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
 
@@ -613,6 +613,7 @@ function render() {
   $("#affectionBar").style.width = `${state.affection/10}%`; $("#trustBar").style.width = `${state.trust/10}%`;
   const traitRows = getVisibleTraitRows(state); const revealedCount = traitRows.filter(row => row.revealed).length;
   $("#moneyValue").textContent = money(state.money); $("#jobValue").textContent = `${state.player.name} · ${state.job.name} · Lv.${state.jobLevel}`; $("#traitProgress").textContent = `${revealedCount} / 5`;
+  $("#playerProfileImage").src=state.player.image;$("#playerProfileImage").alt=`${state.player.name} 주인공 이미지`;$("#playerProfileName").textContent=state.player.name;$("#playerProfileJob").textContent=state.job.name;
   $("#lifeStatus").textContent = state.fatigue >= 70 ? "피로가 누적되는 중" : state.stress > 75 ? "한계에 가까움" : state.energy < 25 ? "휴식이 필요함" : state.confidence >= 70 ? "자신감이 넘치는 중" : state.affection > 750 ? "사랑이 깊어지는 중" : "나쁘지 않은 하루";
   $("#traitList").innerHTML = traitRows.map(row => row.revealed ? `<div class="trait"><span>${row.name}</span><b>${row.value}</b></div>` : `<div class="trait locked"><span>${row.name}</span><b>${row.confidence ? `${row.hint} · ${row.confidence}%` : "???"}</b></div>`).join("");
   const appearance = getEffectiveAppearance(state);
