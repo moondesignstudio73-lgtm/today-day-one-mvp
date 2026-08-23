@@ -9,7 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=32">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="styles.css?v=33">
   <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
@@ -155,12 +156,12 @@
           <div class="night-clock"><b id="nightClock">23:10</b><small id="nightDayLabel">DAY 1</small></div>
         </header>
         <div id="nightRoomScene" class="night-room-scene">
-          <button class="room-object room-phone" type="button" data-room-action="phone"><span>📱</span><b>스마트폰</b><small>메시지 · 쇼핑 · 투자</small><i id="phoneBadge">NEW</i></button>
-          <button class="room-object room-pc" type="button" data-room-action="pc"><span>🖥️</span><b>컴퓨터</b><small>자기계발 · 업무 · 휴식</small></button>
-          <button class="room-object room-wardrobe" type="button" data-room-action="wardrobe"><span>👔</span><b>옷장</b><small>내일의 스타일</small></button>
-          <button class="room-object room-report" type="button" data-room-action="report"><span>📝</span><b>DAY REPORT</b><small>오늘의 변화 확인</small></button>
-          <button class="room-object room-bed" type="button" data-room-action="bed"><span>🌙</span><b>침대</b><small>저장하고 다음 날로</small></button>
-          <button class="room-object room-exit" type="button" data-room-action="exit"><span>🚪</span><b>외출하기</b><small>동네 RPG 지도로 이동</small></button>
+          <button class="room-object room-phone" type="button" data-room-action="phone"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-mobile-screen-button"></i></span><b>스마트폰</b><small>메시지 · 쇼핑 · 투자</small><i id="phoneBadge">NEW</i></button>
+          <button class="room-object room-pc" type="button" data-room-action="pc"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-desktop"></i></span><b>컴퓨터</b><small>자기계발 · 업무 · 휴식</small></button>
+          <button class="room-object room-wardrobe" type="button" data-room-action="wardrobe"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-shirt"></i></span><b>옷장</b><small>내일의 스타일</small></button>
+          <button class="room-object room-report" type="button" data-room-action="report"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-clipboard-list"></i></span><b>DAY REPORT</b><small>오늘의 변화 확인</small></button>
+          <button class="room-object room-bed" type="button" data-room-action="bed"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-bed"></i></span><b>침대</b><small>저장하고 다음 날로</small></button>
+          <button class="room-object room-exit" type="button" data-room-action="exit"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-door-open"></i></span><b>외출하기</b><small>동네 RPG 지도로 이동</small></button>
           <div class="room-window" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
           <div class="room-floor" aria-hidden="true"></div>
         </div>
