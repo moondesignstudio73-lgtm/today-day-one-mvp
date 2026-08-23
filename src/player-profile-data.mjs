@@ -43,9 +43,20 @@ export function getPlayerArchetype(id) {
   return PLAYER_ARCHETYPES.find((entry) => entry.id === id) ?? PLAYER_ARCHETYPES[0];
 }
 
-export function normalizePlayerName(value) {
-  return Array.from(String(value ?? "").trim()).slice(0, 3).join("");
+const BLOCKED_PLAYER_NAMES=["시발","씨발","병신","개새","지랄","좆","닥쳐","꺼져","fuck","shit","bitch"];
+
+export function sanitizePlayerNameInput(value){
+  const raw=Array.from(String(value??"").normalize("NFKC")).filter(character=>/[가-힣A-Za-z]/.test(character)).join("");
+  if(!raw)return {value:"",valid:false,reason:String(value??"").trim()?"이름에는 한글 또는 영문만 사용할 수 있어요.":""};
+  const firstIsKorean=/[가-힣]/.test(raw[0]),sameScript=Array.from(raw).filter(character=>firstIsKorean?/[가-힣]/.test(character):/[A-Za-z]/.test(character)).join("");
+  const name=Array.from(sameScript).slice(0,3).join("");
+  const normalized=name.toLowerCase().replace(/(.)\1{2,}/g,"$1$1");
+  if(BLOCKED_PLAYER_NAMES.some(word=>normalized.includes(word)))return {value:"",valid:false,reason:"사용할 수 없는 표현이 포함된 이름이에요."};
+  const changed=name!==String(value??"").trim();
+  return {value:name,valid:Boolean(name),reason:changed?"한글 또는 영문 중 한 종류만, 최대 3글자까지 사용할 수 있어요.":""};
 }
+
+export function normalizePlayerName(value) { return sanitizePlayerNameInput(value).value; }
 
 export function createPlayerProfile(archetypeId = "balanced", name = "나") {
   const archetype = getPlayerArchetype(archetypeId);

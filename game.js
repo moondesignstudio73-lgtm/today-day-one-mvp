@@ -21,7 +21,7 @@ import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manag
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
-import { analyzeConversationInput, buildConversationContext, getContextualOpening, getHostileConversationResponse, getSuggestedConversationReplies, recordConversationTurn } from "./src/conversation-manager.mjs?v=8";
+import { analyzeConversationInput, buildConversationContext, getContextualOpening, getHostileConversationResponse, getSuggestedConversationReplies, inferConversationQuestion, recordConversationTurn } from "./src/conversation-manager.mjs?v=9";
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs?v=2";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs?v=2";
@@ -43,7 +43,8 @@ import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { getGirlfriendVisual } from "./src/girlfriend-visual-data.mjs";
-import { createPlayerProfile, PLAYER_ARCHETYPES } from "./src/player-profile-data.mjs";
+import { createPlayerProfile, PLAYER_ARCHETYPES, sanitizePlayerNameInput } from "./src/player-profile-data.mjs?v=2";
+import { getRandomPlayerName } from "./src/player-names-data.mjs?v=1";
 import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=10";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs";
@@ -554,12 +555,13 @@ function showPremiumConfirmation(archetype) {
 function renderPlayerSetup() {
   onboarding.step=2; setOnboardingProgress(2);
   $("#onboardingContent").innerHTML=`
-    <header class="setup-heading"><span>PLAYER SETUP</span><h1>나의 생김새 선택</h1><p>외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다.</p></header>
+    <header class="setup-heading"><span>PLAYER SETUP</span><h1>나의 외모 선택</h1><p>외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다.</p></header>
     <div class="setup-card-grid player-select-grid">${PLAYER_ARCHETYPES.map((entry)=>`<button class="setup-character-card ${onboarding.playerArchetype===entry.id?"selected":""}" data-player="${entry.id}" type="button"><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.premium?" · PREMIUM":""}</strong><span>능력 ${entry.abilityRating} · 외모 ${entry.appearanceRating}</span><small>${entry.description}</small></button>`).join("")}</div>
-    <div class="player-input-panel"><label for="playerNameInput">내 이름 <small>최대 3글자</small></label><input id="playerNameInput" maxlength="3" value="${escapeHtml(onboarding.playerName)}" placeholder="이름" autocomplete="off"><div class="roll-row"><div><small>MY CAREER</small><b id="playerJobRoll">${onboarding.playerJob?escapeHtml(onboarding.playerJob.name):"버튼을 눌러 직업 선택"}</b></div><button id="rollPlayerJob" type="button">내 직업 랜덤 선택</button></div></div>
+    <div class="player-input-panel"><label for="playerNameInput">내 이름 <small>최대 3글자 · 한글 또는 영문</small></label><div class="player-name-roll"><input id="playerNameInput" maxlength="3" value="${escapeHtml(onboarding.playerName)}" placeholder="이름" autocomplete="off" aria-describedby="playerNameNotice"><button id="rollPlayerName" type="button">내 이름 랜덤 선택</button></div><small id="playerNameNotice" class="player-name-notice" aria-live="polite"></small><div class="roll-row"><div><small>MY CAREER</small><b id="playerJobRoll">${onboarding.playerJob?escapeHtml(onboarding.playerJob.name):"버튼을 눌러 직업 선택"}</b></div><button id="rollPlayerJob" type="button">내 직업 랜덤 선택</button></div></div>
     <button id="playerSetupNext" class="primary-button setup-next" type="button" ${onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob?"":"disabled"}>최종 결과 확인</button>`;
   document.querySelectorAll("[data-player]").forEach((button)=>button.addEventListener("click",()=>{const archetype=PLAYER_ARCHETYPES.find((entry)=>entry.id===button.dataset.player);if(archetype.premium)showPremiumConfirmation(archetype);else selectPlayerArchetype(archetype.id);}));
-  $("#playerNameInput").addEventListener("input",(event)=>{onboarding.playerName=Array.from(event.target.value.trim()).slice(0,3).join("");event.target.value=onboarding.playerName;$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);});
+  $("#playerNameInput").addEventListener("input",(event)=>{const result=sanitizePlayerNameInput(event.target.value);onboarding.playerName=result.value;event.target.value=result.value;$("#playerNameNotice").textContent=result.reason;$("#playerNameNotice").classList.toggle("warning",Boolean(result.reason));$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);});
+  $("#rollPlayerName").addEventListener("click",()=>{onboarding.playerName=getRandomPlayerName(onboarding.playerName);$("#playerNameInput").value=onboarding.playerName;$("#playerNameNotice").textContent="200개 이름 중 하나를 선택했어요.";$("#playerNameNotice").classList.remove("warning");$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);});
   $("#rollPlayerJob").addEventListener("click",(event)=>runRoll(event.currentTarget,$("#playerJobRoll"),JOBS.map((job)=>job.name),()=>{onboarding.playerJob=generateJob();$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName);return onboarding.playerJob.name;}));
   $("#playerSetupNext").addEventListener("click",renderSetupSummary);
 }
@@ -1005,7 +1007,7 @@ function dailyEvent(completedDay) { if(completedDay%5===0){ const good=Math.rand
 function openChat(mode="message") {
   if(!["message","call"].includes(mode))mode="message";
   const context=buildConversationContext(state),greeting=getContextualOpening(context).replace(`${state.partner.name}: `,"");
-  activeConversation={mode,turn:0,messages:[{speaker:"her",text:greeting}],effects:{affection:0,trust:0,conflict:0,relationshipStress:0},hostile:false};
+  activeConversation={mode,turn:0,topic:"opening",lastQuestionId:inferConversationQuestion(greeting),lastUserMessage:null,recentReplyIds:[],variantSeed:(state.day+state.phase+state.conversationHistory.length)%7,messages:[{speaker:"her",text:greeting}],effects:{affection:0,trust:0,conflict:0,relationshipStress:0},hostile:false};
   renderConversationSession();openModal();
 }
 function renderConversationSession(){
@@ -1024,12 +1026,13 @@ async function chatReply(message){
   if(analysis.level==="hostile"){
     response={...getHostileConversationResponse(state),source:"safety"};state.conversationSafety??={hostileCount:0,lastHostileDay:null};state.conversationSafety.hostileCount=response.count;state.conversationSafety.lastHostileDay=state.day;activeConversation.hostile=true;
   }else{
-    const endpoint=document.querySelector('meta[name="today-day-one-ai-endpoint"]')?.content;response=await requestGirlfriendReply({endpoint,context:{...buildConversationContext(state),sessionTurn:activeConversation.turn,mode:activeConversation.mode},message});
+    const endpoint=document.querySelector('meta[name="today-day-one-ai-endpoint"]')?.content;response=await requestGirlfriendReply({endpoint,context:{...buildConversationContext(state),sessionTurn:activeConversation.turn,mode:activeConversation.mode,sessionState:{topic:activeConversation.topic,lastQuestionId:activeConversation.lastQuestionId,lastUserMessage:activeConversation.lastUserMessage,recentReplyIds:[...activeConversation.recentReplyIds],turn:activeConversation.turn,variantSeed:activeConversation.variantSeed}},message});
   }
   if(!response){renderConversationSession();return;}
   const scale=activeConversation.turn>=7?0:activeConversation.turn>=4?.5:1,effects=Object.fromEntries(Object.entries(response.effects??{}).map(([key,value])=>[key,Math.round(value*(analysis.level==="hostile"?1:scale))]));
   applyEffects(state,effects);for(const key of Object.keys(activeConversation.effects))activeConversation.effects[key]+=effects[key]??0;
   activeConversation.messages.push({speaker:"me",text:message},{speaker:"her",text:response.text});activeConversation.turn+=1;
+  activeConversation.lastUserMessage=message;activeConversation.topic=response.topic??activeConversation.topic;activeConversation.lastQuestionId=inferConversationQuestion(response.text);const replyId=response.replyId??response.id;if(replyId){activeConversation.recentReplyIds.push(replyId);activeConversation.recentReplyIds=activeConversation.recentReplyIds.slice(-12);}
   recordConversationTurn(state,message,response.text,{mode:activeConversation.mode,tone:analysis.level});
   state.logs.push({time:`DAY ${state.day} · ${activeConversation.mode==='call'?'CALL':'MESSAGE'}`,text:analysis.level==='hostile'?`${state.partner.name}에게 공격적인 말을 해 관계가 크게 나빠졌다.`:`${state.partner.name}와 대화 · ${message.slice(0,32)}`});
   SaveManager.save(state);render();
