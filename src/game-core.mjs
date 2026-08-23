@@ -125,7 +125,7 @@ export function advanceTime(state) {
     state.day += 1;
     state.energy = clamp(state.energy + 18);
     state.stress = clamp(state.stress - 5);
-    state.fatigue = clamp(state.fatigue - 12);
+    state.fatigue = clamp(state.fatigue - 18);
   }
   if (state.day > MAX_DAY) state.ended = true;
   state.selected = null;

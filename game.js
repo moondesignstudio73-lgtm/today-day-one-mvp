@@ -1,5 +1,5 @@
-import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=7";
-import { SaveManager } from "./src/save-manager.mjs?v=10";
+import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=8";
+import { SaveManager } from "./src/save-manager.mjs?v=11";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=7";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=5";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=5";
@@ -8,7 +8,7 @@ import { EventRuntimeManager } from "./src/event-runtime-manager.mjs?v=4";
 import { rollMicroEvents } from "./src/micro-event-manager.mjs?v=4";
 import { auditEventSystems } from "./src/event-audit.mjs?v=4";
 import { EVENT_DEFINITIONS } from "./src/events-data.mjs?v=4";
-import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=5";
+import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=6";
 import { getActionAvailability, getWeekdayName, isActionVisible, isWeekend } from "./src/action-manager.mjs?v=5";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
@@ -98,6 +98,7 @@ function closeModal() {
   modal.classList.add("hidden");
   modal.classList.remove("phone-menu-active");
   modal.classList.remove("world-event-active");
+  modal.classList.remove("transport-modal-active");
   if (modalReturnFocus?.isConnected) modalReturnFocus.focus();
   modalReturnFocus = null;
   if (state && !state.ended && !state.breakup) { if(state.phase===3)renderNightHome();else sound.playScene(phases[state.phase].key,state.day); }
@@ -740,11 +741,12 @@ function getWorldLocationName(location) {
 function finishWorldMove(option,result,cost=option.cost,label=option.name) {
   const payment=payForTransport(option,cost,option.minutes,label);
   if(!payment.ok){toast(payment.reason);return false;}
-  const nearby=getNearbyLocation(state.world);
+  const nearby=getNearbyLocation(state.world),arrived=getNearbyLocation(state.world,.25);
   const discovered=nearby&&!state.world.discoveredLocations.includes(nearby.id);
   if(discovered)state.world.discoveredLocations.push(nearby.id);
   SaveManager.save(state);renderWorldMap();
   toast(`${option.name} · ${result.movedSteps??"바로"}칸 · ${option.minutes}분${cost?` · ${money(cost)}`:" · 무료"}${discovered?` · ${nearby.name} 발견`:""}`);
+  if(arrived)setTimeout(()=>openWorldLocation(arrived.id),180);
   return true;
 }
 
@@ -764,10 +766,25 @@ function handleWorldMapKeydown(event) { const moves={ArrowUp:[0,-1],w:[0,-1],W:[
 
 function handleWorldMoveClick(event) { const button=event.target.closest("[data-world-move]");if(!button)return;const [dx,dy]=button.dataset.worldMove.split(",").map(Number);moveOnWorldMap(dx,dy); }
 
+function handleWorldMapPointer(event) {
+  if(event.pointerType==="mouse"&&event.button!==0)return;
+  if(!$("#modal").classList.contains("hidden"))return;
+  const canvas=event.currentTarget,rect=canvas.getBoundingClientRect();
+  const targetX=Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width));
+  const targetY=Math.max(0,Math.min(1,(event.clientY-rect.top)/rect.height));
+  const map=WORLD_MAPS[state.world.districtId]??WORLD_MAPS.dongsu;
+  const playerX=state.world.x/(map.width-1),playerY=state.world.y/(map.height-1);
+  const deltaX=targetX-playerX,deltaY=targetY-playerY;
+  if(Math.abs(deltaX)<.025&&Math.abs(deltaY)<.035)return;
+  event.preventDefault();
+  if(Math.abs(deltaX)>=Math.abs(deltaY))moveOnWorldMap(deltaX>0?1:-1,0);
+  else moveOnWorldMap(0,deltaY>0?1:-1);
+}
+
 function openTransportSelector(required=false) {
   const current=state.world.transport;
   const cards=TRANSPORT_OPTIONS.map(option=>{const locked=option.requiresVehicle&&!state.world.ownedVehicleId;return `<button class="transport-card ${current===option.id?"selected":""}" data-world-transport="${option.id}" type="button" ${locked?"disabled":""}><span>${option.icon}</span><b>${escapeHtml(option.name)}</b><small>${escapeHtml(option.description)}</small><em>${locked?"자동차 미보유":option.cost?`${money(option.cost)} / 1회`:"무료"}</em></button>`;}).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">MOVE STYLE</span><h2>이동수단 선택</h2><p>${required?"지도에서 이동하기 전에 이용할 수단을 선택해 주세요.":"이동수단에 따라 지도 위 캐릭터 표시가 달라집니다."}</p><div class="transport-grid">${cards}</div>`;openModal();
+  $("#modalContent").innerHTML=`<span class="eyebrow">MOVE STYLE</span><h2>이동수단 선택</h2><p>${required?"지도에서 이동하기 전에 이용할 수단을 선택해 주세요.":"이동수단에 따라 지도 위 캐릭터 표시가 달라집니다."}</p><div class="transport-grid">${cards}</div>`;$("#modal").classList.add("transport-modal-active");openModal();
   document.querySelectorAll("[data-world-transport]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{if(button.dataset.worldTransport==="subway"&&getNearbyLocation(state.world)?.category!=="transport"){toast("지하철은 역 가까이에서 이용할 수 있어요.");return;}const result=selectWorldTransport(state.world,button.dataset.worldTransport);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);closeModal();renderWorldMap();toast(`${result.option.name} 이동으로 변경했습니다.`);if(result.option.fastTravel)setTimeout(()=>openTransportDestination(result.option),0);}));
 }
 
@@ -778,14 +795,14 @@ function openTransportDestination(option) {
     ? Object.values(WORLD_MAPS).filter(map=>map.cityId===currentMap.cityId).flatMap(map=>map.locations.filter(location=>location.category==="transport").map(location=>({...location,mapId:map.id,mapName:map.name})))
     : currentMap.locations.filter(location=>location.category!=="home").map(location=>({...location,mapId:currentMap.id,mapName:currentMap.name}));
   const cards=destinations.map(destination=>{const distance=destination.mapId===state.world.districtId?Math.abs(destination.x-state.world.x)+Math.abs(destination.y-state.world.y):8;const fare=option.id==="taxi"?option.cost+distance*1200:option.cost;return `<button class="transport-card" data-transport-destination="${escapeHtml(destination.id)}" data-map-id="${escapeHtml(destination.mapId)}" data-fare="${fare}" type="button"><span>${destination.icon}</span><b>${escapeHtml(destination.name)}</b><small>${escapeHtml(destination.mapName)} · ${option.minutes}분</small><em>${money(fare)}</em></button>`;}).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">${escapeHtml(option.name.toUpperCase())} DESTINATION</span><h2>${option.icon} 목적지 선택</h2><p>${option.id==="subway"?"이동할 역을 선택하세요. 역에서 역으로 빠르게 이동합니다.":"원하는 장소를 선택하세요. 거리에 따라 요금이 달라집니다."}</p><div class="transport-grid">${cards}</div>`;openModal();
+  $("#modalContent").innerHTML=`<span class="eyebrow">${escapeHtml(option.name.toUpperCase())} DESTINATION</span><h2>${option.icon} 목적지 선택</h2><p>${option.id==="subway"?"이동할 역을 선택하세요. 역에서 역으로 빠르게 이동합니다.":"원하는 장소를 선택하세요. 거리에 따라 요금이 달라집니다."}</p><div class="transport-grid">${cards}</div>`;$("#modal").classList.add("transport-modal-active");openModal();
   document.querySelectorAll("[data-transport-destination]").forEach(button=>button.addEventListener("click",()=>{
     const map=WORLD_MAPS[button.dataset.mapId],destination=map?.locations.find(item=>item.id===button.dataset.transportDestination);if(!destination)return;
     const fare=Number(button.dataset.fare);const payment=payForTransport(option,fare,option.minutes,`${option.name} · ${destination.name}`);if(!payment.ok){toast(payment.reason);return;}
     state.world.cityId=map.cityId;state.world.districtId=map.id;state.world.x=destination.x;state.world.y=destination.y;
     if(!state.world.discoveredLocations.includes(destination.id))state.world.discoveredLocations.push(destination.id);
     state.world.travelHistory.push({cityId:map.cityId,districtId:map.id,transport:option.id,destinationId:destination.id,day:state.day});
-    SaveManager.save(state);closeModal();renderWorldMap();toast(`${option.name} · ${destination.name} 도착 · ${option.minutes}분 · ${money(fare)}`);
+    SaveManager.save(state);closeModal();renderWorldMap();toast(`${option.name} · ${destination.name} 도착 · ${option.minutes}분 · ${money(fare)}`);setTimeout(()=>openWorldLocation(destination.id),180);
   }));
 }
 
@@ -824,11 +841,12 @@ function openWorldEventLayer(map,location){
   document.querySelectorAll("[data-world-event-choice]").forEach(button=>button.addEventListener("click",()=>{const choice=choices.find(item=>item.id===button.dataset.worldEventChoice);if(!choice)return;let effects=choice.effects??{},response=choice.response??choice.memory,mbtiLabel="";if(haeunEvent){const result=resolveSituationEventChoice(state,haeunEvent,choice.id);if(!result)return;effects=result.effects;response=choice.response??choice.memory;mbtiLabel=result.mbtiAdjustment?.label??"";}else applyEffects(state,effects);recordMemory(state,{type:"map-event",summary:`${getWorldLocationName(location)}: ${choice.label}`,importance:3,tags:["지도",map.id,location.id,choice.id]});state.logs.push({time:`DAY ${state.day} · MAP EVENT`,text:`${getWorldLocationName(location)} — ${choice.label}`});SaveManager.save(state);showWorldEventResult({map,image,title:getWorldLocationName(location),response,effects,mbtiLabel});}));
 }
 
-function openWorldLocation() {
-  const id=$("#enterLocationButton").dataset.locationId;if(!id)return;const map=WORLD_MAPS[state.world.districtId];const location=map.locations.find(item=>item.id===id);if(!location)return;
-  if(location.category==="home"){returnToNightHome();return;}
-  $("#modalContent").innerHTML=`<span class="eyebrow">${escapeHtml(map.name)} · ${escapeHtml(location.category.toUpperCase())}</span><h2>${location.icon} ${escapeHtml(getWorldLocationName(location))}</h2><p>${escapeHtml(location.description)}</p><div class="venue-menu-preview"><small>이곳에서 할 수 있는 일</small><strong>${escapeHtml(getVenueMenu(location))}</strong></div><button id="visitLocationConfirm" class="primary-button" type="button">둘러보기 · 20분</button>`;openModal();
-  $("#visitLocationConfirm").addEventListener("click",()=>{const result=spendNightTime(state,20,`${location.name} 방문`);if(!result.ok){toast(result.reason);return;}discoverLocation(state.world,location.id,state.day);state.logs.push({time:`DAY ${state.day} · MAP`,text:`${map.name}의 ${location.name}에 방문했다.`});SaveManager.save(state);openWorldEventLayer(map,location);});
+function openWorldLocation(locationId) {
+  const id=locationId??$("#enterLocationButton").dataset.locationId;if(!id)return;const map=WORLD_MAPS[state.world.districtId];const location=map.locations.find(item=>item.id===id);if(!location)return;
+  const locationName=getWorldLocationName(location),home=location.category==="home";
+  $("#modalContent").innerHTML=`<span class="eyebrow">${escapeHtml(map.name)} · ARRIVAL</span><h2>${location.icon} ${escapeHtml(locationName)}</h2><p>${escapeHtml(location.description)}</p>${home?"":`<div class="venue-menu-preview"><small>이곳에서 할 수 있는 일</small><strong>${escapeHtml(getVenueMenu(location))}</strong></div>`}<p class="venue-visit-question">${escapeHtml(locationName)}에 방문하시겠습니까?</p><div class="venue-confirm-actions"><button id="visitLocationCancel" type="button">아니오</button><button id="visitLocationConfirm" class="primary-button" type="button">예${home?" · 귀가하기":" · 방문하기"}</button></div>`;openModal();
+  $("#visitLocationCancel").addEventListener("click",closeModal);
+  $("#visitLocationConfirm").addEventListener("click",()=>{if(home){closeModal();returnToNightHome();return;}const result=spendNightTime(state,20,`${location.name} 방문`);if(!result.ok){toast(result.reason);return;}discoverLocation(state.world,location.id,state.day);state.logs.push({time:`DAY ${state.day} · MAP`,text:`${map.name}의 ${location.name}에 방문했다.`});SaveManager.save(state);openWorldEventLayer(map,location);});
 }
 
 function openDailyReport() {
@@ -1133,8 +1151,9 @@ $("#nightHome").addEventListener("click",handleRoomAction);
 $("#returnHomeButton").addEventListener("click",returnToNightHome);
 $("#worldAtlasButton").addEventListener("click",()=>openWorldAtlas());
 $("#worldTransportButton").addEventListener("click",()=>openTransportSelector(false));
-$("#enterLocationButton").addEventListener("click",openWorldLocation);
+$("#enterLocationButton").addEventListener("click",()=>openWorldLocation());
 $("#worldMapCanvas").addEventListener("keydown",handleWorldMapKeydown);
+$("#worldMapCanvas").addEventListener("pointerup",handleWorldMapPointer);
 $(".world-dpad").addEventListener("click",handleWorldMoveClick);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);

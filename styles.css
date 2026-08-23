@@ -170,7 +170,7 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 .action-result-media video{display:block;width:100%;height:100%;object-fit:cover}
 .action-result-media [hidden]{display:none!important}
 .album-tabs{display:flex;gap:8px;margin:18px 0}.album-tabs button,.album-back{padding:10px 14px;border:1px solid #dfd4df;border-radius:999px;background:#fff;color:#6f6472;font-weight:700;cursor:pointer}.album-tabs button.active{border-color:#c04d76;background:#c04d76;color:#fff}.album-panel{align-items:start}.album-card{padding:0;border:0;text-align:left;cursor:pointer}.video-album-card video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#16131d}.album-empty{grid-column:1/-1;padding:32px;border:1px dashed #d9ccd8;border-radius:18px;color:#8c7f8d;text-align:center}.album-photo-viewer{display:grid;gap:12px;margin:16px 0 0}.album-photo-viewer img{display:block;max-width:100%;max-height:70vh;margin:auto;border-radius:18px}.album-photo-viewer figcaption{text-align:center;font-weight:700}.player-profile-card{display:grid;grid-template-columns:92px minmax(0,1fr);align-items:center;gap:14px;margin:-4px 0 20px;padding:12px;border-radius:18px;background:linear-gradient(145deg,#f6eef4,#eee9f5)}.player-profile-card img{display:block;width:92px;height:126px;border-radius:14px;background:#e9e2eb;object-fit:cover;object-position:50% 8%}.player-profile-card div{display:grid;gap:5px;min-width:0}.player-profile-card small{color:#a64b6c;font:700 9px Outfit;letter-spacing:.14em}.player-profile-card strong{overflow:hidden;font-size:26px;line-height:1.05;text-overflow:ellipsis}.player-profile-card b{overflow:hidden;color:#4f4652;font-size:16px;line-height:1.3;text-overflow:ellipsis}.sound-button{font-size:16px;line-height:1}.partner-head{display:block}.partner-details{min-width:0;padding:15px 2px 0}.partner-head h2{margin:5px 0 2px;font-size:29px}.partner-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}.partner-head #partnerTrait{margin-top:11px;padding-top:10px;border-top:1px solid var(--line);color:#66596a;font-weight:600}
-@media(min-width:1101px){.ui-classic-mode .game-screen.classic-mode{align-items:stretch}.ui-classic-mode .classic-mode>.profile-panel,.ui-classic-mode .classic-mode>.life-panel{position:relative;top:auto;align-self:stretch;box-sizing:border-box}.ui-classic-mode .classic-mode>.profile-panel{display:flex;flex-direction:column}.ui-classic-mode .classic-mode>.profile-panel .chat-button{margin-top:auto}.ui-classic-mode .classic-mode>.life-panel{display:flex;flex-direction:column}.ui-classic-mode .classic-mode>.life-panel .mini-tip{margin-top:auto}.ui-classic-mode .classic-mode>.play-panel{display:flex;flex-direction:column}.ui-classic-mode .classic-mode .timeline{flex:1;margin-top:14px;padding-top:10px}}
+@media(min-width:1101px){.ui-classic-mode .game-screen.classic-mode{align-items:stretch}.ui-classic-mode .classic-mode>.profile-panel,.ui-classic-mode .classic-mode>.life-panel{position:relative;top:auto;align-self:stretch;box-sizing:border-box}.ui-classic-mode .classic-mode>.profile-panel{display:flex;flex-direction:column}.ui-classic-mode .classic-mode>.profile-panel .trait-list{margin-bottom:18px}.ui-classic-mode .classic-mode>.profile-panel .chat-button{margin-top:auto}.ui-classic-mode .classic-mode>.life-panel{display:flex;flex-direction:column}.ui-classic-mode .classic-mode>.life-panel .mini-tip{margin-top:auto}.ui-classic-mode .classic-mode>.play-panel{display:flex;flex-direction:column}.ui-classic-mode .classic-mode .timeline{flex:1;margin-top:14px;padding-top:10px}}
 
 /* Local RPG prototype: room variants and district exploration */
 .night-room-scene.has-room-background{background-color:#15131e;background-repeat:no-repeat}.night-room-scene.has-room-background::before{height:100%;background:linear-gradient(180deg,#06081408 48%,#0808118c 100%);clip-path:none}.has-room-background .room-window,.has-room-background .room-floor{display:none}.room-exit{left:5%;bottom:8%;background:#214038e8}.room-exit:hover,.room-exit:focus-visible{background:#315d4fe8}.world-map{position:relative;display:grid;grid-template-rows:auto minmax(420px,1fr) auto;min-height:calc(100dvh - 116px);overflow:hidden;border:1px solid #ffffff2b;border-radius:30px;background:#17201d;color:#fff;box-shadow:0 32px 90px #0c0d1d4f}.world-map-header{z-index:5;display:grid;grid-template-columns:150px 1fr 150px;align-items:center;gap:20px;padding:20px 24px;background:#101713e8;backdrop-filter:blur(14px)}.world-map-header>button{padding:11px 14px;border:1px solid #ffffff26;border-radius:13px;background:#ffffff0d;color:#fff;cursor:pointer}.world-map-header span{color:#a8dcb9;font:700 9px Outfit;letter-spacing:.18em}.world-map-header h2{margin:4px 0 2px;font-size:26px}.world-map-header p{margin:0;color:#b9c6bd;font-size:10px}.world-clock{text-align:right}.world-clock b,.world-clock small{display:block}.world-clock b{font:600 21px Outfit}.world-clock small{color:#aebbb2;font-size:9px}.world-map-canvas{position:relative;min-height:430px;overflow:hidden;outline:0;background-color:#729061;background-image:linear-gradient(30deg,#ffffff10 12%,transparent 12.5%,transparent 87%,#ffffff10 87.5%),linear-gradient(150deg,#ffffff10 12%,transparent 12.5%,transparent 87%,#ffffff10 87.5%);background-size:42px 72px}.world-map-canvas[data-theme="premium"]{background-color:#566c65;background-image:radial-gradient(circle at 18% 24%,#75a8b8 0 10%,transparent 10.5%),linear-gradient(45deg,#ffffff0c 25%,transparent 25% 75%,#ffffff0c 75%)}.world-road{position:absolute;z-index:0;border:2px solid #ddd0b4;background:#b4a384;box-shadow:inset 0 0 0 8px #c8b99e}.road-horizontal{top:44%;right:-5%;left:-5%;height:82px;transform:rotate(-5deg)}.road-vertical{top:-5%;bottom:-5%;left:48%;width:76px;transform:rotate(4deg)}.world-location-layer{position:absolute;inset:36px}.world-location{position:absolute;z-index:2;display:grid;justify-items:center;min-width:72px;transform:translate(-50%,-50%);left:var(--map-x);top:var(--map-y);padding:8px 9px;border:1px solid #ffffff3d;border-radius:13px;background:#17221ee8;color:#fff;box-shadow:0 7px 18px #18211b66;cursor:default}.world-location.discovered{border-color:#d8e7b8;background:#273b31ed}.world-location>span{font-size:22px}.world-location>b{margin-top:2px;font-size:9px;white-space:nowrap}.world-location>small{color:#aebdaf;font-size:7px;text-transform:uppercase}.world-player{position:absolute;z-index:4;display:grid;justify-items:center;left:calc(36px + (100% - 72px)*var(--map-x)/100);top:calc(36px + (100% - 72px)*var(--map-y)/100);transform:translate(-50%,-50%);transition:left .16s ease,top .16s ease;filter:drop-shadow(0 7px 6px #0d1511a8)}.world-player>span{display:grid;place-items:center;width:36px;height:42px;border:3px solid #fff;border-radius:50% 50% 44% 44%;background:#e85e83;color:#fff;font-size:14px;animation:world-player-idle 1.2s ease-in-out infinite alternate}.world-player>b{margin-top:3px;padding:3px 7px;border-radius:99px;background:#101713e8;font-size:8px}.world-map-footer{z-index:5;display:grid;grid-template-columns:1fr 150px auto;align-items:center;gap:16px;padding:16px 22px;background:#101713f2}.world-map-footer>div:first-child{display:grid;gap:3px}.world-map-footer>div:first-child b{font-size:12px}.world-map-footer>div:first-child span{color:#acb8af;font-size:9px}.world-map-footer>.primary-button{width:150px;margin:0;padding:12px}.world-dpad{display:grid;grid-template-columns:repeat(4,38px);gap:4px}.world-dpad button{width:38px;height:38px;border:1px solid #ffffff27;border-radius:10px;background:#ffffff12;color:#fff;cursor:pointer}.venue-menu-preview{display:grid;gap:6px;margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:14px;background:#faf7f9}.venue-menu-preview small{color:var(--muted);font-size:9px}.venue-menu-preview strong{font-size:12px}@keyframes world-player-idle{to{transform:translateY(-3px)}}
@@ -416,3 +416,79 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 .night-room-scene .room-object>i{top:-7px;right:-7px}
 .night-room-scene .room-bed{padding:14px 16px}
 @media(max-width:760px){.night-room-scene .room-object{grid-template-columns:30px minmax(0,1fr);width:138px;min-height:68px;padding:10px 11px;column-gap:8px}.night-room-scene .room-object .room-icon{width:30px;height:30px;border-radius:7px;font-size:22px}.night-room-scene .room-object b{font-size:13px}.night-room-scene .room-object small{display:none}.night-room-scene .room-bed{padding:10px 11px}}
+
+/* NIGHT ROOM · spacing, navigation and readability refinement */
+.ui-night-mode .topbar{
+  background:transparent;
+  border-color:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+.night-room-scene{inset:104px 0 55px}
+.night-room-scene .room-phone{left:24%;bottom:14%}
+.night-room-scene .room-pc{left:11%;bottom:33%}
+.night-room-scene .room-wardrobe{right:6%;bottom:27%}
+.night-room-scene .room-report{left:46%;top:8%}
+.night-room-scene .room-bed{right:28%;bottom:9%}
+.night-room-scene .room-exit{left:5%;bottom:10%}
+.night-home-tip{
+  right:50%;
+  bottom:10px;
+  left:auto;
+  width:max-content;
+  max-width:calc(100% - 32px);
+  padding:7px 13px;
+  border:1px solid #ffffff1f;
+  border-radius:999px;
+  background:#171421c7;
+  color:#e7dfe9;
+  font-size:14px;
+  line-height:1.45;
+  transform:translateX(50%);
+  box-shadow:0 7px 22px #08071142;
+  backdrop-filter:blur(8px);
+}
+
+/* Modal layers share a readable minimum type scale. */
+.modal-card>p,.modal-card #modalContent>p{font-size:15px;line-height:1.7}
+.modal-card .message{font-size:14px;line-height:1.6}
+.modal-card .phone-app b,.modal-card .report-row span,.modal-card .report-row b,.modal-card .report-ledger li{font-size:12px}
+.modal-card .phone-app small,.modal-card .report-row em,.modal-card .sns-post small,.modal-card .sns-hint{font-size:11px;line-height:1.45}
+
+.modal.transport-modal-active .modal-card{width:min(820px,94vw);padding:36px 38px 38px}
+.transport-modal-active .transport-grid{gap:14px;margin-top:24px}
+.transport-modal-active .transport-card{gap:8px;min-height:190px;padding:21px 12px;border-radius:19px}
+.transport-modal-active .transport-card span{font-size:42px;line-height:1.1}
+.transport-modal-active .transport-card b{font-size:16px;line-height:1.3}
+.transport-modal-active .transport-card small{min-height:48px;font-size:12px;line-height:1.5}
+.transport-modal-active .transport-card em{font-size:12px;line-height:1.3}
+.ui-night-mode .world-map{min-height:calc(100dvh - 136px);margin:10px 0}
+.world-map-canvas{touch-action:manipulation;cursor:pointer}
+.world-map-canvas .world-location{cursor:pointer}
+.venue-visit-question{margin:20px 0 10px;color:var(--ink)!important;font-size:17px!important;font-weight:700;text-align:center}
+.venue-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.venue-confirm-actions button{margin:0;padding:14px 16px;border:1px solid var(--line);border-radius:13px;background:#f5f1f4;color:var(--ink);font-weight:700;cursor:pointer}
+.venue-confirm-actions .primary-button{border-color:transparent;background:var(--ink);color:#fff;box-shadow:none}
+
+@media(max-width:760px){
+  .night-room-scene{inset:88px 0 48px}
+  .night-room-scene .room-phone{left:20%;bottom:14%}
+  .night-room-scene .room-pc{left:5%;bottom:33%}
+  .night-room-scene .room-wardrobe{right:4%;bottom:26%}
+  .night-room-scene .room-report{left:43%;top:7%}
+  .night-room-scene .room-bed{right:25%;bottom:8%}
+  .night-room-scene .room-exit{left:4%;bottom:10%}
+  .night-home-tip{bottom:8px;padding:6px 10px;font-size:13px;white-space:normal}
+  .modal-card>p,.modal-card #modalContent>p{font-size:14px}
+  .modal.transport-modal-active .modal-card{width:calc(100vw - 20px);padding:28px 20px}
+  .transport-modal-active .transport-grid{gap:10px;margin-top:20px}
+  .transport-modal-active .transport-card{min-height:168px;padding:17px 10px}
+  .transport-modal-active .transport-card span{font-size:36px}
+  .transport-modal-active .transport-card b{font-size:15px}
+  .transport-modal-active .transport-card small{min-height:42px;font-size:11px}
+  .transport-modal-active .transport-card em{font-size:11px}
+  .ui-night-mode .world-map{min-height:calc(100dvh - 76px);margin:10px 0}
+  .world-map-footer{position:relative}
+  .world-dpad{justify-self:end}
+  .venue-visit-question{font-size:16px!important}
+}
