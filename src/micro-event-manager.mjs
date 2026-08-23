@@ -1,6 +1,8 @@
 import { applyEffects } from "./game-core.mjs";
 import { recordMemory } from "./memory-manager.mjs";
 
+export const MICRO_EVENT_PROBABILITY=.24;
+
 export const MICRO_EVENTS=[
   {id:"micro-good-morning",category:"message",text:"연인에게서 ‘오늘도 잘 다녀와’라는 짧은 메시지가 왔다.",phases:[0],cooldown:2,effects:{affection:1}},
   {id:"micro-weather-rain",category:"weather",text:"창문에 빗방울이 맺히며 오늘의 공기가 조금 차분해졌다.",phases:[0,1],cooldown:5,effects:{stress:-1}},
@@ -13,5 +15,6 @@ export const MICRO_EVENTS=[
 ];
 
 export function getEligibleMicroEvents(state,events=MICRO_EVENTS){const history=state.microEventHistory??[];return events.filter(event=>event.phases.includes(state.phase)&&!history.some(record=>record.id===event.id&&state.day-record.day<event.cooldown));}
-export function rollMicroEvents(state,random=Math.random,events=MICRO_EVENTS,maxPerPhase=2){state.microEventHistory??=[];const eligible=getEligibleMicroEvents(state,events);const selected=[];for(const event of eligible){if(selected.length>=maxPerPhase)break;if(random()>.24)continue;applyEffects(state,event.effects);const record={id:event.id,day:state.day,phase:state.phase,category:event.category,text:event.text};state.microEventHistory.push(record);selected.push(record);if(["message","call","npc"].includes(event.category))recordMemory(state,{type:"micro-event",summary:event.text,importance:1,tags:["MICRO",event.category]});}return selected;}
+export function getMicroEventDiagnostics(state,events=MICRO_EVENTS){const history=state.microEventHistory??[];return events.map(event=>{const last=[...history].reverse().find(record=>record.id===event.id);const cooldownRemaining=last?Math.max(0,event.cooldown-(state.day-last.day)):0;const phaseEligible=event.phases.includes(state.phase);return {id:event.id,title:event.text,category:event.category,probability:MICRO_EVENT_PROBABILITY,cooldownRemaining,phaseEligible,eligible:phaseEligible&&!cooldownRemaining,phases:event.phases};});}
+export function rollMicroEvents(state,random=Math.random,events=MICRO_EVENTS,maxPerPhase=2){state.microEventHistory??=[];const eligible=getEligibleMicroEvents(state,events);const selected=[];for(const event of eligible){if(selected.length>=maxPerPhase)break;if(random()>MICRO_EVENT_PROBABILITY)continue;applyEffects(state,event.effects);const record={id:event.id,day:state.day,phase:state.phase,category:event.category,text:event.text};state.microEventHistory.push(record);selected.push(record);if(["message","call","npc"].includes(event.category))recordMemory(state,{type:"micro-event",summary:event.text,importance:1,tags:["MICRO",event.category]});}return selected;}
 export function validateMicroEvents(events=MICRO_EVENTS){const ids=new Set(events.map(event=>event.id));return ids.size===events.length&&events.every(event=>event.id&&event.text&&event.category&&event.phases.length&&event.cooldown>=1&&Object.values(event.effects).every(Number.isFinite));}

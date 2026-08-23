@@ -160,7 +160,7 @@ const BASE_EVENT_DEFINITIONS = [
   }
 ];
 
-export const EVENT_DEFINITIONS=[...BASE_EVENT_DEFINITIONS.map(event=>({...event,kind:"micro"})),...SITUATION_EVENTS.map(event=>({...event,kind:"story"}))];
+export const EVENT_DEFINITIONS=[...BASE_EVENT_DEFINITIONS.map(event=>({...event,kind:"random"})),...SITUATION_EVENTS.map(event=>({...event,kind:"story"}))];
 
 const VALID_OPERATORS = new Set([">=", "<=", ">", "<", "=="]);
 

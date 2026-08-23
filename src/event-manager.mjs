@@ -64,7 +64,7 @@ export function evaluateEventEligibility(state,event){
   const recentCategory=history.find(record=>record.category===event.category&&state.day-record.day<CATEGORY_COOLDOWN_DAYS);if(recentCategory)blocks.push("CATEGORY_COOLDOWN");
   const recentHigh=history.find(record=>record.tensionLevel==="high"&&state.day-record.day<=2);if(event.tensionLevel==="high"&&recentHigh)blocks.push("TENSION_RECOVERY");
   const director=state.storyDirector?.nextDayPlan?.eventWeights?.[event.id];if(director?.multiplier)reasons.push(`Director ×${director.multiplier}`);
-  return {eligible:blocks.length===0,reasons,blocks,cooldownRemaining,relationshipState:relation,phaseTime,finalWeight:Math.round(getEventProbability(state,event)*100*(director?.multiplier??1))};
+  return {eligible:blocks.length===0,reasons,blocks,cooldownRemaining,relationshipState:relation,phaseTime,finalWeight:Math.round(getEventProbability(state,event)*100)};
 }
 
 export function getEligibleEvents(state, definitions = EVENT_DEFINITIONS) {
@@ -77,14 +77,17 @@ export function getEventDiagnostics(state, definitions = EVENT_DEFINITIONS) {
   const eventsToday = history.filter(entry => entry.day === state.day).length;
   const dailyLimitReached = eventsToday >= MAX_EVENTS_PER_DAY;
   return definitions.map(event => {
-    const evaluation=evaluateEventEligibility(state,event);const conditionsMet=evaluation.eligible;
+    const evaluation=evaluateEventEligibility(state,event);const conditionsMet=meetsConditions(state,event.conditions);
     const cooldownRemaining=evaluation.cooldownRemaining;
+    const probability=getEventProbability(state,event);
     return {
       id: event.id,
       title: event.title,
+      kind:event.kind??"random",
       conditionsMet,
       cooldownRemaining,
-      probability: getEventProbability(state, event),
+      probability,
+      effectiveProbability:evaluation.eligible&&!dailyLimitReached?probability:0,
       priority: event.priority,
       dailyLimitReached,
       eligible: evaluation.eligible && !dailyLimitReached,

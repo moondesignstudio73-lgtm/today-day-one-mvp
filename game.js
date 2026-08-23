@@ -1,13 +1,13 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=8";
 import { SaveManager } from "./src/save-manager.mjs?v=11";
-import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=7";
-import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=5";
+import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
+import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=6";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=5";
 import { resolveSituationEventChoice } from "./src/situation-event-manager.mjs?v=4";
 import { EventRuntimeManager } from "./src/event-runtime-manager.mjs?v=4";
-import { rollMicroEvents } from "./src/micro-event-manager.mjs?v=4";
+import { getMicroEventDiagnostics, rollMicroEvents } from "./src/micro-event-manager.mjs?v=5";
 import { auditEventSystems } from "./src/event-audit.mjs?v=4";
-import { EVENT_DEFINITIONS } from "./src/events-data.mjs?v=4";
+import { EVENT_DEFINITIONS } from "./src/events-data.mjs?v=5";
 import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=6";
 import { getActionAvailability, getWeekdayName, isActionVisible, isWeekend } from "./src/action-manager.mjs?v=5";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
@@ -30,7 +30,7 @@ import { SoundManager } from "./src/sound-manager.mjs?v=5";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
-import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=7";
+import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=8";
 import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=9";
 import { getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=5";
 import { STORY_SCENES } from "./src/story-data.mjs";
@@ -38,7 +38,7 @@ import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, g
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
-import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=12";
+import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=13";
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
@@ -516,7 +516,7 @@ function renderGirlfriendSetup() {
   const candidates = HEROINE_PROFILES.slice(0,3);
   $("#onboardingContent").innerHTML = `
     <header class="setup-heading"><span>GIRLFRIEND SELECT</span><h1>여자친구 캐릭터 선택</h1><p>보라색 머리 캐릭터를 선택한 뒤 MBTI와 직업을 확인하세요. 이름은 그대로 유지됩니다.</p></header>
-    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>`<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${getGirlfriendVisual().previewImage}?v=6" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`).join("")}</div>
+    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>`<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${profile.referenceImage}?v=7" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`).join("")}</div>
     <div class="roll-panel ${onboarding.partner?"":"locked"}">
       <div class="roll-row"><div><small>MBTI</small><b id="girlfriendTraitRoll">${onboarding.girlfriendTraitsReady?escapeHtml(onboarding.partner.mbti):"버튼을 눌러 MBTI 선택"}</b></div><button id="rollGirlfriendTraits" type="button" ${onboarding.partner?"":"disabled"}>MBTI 랜덤 선택</button></div>
       <div class="roll-row"><div><small>CAREER</small><b id="girlfriendJobRoll">${onboarding.girlfriendJobReady?escapeHtml(onboarding.partner.career.name):"여자친구의 직업"}</b></div><button id="rollGirlfriendJob" type="button" ${onboarding.partner?"":"disabled"}>직업 랜덤 선택</button></div>
@@ -617,7 +617,7 @@ function render() {
   $("#phaseLabel").textContent = phase.label;
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
   typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerMbti").textContent = p.mbti ?? "----"; $("#partnerJob").textContent = p.career?.name ?? p.job; $("#partnerTrait").textContent = `성향 · ${p.archetype}`;
-  $("#partnerAvatar").src = `${getGirlfriendVisual(p.visualId).previewImage}?v=6`;
+  $("#partnerAvatar").src = `${p.referenceImage ?? getGirlfriendVisual(p.visualId).previewImage}?v=7`;
   $("#partnerAvatar").alt = `${p.name} 프로필 사진`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));
   syncOutfitCharacterMedia(false);
@@ -1002,12 +1002,14 @@ function openDebug() {
   const keys = ["day","phase","appearanceSeed","money","health","energy","fatigue","stress","charm","fashion","confidence","work","social","affection","trust","excitement","attachment","conflict","relationshipStress"];
   const stateRows = keys.map(key=>`<div class="debug-stat"><span>${key}</span><b>${Math.round(state[key])}</b></div>`).join("");
   const personalityRows = Object.entries(state.partner.personality).map(([key,value])=>`<div class="debug-stat"><span>${key}</span><b>${value}</b></div>`).join("");
-  const eventRows = getEventDiagnostics(state).map(event=>`<div class="debug-event ${event.eligible?'':event.cooldownRemaining?'cooldown':'ineligible'}"><div><b>${event.title}</b><span>${Math.round(event.probability*100)}%</span></div><small>priority ${event.priority} · ${event.dailyLimitReached?'오늘 이벤트 한도 도달':event.cooldownRemaining?`cooldown ${event.cooldownRemaining}일`:event.conditionsMet?'발생 가능':'조건 불충족'} · ${escapeHtml((event.eligible?event.triggerReasons:event.blockedReasons).join(' / ')||'기본 조건')}</small></div>`).join("");
+  const eventDiagnostics=getEventDiagnostics(state);
+  const eventRows = eventDiagnostics.map(event=>`<div class="debug-event ${event.eligible?'':event.cooldownRemaining?'cooldown':'ineligible'}"><div><b>${event.title}</b><span>${event.eligible?`${Math.round(event.effectiveProbability*100)}%`:'0%'}</span></div><small>${event.kind==='story'?'스토리':'일반 랜덤'} · 우선순위 ${event.priority} · 기본 판정 ${Math.round(event.probability*100)}% · ${event.dailyLimitReached?'오늘 사건 한도 도달':event.cooldownRemaining?`재실행 대기 ${event.cooldownRemaining}일`:event.eligible?'실행 후보':'실행 불가'} · ${escapeHtml((event.eligible?event.triggerReasons:event.blockedReasons).join(' / ')||'기본 조건')}</small></div>`).join("");
+  const microRows=getMicroEventDiagnostics(state).map(event=>`<div class="debug-event ${event.eligible?'':'ineligible'}"><div><b>${escapeHtml(event.title)}</b><span>${event.eligible?`${Math.round(event.probability*100)}%`:'0%'}</span></div><small>짧은 이벤트 · ${escapeHtml(event.category)} · 기본 판정 ${Math.round(event.probability*100)}% · ${event.cooldownRemaining?`재실행 대기 ${event.cooldownRemaining}일`:event.phaseEligible?'현재 시간대 실행 후보':`현재 시간대 제외 · 실행 phase ${event.phases.join(', ')}`}</small></div>`).join("");
   const director=state.storyDirector,analysis=director?.analyses?.at(-1),plan=director?.nextDayPlan;
   const threadRows=Object.entries(director?.threads??{}).sort((a,b)=>b[1]-a[1]).map(([id,value])=>`<div class="debug-stat"><span>${id}</span><b>${value}</b></div>`).join("")||`<p>첫 DAY 종료 후 분석됩니다.</p>`;
   const candidateRows=(plan?.eventCandidates??[]).map(candidate=>`<div class="debug-event ${candidate.blocked?'cooldown':''}"><div><b>${escapeHtml(candidate.title)}</b><span>${candidate.blocked?(candidate.blockedReason??"BLOCKED"):`${Math.round(candidate.finalProbability*100)}%`}</span></div><small>base ${Math.round(candidate.baseProbability*100)}% · ×${candidate.multiplier} · ${candidate.modifiers.map(item=>item.label).join(" · ")||"기본 가중치"}${candidate.cooldownRemaining?` · cooldown ${candidate.cooldownRemaining}`:''}</small></div>`).join("")||`<p>예약 후보가 없습니다.</p>`;
   const unresolvedRows=(director?.unresolvedEvents??[]).map(item=>`<div class="debug-event"><div><b>${item.id}</b><span>STAGE ${item.stage}</span></div><small>${item.type} · DAY ${item.originDay} · ${item.status}</small></div>`).join("")||`<p>미해결 사건이 없습니다.</p>`;
-  $("#modalContent").innerHTML=`<span class="eyebrow">DEVELOPER MODE</span><h2>Simulation Debug</h2><p>저장에는 영향을 주지 않는 읽기 전용 상태 패널입니다.</p><div class="debug-launchers"><button id="characterManagerButton" class="primary-button" type="button">캐릭터 관리 · 히로인 ${HEROINE_PROFILES.length}명 · NPC ${state.npcs.length}명</button><button id="eventViewerButton" class="primary-button" type="button">Event Viewer · 에피소드 ${SITUATION_EVENTS.length}개</button><button id="eventInspectorButton" class="primary-button" type="button">Event Inspector · 실행 상태/큐/복구</button></div><h3>Story Director · ${analysis?`DAY ${analysis.day}`:"WAITING"}</h3><div class="debug-grid"><div class="debug-stat"><span>Relationship</span><b>${analysis?.relationshipState??"-"}</b></div><div class="debug-stat"><span>Tension</span><b>${analysis?.narrativeTension??0}</b></div><div class="debug-stat"><span>Dominant</span><b>${director?.dominantThread??"-"}</b></div><div class="debug-stat"><span>Status</span><b>${director?.dominantStatus??"-"}</b></div><div class="debug-stat"><span>Next Seed</span><b>${plan?.seed??"-"}</b></div><div class="debug-stat"><span>Foreshadow</span><b>R${director?.foreshadowing?.rival??0} · T${director?.foreshadowing?.temptation??0} · L${director?.foreshadowing?.lie??0}</b></div></div><h3>Active Threads</h3><div class="debug-grid">${threadRows}</div><h3>Next DAY Event Candidates</h3><div class="debug-events">${candidateRows}</div><h3>Unresolved Events</h3><div class="debug-events">${unresolvedRows}</div><h3>Game State</h3><div class="debug-grid">${stateRows}</div><h3>${state.partner.name} · Hidden Personality</h3><div class="debug-grid">${personalityRows}</div><h3>Runtime Event Diagnostics</h3><div class="debug-events">${eventRows}</div>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">ACCESSIBILITY · DIAGNOSTICS</span><h2>접근성 · 실행 진단</h2><p>현재 DAY ${state.day} · phase ${state.phase} 기준의 실제 실행 조건입니다. 확률은 조건과 재실행 대기를 통과한 후보별 판정 확률이며, 여러 후보가 통과하면 우선순위와 가중치로 한 사건만 선택됩니다.</p><div class="debug-launchers"><button id="characterManagerButton" class="primary-button" type="button">캐릭터 관리 · 히로인 ${HEROINE_PROFILES.length}명 · NPC ${state.npcs.length}명</button><button id="eventViewerButton" class="primary-button" type="button">Event Viewer · 에피소드 ${SITUATION_EVENTS.length}개</button><button id="eventInspectorButton" class="primary-button" type="button">Event Inspector · 실행 상태/큐/복구</button></div><h3>Story Director · ${analysis?`DAY ${analysis.day}`:"WAITING"}</h3><div class="debug-grid"><div class="debug-stat"><span>Relationship</span><b>${analysis?.relationshipState??"-"}</b></div><div class="debug-stat"><span>Tension</span><b>${analysis?.narrativeTension??0}</b></div><div class="debug-stat"><span>Dominant</span><b>${director?.dominantThread??"-"}</b></div><div class="debug-stat"><span>Status</span><b>${director?.dominantStatus??"-"}</b></div><div class="debug-stat"><span>Next Seed</span><b>${plan?.seed??"-"}</b></div><div class="debug-stat"><span>Foreshadow</span><b>R${director?.foreshadowing?.rival??0} · T${director?.foreshadowing?.temptation??0} · L${director?.foreshadowing?.lie??0}</b></div></div><h3>Active Threads</h3><div class="debug-grid">${threadRows}</div><h3>Next DAY Event Candidates</h3><div class="debug-events">${candidateRows}</div><h3>Unresolved Events</h3><div class="debug-events">${unresolvedRows}</div><h3>Game State</h3><div class="debug-grid">${stateRows}</div><h3>${state.partner.name} · Hidden Personality</h3><div class="debug-grid">${personalityRows}</div><h3>일반·스토리 사건 실행 진단</h3><div class="debug-events">${eventRows}</div><h3>짧은 이벤트 실행 진단</h3><div class="debug-events">${microRows}</div>`;
   openModal();
   $("#characterManagerButton").addEventListener("click",openCharacterManager);
   $("#eventViewerButton").addEventListener("click",openEventViewer);

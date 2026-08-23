@@ -22,7 +22,7 @@ export const HEROINE_PROFILES = [
     fashionPreferences:{러블리:96,로맨틱:94,엘레강트:70,미니멀:42,스포티:38,럭셔리:60}, rivalReaction:"질투를 숨기지 않고 바로 묻는다.", conflictStyle:"감정을 전부 말한다.", reconciliationStyle:"포옹과 솔직한 애정표현", aiVoice:"감탄사와 이모티콘을 자연스럽게 쓰는 다정한 반말.", palette:"blush-coral", referenceImage:"assets/heroines/nari/outfits/01.webp"
   },
   {
-    id:"sejin", name:"세진", age:31, job:"전략 컨설턴트", height:171, bodyType:"톨 애슬레틱", archetype:"야망형", bio:"전략 컨설턴트 · 냉철하고 자신감 있는 분위기",
+    id:"sejin", name:"채연", age:31, job:"전략 컨설턴트", height:171, bodyType:"톨 애슬레틱", archetype:"야망형", bio:"전략 컨설턴트 · 냉철하고 자신감 있는 분위기",
     personality:{contactImportance:48,jealousy:46,materialism:72,romanticism:38,independence:84,marriageDesire:52,economicPreference:92,vanity:82,loyalty:72,opportunism:44,emotionalSensitivity:32,giftPreference:68,socialPreference:88},
     hiddenTrait:"성공보다 성장 의지가 없는 태도를 더 싫어한다.", preferredDates:["파인 다이닝","전시 오프닝","커리어 세미나"], dislikedActions:["무계획","성장 포기"], preferredGifts:["럭셔리","클래식","테크"],
     fashionPreferences:{럭셔리:96,오피스:95,시크:92,엘레강트:84,러블리:20,스포티:58}, rivalReaction:"경쟁 상대를 냉정하게 비교한다.", conflictStyle:"핵심 문제를 직설적으로 지적한다.", reconciliationStyle:"행동으로 증명한 변화", aiVoice:"간결하고 자신감 있으며 가끔 건조한 농담을 한다.", palette:"black-wine", referenceImage:"assets/heroines/sejin/outfits/01.webp"

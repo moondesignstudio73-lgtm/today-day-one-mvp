@@ -100,6 +100,7 @@ export function migrateHeroineProfile(partner) {
   const seed=Number(partner.appearanceSeed) || [...String(partner.id ?? "")].reduce((sum,char)=>sum+char.charCodeAt(0),0);
   const profile=getHeroineProfile(partner.heroineId) ?? HEROINE_PROFILES[Math.abs(seed)%HEROINE_PROFILES.length];
   partner.heroineId=profile.id;
+  if (profile.id === "sejin" && ["세진","서진"].includes(partner.name)) partner.name=profile.name;
   lockGirlfriendToIntroVisual(partner);
   for (const key of ["age","ageCategory","job","height","bodyType","archetype","hiddenTrait","rivalReaction","conflictStyle","reconciliationStyle","aiVoice","referenceImage","uiAccent","studentSafe","messageVoice","excludedEventTags"]) partner[key] ??= structuredClone(profile[key]);
   partner.preferredDates ??=[...profile.preferredDates]; partner.dislikedActions ??=[...profile.dislikedActions]; partner.preferredGifts ??=[...profile.preferredGifts]; partner.fashionPreferences ??={...profile.fashionPreferences};
