@@ -49,8 +49,8 @@ const styleByHeroine = {
 
 const HAEUN_OUTFIT_VIDEOS = Object.freeze({
   3:"assets/heroines/haeun/videos/03_transparent.webm",
-  5:"assets/heroines/haeun/videos/05-transparent.webm",
-  8:"assets/heroines/haeun/videos/08-transparent.webm"
+  5:"https://raw.githubusercontent.com/superstarman35/game/gh-pages/assets/heroines/haeun/videos/05_transparent.webm",
+  8:"https://raw.githubusercontent.com/superstarman35/game/gh-pages/assets/heroines/haeun/videos/08_transparent.webm"
 });
 
 export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=="yuna").flatMap(profile => outfitKinds.map(([kind,label,day,price,tag],index) => ({
