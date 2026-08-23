@@ -50,6 +50,7 @@ export class SaveManager {
       parsed.pendingStoryId ??= null;
       parsed.cgCollection ??= [];
       parsed.videoCollection ??= [];
+      parsed.conversationSafety ??= {hostileCount:0,lastHostileDay:null};
       parsed.situationEventStates ??= {};
       parsed.futureEventWeights ??= {};
       parsed.microEventHistory ??= [];

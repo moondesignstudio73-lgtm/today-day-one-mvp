@@ -1,5 +1,5 @@
-import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=8";
-import { SaveManager } from "./src/save-manager.mjs?v=11";
+import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=9";
+import { SaveManager } from "./src/save-manager.mjs?v=12";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=6";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=5";
@@ -21,7 +21,7 @@ import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manag
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
-import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs?v=7";
+import { analyzeConversationInput, buildConversationContext, getContextualOpening, getHostileConversationResponse, getSuggestedConversationReplies, recordConversationTurn } from "./src/conversation-manager.mjs?v=8";
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs?v=2";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs?v=2";
@@ -59,6 +59,7 @@ const sound = new SoundManager();
 let modalReturnFocus = null;
 let actionResultReturnFocus = null;
 let actionResultContinuation = null;
+let activeConversation = null;
 let dialogueTimer = null;
 let dialogueText = "";
 let dialogueIndex = 0;
@@ -337,7 +338,7 @@ function openGameMenu() {
   $("#modalContent").innerHTML=`<article class="phone-menu ${isNight?"":"story-system-menu"}" aria-label="${isNight?"야간 스마트폰":"스토리 시스템 메뉴"}"><div class="phone-status"><b>${isNight?formatNightTime(state.nightState.minutes):phases[state.phase].time}</b><span>DAY ${state.day} · ${getWeekdayName(state.day)} · ${battery}% ▰</span></div><div class="phone-island" aria-hidden="true"></div><header class="phone-menu-hero"><small>${isNight?"NIGHT TIME · 나의 방":"STORY MODE · SYSTEM"}</small><strong>${isNight?`${state.partner.name}에게 알림이 왔어요`:"이야기를 잠시 멈췄어요"}</strong><span>${isNight?money(state.money):"저장 · 기록 · 설정만 확인할 수 있어요"}</span></header><div class="phone-app-grid">${appMarkup}</div><div class="phone-dock">${dockMarkup}</div><div class="phone-home-indicator" aria-hidden="true"></div></article>`;
   openModal();
   const nightApp = (minutes,label,callback) => () => { const result=spendNightTime(state,minutes,label); if(!result.ok){toast(result.reason);openGameMenu();return;} callback(); SaveManager.save(state); };
-  const actions = { inventory:openInventory, shop:isNight?nightApp(20,"온라인 쇼핑",openShop):openShop, finance:openFinance, career:openCareer, people:openPeople, investment:isNight?nightApp(20,"투자 확인",openInvestment):openInvestment, history:openDialogueHistory, gallery:openCgGallery, message:nightApp(10,"메시지",()=>{state.nightState.messagesRead=true;openChat();}), call:nightApp(30,"전화",openChat), sns:nightApp(20,"SNS",openSns), schedule:openSchedule, todaylog:openTodayLog, report:openDailyReport, speed:()=>{dialogueSpeedIndex=(dialogueSpeedIndex+1)%dialogueSpeeds.length;localStorage.setItem("today-day-one-dialogue-speed",String(dialogueSpeedIndex));toast(`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`);openGameMenu();}, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
+  const actions = { inventory:openInventory, shop:isNight?nightApp(20,"온라인 쇼핑",openShop):openShop, finance:openFinance, career:openCareer, people:openPeople, investment:isNight?nightApp(20,"투자 확인",openInvestment):openInvestment, history:openDialogueHistory, gallery:openCgGallery, message:nightApp(10,"메시지",()=>{state.nightState.messagesRead=true;openChat("message");}), call:nightApp(30,"전화",()=>openChat("call")), sns:nightApp(20,"SNS",openSns), schedule:openSchedule, todaylog:openTodayLog, report:openDailyReport, speed:()=>{dialogueSpeedIndex=(dialogueSpeedIndex+1)%dialogueSpeeds.length;localStorage.setItem("today-day-one-dialogue-speed",String(dialogueSpeedIndex));toast(`대화 속도 · ${dialogueSpeeds[dialogueSpeedIndex].label}`);openGameMenu();}, save:()=>{saveGame();closeModal();}, load:()=>{closeModal();loadGame();}, debug:openDebug };
   document.querySelectorAll("[data-menu-action]").forEach(button=>button.addEventListener("click",()=>{$("#modal").classList.remove("phone-menu-active");actions[button.dataset.menuAction]?.();}));
 }
 
@@ -1001,13 +1002,44 @@ function applyAction() {
 function resultText(a) { if(a.tag==="데이트") return `${state.partner.name}의 표정이 한결 밝아졌다.`; if(a.tag==="성공") return "미래를 위한 한 걸음을 내디뎠다."; if(a.tag==="유혹") return "새로운 인연의 기척이 느껴진다."; if(a.tag==="연락") return "짧은 대화가 두 사람을 조금 더 가깝게 했다."; return "선택의 결과가 하루에 남았다."; }
 function dailyEvent(completedDay) { if(completedDay%5===0){ const good=Math.random()>.45; const amount=good?60000:-35000; const label=good?"예상하지 못한 성과급":"갑작스러운 생활비 지출"; recordTransaction(state,{day:completedDay,category:"event",label,amount}); state.logs.push({time:`DAY ${completedDay} · EVENT`,text:`${label}${good?"이 들어왔다.":"이 생겼다."}`}); } if(completedDay%7===0){state.affection=clamp(state.affection-18,0,1000);state.trust=clamp(state.trust-8,0,1000);state.logs.push({time:`DAY ${completedDay} · RELATIONSHIP`,text:"연락이 뜸했던 영향으로 호감도와 신뢰도가 낮아졌다."});} }
 
-function openChat() {
-  const context = buildConversationContext(state);
-  const greeting = getContextualOpening(context).replace(`${state.partner.name}: `, "");
-  $("#modalContent").innerHTML=`<span class="eyebrow">CHAT WITH ${state.partner.name}</span><h2>${withParticle(state.partner.name,"과","와")}의 대화</h2><div class="chat-window"><div class="message her">${greeting}</div><div id="chatReply"></div></div><form id="chatForm" class="chat-compose"><input id="chatInput" maxlength="180" autocomplete="off" placeholder="자유롭게 메시지를 입력하세요" required><button type="submit">보내기</button></form>`;
-  openModal(); $("#chatForm").addEventListener("submit",event=>{ event.preventDefault(); chatReply($("#chatInput").value); });
+function openChat(mode="message") {
+  if(!["message","call"].includes(mode))mode="message";
+  const context=buildConversationContext(state),greeting=getContextualOpening(context).replace(`${state.partner.name}: `,"");
+  activeConversation={mode,turn:0,messages:[{speaker:"her",text:greeting}],effects:{affection:0,trust:0,conflict:0,relationshipStress:0},hostile:false};
+  renderConversationSession();openModal();
 }
-async function chatReply(message){ const form=$("#chatForm"), send=form?.querySelector("button"); if(send)send.disabled=true; const endpoint=document.querySelector('meta[name="today-day-one-ai-endpoint"]')?.content; const response=await requestGirlfriendReply({endpoint,context:buildConversationContext(state),message}); if(!response){if(send)send.disabled=false;return;} $("#chatReply").innerHTML=`<div class="message me">${escapeHtml(message)}</div><div class="message her">${escapeHtml(response.text)}</div><small class="reply-source">${response.source==='remote'?'AI 연결 응답':'로컬 컨텍스트 응답'}</small>`; applyEffects(state,response.effects); recordConversationTurn(state,message,response.text); recordMemory(state,{type:"conversation",summary:`${state.partner.name}와의 대화`,importance:2,tags:["대화",response.source]}); SaveManager.save(state); form?.remove(); render(); }
+function renderConversationSession(){
+  if(!activeConversation)return;const session=activeConversation,context=buildConversationContext(state),suggestions=getSuggestedConversationReplies(context,session.turn);
+  const messages=session.messages.map(item=>`<div class="message ${item.speaker}">${escapeHtml(item.text)}</div>`).join("");
+  $("#modalContent").innerHTML=`<section class="conversation-session ${session.mode==='call'?'phone-conversation':''}"><span class="eyebrow">${session.mode==='call'?'PHONE CALL':'MESSAGES'} · ${escapeHtml(state.partner.name)}</span><div class="conversation-heading"><div class="conversation-avatar"><img src="${state.partner.referenceImage}" alt=""><i>${session.mode==='call'?'☎':'●'}</i></div><div><h2>${session.mode==='call'?`${state.partner.name}와 통화 중`:`${state.partner.name}에게 메시지`}</h2><p>${session.mode==='call'?'목소리를 들으며 천천히 이야기해 보세요.':'서로를 존중하는 말로 마음을 이어 가세요.'}</p></div></div><div id="chatMessages" class="chat-window" aria-live="polite">${messages}</div><div id="chatSafetyNotice" class="chat-safety-notice" hidden></div><div class="chat-suggestions">${suggestions.map(text=>`<button type="button" data-chat-suggestion="${escapeHtml(text)}">${escapeHtml(text)}</button>`).join("")}</div><form id="chatForm" class="chat-compose"><input id="chatInput" maxlength="180" autocomplete="off" placeholder="직접 입력하거나 추천 답변을 선택하세요" required><button type="submit">보내기</button></form><button id="finishConversation" class="conversation-finish" type="button">${session.mode==='call'?'통화 종료':'대화 마치기'}</button></section>`;
+  $("#chatForm").addEventListener("submit",event=>{event.preventDefault();chatReply($("#chatInput").value);});
+  document.querySelectorAll("[data-chat-suggestion]").forEach(button=>button.addEventListener("click",()=>chatReply(button.dataset.chatSuggestion)));
+  $("#finishConversation").addEventListener("click",finishConversation);requestAnimationFrame(()=>{$("#chatMessages").scrollTop=$("#chatMessages").scrollHeight;});
+}
+async function chatReply(message){
+  if(!activeConversation)return;const analysis=analyzeConversationInput(message),notice=$("#chatSafetyNotice");
+  if(!analysis.allowed){notice.hidden=false;notice.textContent=analysis.message;$("#chatInput").focus();return;}
+  document.querySelectorAll("#chatForm button,[data-chat-suggestion]").forEach(button=>button.disabled=true);
+  let response;
+  if(analysis.level==="hostile"){
+    response={...getHostileConversationResponse(state),source:"safety"};state.conversationSafety??={hostileCount:0,lastHostileDay:null};state.conversationSafety.hostileCount=response.count;state.conversationSafety.lastHostileDay=state.day;activeConversation.hostile=true;
+  }else{
+    const endpoint=document.querySelector('meta[name="today-day-one-ai-endpoint"]')?.content;response=await requestGirlfriendReply({endpoint,context:{...buildConversationContext(state),sessionTurn:activeConversation.turn,mode:activeConversation.mode},message});
+  }
+  if(!response){renderConversationSession();return;}
+  const scale=activeConversation.turn>=7?0:activeConversation.turn>=4?.5:1,effects=Object.fromEntries(Object.entries(response.effects??{}).map(([key,value])=>[key,Math.round(value*(analysis.level==="hostile"?1:scale))]));
+  applyEffects(state,effects);for(const key of Object.keys(activeConversation.effects))activeConversation.effects[key]+=effects[key]??0;
+  activeConversation.messages.push({speaker:"me",text:message},{speaker:"her",text:response.text});activeConversation.turn+=1;
+  recordConversationTurn(state,message,response.text,{mode:activeConversation.mode,tone:analysis.level});
+  state.logs.push({time:`DAY ${state.day} · ${activeConversation.mode==='call'?'CALL':'MESSAGE'}`,text:analysis.level==='hostile'?`${state.partner.name}에게 공격적인 말을 해 관계가 크게 나빠졌다.`:`${state.partner.name}와 대화 · ${message.slice(0,32)}`});
+  SaveManager.save(state);render();
+  if(response.forceEnd||activeConversation.turn>=10){finishConversation(response.forceEnd?"상대가 상처를 받아 대화를 종료했습니다.":"오늘 나눌 이야기를 충분히 나누었습니다.");return;}renderConversationSession();
+}
+function finishConversation(reason=""){
+  if(!activeConversation)return;const session=activeConversation,positive=session.effects.affection+session.effects.trust,summary=session.hostile?"상처와 실망이 남은 대화":positive>=12?"서로의 마음이 가까워진 대화":positive>0?"잔잔하게 마음을 나눈 대화":"조심스러운 대화";
+  recordMemory(state,{type:"conversation",summary:`${state.partner.name}와 ${session.mode==='call'?'통화':'메시지'} · ${summary}`,importance:session.hostile?5:3,tags:["대화",session.mode,session.hostile?"갈등":"교감"]});SaveManager.save(state);activeConversation=null;
+  $("#modalContent").innerHTML=`<span class="eyebrow">CONVERSATION RESULT</span><h2>${escapeHtml(summary)}</h2>${reason?`<p class="conversation-end-reason">${escapeHtml(reason)}</p>`:""}<div class="conversation-result-grid"><div><span>대화 횟수</span><b>${session.turn}턴</b></div><div><span>호감도</span><b class="${session.effects.affection>=0?'up':'down'}">${session.effects.affection>=0?'+':''}${session.effects.affection}</b></div><div><span>신뢰도</span><b class="${session.effects.trust>=0?'up':'down'}">${session.effects.trust>=0?'+':''}${session.effects.trust}</b></div><div><span>관계 스트레스</span><b class="${session.effects.relationshipStress<=0?'up':'down'}">${session.effects.relationshipStress>=0?'+':''}${session.effects.relationshipStress}</b></div></div><button id="conversationResultClose" class="primary-button" type="button">확인</button>`;$("#conversationResultClose").addEventListener("click",closeModal);
+}
 
 function openDebug() {
   if (!state) return;

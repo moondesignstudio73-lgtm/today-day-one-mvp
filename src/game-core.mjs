@@ -59,6 +59,7 @@ export function createInitialState(partner, random = Math.random, setup = {}) {
     memories: [],
     initiatedMessages: [],
     conversationHistory: [],
+    conversationSafety: {hostileCount:0,lastHostileDay:null},
     storyHistory: [],
     storyFlags: {},
     futureScore: 0,
