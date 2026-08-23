@@ -38,7 +38,7 @@ import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, g
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
-import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=7";
+import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=8";
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
@@ -61,6 +61,7 @@ let actionResultReturnFocus = null;
 let actionResultContinuation = null;
 let dialogueTimer = null;
 let outfitVideoTimer = null;
+let outfitVideoFrame = null;
 let dialogueText = "";
 let dialogueIndex = 0;
 const dialogueHistory = [];
@@ -388,16 +389,26 @@ function updateImmersiveCharacter(expressionId="calm") {
 }
 
 function syncOutfitCharacterMedia(forceImage=false) {
-  const image=$("#vnCharacter"),video=$("#vnCharacterVideo"),outfit=state?getEquippedHeroineOutfit(state):null;
+  const image=$("#vnCharacter"),video=$("#vnCharacterVideo"),canvas=$("#vnCharacterCanvas"),outfit=state?getEquippedHeroineOutfit(state):null;
   const showVideo=Boolean(!forceImage&&outfit?.characterWearingVideo&&state.day%2===0);
   if(outfitVideoTimer){clearInterval(outfitVideoTimer);outfitVideoTimer=null;}
-  if(!video||!image)return;
-  video.pause();video.hidden=true;image.hidden=false;
+  if(outfitVideoFrame){cancelAnimationFrame(outfitVideoFrame);outfitVideoFrame=null;}
+  if(!video||!canvas||!image)return;
+  video.pause();video.hidden=true;canvas.hidden=true;image.hidden=false;
   if(!showVideo){video.removeAttribute("src");video.load();return;}
-  image.hidden=true;video.hidden=false;
   if(video.getAttribute("src")!==outfit.characterWearingVideo){video.src=outfit.characterWearingVideo;video.load();}
-  const playOutfitVideo=()=>{if(video.hidden||!video.isConnected)return;video.currentTime=0;video.play().catch(()=>{video.hidden=true;image.hidden=false;});};
-  video.onerror=()=>{if(outfitVideoTimer){clearInterval(outfitVideoTimer);outfitVideoTimer=null;}video.hidden=true;image.hidden=false;};
+  const context=canvas.getContext("2d",{willReadFrequently:true});
+  const drawChromaFrame=()=>{
+    if(video.paused||video.ended||canvas.hidden)return;
+    context.clearRect(0,0,canvas.width,canvas.height);context.drawImage(video,0,0,canvas.width,canvas.height);
+    const frame=context.getImageData(0,0,canvas.width,canvas.height),pixels=frame.data;
+    for(let index=0;index<pixels.length;index+=4){const red=pixels[index],green=pixels[index+1],blue=pixels[index+2],base=Math.max(red,blue),dominance=green-base;if(green>72&&dominance>20){pixels[index+3]=dominance>=58?0:Math.round(255*(58-dominance)/38);pixels[index+1]=Math.min(green,base+10);}}
+    context.putImageData(frame,0,0);outfitVideoFrame=requestAnimationFrame(drawChromaFrame);
+  };
+  const showFallback=()=>{if(outfitVideoFrame){cancelAnimationFrame(outfitVideoFrame);outfitVideoFrame=null;}canvas.hidden=true;image.hidden=false;};
+  const playOutfitVideo=()=>{if(!video.isConnected)return;video.currentTime=0;image.hidden=true;canvas.hidden=false;video.play().then(()=>{outfitVideoFrame=requestAnimationFrame(drawChromaFrame);}).catch(showFallback);};
+  video.onended=showFallback;
+  video.onerror=()=>{if(outfitVideoTimer){clearInterval(outfitVideoTimer);outfitVideoTimer=null;}showFallback();};
   playOutfitVideo();
   outfitVideoTimer=setInterval(playOutfitVideo,10000);
 }

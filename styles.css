@@ -462,7 +462,8 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 .transport-modal-active .transport-card b{font-size:16px;line-height:1.3}
 .transport-modal-active .transport-card small{min-height:48px;font-size:12px;line-height:1.5}
 .transport-modal-active .transport-card em{font-size:12px;line-height:1.3}
-.vn-character-video{z-index:-1;object-fit:contain;pointer-events:none;background:transparent}
+.vn-character-canvas{z-index:-1;width:auto;object-fit:contain;pointer-events:none;background:transparent}
+.outfit-video-source{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .ui-night-mode .world-map{min-height:calc(100dvh - 136px);margin:10px 0}
 .world-map-canvas{touch-action:manipulation;cursor:pointer}
 .world-map-canvas .world-location{cursor:pointer}
