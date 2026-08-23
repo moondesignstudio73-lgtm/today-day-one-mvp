@@ -601,7 +601,7 @@ function render() {
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
-  typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerBio").textContent = `${p.career?.name ?? p.job} · ${p.archetype}`;
+  typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerJob").textContent = p.career?.name ?? p.job; $("#partnerTrait").textContent = `성향 · ${p.archetype}`;
   $("#partnerAvatar").src = `${getGirlfriendVisual(p.visualId).previewImage}?v=6`;
   $("#partnerAvatar").alt = `${p.name} 프로필 사진`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));
