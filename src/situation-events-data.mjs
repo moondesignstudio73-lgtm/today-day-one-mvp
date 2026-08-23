@@ -2,7 +2,7 @@ import { YUNA_STORY_EVENTS } from "./yuna-data.mjs";
 
 const CATEGORY_CONFIG = {
   romance:{label:"연애·데이트",npcRole:"girlfriend",backgrounds:["home-morning","cafe-rain-evening","river-night","home-night"],bgm:"theme",baseEffects:{affection:4,excitement:3}},
-  temptation:{label:"서브 히로인·유혹",npcRole:"female-coworker",backgrounds:["office-day","cafe-rain-evening","river-night","home-night"],bgm:"crisis",baseEffects:{trust:-2,excitement:5,relationshipStress:2}},
+  temptation:{label:"유진·유혹",npcRole:"female-coworker",npcName:"유진",backgrounds:["office-day","cafe-rain-evening","river-night","home-night"],bgm:"crisis",baseEffects:{trust:-2,excitement:5,relationshipStress:2}},
   conflict:{label:"갈등·질투",npcRole:"girlfriend",backgrounds:["home-morning","cafe-rain-evening","river-night","home-night"],bgm:"crisis",baseEffects:{conflict:3,relationshipStress:3}},
   work:{label:"직장",npcRole:"team-lead",backgrounds:["office-day","office-day","cafe-rain-evening","home-night"],bgm:"daily",baseEffects:{work:3,stress:2}},
   friends:{label:"친구·인간관계",npcRole:"best-friend",backgrounds:["cafe-rain-evening","river-night","cafe-rain-evening","home-night"],bgm:"daily",baseEffects:{social:4}},
@@ -64,7 +64,7 @@ const MOODS = {
 const PLAYER_LINES = ["갑작스럽긴 하지만 네 이야기를 듣고 싶어.","조금 천천히 말해도 괜찮아.","그 질문에는 솔직하게 답할게.","오늘의 선택을 나중에 변명하고 싶지는 않아."];
 
 function makeTurns(event,sceneIndex) {
-  const lead=event.category === "temptation" ? "서브 히로인" : event.category === "work" ? "직장 동료" : event.category === "friends" ? "친구" : "연인";
+  const lead=event.category === "temptation" ? event.npcName ?? "유진" : event.category === "work" ? "직장 동료" : event.category === "friends" ? "친구" : "연인";
   const beats=[event.hook,event.pressure,event.reveal,event.echo];
   const line=beats[sceneIndex];
   return [
@@ -89,7 +89,8 @@ function makeChoices(event) {
 
 function buildEvent([id,title,category,startDay,endDay,hook,pressure,reveal,echo],index) {
   const config=CATEGORY_CONFIG[category];
-  const event={id:`situation-${id}`,title,category,categoryLabel:config.label,hook,pressure,reveal,echo,moods:MOODS[category]};
+  const namedText=text=>category==="temptation"?String(text).replaceAll("서브 히로인",config.npcName??"유진"):text;
+  const event={id:`situation-${id}`,title,category,categoryLabel:config.label,npcId:config.npcRole,npcName:config.npcName??null,hook:namedText(hook),pressure:namedText(pressure),reveal:namedText(reveal),echo:namedText(echo),moods:MOODS[category]};
   event.scenes=config.backgrounds.map((backgroundId,sceneIndex)=>({
     id:`${event.id}-scene-${sceneIndex+1}`,title:["사건 시작","흔들리는 대화","감정의 절정","NIGHT 후속 반응"][sceneIndex],backgroundId,
     characterIds:[config.npcRole],expression:["calm","worried","tense","smile"][sceneIndex],pose:sceneIndex===3?"phone":"standing",animation:sceneIndex===2?"tense-shift":"soft-sway",
@@ -108,6 +109,18 @@ function buildEvent([id,title,category,startDay,endDay,hook,pressure,reveal,echo
 }
 
 const BASE_SITUATION_EVENTS=BLUEPRINTS.map(buildEvent);
+const PLAYER_EX_EVENT_IDS=new Set(["situation-ex-girlfriend-reunion"]);
+for(const event of BASE_SITUATION_EVENTS){
+  if(!PLAYER_EX_EVENT_IDS.has(event.id))continue;
+  event.eventType="ETC";
+  event.npcId="player-ex";
+  event.scenes.forEach(scene=>{
+    scene.characterIds=["player-ex"];
+    scene.dialogueTurns.forEach(turn=>{
+      if(turn.speaker==="연인")turn.speaker="전 여자친구 · 가은";
+    });
+  });
+}
 const HAEUN_HOME_TIERS={
   "situation-haeun-home-outside-talk":{trust:[null,700],locationId:"haeun-home-outside",question:"집 앞에서 하은에게 어떻게 답할까?",image:"assets/events/locations/haeun-home-outside-talk-01.png"},
   "situation-haeun-home-tea-talk":{trust:[701,900],locationId:"haeun-home-living-room",question:"차를 마시며 하은과 어떤 이야기를 나눌까?",image:"assets/events/locations/haeun-home-tea-talk-01.png"},

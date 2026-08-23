@@ -32,6 +32,17 @@ export function createStoryReactionSequence(result) {
 
 export function createEventSceneSequence(event) {
   if(event.scenes?.length){
+    if(event.category==="temptation"){
+      const scene=event.scenes[0];
+      const heroineLine=scene.dialogueTurns.find(turn=>turn.type==="dialogue"&&turn.speaker!=="플레이어")?.text??event.hook??event.message;
+      return [
+        {type:"transition",style:scene.transition,label:event.title,backgroundId:scene.backgroundId,characterId:scene.characterIds[0],expressionId:scene.expression,poseId:scene.pose,outfitId:scene.outfit,bgmId:scene.bgmId,sfxId:scene.sfxId,weather:scene.weather,timeOfDay:scene.timeOfDay},
+        {type:"narration",text:event.hook??event.message,backgroundId:scene.backgroundId,characterId:scene.characterIds[0]},
+        {type:"characterEnter",characterId:scene.characterIds[0],expressionId:scene.expression,animationId:scene.animation},
+        {type:"dialogue",speaker:event.npcName??"유진",text:`${heroineLine}\n\n${event.question}`,expressionId:scene.expression,backgroundId:scene.backgroundId,characterId:scene.characterIds[0]},
+        {type:"choice",options:event.choices.map(choice=>({id:choice.id,label:choice.label}))}
+      ];
+    }
     const sequence=[];
     for(const scene of event.scenes){
       sequence.push({type:"transition",style:scene.transition,label:scene.title,backgroundId:scene.backgroundId,characterId:scene.characterIds[0],expressionId:scene.expression,poseId:scene.pose,outfitId:scene.outfit,bgmId:scene.bgmId,sfxId:scene.sfxId,weather:scene.weather,timeOfDay:scene.timeOfDay});

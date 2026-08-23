@@ -34,6 +34,19 @@ function poseForText(text) {
   return "standing";
 }
 
+function characterForStory(scene) {
+  if (scene?.characterId) return scene.characterId;
+  const speaker = String(scene?.speaker ?? "");
+  const storyText = `${scene?.id ?? ""} ${scene?.arc ?? ""} ${scene?.title ?? ""}`;
+  if (/전.?여자친구|전.?연인|가은|ex-message/.test(`${speaker} ${storyText}`)) return "player-ex";
+  if (/채린|신입사원/.test(speaker)) return "office-rookie";
+  if (/여성 동료|여직원|유진/.test(speaker)) return "female-coworker";
+  if (/팀장|상사/.test(speaker)) return "team-lead";
+  if (scene?.eventType === "COWORKER" && speaker !== "나") return "female-coworker";
+  if (scene?.eventType === "FRIEND" && speaker !== "나") return "best-friend";
+  return "girlfriend";
+}
+
 export function resolvePhasePresentation(state, phaseKey) {
   const backgroundId = ({ morning:"home-morning", day:"office-day", evening:"river-night", night:"home-night" })[phaseKey] ?? "home-morning";
   return {
@@ -61,7 +74,7 @@ export function resolveStoryPresentation(scene, state) {
   const eventCgId = MAJOR_CG_PATTERN.test(text) ? `CG_${String(scene?.id ?? "scene").toUpperCase().replace(/[^A-Z0-9]+/g, "_")}` : null;
   return {
     backgroundId,
-    characterId:"girlfriend",
+    characterId:characterForStory(scene),
     outfitId:RIVER_PATTERN.test(text) ? "date" : "default",
     expressionId,
     poseId,
