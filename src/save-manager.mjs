@@ -1,7 +1,7 @@
 import { validateState } from "./game-core.mjs?v=4";
 import { migrateNpcRoster } from "./npc-manager.mjs";
 import { migrateHeroineProfile } from "./girlfriend-manager.mjs?v=6";
-import { createInvestmentState } from "./investment-manager.mjs";
+import { migrateInvestmentState } from "./investment-manager.mjs?v=2";
 import { createLotteryState } from "./lottery-manager.mjs";
 import { createAdvancedEconomyState } from "./economy-manager.mjs";
 import { migrateVisualState } from "./character-appearance.mjs";
@@ -55,7 +55,7 @@ export class SaveManager {
       parsed.eventRuntime ??= {activeEvent:null,scene:null,dialogueIndex:0,state:"IDLE",inputLock:{locked:false,owner:null,reason:null,lockedFor:0},eventQueue:[],microQueue:[],pendingEvent:null,triggerReason:[],assetStatus:"IDLE",checkpoint:null,lastError:null,logs:[]};
       parsed.settings ??= {theaterMode:true};
       parsed.hiddenRoute ??= createHiddenRouteState(Math.random,false);
-      parsed.investment ??= createInvestmentState();
+      parsed.investment = migrateInvestmentState(parsed.investment);
       parsed.lottery ??= createLotteryState();
       parsed.finance ??= createAdvancedEconomyState();
       parsed.finance.bonds ??= [];

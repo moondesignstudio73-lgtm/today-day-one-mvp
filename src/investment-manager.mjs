@@ -5,6 +5,28 @@ export function createInvestmentState() {
   return { market:STOCKS.map(stock => ({ id:stock.id, name:stock.name, price:stock.initialPrice, previousPrice:stock.initialPrice, changeRate:0, risk:stock.risk })), holdings:{}, history:[] };
 }
 
+export function migrateInvestmentState(investment) {
+  if (!investment || !Array.isArray(investment.market)) return createInvestmentState();
+  const existingMarket = new Map(investment.market.map(stock => [stock.id, stock]));
+  const validIds = new Set(STOCKS.map(stock => stock.id));
+  const market = STOCKS.map(stock => {
+    const saved = existingMarket.get(stock.id);
+    if (!saved || !Number.isFinite(saved.price) || saved.price < 1000) {
+      return { id:stock.id, name:stock.name, price:stock.initialPrice, previousPrice:stock.initialPrice, changeRate:0, risk:stock.risk };
+    }
+    return {
+      id:stock.id,
+      name:stock.name,
+      price:saved.price,
+      previousPrice:Number.isFinite(saved.previousPrice) ? saved.previousPrice : saved.price,
+      changeRate:Number.isFinite(saved.changeRate) ? saved.changeRate : 0,
+      risk:stock.risk
+    };
+  });
+  const holdings = Object.fromEntries(Object.entries(investment.holdings ?? {}).filter(([stockId]) => validIds.has(stockId)));
+  return { ...investment, market, holdings, history:Array.isArray(investment.history) ? investment.history : [] };
+}
+
 export function advanceStockMarket(state, random = Math.random) {
   state.investment ??= createInvestmentState();
   const changes = state.investment.market.map(marketStock => {

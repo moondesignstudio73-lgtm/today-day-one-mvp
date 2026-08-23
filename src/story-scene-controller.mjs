@@ -13,7 +13,7 @@ export function createStorySceneSequence(scene, presentation) {
     { type:"transition", style:"fade", label:`DAY ${scene.window?.[0] ?? ""} · ${scene.arc}` },
     { type:"narration", text:scene.message },
     { type:"characterEnter", characterId:presentation.characterId, animationId:presentation.animationId },
-    { type:"dialogue", speaker:scene.speaker, text:scene.title, expressionId:presentation.expressionId },
+    { type:"dialogue", speaker:scene.speaker, text:scene.question ?? scene.prompt ?? scene.title, expressionId:presentation.expressionId },
     { type:"choice", options:scene.choices.map(choice => ({ id:choice.id, label:choice.label })) }
   ];
 }
@@ -24,6 +24,7 @@ export function createStoryReactionSequence(result) {
     { type:"narration", text:`나는 “${result.choice.label}”라고 답했다.` },
     { type:"expressionChange", expressionId },
     { type:"dialogue", speaker:result.scene.speaker, text:result.response, expressionId },
+    ...(result.mbtiAdjustment?.label?[{type:"narration",text:`${result.mbtiAdjustment.label}에 맞는 반응이 관계 수치에 추가로 반영됐다.`}]:[]),
     { type:"transition", style:"fade", label:"시간은 다시 일상으로 흐른다." },
     { type:"sceneEnd" }
   ];
@@ -36,6 +37,7 @@ export function createEventSceneSequence(event) {
       sequence.push({type:"transition",style:scene.transition,label:scene.title,backgroundId:scene.backgroundId,characterId:scene.characterIds[0],expressionId:scene.expression,poseId:scene.pose,outfitId:scene.outfit,bgmId:scene.bgmId,sfxId:scene.sfxId,weather:scene.weather,timeOfDay:scene.timeOfDay});
       sequence.push(...scene.dialogueTurns.map(turn=>({...turn,backgroundId:scene.backgroundId,characterId:scene.characterIds[0],poseId:scene.pose,outfitId:scene.outfit,bgmId:scene.bgmId,sfxId:scene.sfxId,weather:scene.weather,timeOfDay:scene.timeOfDay})));
     }
+    if(event.question)sequence.push({type:"narration",text:event.question});
     sequence.push({type:"choice",options:event.choices.map(choice=>({id:choice.id,label:choice.label}))});
     return sequence;
   }

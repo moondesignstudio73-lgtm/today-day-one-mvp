@@ -73,7 +73,7 @@ export const ACTION_RESULT_ASSETS = Object.freeze({
   "job-athlete-match": "assets/action-results/generated/job-athlete-match-01.png"
 });
 
-export const ONE_TIME_ACTION_RESULT_ASSETS = Object.freeze({
+export const HIGH_TRUST_ACTION_RESULT_ASSETS = Object.freeze({
   "morning-idle": "assets/action-results/generated/morning-idle-01.png",
   "morning-contact": "assets/action-results/generated/morning-contact-01.png",
   "morning-gym": "assets/action-results/generated/morning-gym-01.png",
@@ -102,9 +102,9 @@ export function getActionResultAsset(actionId) {
   return ACTION_RESULT_ASSETS[actionId] ?? null;
 }
 
-export function getOneTimeActionResultAsset(actionId, seenActionIds = []) {
-  if (seenActionIds.includes(actionId)) return null;
-  return ONE_TIME_ACTION_RESULT_ASSETS[actionId] ?? null;
+export function getHighTrustActionResultAsset(actionId, state = {}, seenActionIds = []) {
+  if (Number(state.trust) < 950 || seenActionIds.includes(actionId)) return null;
+  return HIGH_TRUST_ACTION_RESULT_ASSETS[actionId] ?? null;
 }
 
 export function getVisibleActionEffects(effects = {}) {

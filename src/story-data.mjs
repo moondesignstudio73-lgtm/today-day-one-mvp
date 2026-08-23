@@ -178,6 +178,26 @@ const STANDARD_STORY_SCENES = [
 
 export const STORY_SCENES = [...STANDARD_STORY_SCENES,...HIDDEN_ROUTE_SCENES,...HEROINE_STORY_SCENES];
 
+const FRIEND_SCENE_IDS=new Set(["friend-warning","hidden-friend-question"]);
+const COWORKER_SCENE_IDS=new Set(["coworker-introduction","project-opportunity","promise-clash","hidden-cracks"]);
+const inferPreferenceTags=choice=>{
+  const text=`${choice.id} ${choice.label}`;
+  const tags=[];
+  if(/솔직|사과|인정|말한다|상의|설명/.test(text))tags.push("HONEST","DIRECT");
+  if(/계획|예산|일정|조정|준비|저축/.test(text))tags.push("PRACTICAL","PLANNED");
+  if(/마음|들어|위로|함께|고마|사랑/.test(text))tags.push("EMOTIONAL","CARING");
+  if(/깜짝|산책|여행|즐긴|재밌/.test(text))tags.push("SPONTANEOUS","IMAGINATIVE","ROMANTIC");
+  if(/기다|시간|존중|선|거절/.test(text))tags.push("PRIVATE","BOUNDARY");
+  return [...new Set(tags)];
+};
+for(const scene of STORY_SCENES){
+  scene.eventType=FRIEND_SCENE_IDS.has(scene.id)?"FRIEND":COWORKER_SCENE_IDS.has(scene.id)?"COWORKER":scene.speaker==="나"?"INNER_CHOICE":"GIRLFRIEND";
+  scene.question??=scene.eventType==="INNER_CHOICE"?`${scene.title}에서 나는 어떤 결정을 내릴까?`:`${scene.speaker}에게 어떻게 답할까?`;
+  scene.locationId??="story-location";
+  scene.image??={intro:`assets/events/${scene.eventType.toLowerCase()}/${scene.id}-01.png`,result:`assets/events/${scene.eventType.toLowerCase()}/${scene.id}-result-01.png`,status:"planned"};
+  for(const choice of scene.choices)choice.preferenceTags??=inferPreferenceTags(choice);
+}
+
 export function validateStoryData(scenes = STORY_SCENES) {
   const ids = new Set();
   return scenes.every(scene => {

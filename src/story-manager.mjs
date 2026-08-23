@@ -4,6 +4,7 @@ import { meetsConditions } from "./event-manager.mjs";
 import { recordMemory } from "./memory-manager.mjs";
 import { STORY_SCENES } from "./story-data.mjs";
 import { applyHiddenRouteEffects, getHiddenRouteSceneEffects } from "./hidden-route-manager.mjs";
+import { combineChoiceEffects, getMbtiChoiceAdjustment } from "./event-choice-modifier.mjs";
 
 function hasStoryChoice(state, requirement) {
   return (state.storyHistory ?? []).some(record => record.sceneId === requirement.sceneId && (!requirement.choiceIds || requirement.choiceIds.includes(record.choiceId)));
@@ -44,7 +45,9 @@ export function resolveStoryChoice(state, sceneId, choiceId, scenes = STORY_SCEN
   const choice = scene?.choices.find(item => item.id === choiceId);
   if (!scene || !choice || (state.storyHistory ?? []).some(record => record.sceneId === sceneId)) return null;
   const outcome = selectOutcome(state,choice);
-  const effects = { ...(choice.effects ?? {}), ...(outcome?.effects ?? {}) };
+  const conditionalEffects = combineChoiceEffects(choice.effects ?? {},outcome?.effects ?? {});
+  const mbtiAdjustment = getMbtiChoiceAdjustment(state,choice);
+  const effects = combineChoiceEffects(conditionalEffects,mbtiAdjustment.effects);
   const baseRouteEffects = { ...(choice.routeEffects ?? {}), ...(outcome?.routeEffects ?? {}) };
   const traitRouteEffects = getHiddenRouteSceneEffects(state,scene.id);
   const routeEffectKeys = [...new Set([...Object.keys(baseRouteEffects),...Object.keys(traitRouteEffects)])];
@@ -62,7 +65,7 @@ export function resolveStoryChoice(state, sceneId, choiceId, scenes = STORY_SCEN
   state.storyHistory.push(record);
   state.pendingStoryId = null;
   const memory = recordMemory(state,{type:"story",summary:choice.memory ?? `${scene.title}: ${choice.label}`,importance:4,tags:["스토리",scene.arc,scene.id,choice.id]});
-  return {scene,choice,outcome,effects,routeEffects,response,record,memory};
+  return {scene,choice,outcome,effects,routeEffects,response,record,memory,mbtiAdjustment};
 }
 
 export function validateStoryState(state) {

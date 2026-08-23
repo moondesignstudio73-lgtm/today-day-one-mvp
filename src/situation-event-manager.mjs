@@ -1,6 +1,7 @@
 import { applyEffects } from "./game-core.mjs";
 import { recordMemory } from "./memory-manager.mjs";
 import { SITUATION_EVENTS } from "./situation-events-data.mjs";
+import { combineChoiceEffects, getMbtiChoiceAdjustment } from "./event-choice-modifier.mjs";
 
 export function getSituationEvent(id){return SITUATION_EVENTS.find(event=>event.id===id)??null;}
 
@@ -23,14 +24,16 @@ export function activateSituationEvent(state,event) {
 export function resolveSituationEventChoice(state,event,choiceId) {
   const choice=event.choices.find(item=>item.id===choiceId);
   if(!choice)return null;
-  applyEffects(state,choice.effects);
+  const mbtiAdjustment=getMbtiChoiceAdjustment(state,choice);
+  const effects=combineChoiceEffects(choice.effects,mbtiAdjustment.effects);
+  applyEffects(state,effects);
   state.storyFlags??={};state.storyFlags[event.storyFlag]=true;state.storyFlags[choice.flag]=true;
   state.situationEventStates??={};state.situationEventStates[event.id]={status:"COMPLETED",startedDay:state.situationEventStates[event.id]?.startedDay??state.day,completedDay:state.day,sceneIndex:event.scenes.length-1,choiceId};
   state.futureEventWeights??={};
   for(const [key,value] of Object.entries({...event.futureEventWeights,...choice.futureEventWeights}))state.futureEventWeights[key]=(state.futureEventWeights[key]??1)*value;
   const memory=recordMemory(state,{type:"situation-event",summary:choice.memory,importance:event.cgCandidate?5:4,tags:[event.category,event.id,choiceId]});
   const record=[...(state.eventHistory??[])].reverse().find(entry=>entry.id===event.id&&entry.day===state.day);if(record){record.choiceId=choiceId;record.status="COMPLETED";record.memoryId=memory.id;}
-  return {event,choice,memory,status:"COMPLETED"};
+  return {event,choice,effects,mbtiAdjustment,memory,status:"COMPLETED"};
 }
 
 export function validateSituationEventState(state) {

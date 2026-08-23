@@ -35,10 +35,14 @@ export function isGirlfriendHappy(state = {}) {
     && Number(state.relationshipStress) < 55;
 }
 
-export function getActionResultVideo(actionId, state = {}, random = Math.random) {
-  if (isGirlfriendSad(state)) return ACTION_RESULT_VIDEOS.sad[0];
+export function getActionResultVideo(actionId, state = {}, seenVideos = [], random = Math.random) {
   const category = ACTION_VIDEO_CATEGORIES[actionId];
-  if (!category || !isGirlfriendHappy(state) || random() >= ACTION_VIDEO_CHANCE) return null;
-  const candidates = ACTION_RESULT_VIDEOS[category];
+  if (!category || !isGirlfriendHappy(state)) return null;
+  const candidates = ACTION_RESULT_VIDEOS[category].filter(path => !seenVideos.includes(path));
+  if (!candidates.length) return null;
   return candidates[Math.min(candidates.length - 1, Math.floor(random() * candidates.length))];
+}
+
+export function getSadEventVideo(state = {}) {
+  return isGirlfriendSad(state) ? ACTION_RESULT_VIDEOS.sad[0] : null;
 }

@@ -49,6 +49,9 @@ const BLUEPRINTS = [
 
   ["ex-girlfriend-reunion","전 연인과의 우연한 재회","mystery",7,23,"점심 카페에서 오래전 헤어진 사람이 이름을 불렀다.","안부는 과거의 미련과 현재 연애에 대한 질문으로 변했다.","전 연인은 마지막으로 묻고 싶었던 진실이 있다고 말했다.","현재 연인에게 이 만남을 말할지가 새로운 비밀이 됐다."],
   ["her-ex-returns","연인의 전 남자친구가 돌아오다","mystery",11,27,"연인의 휴대폰에 전 남자친구의 장문 메시지가 도착했다.","끝난 관계라는 말과 흔들리는 눈빛이 서로 달랐다.","연인은 과거를 정리할 기회를 믿어 줄 수 있냐고 물었다.","세 사람이 마주할 가능성이 라이벌 스레드에 남았다."]
+  ,["haeun-home-outside-talk","집 앞에서 나누는 이야기","romance",2,30,"하은의 집에 도착했지만 아직 안으로 들어오라는 말은 없었다.","두 사람은 현관 앞에서 서로에게 편한 거리를 확인했다.","하은은 부담 없이 여기서 이야기해도 괜찮겠냐고 물었다.","강요하지 않은 대화가 다음 방문의 신뢰로 남았다."]
+  ,["haeun-home-tea-talk","차를 마시며 나누는 이야기","romance",3,30,"하은이 현관문을 열고 거실로 안내했다.","테이블 위의 찻잔 두 개 사이로 조금 깊은 이야기가 시작됐다.","하은은 요즘 서로에게 숨기는 고민이 없는지 물었다.","따뜻한 차와 솔직한 대화가 집 안의 거리를 좁혔다."]
+  ,["haeun-home-meal","하은의 집에서 함께 먹는 저녁","romance",5,30,"하은의 식탁에는 두 사람 몫의 저녁이 준비되어 있었다.","평범한 식사 안에서 함께 사는 미래가 자연스럽게 떠올랐다.","하은은 다음에는 무엇을 함께 만들어 먹고 싶은지 물었다.","식사가 끝난 뒤 두 사람은 다음 장보기 약속을 정했다."]
 ];
 
 const MOODS = {
@@ -78,9 +81,9 @@ function makeTurns(event,sceneIndex) {
 
 function makeChoices(event) {
   return [
-    {id:"honest",label:"불편하더라도 전부 솔직히 말한다",effects:{trust:10,affection:3,conflict:-2},flag:`${event.id}:HONEST`,memory:`${event.title}에서 솔직함을 선택했다.`,futureEventWeights:{reconciliation:1.25,suspicion:.75}},
-    {id:"protect",label:"관계를 지키기 위한 선을 분명히 긋는다",effects:{trust:6,excitement:-2,relationshipStress:-2},flag:`${event.id}:BOUNDARY`,memory:`${event.title}에서 관계의 경계를 정했다.`,futureEventWeights:{loyalty:1.3,temptation:.7}},
-    {id:"risk",label:"지금의 감정을 따라 위험을 감수한다",effects:{excitement:10,trust:-7,conflict:4},flag:`${event.id}:RISK`,memory:`${event.title}에서 위험한 감정을 따랐다.`,futureEventWeights:{temptation:1.4,suspicion:1.35}}
+    {id:"honest",label:"불편하더라도 전부 솔직히 말한다",preferenceTags:["HONEST","EMOTIONAL","DIRECT"],effects:{trust:10,affection:3,conflict:-2},response:"솔직한 답은 당장의 긴장보다 앞으로의 신뢰를 선택한 말이 되었다.",flag:`${event.id}:HONEST`,memory:`${event.title}에서 솔직함을 선택했다.`,futureEventWeights:{reconciliation:1.25,suspicion:.75}},
+    {id:"protect",label:"관계를 지키기 위한 선을 분명히 긋는다",preferenceTags:["BOUNDARY","PRACTICAL","PLANNED","LOGICAL"],effects:{trust:6,excitement:-2,relationshipStress:-2},response:"구체적인 경계가 두 사람이 다시 같은 문제를 겪지 않을 기준이 되었다.",flag:`${event.id}:BOUNDARY`,memory:`${event.title}에서 관계의 경계를 정했다.`,futureEventWeights:{loyalty:1.3,temptation:.7}},
+    {id:"risk",label:"지금의 감정을 따라 위험을 감수한다",preferenceTags:["SPONTANEOUS","IMAGINATIVE","RISK"],effects:{excitement:10,trust:-7,conflict:4},response:"순간의 설렘은 커졌지만 선택의 책임과 불안도 함께 남았다.",flag:`${event.id}:RISK`,memory:`${event.title}에서 위험한 감정을 따랐다.`,futureEventWeights:{temptation:1.4,suspicion:1.35}}
   ];
 }
 
@@ -95,7 +98,7 @@ function buildEvent([id,title,category,startDay,endDay,hook,pressure,reveal,echo
     dialogueTurns:makeTurns(event,sceneIndex)
   }));
   return {
-    ...event,message:hook,conditions:[{stat:"day",operator:">=",value:startDay}],probability:.025+(index%4)*.008,priority:52+(index%7),cooldown:7+(index%5),effects:config.baseEffects,
+    ...event,message:hook,question:`${title}에서 나는 어떻게 답하고 행동할까?`,eventType:category==="friends"?"FRIEND":category==="work"||category==="temptation"?"COWORKER":"GIRLFRIEND",image:{intro:`assets/events/${category}/${id}-01.png`,result:`assets/events/${category}/${id}-result-01.png`,status:"planned"},conditions:[{stat:"day",operator:">=",value:startDay}],probability:.025+(index%4)*.008,priority:52+(index%7),cooldown:7+(index%5),effects:config.baseEffects,
     baseWeight:45+(index%6)*5,dayRange:[startDay,endDay],timeOfDay:index%3===0?"evening":"day",location:event.scenes[0].backgroundId,tensionLevel:category==="conflict"||category==="mystery"?"high":category==="temptation"?"medium-high":"medium",
     relationshipStates:category==="conflict"?["SUSPICIOUS","CONFLICT","RECOVERING"]:category==="romance"?["HONEYMOON","STABLE","PASSIONATE"]:["DISTANT","STABLE","SUSPICIOUS"],
     npcRequirements:config.npcRole==="girlfriend"?[]:[config.npcRole],requiredMemories:[],requiredEvents:[],forbiddenFlags:[`${event.id}:COMPLETED`],repeatable:false,maxTriggerCount:1,eventState:"LOCKED",
@@ -105,6 +108,18 @@ function buildEvent([id,title,category,startDay,endDay,hook,pressure,reveal,echo
 }
 
 const BASE_SITUATION_EVENTS=BLUEPRINTS.map(buildEvent);
+const HAEUN_HOME_TIERS={
+  "situation-haeun-home-outside-talk":{trust:[null,700],locationId:"haeun-home-outside",question:"집 앞에서 하은에게 어떻게 답할까?",image:"assets/events/locations/haeun-home-outside-talk-01.png"},
+  "situation-haeun-home-tea-talk":{trust:[701,900],locationId:"haeun-home-living-room",question:"차를 마시며 하은과 어떤 이야기를 나눌까?",image:"assets/events/locations/haeun-home-tea-talk-01.png"},
+  "situation-haeun-home-meal":{trust:[901,null],locationId:"haeun-home-dining-room",question:"하은이 준비한 식사에 어떻게 마음을 전할까?",image:"assets/events/locations/haeun-home-meal-01.png"}
+};
+for(const event of BASE_SITUATION_EVENTS){
+  const tier=HAEUN_HOME_TIERS[event.id];
+  if(!tier)continue;
+  event.heroineIds=["haeun"];event.locationId=tier.locationId;event.question=tier.question;event.image.intro=tier.image;event.image.result=tier.image;event.image.status="ready";
+  if(tier.trust[0]!==null)event.conditions.push({stat:"trust",operator:">=",value:tier.trust[0]});
+  if(tier.trust[1]!==null)event.conditions.push({stat:"trust",operator:"<=",value:tier.trust[1]});
+}
 for(const event of BASE_SITUATION_EVENTS)event.excludedHeroineIds=["yuna"];
 export const SITUATION_EVENTS=[...BASE_SITUATION_EVENTS,...YUNA_STORY_EVENTS];
 const STORY_CHAINS={
