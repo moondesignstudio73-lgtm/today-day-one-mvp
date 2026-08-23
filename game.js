@@ -14,7 +14,7 @@ import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
 import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, getPaycheckRange, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=6";
-import { acquireActionItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, purchaseItem } from "./src/inventory-manager.mjs?v=7";
+import { acquireActionItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, purchaseItem } from "./src/inventory-manager.mjs?v=8";
 import { getItem, ITEMS } from "./src/items-data.mjs?v=5";
 import { giveGift } from "./src/gift-manager.mjs?v=7";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
@@ -24,7 +24,7 @@ import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mj
 import { buildConversationContext, getContextualOpening, recordConversationTurn } from "./src/conversation-manager.mjs?v=7";
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs?v=2";
-import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs";
+import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs?v=2";
 import { analyzePlayHistory } from "./src/ending-manager.mjs";
 import { SoundManager } from "./src/sound-manager.mjs?v=5";
 import { recordMemory } from "./src/memory-manager.mjs";
@@ -903,7 +903,15 @@ function openCgGallery(activeTab="photos") {
 function openNightPc() {
   const workButton=isWeekend(state.day)?"":`<button data-pc-action="work">💼 야간 업무<small>수입 증가 · 스트레스 증가</small></button>`;
   $("#modalContent").innerHTML=`<span class="eyebrow">MY COMPUTER · 60 MIN</span><h2>컴퓨터로 무엇을 할까?</h2><div class="pc-actions"><button data-pc-action="game">🎮 게임하기<small>스트레스 완화 · 피로 증가</small></button><button data-pc-action="study">📚 자기계발<small>업무 능력 증가 · 피로 증가</small></button>${workButton}</div>`;openModal();
-  document.querySelectorAll("[data-pc-action]").forEach(button=>button.addEventListener("click",()=>{const result=spendNightTime(state,60,button.textContent.trim().split(" ")[1]||"PC 활동");if(!result.ok){toast(result.reason);return;}const id=button.dataset.pcAction;const effects=id==="game"?{stress:-10,fatigue:8,energy:-5}:id==="study"?{work:6,confidence:3,fatigue:9,energy:-7}:{money:50000,work:5,stress:10,fatigue:12,energy:-10};applyEffects(state,effects);if(effects.money)appendTransaction(state,{category:"night-work",label:"야간 업무",amount:effects.money});SaveManager.save(state);closeModal();render();toast(`${result.time} · 밤 활동을 마쳤어요.`);}));
+  document.querySelectorAll("[data-pc-action]").forEach(button=>button.addEventListener("click",()=>{const id=button.dataset.pcAction,activity={game:{title:"게임하기",icon:"🎮",effects:{stress:-10,fatigue:8,energy:-5}},study:{title:"자기계발",icon:"📚",effects:{work:6,confidence:3,fatigue:9,energy:-7}},work:{title:"야간 업무",icon:"💼",effects:{money:50000,work:5,stress:10,fatigue:12,energy:-10}}}[id];if(!activity)return;const before=Object.fromEntries(Object.keys(activity.effects).map(key=>[key,state[key]??0])),startTime=formatNightTime(ensureNightState(state).minutes),result=spendNightTime(state,60,activity.title);if(!result.ok){toast(result.reason);return;}applyEffects(state,activity.effects);if(activity.effects.money)appendTransaction(state,{category:"night-work",label:"야간 업무",amount:activity.effects.money});const changes=Object.fromEntries(Object.keys(activity.effects).map(key=>[key,Math.round((state[key]??0)-before[key])]));SaveManager.save(state);render();showNightPcResult(activity,result,startTime,changes);}));
+}
+
+function showNightPcResult(activity,result,startTime,changes) {
+  const labels={money:"보유 자산",stress:"스트레스",fatigue:"피로",energy:"체력",work:"업무 능력",confidence:"자신감"};
+  const rows=Object.entries(changes).map(([key,value])=>`<div class="night-pc-stat ${value>0?'up':value<0?'down':'neutral'}"><span>${escapeHtml(labels[key]??key)}</span><b>${value>0?'+':''}${key==='money'?money(value):value}</b></div>`).join("");
+  $("#modalContent").innerHTML=`<article class="night-pc-result"><span class="night-pc-result-icon" aria-hidden="true">${activity.icon}</span><small>MY COMPUTER · ACTIVITY RESULT</small><h2>${escapeHtml(activity.title)} 완료</h2><p>${startTime} → ${result.time} · 60분 사용</p><div class="night-pc-stat-list">${rows}</div><button id="nightPcResultConfirm" class="primary-button" type="button">수치 확인</button></article>`;
+  openModal();
+  $("#nightPcResultConfirm").addEventListener("click",closeModal);
 }
 
 function goToSleep() {
@@ -1056,7 +1064,7 @@ function openInventory() {
 function openShop() {
   sound.playBgm("dateShopping",state.day);
   const visibleItems=ITEMS.filter(item=>item.category!=="heroine-outfit" || item.heroineId===state.partner.heroineId);
-  const cards = visibleItems.map(item=>{const heroineOutfit=item.category==="heroine-outfit",unlocked=!heroineOutfit||isOutfitUnlocked(state,item);const visual=item.productImage?`<img class="shop-product-image" src="${item.productImage}" alt="${escapeHtml(item.name)}" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`;const actions=heroineOutfit?`<button data-buy="${item.id}" data-owner="gift" ${unlocked?'':'disabled'}>${unlocked?`${state.partner.name} 선물용`:`DAY ${item.unlockConditions.day} 잠금`}</button>`:`<button data-buy="${item.id}" data-owner="player">내 것</button><button data-buy="${item.id}" data-owner="gift">선물용</button>`;return `<div class="shop-item ${heroineOutfit?'heroine-outfit-card':''}">${visual}<div><small>${item.brand} · ${item.rarity??`LUX ${item.luxuryLevel}`}</small><b>${escapeHtml(item.name)}</b><span>${escapeHtml((item.styleTags??item.preferenceTags).join(" · "))} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span><strong>${money(item.price)}</strong></div><div class="shop-actions">${actions}</div></div>`;}).join("");
+  const cards = visibleItems.map(item=>{const heroineOutfit=item.category==="heroine-outfit",unlocked=!heroineOutfit||isOutfitUnlocked(state,item),purchased=(state.inventory??[]).some(entry=>entry.itemId===item.id);const visual=item.productImage?`<img class="shop-product-image" src="${item.productImage}" alt="${escapeHtml(item.name)}" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`;const actions=purchased?`<button class="purchased-button" disabled>구매 완료</button>`:heroineOutfit?`<button data-buy="${item.id}" data-owner="gift" ${unlocked?'':'disabled'}>${unlocked?`${state.partner.name} 선물용`:`DAY ${item.unlockConditions.day} 잠금`}</button>`:`<button data-buy="${item.id}" data-owner="player">내 것</button><button data-buy="${item.id}" data-owner="gift">선물용</button>`;return `<div class="shop-item ${heroineOutfit?'heroine-outfit-card':''} ${purchased?'purchased':''}">${visual}<div><small>${item.brand} · ${item.rarity??`LUX ${item.luxuryLevel}`}</small><b>${escapeHtml(item.name)}</b><span>${escapeHtml((item.styleTags??item.preferenceTags).join(" · "))} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span><strong>${money(item.price)}</strong></div><div class="shop-actions">${actions}</div></div>`;}).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">LIFESTYLE SHOP</span><h2>오늘의 상점</h2><p>보유 자산 ${money(state.money)} · ${state.partner.name} 전용 의상 10종이 관계 진행에 따라 해금됩니다.</p><div class="shop-list">${cards}</div>`;
   openModal();
   if (state.job?.id === "used-car-dealer") $("#modalContent").insertAdjacentHTML("afterbegin", `<p class="career-tip"><b>딜러 네트워크 적용:</b> ${escapeHtml(state.partner.name)}에게 선물할 차량은 결제 시 12% 자동 할인됩니다.</p>`);
@@ -1135,12 +1143,20 @@ function openInvestment() {
   const portfolio=getPortfolioSummary(state);
   const lottery=getLotterySummary(state);
   const wealthyLeverage=state.player?.archetypeId==="wealthy"?`<p class="career-tip"><b>부자 캐릭터 특전:</b> 주가 상승과 하락이 모두 10배로 적용됩니다.</p>`:"";
-  const cards=state.investment.market.map(stock=>{ const holding=state.investment.holdings[stock.id]; return `<div class="stock-card"><div><small>${stock.risk.toUpperCase()} RISK · ${stock.changeRate>=0?'+':''}${stock.changeRate}%</small><b>${stock.name}</b><span>${money(stock.price)} · 보유 ${holding?.quantity??0}주${holding?` · 평균 ${money(holding.averageCost)}`:''}</span></div><div class="stock-actions"><button data-stock-buy="${stock.id}">1주 매수</button><button data-stock-sell="${stock.id}" ${holding?'':'disabled'}>1주 매도</button></div></div>`; }).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">VIRTUAL MARKET</span><h2>오늘의 투자</h2>${wealthyLeverage}<p>보유 자산 ${money(state.money)} · 평가금액 ${money(portfolio.marketValue)} · 손익 ${portfolio.profitLoss>=0?'+':''}${money(portfolio.profitLoss)}</p><div class="stock-list">${cards}</div><div class="lottery-card"><div><small>INSTANT LOTTERY · DAY ${state.day}</small><b>오늘의 행운 복권</b><span>1장 ${money(LOTTERY_TICKET_PRICE)} · 오늘 ${lottery.today}/${DAILY_TICKET_LIMIT}장 · 누적 손익 ${lottery.net>=0?'+':''}${money(lottery.net)}</span></div><button id="lotteryBuyButton" ${lottery.today>=DAILY_TICKET_LIMIT||state.money<LOTTERY_TICKET_PRICE?'disabled':''}>한 장 긁기</button></div>`;
+  const valueClass=value=>value>0?"investment-gain":value<0?"investment-loss":"investment-neutral";
+  const cards=state.investment.market.map(stock=>{const holding=state.investment.holdings[stock.id],positionProfit=holding?(stock.price-holding.averageCost)*holding.quantity:0;return `<div class="stock-card"><div><small class="${valueClass(stock.changeRate)}">${stock.risk.toUpperCase()} RISK · ${stock.changeRate>=0?'+':''}${stock.changeRate}%</small><b>${stock.name}</b><span class="stock-position-line">${money(stock.price)} · 보유 ${holding?.quantity??0}주${holding?` · 평균 ${money(holding.averageCost)}`:''}</span>${holding?`<em class="stock-profit ${valueClass(positionProfit)}">평가 손익 ${positionProfit>=0?'+':''}${money(positionProfit)}</em>`:""}</div><div class="stock-actions"><button data-stock-buy="${stock.id}">1주 매수</button><button data-stock-sell="${stock.id}" ${holding?'':'disabled'}>1주 매도</button></div></div>`;}).join("");
+  $("#modalContent").innerHTML=`<span class="eyebrow">VIRTUAL MARKET</span><h2>오늘의 투자</h2>${wealthyLeverage}<p class="investment-summary-line">보유 자산 <b>${money(state.money)}</b> · 평가금액 <b>${money(portfolio.marketValue)}</b> · 손익 <strong class="${valueClass(portfolio.profitLoss)}">${portfolio.profitLoss>=0?'+':''}${money(portfolio.profitLoss)}</strong></p><div class="stock-list">${cards}</div><div class="lottery-card"><div><small>INSTANT LOTTERY · DAY ${state.day}</small><b>오늘의 행운 복권</b><span>1장 ${money(LOTTERY_TICKET_PRICE)} · 오늘 ${lottery.today}/${DAILY_TICKET_LIMIT}장 · 누적 손익 <strong class="${valueClass(lottery.net)}">${lottery.net>=0?'+':''}${money(lottery.net)}</strong></span></div><button id="lotteryBuyButton" ${lottery.today>=DAILY_TICKET_LIMIT||state.money<LOTTERY_TICKET_PRICE?'disabled':''}>한 장 긁기</button></div>`;
   openModal();
   document.querySelectorAll("[data-stock-buy]").forEach(button=>button.addEventListener("click",()=>{const result=buyStock(state,button.dataset.stockBuy);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openInvestment();}));
   document.querySelectorAll("[data-stock-sell]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{const result=sellStock(state,button.dataset.stockSell);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);render();openInvestment();}));
-  $("#lotteryBuyButton").addEventListener("click",()=>{const result=buyInstantLottery(state);if(!result.ok){toast(result.reason);return;}state.logs.push({time:`DAY ${state.day} · LOTTERY`,text:`즉석복권 ${result.label}${result.prize?` · ${money(result.prize)} 당첨`:''}`});SaveManager.save(state);render();openInvestment();toast(result.prize?`${result.label}! ${money(result.prize)} 당첨`:`아쉽게도 꽝이에요.`);});
+  $("#lotteryBuyButton").addEventListener("click",()=>{const result=buyInstantLottery(state);if(!result.ok){toast(result.reason);return;}state.logs.push({time:`DAY ${state.day} · LOTTERY`,text:`즉석복권 ${result.label}${result.prize?` · ${money(result.prize)} 당첨`:''}`});SaveManager.save(state);render();showLotteryResult(result);});
+}
+
+function showLotteryResult(result) {
+  const won=result.prize>0;
+  $("#modalContent").innerHTML=`<article class="lottery-result ${won?'won':'miss'}"><span class="lottery-result-icon" aria-hidden="true">${won?'🎉':'🍀'}</span><small>INSTANT LOTTERY · DAY ${state.day}</small><h2>${won?escapeHtml(result.label):'꽝'}</h2><strong>${won?`${money(result.prize)} 당첨!`:'아쉽게도 당첨되지 않았어요.'}</strong><p>${won?'당첨금이 보유 자산에 바로 지급되었습니다.':'다음 행운을 기대해 보세요.'}</p><button id="lotteryResultConfirm" class="primary-button" type="button">확인</button></article>`;
+  openModal();
+  $("#lotteryResultConfirm").addEventListener("click",openInvestment);
 }
 
 function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state); const analysis=analyzePlayHistory(state);

@@ -76,6 +76,7 @@ export function acquireActionItem(state, action) {
 export function purchaseItem(state, itemId, owner = "player") {
   const item = getItem(itemId);
   if (!item) return { ok:false, reason:"존재하지 않는 아이템입니다." };
+  if ((state.inventory ?? []).some(entry => entry.itemId === itemId)) return { ok:false, reason:"이미 구매한 아이템입니다." };
   if (item.category === "heroine-outfit" && owner !== "gift") return {ok:false,reason:"히로인 의상은 선물용으로 구매해 주세요."};
   if (item.category === "heroine-outfit" && item.heroineId !== state.partner.heroineId) return {ok:false,reason:`${state.partner.name}의 체형과 취향에 맞는 의상이 아닙니다.`};
   if (item.category === "heroine-outfit" && !isOutfitUnlocked(state,item)) return {ok:false,reason:"아직 잠겨 있는 특별 의상입니다."};
