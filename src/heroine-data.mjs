@@ -54,7 +54,8 @@ export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=
   preferenceTags:[tag,...styleByHeroine[profile.id]], styleTags:[tag,...styleByHeroine[profile.id]], rarity:index >= 8 ? "legendary" : index >= 6 ? "rare" : "common",
   unlockConditions:{day, affection:index >= 8 ? 650 : index >= 6 ? 560 : 0, trust:index === 9 ? 600 : 0},
   productImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`,
-  characterWearingImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`
+  characterWearingImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`,
+  characterWearingVideo:profile.id === "haeun" && index === 2 ? "assets/heroines/haeun/videos/03.webm" : null
 }))),...YUNA_OUTFITS];
 
 const mainBeats = ["첫 번째 약속","일과 사랑의 경계","예상 밖의 데이트","친구에게 소개하는 날","처음 드러난 약점","서로의 돈 이야기","라이벌의 등장","크게 부딪힌 밤","다시 손을 잡는 방법","우리의 다음 계절"];

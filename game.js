@@ -38,7 +38,7 @@ import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, g
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
-import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=6";
+import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=7";
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
@@ -60,6 +60,7 @@ let modalReturnFocus = null;
 let actionResultReturnFocus = null;
 let actionResultContinuation = null;
 let dialogueTimer = null;
+let outfitVideoTimer = null;
 let dialogueText = "";
 let dialogueIndex = 0;
 const dialogueHistory = [];
@@ -379,10 +380,26 @@ function updateImmersiveCharacter(expressionId="calm") {
   const characterId=immersiveScene?.presentation?.characterId??"girlfriend";
   updateGiftVehicleLayer(characterId);
   const npcSprite=characterId!=="girlfriend"?getNpcSprite(characterId):"";
-  if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;return;}
-  if(characterId==="girlfriend"&&immersiveScene?.previewOutfitImage){character.src=immersiveScene.previewOutfitImage;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;return;}
+  if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
+  if(characterId==="girlfriend"&&immersiveScene?.previewOutfitImage){character.src=immersiveScene.previewOutfitImage;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   state.currentExpression=expressionId;
   renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId:immersiveScene?.presentation?.poseId,outfitId:immersiveScene?.presentation?.outfitId});
+  syncOutfitCharacterMedia(false);
+}
+
+function syncOutfitCharacterMedia(forceImage=false) {
+  const image=$("#vnCharacter"),video=$("#vnCharacterVideo"),outfit=state?getEquippedHeroineOutfit(state):null;
+  const showVideo=Boolean(!forceImage&&outfit?.characterWearingVideo&&state.day%2===0);
+  if(outfitVideoTimer){clearInterval(outfitVideoTimer);outfitVideoTimer=null;}
+  if(!video||!image)return;
+  video.pause();video.hidden=true;image.hidden=false;
+  if(!showVideo){video.removeAttribute("src");video.load();return;}
+  image.hidden=true;video.hidden=false;
+  if(video.getAttribute("src")!==outfit.characterWearingVideo){video.src=outfit.characterWearingVideo;video.load();}
+  const playOutfitVideo=()=>{if(video.hidden||!video.isConnected)return;video.currentTime=0;video.play().catch(()=>{video.hidden=true;image.hidden=false;});};
+  video.onerror=()=>{if(outfitVideoTimer){clearInterval(outfitVideoTimer);outfitVideoTimer=null;}video.hidden=true;image.hidden=false;};
+  playOutfitVideo();
+  outfitVideoTimer=setInterval(playOutfitVideo,10000);
 }
 
 function updateGiftVehicleLayer(characterId="girlfriend") {
@@ -606,6 +623,7 @@ function render() {
   $("#partnerAvatar").src = `${getGirlfriendVisual(p.visualId).previewImage}?v=6`;
   $("#partnerAvatar").alt = `${p.name} 프로필 사진`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));
+  syncOutfitCharacterMedia(false);
   updateGiftVehicleLayer("girlfriend");
   $("#vnExpressionLayer").className=`vn-expression-layer ${expression.tone}`;
   $("#vnExpressionLayer").innerHTML=`<span aria-hidden="true">${expression.icon}</span><b>${expression.label}</b>`;
@@ -651,6 +669,7 @@ function verifyPresentationAsset(presentation,backdrop){
 }
 
 function renderNightHome() {
+  syncOutfitCharacterMedia(true);
   const night = ensureNightState(state);
   const home=getPlayerHomeProfile(state.player?.archetypeId);
   document.body.classList.remove("ui-story-mode","ui-classic-mode");
@@ -675,6 +694,7 @@ function renderNightHome() {
 }
 
 function renderWorldMap() {
+  syncOutfitCharacterMedia(true);
   const night=ensureNightState(state);
   const world=state.world;
   const map=WORLD_MAPS[world.districtId]??WORLD_MAPS.dongsu;
