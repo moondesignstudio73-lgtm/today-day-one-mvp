@@ -14,7 +14,7 @@ import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
 import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, getPaycheckRange, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=6";
-import { acquireActionItem, equipItem, getEffectiveAppearance, getEquipmentBonuses, purchaseItem } from "./src/inventory-manager.mjs?v=6";
+import { acquireActionItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, purchaseItem } from "./src/inventory-manager.mjs?v=7";
 import { getItem, ITEMS } from "./src/items-data.mjs?v=5";
 import { giveGift } from "./src/gift-manager.mjs?v=7";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
@@ -38,7 +38,7 @@ import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, g
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
-import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=8";
+import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=9";
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
@@ -60,8 +60,6 @@ let modalReturnFocus = null;
 let actionResultReturnFocus = null;
 let actionResultContinuation = null;
 let dialogueTimer = null;
-let outfitVideoTimer = null;
-let outfitVideoFrame = null;
 let dialogueText = "";
 let dialogueIndex = 0;
 const dialogueHistory = [];
@@ -389,28 +387,16 @@ function updateImmersiveCharacter(expressionId="calm") {
 }
 
 function syncOutfitCharacterMedia(forceImage=false) {
-  const image=$("#vnCharacter"),video=$("#vnCharacterVideo"),canvas=$("#vnCharacterCanvas"),outfit=state?getEquippedHeroineOutfit(state):null;
+  const image=$("#vnCharacter"),video=$("#vnCharacterVideo"),outfit=state?getEquippedHeroineOutfit(state):null;
   const showVideo=Boolean(!forceImage&&outfit?.characterWearingVideo&&state.day%2===0);
-  if(outfitVideoTimer){clearInterval(outfitVideoTimer);outfitVideoTimer=null;}
-  if(outfitVideoFrame){cancelAnimationFrame(outfitVideoFrame);outfitVideoFrame=null;}
-  if(!video||!canvas||!image)return;
-  video.pause();video.hidden=true;canvas.hidden=true;image.hidden=false;
+  if(!video||!image)return;
+  video.pause();video.hidden=true;image.hidden=false;
   if(!showVideo){video.removeAttribute("src");video.load();return;}
   if(video.getAttribute("src")!==outfit.characterWearingVideo){video.src=outfit.characterWearingVideo;video.load();}
-  const context=canvas.getContext("2d",{willReadFrequently:true});
-  const drawChromaFrame=()=>{
-    if(video.paused||video.ended||canvas.hidden)return;
-    context.clearRect(0,0,canvas.width,canvas.height);context.drawImage(video,0,0,canvas.width,canvas.height);
-    const frame=context.getImageData(0,0,canvas.width,canvas.height),pixels=frame.data;
-    for(let index=0;index<pixels.length;index+=4){const red=pixels[index],green=pixels[index+1],blue=pixels[index+2],base=Math.max(red,blue),dominance=green-base;if(green>72&&dominance>20){pixels[index+3]=dominance>=58?0:Math.round(255*(58-dominance)/38);pixels[index+1]=Math.min(green,base+10);}}
-    context.putImageData(frame,0,0);outfitVideoFrame=requestAnimationFrame(drawChromaFrame);
-  };
-  const showFallback=()=>{if(outfitVideoFrame){cancelAnimationFrame(outfitVideoFrame);outfitVideoFrame=null;}canvas.hidden=true;image.hidden=false;};
-  const playOutfitVideo=()=>{if(!video.isConnected)return;video.currentTime=0;image.hidden=true;canvas.hidden=false;video.play().then(()=>{outfitVideoFrame=requestAnimationFrame(drawChromaFrame);}).catch(showFallback);};
-  video.onended=showFallback;
-  video.onerror=()=>{if(outfitVideoTimer){clearInterval(outfitVideoTimer);outfitVideoTimer=null;}showFallback();};
-  playOutfitVideo();
-  outfitVideoTimer=setInterval(playOutfitVideo,10000);
+  const showFallback=()=>{video.hidden=true;image.hidden=false;};
+  video.onerror=showFallback;
+  image.hidden=true;video.hidden=false;video.currentTime=0;
+  video.play().catch(showFallback);
 }
 
 function updateGiftVehicleLayer(characterId="girlfriend") {
@@ -630,7 +616,7 @@ function render() {
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
-  typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerJob").textContent = p.career?.name ?? p.job; $("#partnerTrait").textContent = `성향 · ${p.archetype}`;
+  typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerMbti").textContent = p.mbti ?? "----"; $("#partnerJob").textContent = p.career?.name ?? p.job; $("#partnerTrait").textContent = `성향 · ${p.archetype}`;
   $("#partnerAvatar").src = `${getGirlfriendVisual(p.visualId).previewImage}?v=6`;
   $("#partnerAvatar").alt = `${p.name} 프로필 사진`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));
@@ -1059,10 +1045,11 @@ function openCharacterManager() {
 function openInventory() {
   const bonuses = getEquipmentBonuses(state);
   const ownerLabel = { player:"내 아이템", gift:"선물 대기", girlfriend:`${state.partner.name} 소유` };
-  const cards = state.inventory.length ? state.inventory.map(instance=>{ const item=getItem(instance.itemId); const control=instance.owner==='player'?`<button class="equip-button" data-instance="${instance.instanceId}" ${instance.equipped?'disabled':''}>${instance.equipped?'장착 중':'장착'}</button>`:instance.owner==='gift'?`<button class="gift-button" data-gift="${instance.instanceId}">${state.partner.name}에게 선물</button>`:`<em>${instance.equipped?'사용 중':'보관 중'}</em>`; const visual=item.productImage?`<img class="inventory-product-image" src="${item.productImage}" alt="" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`; return `<div class="inventory-item">${visual}<div><small>${item.brand} · ${item.category}</small><b>${item.name}</b><span>${ownerLabel[instance.owner]} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span></div>${control}</div>`; }).join("") : `<p class="empty-inventory">아직 보유한 아이템이 없습니다.</p>`;
+  const cards = state.inventory.length ? state.inventory.map(instance=>{ const item=getItem(instance.itemId); const girlfriendOutfit=instance.owner==='girlfriend'&&item.category==='heroine-outfit'; const control=instance.owner==='player'?`<button class="equip-button" data-instance="${instance.instanceId}" ${instance.equipped?'disabled':''}>${instance.equipped?'장착 중':'장착'}</button>`:instance.owner==='gift'?`<button class="gift-button" data-gift="${instance.instanceId}">${state.partner.name}에게 선물</button>`:girlfriendOutfit?`<button class="equip-button girlfriend-outfit-button" data-girlfriend-outfit="${instance.instanceId}" ${instance.equipped?'disabled':''}>${instance.equipped?'사용 중':'갈아입기'}</button>`:`<em>${instance.equipped?'사용 중':'보관 중'}</em>`; const visual=item.productImage?`<img class="inventory-product-image" src="${item.productImage}" alt="" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`; return `<div class="inventory-item">${visual}<div><small>${item.brand} · ${item.category}</small><b>${item.name}</b><span>${ownerLabel[instance.owner]} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span></div>${control}</div>`; }).join("") : `<p class="empty-inventory">아직 보유한 아이템이 없습니다.</p>`;
   $("#modalContent").innerHTML=`<span class="eyebrow">INVENTORY</span><h2>나의 가방</h2><p>장착 보너스 · 매력 +${bonuses.attractiveness} · 패션 +${bonuses.fashion}</p><div class="inventory-list">${cards}</div>`;
   openModal();
-  document.querySelectorAll(".equip-button:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{ equipItem(state,button.dataset.instance); SaveManager.save(state); openInventory(); }));
+  document.querySelectorAll("[data-instance]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{ equipItem(state,button.dataset.instance); SaveManager.save(state); openInventory(); }));
+  document.querySelectorAll("[data-girlfriend-outfit]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{const result=equipGirlfriendOutfit(state,button.dataset.girlfriendOutfit);if(!result){toast("의상을 변경할 수 없습니다.");return;}state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${state.partner.name} 의상 변경 · ${result.item.name}`});SaveManager.save(state);render();openInventory();toast(`${state.partner.name}의 의상을 ${result.item.name}(으)로 바꿨어요.`);}));
   document.querySelectorAll(".gift-button").forEach(button=>button.addEventListener("click",()=>{ const result=giveGift(state,button.dataset.gift); if(!result)return; state.logs.push({time:`DAY ${state.day} · GIFT`,text:`${result.item.name} 선물 · ${result.reaction.reaction}`}); recordMemory(state,{type:"gift",summary:`${result.item.name} 선물`,importance:4,tags:["선물",result.item.id]}); SaveManager.save(state); toast(`${state.partner.name}: “${result.reaction.reaction}” · 호감 +${result.reaction.affection}`); render(); openInventory(); }));
 }
 
@@ -1073,7 +1060,18 @@ function openShop() {
   $("#modalContent").innerHTML=`<span class="eyebrow">LIFESTYLE SHOP</span><h2>오늘의 상점</h2><p>보유 자산 ${money(state.money)} · ${state.partner.name} 전용 의상 10종이 관계 진행에 따라 해금됩니다.</p><div class="shop-list">${cards}</div>`;
   openModal();
   if (state.job?.id === "used-car-dealer") $("#modalContent").insertAdjacentHTML("afterbegin", `<p class="career-tip"><b>딜러 네트워크 적용:</b> ${escapeHtml(state.partner.name)}에게 선물할 차량은 결제 시 12% 자동 할인됩니다.</p>`);
-  document.querySelectorAll("[data-buy]").forEach(button=>button.addEventListener("click",()=>{ const result=purchaseItem(state,button.dataset.buy,button.dataset.owner); if(!result.ok){toast(result.reason);return;} const outfitGift=result.item.category==="heroine-outfit"?giveGift(state,result.instance.instanceId):null; if(outfitGift){state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${outfitGift.item.name} 선물 · 바로 착용`});recordMemory(state,{type:"gift",summary:`${outfitGift.item.name} 의상 선물`,importance:4,tags:["선물","의상",outfitGift.item.id]});} SaveManager.save(state); render(); openShop(); toast(outfitGift?`${state.partner.name}에게 선물 완료 · 새 의상 착용`:`${result.item.name} 구매 완료`); }));
+  document.querySelectorAll("[data-buy]").forEach(button=>button.addEventListener("click",()=>openPurchaseConfirmation(button.dataset.buy,button.dataset.owner)));
+}
+
+function openPurchaseConfirmation(itemId, owner) {
+  const item=getItem(itemId),quote=getPurchaseQuote(state,item,owner);
+  if(!item||!quote){toast("구매 정보를 확인할 수 없습니다.");return;}
+  const target=owner==="gift"?`${state.partner.name} 선물용`:"내 것";
+  const visual=item.productImage?`<img class="purchase-confirm-image" src="${item.productImage}" alt="${escapeHtml(item.name)}">`:`<div class="purchase-confirm-icon" aria-hidden="true">${item.icon}</div>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">PURCHASE CONFIRM</span><h2>구매 확인</h2><div class="purchase-confirm-item">${visual}<div><small>${escapeHtml(item.brand)} · ${escapeHtml(target)}</small><b>${escapeHtml(item.name)}</b><strong>${money(quote.price)}</strong></div></div><p class="venue-visit-question">구매하시겠습니까?</p><div class="venue-confirm-actions"><button id="purchaseCancel" type="button">아니오</button><button id="purchaseConfirm" class="primary-button" type="button">예</button></div>`;
+  openModal();
+  $("#purchaseCancel").addEventListener("click",openShop);
+  $("#purchaseConfirm").addEventListener("click",()=>{const result=purchaseItem(state,itemId,owner);if(!result.ok){toast(result.reason);openShop();return;}const outfitGift=result.item.category==="heroine-outfit"?giveGift(state,result.instance.instanceId):null;if(outfitGift){state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${outfitGift.item.name} 선물 · 바로 착용`});recordMemory(state,{type:"gift",summary:`${outfitGift.item.name} 의상 선물`,importance:4,tags:["선물","의상",outfitGift.item.id]});}SaveManager.save(state);render();openShop();toast(outfitGift?`${state.partner.name}에게 선물 완료 · 새 의상 착용`:`${result.item.name} 구매 완료`);});
 }
 
 function openFinance() {

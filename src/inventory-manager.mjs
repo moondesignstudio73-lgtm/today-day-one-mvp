@@ -36,6 +36,22 @@ export function equipItem(state, instanceId) {
   return instance;
 }
 
+export function equipGirlfriendOutfit(state, instanceId) {
+  const instance = (state.inventory ?? []).find(entry => entry.instanceId === instanceId && entry.owner === "girlfriend");
+  if (!instance) return null;
+  const item = getItem(instance.itemId);
+  if (!item || item.category !== "heroine-outfit" || item.heroineId !== state.partner.heroineId) return null;
+  for (const entry of state.inventory) {
+    const ownedItem = getItem(entry.itemId);
+    if (entry.owner === "girlfriend" && entry.equipped && ownedItem?.category === "heroine-outfit") entry.equipped = false;
+  }
+  instance.equipped = true;
+  instance.lastWorn = state.day;
+  state.girlfriendEquipment ??= {};
+  state.girlfriendEquipment["heroine-outfit"] = instance.instanceId;
+  return { instance, item };
+}
+
 export function getEquipmentBonuses(state) {
   return (state.inventory ?? []).filter(entry => entry.owner === "player" && entry.equipped).reduce((total, entry) => {
     const item = getItem(entry.itemId);
