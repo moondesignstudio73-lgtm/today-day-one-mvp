@@ -1,5 +1,5 @@
-import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=6";
-import { SaveManager } from "./src/save-manager.mjs?v=9";
+import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=7";
+import { SaveManager } from "./src/save-manager.mjs?v=10";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=7";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=5";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=5";
@@ -135,6 +135,27 @@ function animateActionResultEffects(rows) {
   });
 }
 
+function isGirlfriendAction(action) {
+  const effects=action?.effects??{};
+  return Number(effects.affection)>0||Number(effects.trust)>0||["데이트","추억","직업지원","돌봄"].includes(action?.tag)||Array.isArray(action?.heroineIds)||Array.isArray(action?.careerIds);
+}
+
+function rememberActionMedia(action,imageAsset,videoAsset) {
+  if (!isGirlfriendAction(action)) return false;
+  state.cgCollection??=[];
+  state.videoCollection??=[];
+  let changed=false;
+  if(imageAsset&&!state.cgCollection.some(entry=>entry.id===`action-${action.id}`)){
+    state.cgCollection.push({id:`action-${action.id}`,title:action.title,image:imageAsset,day:state.day,type:"action"});
+    changed=true;
+  }
+  if(videoAsset&&!state.videoCollection.some(entry=>entry.video===videoAsset)){
+    state.videoCollection.push({id:`video-${action.id}-${state.videoCollection.length+1}`,actionId:action.id,title:action.title,video:videoAsset,poster:imageAsset??null,day:state.day});
+    changed=true;
+  }
+  return changed;
+}
+
 function openActionResultModal(action, message, effects, continuation) {
   const modal = $("#actionResultModal");
   const image = $("#actionResultImage");
@@ -145,6 +166,7 @@ function openActionResultModal(action, message, effects, continuation) {
   const highTrustAsset = getHighTrustActionResultAsset(action.id,state,state.seenOneTimeActionResults);
   const asset = highTrustAsset ?? getActionResultAsset(action.id);
   const videoAsset = highTrustAsset ? null : getActionResultVideo(action.id,state,state.seenActionResultVideos);
+  const albumChanged=rememberActionMedia(action,asset,videoAsset);
   if (highTrustAsset) {
     state.seenOneTimeActionResults.push(action.id);
     SaveManager.save(state);
@@ -153,6 +175,7 @@ function openActionResultModal(action, message, effects, continuation) {
     state.seenActionResultVideos.push(videoAsset);
     SaveManager.save(state);
   }
+  if(albumChanged&&!highTrustAsset&&!videoAsset)SaveManager.save(state);
   actionResultReturnFocus = document.activeElement;
   actionResultContinuation = continuation;
   $("#actionResultTitle").textContent = action.title;
@@ -296,9 +319,9 @@ function openGameMenu() {
     ["message","💬","메시지",`${withParticle(state.partner.name,"과","와")} 대화`,"rose"],["call","📞","전화","통화하기","violet"],["shop","🛍","쇼핑","온라인 상점","green"],
     ["investment","📈","투자","주식·채권","blue"],["sns","📷","SNS","오늘의 피드","orange"],["people","👥","연락처","인맥 확인","mint"],
     ["schedule","📅","일정","30일 캘린더","pink"],["finance","💳","금융","자산·거래","indigo"],["todaylog","📝","오늘 기록","DAY 로그","gray"],
-    ["gallery","🖼","CG 앨범","해금한 장면","violet"]
+    ["gallery","🖼","포토 앨범","사진 · 동영상 추억","violet"]
   ] : [
-    ["save","↓","저장","현재 장면 보관","rose"],["load","↻","불러오기","저장 장면 복귀","violet"],["gallery","🖼","CG 앨범","해금한 장면","pink"],
+    ["save","↓","저장","현재 장면 보관","rose"],["load","↻","불러오기","저장 장면 복귀","violet"],["gallery","🖼","포토 앨범","사진 · 동영상 추억","pink"],
     ["speed","⏩","대사 속도",dialogueSpeeds[dialogueSpeedIndex].label,"indigo"],["debug","⚙","설정","접근성·진단","gray"]
   ];
   const dock = isNight ? [["report","☾","하루 정산"],["save","↓","저장하기"]] : [["history","≡","대화 기록"],["save","↓","저장하기"]];
@@ -831,11 +854,14 @@ function openSns() {
 
 function openSchedule() { const tomorrow=Math.min(30,state.day+1);$("#modalContent").innerHTML=`<span class="eyebrow">30 DAYS CALENDAR</span><h2>우리의 일정</h2><div class="schedule-card"><b>DAY ${state.day} · ${getWeekdayName(state.day)}</b><span>오늘의 일정을 마무리하는 중</span></div><div class="schedule-card"><b>DAY ${tomorrow} · ${getWeekdayName(tomorrow)}</b><span>내일의 선택은 아직 정해지지 않았어요.</span></div>`;openModal(); }
 
-function openCgGallery() {
-  const unlocked=state.cgCollection??[];
-  const unlockedCards=unlocked.map(entry=>`<article class="cg-card"><img src="${entry.image}" alt="${escapeHtml(entry.title)}" loading="lazy"><div><small>DAY ${entry.day}</small><b>${escapeHtml(entry.title)}</b></div></article>`).join("");
-  const lockedCards=Array.from({length:Math.max(0,8-unlocked.length)},(_,index)=>`<article class="cg-card locked"><span>?</span><div><small>LOCKED ${index+1}</small><b>???</b></div></article>`).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">CG COLLECTION</span><h2>기억에 남은 장면</h2><p>${unlocked.length} / 8 해금 · 중요 장면을 직접 보면 앨범에 저장됩니다.</p><div class="cg-gallery">${unlockedCards}${lockedCards}</div>`;openModal();
+function openCgGallery(activeTab="photos") {
+  const photos=state.cgCollection??[];
+  const videos=state.videoCollection??[];
+  const photoCards=photos.length?photos.map(entry=>`<button class="cg-card album-card" type="button" data-album-photo="${escapeHtml(entry.image)}" data-album-title="${escapeHtml(entry.title)}"><img src="${entry.image}" alt="${escapeHtml(entry.title)}" loading="lazy"><div><small>DAY ${entry.day}${entry.type==="action"?" · 함께한 행동":" · STORY"}</small><b>${escapeHtml(entry.title)}</b></div></button>`).join(""):`<p class="album-empty">여자친구와 함께 행동하거나 중요한 장면을 보면 사진이 저장됩니다.</p>`;
+  const videoCards=videos.length?videos.map(entry=>`<article class="cg-card video-album-card"><video src="${entry.video}" ${entry.poster?`poster="${entry.poster}"`:""} controls playsinline preload="metadata" aria-label="${escapeHtml(entry.title)} 영상"></video><div><small>DAY ${entry.day} · HAPPY VIDEO</small><b>${escapeHtml(entry.title)}</b></div></article>`).join(""):`<p class="album-empty">여자친구와 행복한 행동 중 영상이 등장하면 이곳에 저장됩니다.</p>`;
+  $("#modalContent").innerHTML=`<span class="eyebrow">PHOTO ALBUM</span><h2>우리의 포토 앨범</h2><p>여자친구와 함께한 사진 ${photos.length}장 · 행복한 시간 영상 ${videos.length}개</p><div class="album-tabs" role="tablist"><button type="button" data-album-tab="photos" class="${activeTab==="photos"?"active":""}">사진 앨범 · ${photos.length}</button><button type="button" data-album-tab="videos" class="${activeTab==="videos"?"active":""}">동영상 앨범 · ${videos.length}</button></div><div class="cg-gallery album-panel">${activeTab==="videos"?videoCards:photoCards}</div>`;openModal();
+  document.querySelectorAll("[data-album-tab]").forEach(button=>button.addEventListener("click",()=>openCgGallery(button.dataset.albumTab)));
+  document.querySelectorAll("[data-album-photo]").forEach(button=>button.addEventListener("click",()=>{$("#modalContent").innerHTML=`<button class="album-back" type="button">← 포토 앨범</button><figure class="album-photo-viewer"><img src="${button.dataset.albumPhoto}" alt="${escapeHtml(button.dataset.albumTitle)}"><figcaption>${escapeHtml(button.dataset.albumTitle)}</figcaption></figure>`;$(".album-back").addEventListener("click",()=>openCgGallery("photos"));}));
 }
 
 function openNightPc() {

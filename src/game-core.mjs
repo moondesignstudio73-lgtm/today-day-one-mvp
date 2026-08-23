@@ -64,6 +64,7 @@ export function createInitialState(partner, random = Math.random, setup = {}) {
     futureScore: 0,
     pendingStoryId: null,
     cgCollection: [],
+    videoCollection: [],
     storyDirector:createStoryDirectorState(0),
     hiddenRoute:createHiddenRouteState(random),
     investment: createInvestmentState(),
@@ -142,7 +143,7 @@ export function validateState(value) {
   if (!Number.isInteger(value.appearanceSeed) || !validateCharacterAppearance(value.characterAppearance) || !Array.isArray(value.equippedVisualLayers) || typeof value.currentExpression !== "string" || typeof value.currentPose !== "string" || typeof value.currentOutfit !== "string" || typeof value.currentAccessory !== "string" || typeof value.currentBackground !== "string") return false;
   if (!validateJob(value.job) || !Number.isFinite(value.jobLevel) || !Number.isFinite(value.jobProgress) || !Array.isArray(value.economyLedger) || !validateAdvancedEconomyState(value.finance) || !Array.isArray(value.inventory) || !value.equipment || !value.girlfriendEquipment || !validateNpcs(value.npcs) || !Array.isArray(value.npcHistory) || !Array.isArray(value.temptationHistory) || !Array.isArray(value.rivalHistory) || !validateMemories(value.memories) || !Array.isArray(value.initiatedMessages) || !Array.isArray(value.conversationHistory) || !validateInvestmentState(value.investment) || !validateLotteryState(value.lottery)) return false;
   if (!Array.isArray(value.logs) || !Array.isArray(value.choices) || !value.situationEventStates || !value.futureEventWeights || !Array.isArray(value.microEventHistory) || !value.eventRuntime || !value.settings) return false;
-  if (!Array.isArray(value.storyHistory) || !value.storyFlags || typeof value.storyFlags !== "object" || !Number.isFinite(value.futureScore) || (value.pendingStoryId !== null && typeof value.pendingStoryId !== "string") || !Array.isArray(value.cgCollection)) return false;
+  if (!Array.isArray(value.storyHistory) || !value.storyFlags || typeof value.storyFlags !== "object" || !Number.isFinite(value.futureScore) || (value.pendingStoryId !== null && typeof value.pendingStoryId !== "string") || !Array.isArray(value.cgCollection) || !Array.isArray(value.videoCollection)) return false;
   if (!validateHiddenRouteState(value.hiddenRoute)) return false;
   if (!validateStoryDirectorState(value.storyDirector)) return false;
   if (!value.dayStartSnapshot || typeof value.dayStartSnapshot !== "object" || (value.nightState !== null && typeof value.nightState !== "object")) return false;

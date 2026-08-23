@@ -1,4 +1,4 @@
-import { validateState } from "./game-core.mjs?v=4";
+import { validateState } from "./game-core.mjs?v=7";
 import { migrateNpcRoster } from "./npc-manager.mjs";
 import { migrateHeroineProfile } from "./girlfriend-manager.mjs?v=6";
 import { migrateInvestmentState } from "./investment-manager.mjs?v=2";
@@ -49,6 +49,7 @@ export class SaveManager {
       parsed.futureScore ??= 0;
       parsed.pendingStoryId ??= null;
       parsed.cgCollection ??= [];
+      parsed.videoCollection ??= [];
       parsed.situationEventStates ??= {};
       parsed.futureEventWeights ??= {};
       parsed.microEventHistory ??= [];
