@@ -13,7 +13,7 @@ export const HEROINE_PROFILES = [
     id:"haeun", name:"하은", age:29, job:"재무기획자", height:166, bodyType:"슬림 밸런스", archetype:"안정형 직장인", bio:"재무기획자 · 차분하고 현실적인 인상",
     personality:{contactImportance:38,jealousy:34,materialism:28,romanticism:54,independence:72,marriageDesire:68,economicPreference:82,vanity:30,loyalty:88,opportunism:12,emotionalSensitivity:42,giftPreference:48,socialPreference:50},
     hiddenTrait:"관계가 불안해지면 감정보다 계획을 먼저 세운다.", preferredDates:["조용한 식당","서점","함께 장보기"], dislikedActions:["충동 지출","말 없는 잠수"], preferredGifts:["미니멀","클래식","의미"],
-    fashionPreferences:{미니멀:95,오피스:92,엘레강트:82,로맨틱:55,스포티:45,럭셔리:48}, rivalReaction:"사실을 확인한 뒤 조용히 거리를 둔다.", conflictStyle:"근거와 약속을 확인한다.", reconciliationStyle:"구체적인 재발 방지 약속", aiVoice:"짧고 차분하며 현실적인 존댓말과 반말을 섞는다.", palette:"ivory-navy", referenceImage:"assets/heroines/haeun/outfits/01.webp"
+    fashionPreferences:{미니멀:95,오피스:92,엘레강트:82,로맨틱:55,스포티:45,럭셔리:48}, rivalReaction:"사실을 확인한 뒤 조용히 거리를 둔다.", conflictStyle:"근거와 약속을 확인한다.", reconciliationStyle:"구체적인 재발 방지 약속", aiVoice:"짧고 차분하며 현실적인 존댓말과 반말을 섞는다.", palette:"ivory-navy", referenceImage:"assets/heroines/haeun/outfits/01.png"
   },
   {
     id:"nari", name:"나리", age:25, job:"플로리스트", height:160, bodyType:"쁘띠 글래머", archetype:"감정표현형", bio:"플로리스트 · 감정이 얼굴에 드러나는 다정한 사람",
@@ -53,8 +53,8 @@ export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=
   price, luxuryLevel:Math.max(1,Math.ceil(price / 70000)), attractivenessBonus:2 + Math.ceil(index / 2), fashionBonus:4 + index,
   preferenceTags:[tag,...styleByHeroine[profile.id]], styleTags:[tag,...styleByHeroine[profile.id]], rarity:index >= 8 ? "legendary" : index >= 6 ? "rare" : "common",
   unlockConditions:{day, affection:index >= 8 ? 650 : index >= 6 ? 560 : 0, trust:index === 9 ? 600 : 0},
-  productImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.webp`,
-  characterWearingImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.webp`
+  productImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`,
+  characterWearingImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`
 }))),...YUNA_OUTFITS];
 
 const mainBeats = ["첫 번째 약속","일과 사랑의 경계","예상 밖의 데이트","친구에게 소개하는 날","처음 드러난 약점","서로의 돈 이야기","라이벌의 등장","크게 부딪힌 밤","다시 손을 잡는 방법","우리의 다음 계절"];
