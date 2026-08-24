@@ -659,6 +659,29 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 @media(max-width:1050px){.topbar{gap:8px}.topbar>.story-toolbar button{min-width:48px;padding:8px 7px}.topbar .brand small{display:none}.topbar .top-actions #resetButton{display:none!important}}
 @media(max-width:760px){.ui-story-mode .topbar,.theater-mode.ui-story-mode .topbar,.theater-mode .topbar,.ui-night-mode .topbar,.ui-classic-mode .topbar{height:62px;padding:0 8px}.topbar .brand>span:last-child{display:none}.topbar .day-pill{font-size:9px}.topbar>.story-toolbar{margin-left:0}.topbar>.story-toolbar button{min-width:39px;padding:7px 4px;font-size:7px}.theater-mode .topbar .top-actions{margin-left:0}.theater-mode .vn-stage,.ui-story-mode .story-mode .vn-stage{height:calc(100dvh - 74px);min-height:500px}.theater-mode .game-screen{padding-top:0}.theater-mode .night-home{height:calc(100dvh - 150px)}.theater-mode .world-map{height:calc(100dvh - 154px)}}
 
+/* Keep the original open header composition; only the game controls sit at right. */
+.ui-story-mode .topbar,.theater-mode.ui-story-mode .topbar,.theater-mode .topbar,.ui-classic-mode .topbar{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+.ui-classic-mode .game-screen.classic-mode{padding-top:8px}
+.ui-classic-mode .classic-mode>.play-panel{padding-top:0}
+.ui-classic-mode .action-selection-panel{top:26px}
+.game-tools-trigger{bottom:96px}
+
+@media(min-width:761px) and (max-width:1100px){
+  .theater-mode .topbar .brand strong,
+  .theater-mode .topbar .brand small,
+  .ui-classic-mode .topbar .brand strong,
+  .ui-classic-mode .topbar .brand small{color:#fff}
+}
+
+@media(max-width:760px){
+  .game-tools-trigger{bottom:72px}
+}
+
 @media(max-width:760px){
   .ui-night-mode .night-home,.theater-mode .night-home{
     height:calc(100dvh - 112px);
