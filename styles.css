@@ -672,6 +672,7 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 .ui-classic-mode .classic-mode>.play-panel{padding-top:0}
 .ui-classic-mode .topbar{position:sticky}
 .ui-classic-mode .topbar>.day-pill,
+.ui-night-mode .topbar>.day-pill,
 .theater-mode .topbar>.day-pill{
   position:absolute;
   left:50%;
