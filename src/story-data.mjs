@@ -133,6 +133,72 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"restore-routine-together",conditions:[{storyChoice:{sceneId:"m30-day3-discharge-phone",choiceIds:["set-up-together"]}}],label:"하은과 복약 자리와 저녁 동선만 함께 다시 만든다",effects:{affection:10,trust:10,health:3,stress:-4},scenarioEffects:{haeunAffection:10,haeunTrust:8,haeunDependency:2,homeSearchCount:1},unlockedActions:["home-routine-with-haeun","call-haeun"],followUpHooks:["day5-work-return"],response:"약은 물컵 옆, 충전기는 소파 가까이에 두었다. 하은은 “예전처럼”이라는 말을 쓰지 않고 매번 위치를 물었다. 둘이 만든 첫 동선은 과거의 복원이 아니라 오늘의 합의였다.",memory:"하은과 집에서 지킬 복약·저녁 동선을 새로 정함"},
     {id:"open-phone-at-desk",conditions:[{storyChoice:{sceneId:"m30-day3-discharge-phone",choiceIds:["seal-until-home"]}}],label:"책상에 앉아 봉투를 열고 최근 알림과 집 관련 기록만 확인한다",effects:{confidence:8,stress:2,trust:4},scenarioEffects:{investigation:9,memoryRecovery:5,homeSearchCount:1},clues:["phone-first-open-at-home"],unlockedActions:["inspect-phone-at-home","inspect-home-records"],followUpHooks:["day5-work-return"],response:"알림 범위를 날짜와 집 주소 관련 항목으로 제한했다. 하은은 화면을 보지 않고 주방에서 죽을 데웠다. 확인할 것과 미룰 것을 내가 정하자, 낯선 책상이 조금은 내 자리가 됐다.",memory:"집 책상에서 휴대폰 기록의 확인 범위를 정해 처음 열어 봄"}
   ]
+},{
+  id:"m30-day5-work-return",arc:"다시 만난 자리",window:[5,5],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day4-arrive-home"},
+  title:"내 자리에 앉는 법",speaker:"윤서진",message:"출입증 사진 속 남자는 익숙한 표정으로 웃고 있었다. 회사 로비의 회전문 앞에서 하은은 내 넥타이를 한 번 보고 손을 거뒀다.",
+  chapterType:"daily-life/workplace-hybrid",targetPlaytimeMinutes:[5,8],timeWindow:"morning",participants:["protagonist","haeun","seojin","team-lead"],
+  previousChoiceReferences:["m30-day4-arrive-home"],
+  dramaticPurpose:"주인공이 과거의 직장 평판에 휩쓸리지 않고 복귀 방식을 선택하게 하며, 윤서진이 사람에 대한 호감과 능력·성장 가능성 평가를 서로 다른 축으로 시작하게 한다.",
+  informationBudget:{mustReveal:["주인공은 사고 전 서비스 전략 업무를 맡았다","오늘은 정식 근무가 아니라 두 시간 적응 방문이다","윤서진은 주인공의 과거 업무 방식을 알고 있다"],mayReveal:["주인공이 실패를 문서로 남기던 습관","윤서진이 병원 소식을 꾸준히 확인했다"],mustNotReveal:["사고의 진짜 배후","가짜 하은의 정체","윤서진이 알 수 없는 사고 세부"],playerMaySuspect:["서진은 단순한 동료보다 주인공의 복귀에 관심이 많다"]},
+  relationshipBudget:{haeunAffection:"small",haeunTrust:"small",seojinAffection:"small-to-medium",seojinStatusInterest:"small-to-medium",coworkerRelation:"small"},
+  clueBudget:{allowed:["work-return-plan","pre-accident-work-habit"],forbidden:["accident-culprit","fake-haeun-proof"]},
+  emotionalCurve:["출근 긴장 4","하은과의 생활적 웃음 3","로비의 낯섦 5","동료의 환대 4","과거 평판의 압박 6","업무 화면의 공백 7","복귀 전략 선택 5","다음 방문에 대한 의지 4"],
+  sceneBeats:["로비에서 하은과 출근 경계를 정함","출입증과 엘리베이터로 과거 직장 실감","팀장과 서진의 서로 다른 환대","커피 머신 앞의 일상 대화로 서진의 말투와 관찰력 제시","자리와 미완료 업무 화면이 과거 평판의 압박으로 전환","서진에게 현재 업무와 과거 자신을 구분해 질문","업무·관계·회복 중 우선 복귀 전략 선택","서진의 후속 자료와 DAY 6 생활 재개 훅"],
+  voiceProfiles:{
+    protagonist:{rhythm:"짧고 구체적인 확인 질문",humor:"상황을 과장하지 않는 건조한 반응",emotion:"업무 화면을 닫거나 질문 순서를 정하는 행동으로 표현",relationshipVariation:"하은에게는 허락 범위를 말하고 서진에게는 사실과 평가를 구분해 요구"},
+    haeun:{rhythm:"먼저 말을 열고 일상적인 농담으로 긴장을 낮춤",humor:"옷차림과 점심 같은 생활 소재",emotion:"회사 안까지 따라가지 않고 선택권을 남김",relationshipVariation:"연인의 익숙함을 보이되 복귀를 감독하지 않음"},
+    seojin:{rhythm:"사회적으로 매끄러운 중간 길이 문장과 목적 있는 질문",humor:"업무 관찰을 이용한 건조한 농담",emotion:"직접 고백하지 않고 준비한 자료와 질문 순서로 드러냄",relationshipVariation:"현재의 취약함은 존중하면서 책임감·판단력·성장 가능성을 별도로 평가"},
+    teamLead:{rhythm:"짧고 절차적인 존댓말",humor:"거의 없음",emotion:"업무 범위를 명확히 제한하는 방식으로 배려"}
+  },
+  knowledgeLedger:{
+    protagonist:{KNOWS:["DAY 4에 집의 확인 순서를 정했다","오늘 회사에 두 시간 적응 방문한다"],BELIEVES:["과거 평판과 현재 능력을 분리해 확인해야 한다"],SUSPECTS:["동료들이 자신에게 기대하는 역할이 남아 있다"],DOES_NOT_KNOW:["사고 전 맡은 프로젝트","윤서진과의 친밀도","현재 조직 변화"],HIDES:["자기 자리 앞에서 도망치고 싶은 마음"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["현재 가능한 업무 범위와 평가 기준을 확인한다"],FEARS:["기억 속 자신을 연기하다 실패하는 것"]},
+    haeun:{KNOWS:["주인공이 오늘 회사에 간다","DAY 4에 주인공이 선택한 집 조사 방식"],BELIEVES:["회사 안에서는 주인공이 직접 관계를 다시 맺어야 한다"],SUSPECTS:[],DOES_NOT_KNOW:["현재 회사 내부 사정","윤서진의 개인적 관심"],HIDES:["회사 사람들에게 주인공을 맡기는 불안"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["주인공이 무리 없이 돌아온다"],FEARS:["복귀 실패가 회복 의지를 꺾는 것"]},
+    seojin:{KNOWS:["주인공의 과거 업무와 평판","오늘 적응 방문의 의료 제한","현재 팀의 변경 사항"],BELIEVES:["주인공의 복귀 태도가 향후 가능성을 보여 준다"],SUSPECTS:["기억을 잃어도 판단 습관 일부는 남아 있을 수 있다"],DOES_NOT_KNOW:["하은과 주인공의 현재 관계 온도","사고의 비공개 세부","주인공이 자신을 기억하는지"],HIDES:["병원 소식을 다른 동료보다 자주 확인했다"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["주인공의 현재 판단력과 자신에 대한 반응을 확인한다"],FEARS:["유능했던 동료가 과거 평판을 연기하다 무너지는 것"]},
+    teamLead:{KNOWS:["복귀 절차와 의료 제한","현재 가능한 업무 범위"],BELIEVES:["업무 투입보다 환경 적응이 우선이다"],SUSPECTS:[],DOES_NOT_KNOW:["주인공과 서진의 사적 감정"],HIDES:[],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["안전한 적응 방문을 마친다"],FEARS:["조기 업무 투입으로 건강 문제가 생기는 것"]}
+  },
+  lineLayers:[
+    {line:"기억 말고 판단부터 빌리죠.",surface:"현재 업무 자료 검토를 제안한다",emotion:"돌아온 동료가 반갑지만 동정하고 싶지 않다",intention:"주인공의 현재 능력과 성장 가능성을 확인한다"},
+    {line:"제가 알고 싶은 건 예전의 답이 아니라 지금 정한 기준이에요.",surface:"복귀 방식을 묻는다",emotion:"과거 관계를 혼자 기억하는 거리감이 있다",intention:"주인공이 자신에게 얼마나 솔직하고 주도적인지 살핀다"}
+  ],
+  dialogueTurns:[
+    {type:"dialogue",speaker:"하은",text:"넥타이 조금 비뚤어졌어. 고쳐 줘도 돼, 아니면 오늘의 자율 과제야?",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"위치만 말해 줘.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"오른쪽으로 손가락 한 마디. 됐다. 환자복보다 훨씬 네 옷 같다.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"출입증 사진은 내가 아닌 것 같은데.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"사진은 원래 본인보다 자신감이 많아. 점심은 네가 정하고, 힘들면 연락. 보고서는 필요 없어.",expressionId:"smile"},
+    {type:"narration",text:"하은은 회전문 앞에서 손만 흔들었다. 회사 안까지 따라오지 않았다. 어제 집에서 그랬듯, 들어갈지는 내 몫으로 남겼다."},
+    {type:"narration",text:"출입증을 대자 게이트가 열렸다. 엘리베이터 거울 속 정장 차림과 층수 버튼의 닳은 숫자 중 어느 쪽도 기억나지 않았다."},
+    {type:"dialogue",speaker:"팀장",text:"오신 것만으로 충분합니다. 오늘은 두 시간, 자리 확인과 팀 변경 사항 설명까지만 하겠습니다.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"업무 판단을 요구하는 일은 없습니까?",expressionId:"calm"},
+    {type:"dialogue",speaker:"팀장",text:"없습니다. 원하셔도 오늘은 승인하지 않겠습니다. 복귀는 성과가 아니라 절차입니다.",expressionId:"calm"},
+    {type:"dialogue",speaker:"윤서진",text:"팀장님이 저 말을 문서보다 짧게 하신 건 처음 보네요. 복귀 첫날부터 기록 하나 세웠어요.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"미안하지만…",expressionId:"calm"},
+    {type:"dialogue",speaker:"윤서진",text:"윤서진. 스물일곱. 같은 팀 서비스 전략. 기억 안 난다고 먼저 말해도 괜찮아요. 서운한 표정은 퇴근 뒤에 따로 연습할게요.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"반응이 익숙하네요.",expressionId:"calm"},
+    {type:"dialogue",speaker:"윤서진",text:"낯선 상황에서 질문 순서 정하는 것도 그대로고요. 커피부터 볼래요, 자리부터 볼래요? 둘 다 업무는 아닙니다.",expressionId:"calm"},
+    {type:"narration",text:"커피 머신 앞에서 서진은 내 사원증 등급으로 결제하지 않고 방문자 버튼을 눌렀다. 지금의 권한을 과거와 섞지 않았다."},
+    {type:"dialogue",speaker:"윤서진",text:"예전엔 아메리카노. 오늘은 물부터 드세요. 취향 정보와 의료 조언 중 하나만 고르라면 후자가 안전하니까.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"내가 어떤 일을 했죠? 좋은 말 말고 확인 가능한 걸로.",expressionId:"calm"},
+    {type:"dialogue",speaker:"윤서진",text:"신규 결제 서비스 전략, 손익 가설, 실패 보고서. 성과는 좋았고 일정은 자주 무리했어요. 마지막은 칭찬 아닙니다.",expressionId:"calm"},
+    {type:"dialogue",speaker:"팀장",text:"서진 씨가 현재 자료를 정리했습니다. 다만 검토 여부는 본인이 결정하세요.",expressionId:"calm"},
+    {type:"narration",text:"내 자리의 모니터를 켜자 읽지 않은 알림 숫자가 세 자리를 넘었다. 자동 복구된 문서 제목은 ‘실패 가설—다음 검증 순서’였다."},
+    {type:"dialogue",speaker:"나",text:"성공 보고서가 아니라 실패 가설을 고정해 뒀네요.",expressionId:"calm"},
+    {type:"dialogue",speaker:"윤서진",text:"잘된 건 다들 기억하니까요. 본인은 틀린 이유를 안 잊으려고 했어요. 꽤 피곤한 사람이었죠.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"지금도 그 방식이 유효하다고 봅니까?",expressionId:"calm"},
+    {type:"dialogue",speaker:"윤서진",text:"그걸 보려고 두 묶음으로 나눴어요. 하나는 지금 팀이 아는 사실, 하나는 예전의 당신이 남긴 판단. 섞으면 따라 쓰게 되니까.",expressionId:"calm"},
+    {type:"narration",text:"서진은 파란 파일과 회색 파일을 책상 양쪽 끝에 놓았다. 어느 쪽도 내 앞으로 밀지 않았다."},
+    {type:"dialogue",speaker:"나",text:"병원 소식도 계속 확인했어요?",expressionId:"calm"},
+    {type:"dialogue",speaker:"윤서진",text:"팀 공지는 봤어요. 개인적으로 몇 번 더 물은 것도 맞고요. 동료가 일 년째 안 돌아오는데 프로젝트 얘기만 궁금했다고 하면 그게 더 이상하잖아요.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"솔직하네요.",expressionId:"calm"},
+    {type:"dialogue",speaker:"윤서진",text:"질문을 돌려받을 것 같았거든요. 제가 알고 싶은 건 예전의 답이 아니라, 지금 어떤 기준으로 돌아올지예요.",expressionId:"calm"},
+    {type:"narration",text:"회의실 문이 열리고 오전 브리핑 알림이 울렸다. 오늘 들어갈 필요는 없었다. 대신 다음 방문 전까지 어떤 방식으로 현재의 자리를 확인할지는 정할 수 있었다."}
+  ],
+  presentation:{backgroundId:"office-day",characterId:"female-coworker",expressionId:"smile",poseId:"standing"},
+  choices:[
+    {id:"request-current-briefing",label:"과거 자료는 닫아 두고 현재 팀의 사실·일정·책임 범위부터 브리핑받는다",effects:{work:6,confidence:6,energy:-4},scenarioEffects:{coworkerRelation:4,seojinAffection:2,seojinStatusInterest:10},clues:["work-return-plan"],unlockedActions:["review-current-work","office-briefing"],profileUnlocks:["seojin-basic"],followUpHooks:["day6-life-restart"],response:"서진은 파란 파일만 열고 숫자의 출처와 담당자를 먼저 표시했다. “좋네요. 과거의 정답보다 현재의 책임부터.” 칭찬은 짧았지만 다음 설명은 더 구체적이었다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day4-arrive-home",choiceIds:["cross-check-digital-address","open-phone-at-desk"]}}],scenarioEffects:{seojinStatusInterest:3},unlockedActions:["structured-work-review"],response:"어젯밤 집에서 만든 확인 목록을 펼치자 서진이 항목 순서를 바꾸지 않고 출처만 덧붙였다. “기억이 없어도 검증 방식은 있네요. 이건 다음 회의에 써도 되겠어요.”"}],memory:"과거 평가를 보류하고 현재 업무의 사실과 책임 범위부터 확인함"},
+    {id:"rebuild-social-context",label:"업무 전에 서진과 팀원들에게 내가 놓친 관계와 최근 변화를 직접 묻는다",effects:{social:7,confidence:3,energy:-3},scenarioEffects:{coworkerRelation:8,seojinAffection:10,seojinStatusInterest:2},unlockedActions:["coworker-lunch","ask-team-history"],profileUnlocks:["seojin-basic"],followUpHooks:["day6-life-restart"],response:"서진은 조직도 대신 사람 이름 옆에 ‘요즘 맡은 일’을 적었다. “관계를 업무 부록으로 안 보는 건 의외네요.” 말은 가벼웠지만, 점심 가능한 시간을 먼저 알려 준 사람은 서진이었다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day4-arrive-home",choiceIds:["restore-routine-together"]}}],scenarioEffects:{seojinAffection:3},unlockedActions:["seojin-lunch-invitation"],response:"복약 시간 때문에 점심 종료 시각을 먼저 말하자 서진이 바로 달력에 반영했다. “생활 계획을 숨기지 않는 쪽이 훨씬 같이 일하기 편해요. 점심은 짧게, 대신 다음에 제대로.”"}],memory:"업무보다 먼저 현재 동료 관계와 팀 변화를 다시 배움"},
+    {id:"set-return-boundary",label:"기억 공백과 의료 제한을 공개하고 다음 방문의 업무 범위를 문서로 합의한다",effects:{confidence:9,health:3,stress:-3,work:3},scenarioEffects:{coworkerRelation:5,seojinAffection:5,seojinStatusInterest:7},clues:["work-return-plan"],unlockedActions:["planned-work-return","review-current-work"],profileUnlocks:["seojin-basic"],followUpHooks:["day6-life-restart"],response:"팀장은 업무 시간과 중단 기준을 문서에 적었다. 서진은 마지막 줄에 ‘모르면 확인, 기억나는 척 금지’를 추가했다. “책임지는 사람이 무리까지 책임질 필요는 없으니까요.”",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day4-arrive-home",choiceIds:["map-home-basics"]}}],scenarioEffects:{seojinStatusInterest:3},unlockedActions:["structured-work-review"],response:"집에서 정한 생활 구역표 옆에 회사의 업무 범위를 같은 형식으로 적었다. 서진은 잠시 보더니 중단 조건까지 숫자로 바꿨다. “경계를 정할 줄 아는 사람은 일정도 덜 망쳐요.”"}],memory:"기억 공백과 회복 한계를 공개하고 단계적 직장 복귀 범위를 합의함"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [

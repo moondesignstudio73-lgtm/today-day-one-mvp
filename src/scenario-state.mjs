@@ -11,7 +11,8 @@ export const GAME_MODE_CONFIGS = Object.freeze({
 const TRACKED_METRICS = [
   "investigation", "suspicion", "memoryRecovery", "haeunAffection",
   "haeunTrust", "haeunDependency", "homeSearchCount",
-  "computerSearchCount", "accidentSearchCount", "coworkerRelation"
+  "computerSearchCount", "accidentSearchCount", "coworkerRelation",
+  "seojinAffection", "seojinStatusInterest"
 ];
 const COLLECTIONS = ["clues", "contradictions", "profileUnlocks", "unlockedActions", "followUpHooks"];
 
@@ -44,6 +45,8 @@ export function createScenarioState(mode = GAME_MODES.FREE_ROMANCE) {
     computerSearchCount: 0,
     accidentSearchCount: 0,
     coworkerRelation: 0,
+    seojinAffection: 0,
+    seojinStatusInterest: 0,
     clues: [],
     contradictions: [],
     profileUnlocks: [],
