@@ -756,6 +756,20 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
   :-webkit-full-screen .topbar>.day-pill{top:9px}
 }
 
+/* Conversation replies arrive after a short, visible typing pause. */
+.reply-waiting{display:flex;align-items:center;gap:5px;width:max-content}.reply-waiting i{width:6px;height:6px;border-radius:50%;background:#b58ca0;animation:reply-dot 1s ease-in-out infinite}.reply-waiting i:nth-child(2){animation-delay:.15s}.reply-waiting i:nth-child(3){animation-delay:.3s}.reply-waiting small{margin-left:4px;color:#99828e;font-size:8px}.conversation-finish:disabled{opacity:.45;cursor:wait}@keyframes reply-dot{0%,60%,100%{opacity:.35;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+/* JS touch detection also covers tablets using a desktop-sized viewport. */
+.touch-device .ui-classic-mode .topbar .brand,
+.touch-device .ui-classic-mode .topbar .brand strong,
+.touch-device .ui-classic-mode .topbar .brand small,
+.touch-device .theater-mode .topbar .brand,
+.touch-device .theater-mode .topbar .brand strong,
+.touch-device .theater-mode .topbar .brand small{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+
 /* Touch screens: prevent the play surface from flashing as selected on every tap. */
 @media (hover:none), (pointer:coarse){
   .ui-classic-mode .topbar .brand,

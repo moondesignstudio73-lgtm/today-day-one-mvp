@@ -52,6 +52,8 @@ import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
+const touchDevice = navigator.maxTouchPoints > 0 || "ontouchstart" in window;
+document.documentElement.classList.toggle("touch-device",touchDevice);
 
 let state;
 let onboarding = null;
@@ -89,6 +91,10 @@ function persistEventRuntime(save=false){if(!state)return;state.eventRuntime=eve
 function renderFullscreenButtons(){const active=Boolean(document.fullscreenElement)||document.body.classList.contains("theater-mode");for(const button of [$("#fullscreenButton"),$("#storyFullscreenButton")])if(button){button.setAttribute("aria-pressed",String(active));button.textContent=button.id==="storyFullscreenButton"?(active?"WINDOW":"FULLSCREEN"):(active?"▣ 창모드":"⛶ 전체화면");}}
 function setTheaterMode(enabled){document.body.classList.toggle("theater-mode",enabled);if(state){state.settings??={};state.settings.theaterMode=enabled;localStorage.setItem(THEATER_SETTING_KEY,String(enabled));SaveManager.save(state);}renderFullscreenButtons();}
 async function toggleFullscreen(event){event?.stopPropagation();if(document.fullscreenElement){await document.exitFullscreen();setTheaterMode(false);return;}if(document.body.classList.contains("theater-mode")){setTheaterMode(false);return;}try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else setTheaterMode(true);}catch{setTheaterMode(true);}renderFullscreenButtons();}
+function requestInitialFullscreen(){
+  if(document.fullscreenElement||!document.documentElement.requestFullscreen)return;
+  document.documentElement.requestFullscreen().catch(()=>{});
+}
 
 function openModal() {
   if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
@@ -631,7 +637,7 @@ function playNextIntroVideo() {
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
 function startGame() { beginOnboarding(); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
+function showGame() { requestInitialFullscreen(); state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function outfitImageUrl(item) { return item?.heroineId==="haeun"&&item?.productImage?`${item.productImage}?v=8`:item?.productImage??""; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
@@ -1121,8 +1127,9 @@ function openChat(mode="message") {
 }
 function renderConversationSession(){
   if(!activeConversation)return;const session=activeConversation,context=buildConversationContext(state),suggestions=getSuggestedConversationReplies(context,session.turn);
-  const messages=session.messages.map(item=>`<div class="message ${item.speaker}">${escapeHtml(item.text)}</div>`).join("");
-  $("#modalContent").innerHTML=`<section class="conversation-session ${session.mode==='call'?'phone-conversation':''}"><span class="eyebrow">${session.mode==='call'?'PHONE CALL':'MESSAGES'} · ${escapeHtml(state.partner.name)}</span><div class="conversation-heading"><div class="conversation-avatar"><img src="${state.partner.referenceImage}" alt=""><i>${session.mode==='call'?'☎':'●'}</i></div><div><h2>${session.mode==='call'?`${state.partner.name}와 통화 중`:`${state.partner.name}에게 메시지`}</h2><p>${session.mode==='call'?'목소리를 들으며 천천히 이야기해 보세요.':'서로를 존중하는 말로 마음을 이어 가세요.'}</p></div></div><div id="chatMessages" class="chat-window" aria-live="polite">${messages}</div><div id="chatSafetyNotice" class="chat-safety-notice" hidden></div><div class="chat-suggestions">${suggestions.map(text=>`<button type="button" data-chat-suggestion="${escapeHtml(text)}">${escapeHtml(text)}</button>`).join("")}</div><form id="chatForm" class="chat-compose"><input id="chatInput" maxlength="180" autocomplete="off" placeholder="직접 입력하거나 추천 답변을 선택하세요" required><button type="submit">보내기</button></form><button id="finishConversation" class="conversation-finish" type="button">${session.mode==='call'?'통화 종료':'대화 마치기'}</button></section>`;
+  const waiting=session.replyPending?`<div class="message her reply-waiting" aria-label="${escapeHtml(state.partner.name)} 답장 작성 중"><i></i><i></i><i></i><small>${session.mode==='call'?'잠시 생각 중':'답장 작성 중'}</small></div>`:"";
+  const messages=session.messages.map(item=>`<div class="message ${item.speaker}">${escapeHtml(item.text)}</div>`).join("")+waiting;
+  $("#modalContent").innerHTML=`<section class="conversation-session ${session.mode==='call'?'phone-conversation':''}"><span class="eyebrow">${session.mode==='call'?'PHONE CALL':'MESSAGES'} · ${escapeHtml(state.partner.name)}</span><div class="conversation-heading"><div class="conversation-avatar"><img src="${state.partner.referenceImage}" alt=""><i>${session.mode==='call'?'☎':'●'}</i></div><div><h2>${session.mode==='call'?`${state.partner.name}와 통화 중`:`${state.partner.name}에게 메시지`}</h2><p>${session.mode==='call'?'목소리를 들으며 천천히 이야기해 보세요.':'서로를 존중하는 말로 마음을 이어 가세요.'}</p></div></div><div id="chatMessages" class="chat-window" aria-live="polite">${messages}</div><div id="chatSafetyNotice" class="chat-safety-notice" hidden></div><div class="chat-suggestions">${suggestions.map(text=>`<button type="button" data-chat-suggestion="${escapeHtml(text)}" ${session.replyPending?'disabled':''}>${escapeHtml(text)}</button>`).join("")}</div><form id="chatForm" class="chat-compose"><input id="chatInput" maxlength="180" autocomplete="off" placeholder="${session.replyPending?'답장을 기다리고 있어요…':'직접 입력하거나 추천 답변을 선택하세요'}" required ${session.replyPending?'disabled':''}><button type="submit" ${session.replyPending?'disabled':''}>보내기</button></form><button id="finishConversation" class="conversation-finish" type="button" ${session.replyPending?'disabled':''}>${session.mode==='call'?'통화 종료':'대화 마치기'}</button></section>`;
   $("#chatForm").addEventListener("submit",event=>{event.preventDefault();chatReply($("#chatInput").value);});
   document.querySelectorAll("[data-chat-suggestion]").forEach(button=>button.addEventListener("click",()=>chatReply(button.dataset.chatSuggestion)));
   $("#finishConversation").addEventListener("click",finishConversation);requestAnimationFrame(()=>{$("#chatMessages").scrollTop=$("#chatMessages").scrollHeight;});
@@ -1130,22 +1137,26 @@ function renderConversationSession(){
 async function chatReply(message){
   if(!activeConversation)return;const analysis=analyzeConversationInput(message),notice=$("#chatSafetyNotice");
   if(!analysis.allowed){notice.hidden=false;notice.textContent=analysis.message;$("#chatInput").focus();return;}
-  document.querySelectorAll("#chatForm button,[data-chat-suggestion]").forEach(button=>button.disabled=true);
+  const session=activeConversation;
+  session.messages.push({speaker:"me",text:message});session.replyPending=true;renderConversationSession();
+  const replyDelay=new Promise(resolve=>setTimeout(resolve,session.mode==="call"?900+Math.random()*900:1500+Math.random()*1600));
   let response;
   if(analysis.level==="hostile"){
-    response={...getHostileConversationResponse(state),source:"safety"};state.conversationSafety??={hostileCount:0,lastHostileDay:null};state.conversationSafety.hostileCount=response.count;state.conversationSafety.lastHostileDay=state.day;activeConversation.hostile=true;
+    response={...getHostileConversationResponse(state),source:"safety"};await replyDelay;state.conversationSafety??={hostileCount:0,lastHostileDay:null};state.conversationSafety.hostileCount=response.count;state.conversationSafety.lastHostileDay=state.day;session.hostile=true;
   }else{
-    const endpoint=document.querySelector('meta[name="today-day-one-ai-endpoint"]')?.content;response=await requestGirlfriendReply({endpoint,context:{...buildConversationContext(state),sessionTurn:activeConversation.turn,mode:activeConversation.mode,sessionState:{topic:activeConversation.topic,lastQuestionId:activeConversation.lastQuestionId,lastUserMessage:activeConversation.lastUserMessage,recentReplyIds:[...activeConversation.recentReplyIds],turn:activeConversation.turn,variantSeed:activeConversation.variantSeed}},message});
+    const endpoint=document.querySelector('meta[name="today-day-one-ai-endpoint"]')?.content;[response]=await Promise.all([requestGirlfriendReply({endpoint,context:{...buildConversationContext(state),sessionTurn:session.turn,mode:session.mode,sessionState:{topic:session.topic,lastQuestionId:session.lastQuestionId,lastUserMessage:session.lastUserMessage,recentReplyIds:[...session.recentReplyIds],turn:session.turn,variantSeed:session.variantSeed}},message}),replyDelay]);
   }
+  if(activeConversation!==session)return;
+  session.replyPending=false;
   if(!response){renderConversationSession();return;}
-  const scale=activeConversation.turn>=7?0:activeConversation.turn>=4?.5:1,effects=Object.fromEntries(Object.entries(response.effects??{}).map(([key,value])=>[key,Math.round(value*(analysis.level==="hostile"?1:scale))]));
-  for(const [key,value] of Object.entries(effects))activeConversation.effects[key]=(activeConversation.effects[key]??0)+value;
-  activeConversation.messages.push({speaker:"me",text:message},{speaker:"her",text:response.text});activeConversation.turn+=1;
-  activeConversation.lastUserMessage=message;activeConversation.topic=response.topic??activeConversation.topic;activeConversation.lastQuestionId=inferConversationQuestion(response.text);const replyId=response.replyId??response.id;if(replyId){activeConversation.recentReplyIds.push(replyId);activeConversation.recentReplyIds=activeConversation.recentReplyIds.slice(-12);}
-  recordConversationTurn(state,message,response.text,{mode:activeConversation.mode,tone:analysis.level});
-  state.logs.push({time:`DAY ${state.day} · ${activeConversation.mode==='call'?'CALL':'MESSAGE'}`,text:analysis.level==='hostile'?`${state.partner.name}에게 공격적인 말을 해 관계가 크게 나빠졌다.`:`${state.partner.name}와 대화 · ${message.slice(0,32)}`});
+  const scale=session.turn>=7?0:session.turn>=4?.5:1,effects=Object.fromEntries(Object.entries(response.effects??{}).map(([key,value])=>[key,Math.round(value*(analysis.level==="hostile"?1:scale))]));
+  for(const [key,value] of Object.entries(effects))session.effects[key]=(session.effects[key]??0)+value;
+  session.messages.push({speaker:"her",text:response.text});session.turn+=1;
+  session.lastUserMessage=message;session.topic=response.topic??session.topic;session.lastQuestionId=inferConversationQuestion(response.text);const replyId=response.replyId??response.id;if(replyId){session.recentReplyIds.push(replyId);session.recentReplyIds=session.recentReplyIds.slice(-12);}
+  recordConversationTurn(state,message,response.text,{mode:session.mode,tone:analysis.level});
+  state.logs.push({time:`DAY ${state.day} · ${session.mode==='call'?'CALL':'MESSAGE'}`,text:analysis.level==='hostile'?`${state.partner.name}에게 공격적인 말을 해 관계가 크게 나빠졌다.`:`${state.partner.name}와 대화 · ${message.slice(0,32)}`});
   SaveManager.save(state);
-  if(response.forceEnd||activeConversation.turn>=10){finishConversation(response.forceEnd?"상대가 상처를 받아 대화를 종료했습니다.":"오늘 나눌 이야기를 충분히 나누었습니다.");return;}renderConversationSession();
+  if(response.forceEnd||session.turn>=10){finishConversation(response.forceEnd?"상대가 상처를 받아 대화를 종료했습니다.":"오늘 나눌 이야기를 충분히 나누었습니다.");return;}renderConversationSession();
 }
 function finishConversation(reason=""){
   if(!activeConversation)return;const session=activeConversation;session.effects=Object.fromEntries(Object.entries(session.effects).map(([key,value])=>[key,Math.max(-3,Math.min(3,Math.round(value)))]));applyEffects(state,session.effects);const effect=key=>session.effects[key]??0,positive=effect("affection")+effect("trust"),summary=session.hostile?"상처와 실망이 남은 대화":positive>=4?"서로의 마음이 가까워진 대화":positive>0?"잔잔하게 마음을 나눈 대화":"조심스러운 대화";
