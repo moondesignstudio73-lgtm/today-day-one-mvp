@@ -526,7 +526,7 @@ function renderModeSetup() {
   document.querySelectorAll("[data-game-mode]").forEach(button=>button.addEventListener("click",()=>{
     onboarding.mode=button.dataset.gameMode;
     const config=getGameModeConfig(onboarding.mode);
-    if(config.fixedPartnerId){onboarding.partner=createGirlfriendFromProfile(config.fixedPartnerId);onboarding.girlfriendTraitsReady=true;onboarding.girlfriendJobReady=true;renderPlayerSetup();}
+    if(config.fixedPartnerId){onboarding.partner=createGirlfriendFromProfile(config.fixedPartnerId);onboarding.partner.age=23;onboarding.girlfriendTraitsReady=true;onboarding.girlfriendJobReady=true;renderPlayerSetup();}
     else{onboarding.partner=null;onboarding.girlfriendTraitsReady=false;onboarding.girlfriendJobReady=false;renderGirlfriendSetup();}
   }));
 }
@@ -586,7 +586,7 @@ function renderSetupSummary() {
   onboarding.previewState=createInitialState(onboarding.partner,Math.random,{mode:onboarding.mode,player,job:onboarding.playerJob});
   const preview=onboarding.previewState;
   const mode=getGameModeConfig(preview.gameMode);
-  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>FINAL PROFILE · ${escapeHtml(mode.title)}</span><h1>${escapeHtml(player.name)}의 30일이 시작됩니다</h1><p>선택한 모드와 설정은 저장 데이터와 모든 게임 시스템에 적용됩니다.</p></header><div class="setup-summary"><img src="${player.image}" alt="${escapeHtml(player.name)}"><div><span>${escapeHtml(player.archetypeName)}</span><h2>${escapeHtml(player.name)}</h2><dl><div><dt>게임 모드</dt><dd>${escapeHtml(mode.title)}</dd></div><div><dt>직업</dt><dd>${escapeHtml(preview.job.name)}</dd></div><div><dt>초기 자금</dt><dd>${money(preview.money)}</dd></div><div><dt>매력 / 패션</dt><dd>${preview.charm} / ${preview.fashion}</dd></div><div><dt>업무 / 사교</dt><dd>${preview.work} / ${preview.social}</dd></div></dl></div><div class="summary-partner"><small>${preview.scenario.enabled?"FIANCÉE · CAMPAIGN":"GIRLFRIEND"}</small><strong>${escapeHtml(preview.partner.name)}</strong><span>${escapeHtml(preview.partner.mbti)} · ${escapeHtml(preview.partner.career.name)}</span><p>${personalitySummary(preview.partner)}</p></div></div><button id="openIntroButton" class="primary-button setup-next" type="button">다음 · 프롤로그 보기</button>`;
+  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>FINAL PROFILE · ${escapeHtml(mode.title)}</span><h1>${escapeHtml(player.name)}의 30일이 시작됩니다</h1><p>선택한 모드와 설정은 저장 데이터와 모든 게임 시스템에 적용됩니다.</p></header><div class="setup-summary"><img src="${player.image}" alt="${escapeHtml(player.name)}"><div><span>${escapeHtml(player.archetypeName)}</span><h2>${escapeHtml(player.name)}</h2><dl><div><dt>게임 모드</dt><dd>${escapeHtml(mode.title)}</dd></div><div><dt>직업</dt><dd>${escapeHtml(preview.job.name)}</dd></div><div><dt>초기 자금</dt><dd>${money(preview.money)}</dd></div><div><dt>매력 / 패션</dt><dd>${preview.charm} / ${preview.fashion}</dd></div><div><dt>업무 / 사교</dt><dd>${preview.work} / ${preview.social}</dd></div></dl></div><div class="summary-partner"><small>${preview.scenario.enabled?"FIANCÉE · CAMPAIGN":"GIRLFRIEND"}</small><strong>${escapeHtml(preview.partner.name)}${preview.scenario.enabled?` · ${preview.partner.age}세`:""}</strong><span>${preview.scenario.enabled?"MBTI 🔒 · 직업 🔒":`${escapeHtml(preview.partner.mbti)} · ${escapeHtml(preview.partner.career.name)}`}</span><p>${preview.scenario.enabled?"프로필은 함께 보낸 시간과 확인한 기록에 따라 해금됩니다.":personalitySummary(preview.partner)}</p></div></div><button id="openIntroButton" class="primary-button setup-next" type="button">다음 · 프롤로그 보기</button>`;
   $("#openIntroButton").addEventListener("click",openStoryIntro);
 }
 
@@ -642,7 +642,8 @@ function render() {
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
-  typeDialogue(phase.text); $("#partnerName").textContent = p.name; $("#partnerMbti").textContent = p.mbti ?? "----"; $("#partnerJob").textContent = p.career?.name ?? p.job; $("#partnerTrait").textContent = `성향 · ${p.archetype}`;
+  const campaignProfileLocked=state.scenario?.enabled===true;
+  typeDialogue(phase.text); $("#partnerName").textContent = campaignProfileLocked?`${p.name} · ${p.age}세`:p.name; $("#partnerMbti").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-mbti")?"🔒":p.mbti ?? "----"; $("#partnerJob").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-career")?"직업 · 🔒":p.career?.name ?? p.job; $("#partnerTrait").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-personality")?"성향 · 🔒":`성향 · ${p.archetype}`;
   $("#partnerAvatar").src = `${p.referenceImage ?? getGirlfriendVisual(p.visualId).previewImage}?v=7`;
   $("#partnerAvatar").alt = `${p.name} 프로필 사진`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));

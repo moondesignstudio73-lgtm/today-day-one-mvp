@@ -23,6 +23,8 @@ export function clamp(value, min = 0, max = 100) {
 
 export function createInitialState(partner, random = Math.random, setup = {}) {
   const gameMode = normalizeGameMode(setup.mode);
+  const gamePartner = structuredClone(partner);
+  if (gameMode === "marriage-in-30-days" && gamePartner?.heroineId === "haeun") gamePartner.age = 23;
   const selectedJob = setup.job ? structuredClone(setup.job) : generateJob(random);
   const player = setup.player ? structuredClone(setup.player) : createPlayerProfile();
   const jobStart = applyPlayerArchetype(getJobStartingState(selectedJob, random), player);
@@ -43,10 +45,10 @@ export function createInitialState(partner, random = Math.random, setup = {}) {
     day: 1,
     phase: 0,
     selected: null,
-    partner,
+    partner: gamePartner,
     player,
     world:createWorldState(player),
-    ...createVisualState(partner),
+    ...createVisualState(gamePartner),
     job: selectedJob,
     jobLevel: 1,
     jobProgress: 0,

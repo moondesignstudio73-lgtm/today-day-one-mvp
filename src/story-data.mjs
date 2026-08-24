@@ -3,24 +3,43 @@ import { HEROINE_STORY_SCENES } from "./heroine-data.mjs";
 
 export const MARRIAGE_30_STORY_SCENES = [{
   id:"m30-day1-hospital-awakening",arc:"잃어버린 1년",window:[1,1],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],
-  title:"눈을 뜬 날",speaker:"하은",message:"소독약 냄새와 일정한 기계음. 눈을 뜨자 낯선 여자가 물컵의 빨대를 입가에 가져왔다.",
-  dramaticPurpose:"혼수 1년과 기억 손실을 확인하고, 하은을 따뜻하고 유능한 현재의 보호자로 소개한다.",
+  title:"눈을 뜨다",speaker:"하은",message:"어둠이 걷힌 자리에는 병원의 하얀 천장과 일정한 기계음이 있었다. 고개를 돌리자 보라색 머리의 여자가 침대 곁에서 잠들어 있었다.",
+  dramaticPurpose:"자기 정체성까지 잃은 공포를 체감시키고, 하은의 애정과 30일 뒤 결혼 약속, 사고로 잃은 부모님, 망가진 몸을 차례로 받아들이게 한다.",
+  emotionalCurve:["혼란 2","안도 4","낯섦 5","경계 6","생활적 온기 4","결혼 통보 7","부모의 죽음 9","기립 실패 8","회복 의지 5"],
   knowledgeLedger:{
-    protagonist:{KNOWS:["병원에서 깨어났다","최근 기억이 비어 있다"],BELIEVES:[],SUSPECTS:["부상과 기억 손실이 연결돼 있다"],DOES_NOT_KNOW:["하은과의 과거","사고 경위"],HIDES:[],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["현재 상태를 사실부터 확인한다"],FEARS:["자신의 판단을 잃는 것"]},
-    haeun:{KNOWS:["주인공이 1년 만에 깨어났다","의사가 자극적인 기억 확인을 피하라고 했다"],BELIEVES:["일상부터 되찾는 것이 회복에 도움이 된다"],SUSPECTS:[],DOES_NOT_KNOW:["주인공이 무엇을 언제 떠올릴지"],HIDES:["지금 말하면 부담이 될 과거의 세부사항"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["주인공을 안심시키고 곁에 머문다"],FEARS:["주인공이 자신을 완전히 낯선 사람으로 밀어내는 것"]},
+    protagonist:{KNOWS:["병원에서 깨어났다","자신의 이름과 최근 기억이 비어 있다"],BELIEVES:[],SUSPECTS:["부상과 기억 손실이 연결돼 있다"],DOES_NOT_KNOW:["하은과의 과거","사고 경위","부모님의 생사","결혼 약속"],HIDES:["낯선 사람의 포옹이 두렵다"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["현재 상태를 사실부터 확인한다","몸을 스스로 움직인다"],FEARS:["자신이 누구인지 끝내 기억하지 못하는 것"]},
+    haeun:{KNOWS:["주인공이 1년 만에 깨어났다","자신은 23세다","두 사람은 30일 뒤 결혼하기로 했다","사고로 주인공의 부모가 사망했다","의사가 자극적인 기억 확인을 피하라고 했다"],BELIEVES:["일상부터 되찾는 것이 회복에 도움이 된다"],SUSPECTS:[],DOES_NOT_KNOW:["주인공이 무엇을 언제 떠올릴지"],HIDES:["지금 말하면 부담이 될 과거의 세부사항"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["주인공을 안심시키고 곁에 머문다"],FEARS:["주인공이 자신을 완전히 낯선 사람으로 밀어내는 것"]},
     doctor:{KNOWS:["혼수 기간","기억 검사 결과","현재 활력징후"],BELIEVES:["회복 속도를 단정할 수 없다"],SUSPECTS:[],DOES_NOT_KNOW:["사고 전 사적 관계"],HIDES:[],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["환자가 무리하지 않고 기본 검사를 받는다"],FEARS:["과도한 자극으로 환자가 불안정해지는 것"]}
   },
   dialogueTurns:[
-    {type:"dialogue",speaker:"하은",text:"천천히. 한꺼번에 마시면 또 기침해. …이 말부터 하는 게 맞나? 나 하은이야. 네 여자친구.",expressionId:"smile"},
-    {type:"dialogue",speaker:"나",text:"미안한데, 기억이 안 나. 당신도… 내가 왜 여기 있는지도.",expressionId:"calm"},
-    {type:"dialogue",speaker:"담당 의사",text:"교통사고 뒤 정확히 1년 만에 의식을 회복했습니다. 기억은 서두른다고 돌아오지 않습니다. 먼저 오늘 날짜와 몸 상태부터 확인하죠.",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"좋아. 어려운 건 선생님한테 맡기고, 나는 물이랑 충전기 담당. 우리 사이 얘기는 네가 물어볼 때만 할게.",expressionId:"smile"}
+    {type:"narration",text:"눈꺼풀을 올리는 일부터 힘이 들었다. 천장 모서리의 물자국, 왼손의 수액, 목 안쪽의 마른 통증이 하나씩 형태를 얻었다."},
+    {type:"narration",text:"침대 곁의 여자가 고개를 들었다. 보라색 머리카락 사이로 눈이 마주친 순간, 그녀의 손에서 종이컵이 찌그러졌다."},
+    {type:"dialogue",speaker:"하은",text:"드… 드디어. 잠깐만. 선생님부터— 아니, 나 한 번만 봐 줘. 진짜 깨어난 거 맞지?",expressionId:"worried"},
+    {type:"narration",text:"그녀가 내 어깨를 감싸 안았다. 따뜻한 체온과 떨리는 숨이 먼저 닿았다. 얼굴은 아름다웠지만, 이름도 관계도 떠오르지 않았다."},
+    {type:"dialogue",speaker:"나",text:"저기… 미안한데. 누구지?",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"……나?",expressionId:"worried"},
+    {type:"dialogue",speaker:"나",text:"당신도 모르겠고, 여기가 어딘지도 모르겠어. 내 이름도.",expressionId:"calm"},
+    {type:"narration",text:"하은은 팔을 풀고 반 걸음 물러났다. 울음을 닦는 대신 호출 버튼을 눌렀다. 내 손이 닿을 자리는 비워 두었다."},
+    {type:"dialogue",speaker:"담당 의사",text:"교통사고 후 정확히 1년입니다. 이름과 과거 기억에 손상이 있지만, 지금 대화를 이해하고 판단하는 능력은 유지되고 있습니다. 질문은 한 번에 하나씩 하겠습니다.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"먼저 저 사람부터. 내가 아는 사람이 맞습니까?",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"이하은. 스물세 살. 네 여자친구야. 지금은 그것만 믿으라는 말 안 할게. 확인하고 싶은 건 확인해.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"여자친구라고?",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"응. 그리고 이건 더 천천히 말해야 하는데… 우리, 30일 뒤에 결혼하기로 했어. 날짜도 네가 골랐고.",expressionId:"worried"},
+    {type:"narration",text:"모르는 사람과의 결혼식이 달력 어딘가에 잡혀 있었다. 하은은 대답을 재촉하지 않고 구겨진 종이컵을 새 컵으로 바꿨다."},
+    {type:"dialogue",speaker:"나",text:"사고는 어떻게 났지? 부모님은?",expressionId:"calm"},
+    {type:"narration",text:"하은의 손이 물병 뚜껑 위에서 멈췄다. 담당 의사가 의자를 당겨 침대 가까이 앉았다."},
+    {type:"dialogue",speaker:"담당 의사",text:"가족 여행 중 트럭과 충돌했습니다. 하은 씨는 비교적 가벼운 부상이었고, 환자분이 몸으로 감싼 정황이 있습니다. 부모님 두 분은… 현장에서 돌아가셨습니다.",expressionId:"worried"},
+    {type:"narration",text:"슬퍼해야 할 얼굴조차 떠오르지 않았다. 그 사실이 죽음 자체보다 먼저 숨을 막았다."},
+    {type:"dialogue",speaker:"하은",text:"사진은 있어. 지금 보자고 안 할게. 네가 준비되면, 한 장씩 같이 보자.",expressionId:"worried"},
+    {type:"narration",text:"침대 난간을 잡고 몸을 일으켰다. 다리는 내 것이 아닌 것처럼 떨렸고, 발바닥이 바닥을 찾기도 전에 무릎이 접혔다."},
+    {type:"dialogue",speaker:"하은",text:"잡을게. 싫으면 바로 놓을게. 하나만 말해 줘.",expressionId:"worried"},
+    {type:"dialogue",speaker:"나",text:"…잠깐. 내가 정할게.",expressionId:"calm"}
   ],
   presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
   choices:[
-    {id:"verify-medical",label:"의사에게 사고 날짜와 검사 결과부터 확인한다",effects:{trust:4,confidence:5},scenarioEffects:{investigation:8,memoryRecovery:2},clues:["coma-one-year"],profileUnlocks:["haeun-basic"],followUpHooks:["day2-rehabilitation"],response:"의사는 사고 날짜와 검사 순서를 메모해 주었다. 하은은 끼어들지 않고 종이를 내 손 닿는 곳에 놓았다.",memory:"깨어난 날 의료 기록부터 확인함"},
-    {id:"rebuild-routine",label:"하은에게 내가 좋아하던 일상부터 들려 달라고 한다",effects:{affection:10,trust:8},scenarioEffects:{haeunAffection:12,haeunTrust:8},clues:["coma-one-year"],profileUnlocks:["haeun-basic"],unlockedActions:["ask-daily-routine"],followUpHooks:["day2-rehabilitation"],response:"“아침엔 뜨거운 커피부터 찾았고, 양말은 꼭 한 짝씩 잃어버렸어.” 하은은 거창한 약속 대신 사소한 버릇부터 이야기했다.",memory:"하은에게 과거의 일상부터 들은 날"},
-    {id:"observe-first",label:"지금은 단정하지 않고 두 사람의 설명을 메모한다",effects:{trust:2,confidence:7},scenarioEffects:{investigation:5,suspicion:2},clues:["coma-one-year"],profileUnlocks:["haeun-basic"],followUpHooks:["day2-rehabilitation"],response:"날짜, 혼수 기간, 하은이라는 이름을 적었다. 하은은 메모를 훔쳐보지 않고 침대 난간을 올려 주었다.",memory:"깨어난 직후 들은 사실을 구분해 기록함"}
+    {id:"set-boundary",label:"하은에게 한 걸음 물러나 달라고 하고 의료 기록부터 확인한다",effects:{trust:2,confidence:7},scenarioEffects:{investigation:10,suspicion:3,memoryRecovery:2},clues:["coma-one-year","parents-died-in-collision"],profileUnlocks:["haeun-basic"],followUpHooks:["day2-rehabilitation"],response:"“알겠어. 네가 먼저 부를 때까지 여기 있을게.” 하은은 침대 끝에서 한 걸음 물러났다. 의사는 사고 날짜와 검사 순서를 적은 종이를 내 손에 건넸다.",memory:"하은과 거리를 두고 사고의 확인 가능한 사실부터 정리함"},
+    {id:"accept-support",label:"지금은 하은의 팔을 잡고 다시 침대에 앉는다",effects:{affection:12,trust:10,health:2},scenarioEffects:{haeunAffection:14,haeunTrust:10,haeunDependency:5,memoryRecovery:2},clues:["coma-one-year","parents-died-in-collision"],profileUnlocks:["haeun-basic"],unlockedActions:["ask-daily-routine"],followUpHooks:["day2-rehabilitation"],response:"하은은 겨드랑이를 들지 않고 팔꿈치만 받쳤다. 내가 침대에 앉자 그제야 숨을 내쉬었다. “오늘은 여기까지. 결혼 얘기도, 기억 얘기도 네 속도로 하자.”",memory:"깨어난 날 하은의 도움을 받아 다시 침대에 앉음"},
+    {id:"controlled-help",label:"간호사를 부르고 하은에게는 옆에서 상태만 말해 달라고 한다",effects:{trust:6,confidence:8,health:3},scenarioEffects:{investigation:6,haeunTrust:7,memoryRecovery:3},clues:["coma-one-year","parents-died-in-collision"],profileUnlocks:["haeun-basic"],unlockedActions:["review-medical-plan"],followUpHooks:["day2-rehabilitation"],response:"간호사가 자세를 바로잡는 동안 하은은 어지럼 여부와 통증 위치만 물었다. 내가 고개를 들자 “지시 잘하네. 그건 그대로야.”라며 처음으로 작게 웃었다.",memory:"도움의 범위를 직접 정하고 첫 기립 실패를 수습함"}
   ]
 },{
   id:"m30-day2-rehabilitation",arc:"다시 걷는 연습",window:[2,2],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day1-hospital-awakening"},
@@ -61,7 +80,7 @@ export const MARRIAGE_30_STORY_SCENES = [{
   ],
   presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"phone"},
   choices:[
-    {id:"inspect-system-first",label:"계정·날짜·백업 상태부터 직접 확인한다",effects:{confidence:7,trust:3},scenarioEffects:{investigation:8,memoryRecovery:3},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-system"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"잠금 화면의 날짜와 계정 이름부터 적었다. 사진과 메시지는 닫아 둔 채, 확인한 사실과 아직 보지 않은 영역을 구분했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["verify-medical"]}}],effects:{confidence:3},scenarioEffects:{investigation:3},response:"병원에서 받은 사고 날짜와 기기 백업 날짜를 나란히 적었다. 아직 결론은 없지만 확인 순서는 분명해졌다."}],memory:"돌아온 휴대폰의 시스템 정보부터 확인함"},
+    {id:"inspect-system-first",label:"계정·날짜·백업 상태부터 직접 확인한다",effects:{confidence:7,trust:3},scenarioEffects:{investigation:8,memoryRecovery:3},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-system"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"잠금 화면의 날짜와 계정 이름부터 적었다. 사진과 메시지는 닫아 둔 채, 확인한 사실과 아직 보지 않은 영역을 구분했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["set-boundary"]}}],effects:{confidence:3},scenarioEffects:{investigation:3},response:"병원에서 받은 사고 날짜와 기기 백업 날짜를 나란히 적었다. 아직 결론은 없지만 확인 순서는 분명해졌다."}],memory:"돌아온 휴대폰의 시스템 정보부터 확인함"},
     {id:"set-up-together",label:"하은과 복약 알람과 필수 연락처만 함께 설정한다",effects:{affection:8,trust:10},scenarioEffects:{haeunAffection:8,haeunTrust:10,memoryRecovery:2},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","call-haeun"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"하은은 자신의 번호를 ‘하은’이라고만 저장했다. 하트를 붙였다가 내 얼굴을 보고 지운 뒤, “이건 네가 기억나면 직접.”이라고 말했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["take-her-hand"]}}],effects:{affection:4},scenarioEffects:{haeunAffection:4},response:"알람 설정을 마친 하은이 손을 내밀었다. 어제처럼 이번에도 잡을지는 내 쪽에서 정할 수 있게, 손바닥만 펴 둔 채였다."}],memory:"하은과 휴대폰의 필수 기능만 다시 설정함"},
     {id:"seal-until-home",label:"인계 목록만 대조하고 내용 확인은 집에서 하기로 한다",effects:{confidence:8,stress:-4,trust:4},scenarioEffects:{investigation:4,haeunTrust:4},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-at-home"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"휴대폰, 지갑, 열쇠를 목록과 대조한 뒤 다시 봉투에 넣었다. 하은은 재촉하지 않고 봉투를 내 가방 맨 위에 놓았다.",memory:"휴대폰 기록 확인을 집에 도착한 뒤로 미룸"}
   ]
