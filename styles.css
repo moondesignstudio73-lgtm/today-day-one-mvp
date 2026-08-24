@@ -668,7 +668,23 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 }
 .ui-classic-mode .game-screen.classic-mode{padding-top:8px}
 .ui-classic-mode .classic-mode>.play-panel{padding-top:0}
-.ui-classic-mode .action-selection-panel{top:26px}
+.ui-classic-mode .topbar{position:sticky}
+.ui-classic-mode .topbar>.day-pill,
+.theater-mode .topbar>.day-pill{
+  position:absolute;
+  left:50%;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  min-width:250px;
+  padding:11px 24px;
+  justify-content:center;
+  transform:translateX(-50%);
+  text-align:center;
+  white-space:nowrap;
+}
+.ui-classic-mode .action-selection-panel{top:76px}
 .game-tools-trigger{bottom:96px}
 
 @media(min-width:761px) and (max-width:1100px){
@@ -676,6 +692,8 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
   .theater-mode .topbar .brand small,
   .ui-classic-mode .topbar .brand strong,
   .ui-classic-mode .topbar .brand small{color:#fff}
+  .ui-classic-mode .topbar>.day-pill,
+  .theater-mode .topbar>.day-pill{min-width:220px;padding:10px 18px}
 }
 
 @media(max-width:760px){
