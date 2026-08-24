@@ -686,6 +686,15 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
   text-align:center;
   white-space:nowrap;
 }
+/* Native fullscreen is independent from theater mode: center against the viewport. */
+:fullscreen .topbar>.day-pill,
+:-webkit-full-screen .topbar>.day-pill{
+  position:fixed;
+  top:14px;
+  left:50vw;
+  z-index:182;
+  transform:translateX(-50%);
+}
 .ui-classic-mode .action-selection-panel{top:76px}
 .game-tools-trigger{bottom:96px}
 
@@ -741,6 +750,8 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
     grid-template-rows:auto minmax(270px,1fr) auto;
   }
   .world-map-canvas{min-height:270px}
+  :fullscreen .topbar>.day-pill,
+  :-webkit-full-screen .topbar>.day-pill{top:9px}
 }
 
 /* Touch screens: prevent the play surface from flashing as selected on every tap. */
