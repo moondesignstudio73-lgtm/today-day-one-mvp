@@ -73,6 +73,12 @@ const HAEUN_OUTFIT_VIDEOS = Object.freeze({
   10:"assets/heroines/haeun/videos/10_transparent.webm"
 });
 
+export const HAEUN_SPECIAL_EVENT_OUTFIT = Object.freeze({
+  id:"outfit-haeun-special-sailor",outfitId:"OUTFIT_HAEUN_SPECIAL_SAILOR_EVENT_001",icon:"✨",name:"하은 · 서머 세일러 이벤트 룩",brand:"Haeun's Surprise",category:"heroine-outfit",heroineId:"haeun",
+  price:0,luxuryLevel:3,attractivenessBonus:8,fashionBonus:10,preferenceTags:["이벤트","데이트","세일러"],styleTags:["이벤트","데이트","세일러"],rarity:"special",eventOnly:true,
+  unlockConditions:{day:1,affection:0,trust:0},productImage:"assets/characters/girlfriend-special-event-sailor-2d.png",characterWearingImage:"assets/characters/girlfriend-special-event-sailor-2d.png",characterWearingVideo:"assets/characters/girlfriend-special-event-sailor-2d_transparent.webm"
+});
+
 export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=="yuna").flatMap(profile => (profile.id === "haeun" ? haeunOutfitKinds : outfitKinds).map(([kind,label,day,price,tag],index) => ({
   id:`outfit-${profile.id}-${String(index + 1).padStart(2,"0")}`, outfitId:`OUTFIT_${profile.id.toUpperCase()}_${kind.toUpperCase()}_${String(index + 1).padStart(3,"0")}`,
   icon:"👗", name:`${profile.name} · ${label}`, brand:"Atelier One Day", category:"heroine-outfit", heroineId:profile.id,
@@ -82,7 +88,7 @@ export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=
   productImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`,
   characterWearingImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`,
   characterWearingVideo:profile.id === "haeun" ? HAEUN_OUTFIT_VIDEOS[index + 1] ?? null : null
-}))),...YUNA_OUTFITS];
+}))),HAEUN_SPECIAL_EVENT_OUTFIT,...YUNA_OUTFITS];
 
 const mainBeats = ["첫 번째 약속","일과 사랑의 경계","예상 밖의 데이트","친구에게 소개하는 날","처음 드러난 약점","서로의 돈 이야기","라이벌의 등장","크게 부딪힌 밤","다시 손을 잡는 방법","우리의 다음 계절"];
 const subBeats = ["우산 하나","점심의 메시지","취향을 고르는 시간","사진 한 장","늦은 퇴근길","작은 선물","친구의 조언","서툰 요리","잠들기 전 통화","비밀 하나"];

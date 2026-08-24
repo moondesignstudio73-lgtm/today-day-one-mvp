@@ -38,7 +38,7 @@ import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, g
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
-import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=15";
+import { HAEUN_SPECIAL_EVENT_OUTFIT, HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=16";
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
@@ -105,6 +105,7 @@ function closeModal() {
   modal.classList.remove("phone-menu-active");
   modal.classList.remove("world-event-active");
   modal.classList.remove("transport-modal-active");
+  modal.classList.remove("today-record-active");
   if (modalReturnFocus?.isConnected) modalReturnFocus.focus();
   modalReturnFocus = null;
   if (state && !state.ended && !state.breakup) { if(state.phase===3)renderNightHome();else sound.playScene(phases[state.phase].key,state.day); }
@@ -395,16 +396,17 @@ function updateImmersiveCharacter(expressionId="calm") {
   const poseId=immersiveScene?.presentation?.poseId,outfitId=immersiveScene?.presentation?.outfitId;
   renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId,outfitId});
   updatePartnerPortrait(expressionId,poseId,outfitId);
-  syncOutfitCharacterMedia(false);
+  const girlfriendEventVideo=characterId==="girlfriend"&&["event","temptation"].includes(immersiveScene?.type)?"assets/characters/girlfriend-standing-2d_transparent.webm":"";
+  syncOutfitCharacterMedia(false,girlfriendEventVideo);
 }
 
-function syncOutfitCharacterMedia(forceImage=false) {
+function syncOutfitCharacterMedia(forceImage=false,forcedVideo="") {
   const image=$("#vnCharacter"),video=$("#vnCharacterVideo"),outfit=state?getEquippedHeroineOutfit(state):null;
-  const showVideo=Boolean(!forceImage&&outfit?.characterWearingVideo);
+  const showVideo=Boolean(!forceImage&&(forcedVideo||outfit?.characterWearingVideo));
   if(!video||!image)return;
   const showFallback=()=>{video.hidden=true;image.hidden=false;};
   if(!showVideo){video.pause();showFallback();delete video.dataset.outfitSource;video.removeAttribute("src");video.removeAttribute("poster");video.load();return;}
-  const source=outfit.characterWearingVideo;
+  const source=forcedVideo||outfit.characterWearingVideo;
   const revealVideo=()=>{
     if(video.dataset.outfitSource!==source||video.readyState<2)return;
     video.hidden=false;image.hidden=true;
@@ -958,7 +960,9 @@ function openDailyReport() {
 
 function openTodayLog() {
   const rows=getTodayLogs().map(entry=>`<div class="history-entry"><small>${escapeHtml(entry.time)}</small><p>${escapeHtml(entry.text)}</p></div>`).join("")||"<p>오늘 기록이 아직 없어요.</p>";
-  $("#modalContent").innerHTML=`<span class="eyebrow">TODAY'S RECORD</span><h2>DAY ${state.day} · ${getWeekdayName(state.day)} 오늘의 기록</h2><div class="dialogue-history">${rows}</div>`;openModal();
+  $("#modal").classList.add("today-record-active");
+  $("#modalContent").innerHTML=`<article class="today-record-popup"><header><span class="eyebrow">TODAY'S RECORD</span><h2>DAY ${state.day} · ${getWeekdayName(state.day)} 오늘의 기록</h2><p>오늘 있었던 선택과 사건을 시간순으로 확인할 수 있습니다.</p></header><div class="dialogue-history">${rows}</div><button id="todayRecordClose" class="primary-button" type="button">닫기</button></article>`;openModal();
+  $("#todayRecordClose").addEventListener("click",closeModal);
 }
 
 function openSns() {
@@ -1031,6 +1035,26 @@ function handleGirlfriendWardrobeClick(event) {
   state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${state.partner.name} 의상 변경 · ${result.item.name}`});
   SaveManager.save(state);render();toast(`${result.item.name} 착용 · 크로마키 영상 재생`);
 }
+
+function unlockSpecialOutfitEventIfEligible() {
+  state.specialEvents??={};
+  if(state.specialEvents.haeunSailorOutfitUnlocked||state.partner.heroineId!=="haeun")return false;
+  const elegantDateCount=(state.actionHistory??[]).filter(entry=>entry.actionId==="dinner-date").length;
+  if(elegantDateCount<10)return false;
+  let instance=(state.inventory??[]).find(entry=>entry.itemId===HAEUN_SPECIAL_EVENT_OUTFIT.id&&entry.owner==="girlfriend");
+  instance??=addItem(state,HAEUN_SPECIAL_EVENT_OUTFIT.id,"girlfriend","special-date-event");
+  if(instance)equipGirlfriendOutfit(state,instance.instanceId);
+  state.specialEvents.haeunSailorOutfitUnlocked=true;
+  state.specialEvents.haeunSailorOutfitUnlockedDay=state.day;
+  state.logs.push({time:`DAY ${state.day} · SPECIAL EVENT`,text:`${state.partner.name}가 나를 위해 특별한 이벤트 의상을 준비했다.`});
+  return true;
+}
+
+function showSpecialOutfitEventPopup(continuation) {
+  $("#modalContent").innerHTML=`<article class="special-outfit-event"><video src="assets/characters/girlfriend-special-event-sailor-2d_transparent.webm" autoplay loop muted playsinline aria-label="${escapeHtml(state.partner.name)} 특별 이벤트 의상 영상"></video><span class="eyebrow">SPECIAL DATE EVENT · 10 TIMES</span><h2>${escapeHtml(state.partner.name)}의 특별한 준비</h2><p>“오늘은 내가 준비했어. 너를 위해 특별한 이벤트를 준비했어.”</p><strong>이벤트 의상이 보관함에 추가되었습니다.</strong><button id="specialOutfitEventConfirm" class="primary-button" type="button">확인</button></article>`;
+  openModal();
+  $("#specialOutfitEventConfirm").addEventListener("click",()=>{closeModal();render();continuation?.();});
+}
 function applyAction() {
   if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
   if (state.selected === null) return;
@@ -1054,6 +1078,7 @@ function applyAction() {
   const rivalResult = eventsUnlocked ? applyRivalPressure(state, action) : null;
   if (rivalResult?.record.delta > 0) state.logs.push({time:`DAY ${state.day} · RIVAL`,text:`${rivalResult.rival.name}의 접근 위험이 높아졌다.`});
   state.choices.push(action.tag); state.actionHistory.push({ day:state.day, phase:state.phase, actionId:action.id, tag:action.tag }); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
+  const unlockedSpecialOutfit=unlockSpecialOutfitEventIfEligible();
   if (["데이트","유혹","쇼핑"].includes(action.tag)) recordMemory(state,{type:"action",summary:action.title,importance:action.tag==="유혹"?4:2,tags:[action.tag]});
   const clue = observePersonality(state, action.tag);
   if (clue?.revealed) toast(`${state.partner.name}의 성향을 하나 알아냈어요.`);
@@ -1080,7 +1105,8 @@ function applyAction() {
   const actionMessage = [resultText(action), ...microEvents.map(micro=>micro.text)].join(" ");
   render();
   openActionResultModal(action, actionMessage, fx, () => {
-    if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { const temptation=eventsUnlocked&&npcResult&&getTemptationOpportunity(state); const story=eventsUnlocked?selectNextStoryScene(state):null; if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }
+    const continueAfterSpecialEvent=()=>{if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { const temptation=eventsUnlocked&&npcResult&&getTemptationOpportunity(state); const story=eventsUnlocked?selectNextStoryScene(state):null; if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }};
+    if(unlockedSpecialOutfit)showSpecialOutfitEventPopup(continueAfterSpecialEvent);else continueAfterSpecialEvent();
   });
 }
 
@@ -1140,7 +1166,7 @@ function renderGameTools() {
   const content=$("#gameToolsContent");
   if(gameToolsTab==="outfits"){
     const equipped=getEquippedHeroineOutfit(state),outfits=HEROINE_OUTFITS.filter(item=>item.heroineId===state.partner.heroineId);
-    content.innerHTML=`<div class="game-tools-intro"><b>${escapeHtml(state.partner.name)} 전체 의상</b><span>잠금·보유 조건과 관계없이 미리 보고 바로 선택할 수 있습니다.</span></div><div class="tools-outfit-grid">${outfits.map((outfit,index)=>`<button type="button" data-tools-outfit="${outfit.id}" class="tools-outfit-card ${equipped?.id===outfit.id?"selected":""}"><img src="${outfitImageUrl(outfit)}" alt="${escapeHtml(outfit.name)}" loading="lazy"><span>${String(index+1).padStart(2,"0")}</span><b>${escapeHtml(outfit.name.replace(`${state.partner.name} · `,""))}</b><small>${money(outfit.price)} · ${equipped?.id===outfit.id?"현재 착용 중":"이 의상 선택"}</small></button>`).join("")}</div>`;
+    content.innerHTML=`<div class="game-tools-intro"><b>${escapeHtml(state.partner.name)} 전체 의상</b><span>잠금·보유 조건과 관계없이 미리 보고 바로 선택할 수 있습니다.</span></div><div class="tools-outfit-grid">${outfits.map((outfit,index)=>`<button type="button" data-tools-outfit="${outfit.id}" class="tools-outfit-card ${equipped?.id===outfit.id?"selected":""}"><img src="${outfitImageUrl(outfit)}" alt="${escapeHtml(outfit.name)}" loading="lazy"><span>${outfit.eventOnly?"이벤트 의상":String(index+1).padStart(2,"0")}</span><b>${escapeHtml(outfit.name.replace(`${state.partner.name} · `,""))}</b><small>${outfit.eventOnly?"근사한 데이트 10회 보상":money(outfit.price)} · ${equipped?.id===outfit.id?"현재 착용 중":"이 의상 선택"}</small></button>`).join("")}</div>`;
   }else if(gameToolsTab==="events"){
     const groups=SITUATION_EVENTS.reduce((result,event)=>{(result[event.categoryLabel]??=[]).push(event);return result;},{});
     content.innerHTML=`<div class="game-tools-intro"><b>전체 이벤트</b><span>DAY·조건을 무시하고 선택한 이벤트의 장면과 선택지를 실행합니다.</span></div>${Object.entries(groups).map(([label,events])=>`<section class="tools-event-group"><h3>${escapeHtml(label)} <span>${events.length}</span></h3>${events.map(event=>`<button type="button" class="tools-list-row" data-tools-event="${event.id}"><span><b>${escapeHtml(event.title)}</b><small>${escapeHtml(event.id)} · DAY ${event.dayRange?.[0]??"-"}–${event.dayRange?.[1]??"-"}</small></span><em>실행</em></button>`).join("")}</section>`).join("")}`;
@@ -1234,7 +1260,7 @@ function openInventory() {
 
 function openShop() {
   sound.playBgm("dateShopping",state.day);
-  const visibleItems=ITEMS.filter(item=>item.category!=="heroine-outfit" || item.heroineId===state.partner.heroineId);
+  const visibleItems=ITEMS.filter(item=>(item.category!=="heroine-outfit" || item.heroineId===state.partner.heroineId)&&!item.eventOnly);
   const cards = visibleItems.map(item=>{const heroineOutfit=item.category==="heroine-outfit",unlocked=!heroineOutfit||isOutfitUnlocked(state,item),purchased=(state.inventory??[]).some(entry=>entry.itemId===item.id);const visual=item.productImage?`<img class="shop-product-image" src="${outfitImageUrl(item)}" alt="${escapeHtml(item.name)}" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`;const actions=purchased?`<button class="purchased-button" disabled>구매 완료</button>`:heroineOutfit?`<button data-buy="${item.id}" data-owner="gift" ${unlocked?'':'disabled'}>${unlocked?`${state.partner.name} 선물용`:`DAY ${item.unlockConditions.day} 잠금`}</button>`:`<button data-buy="${item.id}" data-owner="player">내 것</button><button data-buy="${item.id}" data-owner="gift">선물용</button>`;return `<div class="shop-item ${heroineOutfit?'heroine-outfit-card':''} ${purchased?'purchased':''}">${visual}<div><small>${item.brand} · ${item.rarity??`LUX ${item.luxuryLevel}`}</small><b>${escapeHtml(item.name)}</b><span>${escapeHtml((item.styleTags??item.preferenceTags).join(" · "))} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span><strong>${money(item.price)}</strong></div><div class="shop-actions">${actions}</div></div>`;}).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">LIFESTYLE SHOP</span><h2>오늘의 상점</h2><p>보유 자산 ${money(state.money)} · ${state.partner.name} 전용 의상 10종이 관계 진행에 따라 해금됩니다.</p><div class="shop-list">${cards}</div>`;
   openModal();
@@ -1377,6 +1403,7 @@ $("#worldMapCanvas").addEventListener("pointerup",handleWorldMapPointer);
 $(".world-dpad").addEventListener("click",handleWorldMoveClick);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#girlfriendWardrobe").addEventListener("click",handleGirlfriendWardrobeClick);
+$("#todayRecordButton").addEventListener("click",openTodayLog);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#storyChoiceLayer").addEventListener("click",event=>{event.stopPropagation();const button=event.target.closest("[data-immersive-choice]");if(button)chooseImmersiveOption(button.dataset.immersiveChoice);});
 $("#visualNovelStage").addEventListener("keydown",event=>{ if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });
