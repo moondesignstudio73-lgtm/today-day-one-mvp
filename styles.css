@@ -722,7 +722,8 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 .modal.today-record-active{padding:12px;background:#17121f99;backdrop-filter:blur(10px)}.modal.today-record-active .modal-card{box-sizing:border-box;width:min(760px,95vw);height:min(780px,92dvh);max-height:92dvh;padding:34px 34px 28px;overflow:hidden}.today-record-active #modalContent{height:100%}.today-record-popup{display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100%;min-height:0}.today-record-popup header{padding-right:30px;border-bottom:1px solid var(--line)}.today-record-popup header h2{margin-bottom:4px}.today-record-popup header p{margin:0 0 17px}.today-record-popup .dialogue-history{align-content:start;overflow:auto;padding:18px 4px 18px 0}.today-record-popup .history-entry{padding:17px 19px}.today-record-popup .history-entry small{font-size:10px}.today-record-popup .history-entry p{font-size:14px;line-height:1.65}.today-record-popup>.primary-button{width:100%;margin:0}.today-record-active .modal-close{z-index:2}
 @media(max-width:760px){.modal.today-record-active{padding:0}.modal.today-record-active .modal-card{width:100%;height:100dvh;max-height:100dvh;border-radius:0;padding:28px 18px 18px}.today-record-popup header p{margin-bottom:12px}}
 
-@media(min-width:761px) and (max-width:1100px){
+@media(min-width:761px) and (max-width:1366px){
+  .ui-classic-mode .topbar .brand{color:#fff}
   .theater-mode .topbar .brand strong,
   .theater-mode .topbar .brand small,
   .ui-classic-mode .topbar .brand strong,
