@@ -33,7 +33,8 @@ export function renderCharacter(image, state, accessoryImage, overrides = {}) {
   const yunaSpecialOutfit=state.partner.heroineId==="yuna"&&!equippedOutfit&&overrides.outfitId&&overrides.outfitId!=="uniform"?getYunaOutfitAsset(overrides.outfitId):null;
   const yunaExpression=state.partner.heroineId==="yuna"&&!equippedOutfit&&!yunaSpecialOutfit&&overrides.expressionId?getYunaExpressionAsset(expression.tone):null;
   const profileImage=state.partner.heroineId!=="haeun"?state.partner.referenceImage:null;
-  const source = equippedOutfit?.characterWearingImage ?? yunaSpecialOutfit ?? yunaExpression ?? profileImage ?? getGirlfriendVisualAsset(state.partner.visualId,expression.tone,pose,outfit) ?? state.partner.referenceImage ?? getCharacterSprite("girlfriend",expression.tone,pose,outfit);
+  const baseSource = equippedOutfit?.characterWearingImage ?? yunaSpecialOutfit ?? yunaExpression ?? profileImage ?? getGirlfriendVisualAsset(state.partner.visualId,expression.tone,pose,outfit) ?? state.partner.referenceImage ?? getCharacterSprite("girlfriend",expression.tone,pose,outfit);
+  const source = equippedOutfit?.heroineId==="haeun" ? `${baseSource}?v=8` : baseSource;
   const accessorySource = getGiftVisualAsset(accessory) || getCharacterAccessory("girlfriend",accessory);
   state.currentExpression = expression.tone;
   state.currentPose = pose;
