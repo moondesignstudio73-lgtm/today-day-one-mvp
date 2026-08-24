@@ -1,6 +1,6 @@
 # DAY 1 출시 완성도 진행표
 
-현재 상태: `SCENARIO LOCK CANDIDATE / 사용자 승인 대기`
+현재 상태: `PHASE 12 배경 명세 완료 / 캐릭터 표정 명세 대기`
 
 DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에는 DAY 2 이후의 신규 스토리·콘텐츠를 구현하지 않는다. 이미 존재하는 DAY 2~5 코드와 미커밋 DAY 3 변경은 삭제하거나 확장하지 않고 동결한다.
 
@@ -16,11 +16,11 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - [x] PHASE 8 — 플레이타임 구조 검사
 - [x] PHASE 9 — 시나리오 수정본 작성
 - [x] PHASE 10 — 수정본 연속 플레이 재검수
-- [ ] PHASE 11 — 사용자 승인 후 `DAY 1 — SCENARIO LOCK`
+- [x] PHASE 11 — 사용자 승인 후 `DAY 1 — SCENARIO LOCK`
 
 ## 제작 관문
 
-- [ ] PHASE 12 — 배경 에셋 명세
+- [x] PHASE 12 — 배경 에셋 명세
 - [ ] PHASE 13 — 캐릭터 표정 명세
 - [ ] PHASE 14 — 포즈 명세
 - [ ] PHASE 15 — 이벤트 CG 선정 및 프롬프트
@@ -42,6 +42,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - `docs/day1/DAY1_SCENARIO_AUDIT.md`
 - `docs/day1/DAY1_SCENARIO_REVISION_V1.md`
 - `docs/day1/DAY1_SCENARIO_QA_V1.md`
+- `docs/day1/DAY1_BACKGROUND_ASSET_SPEC.md`
 
 ## 최근 검증
 
@@ -56,4 +57,4 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 
 ## 다음 작업
 
-사용자가 `docs/day1/DAY1_SCENARIO_REVISION_V1.md`를 승인하면 PHASE 11 `DAY 1 — SCENARIO LOCK`으로 지정한다. 승인 전에는 에셋 명세나 게임 데이터화를 시작하지 않는다.
+잠금된 시나리오를 기준으로 PHASE 13 하은·담당 의사·간호사의 캐릭터 표정 명세를 작성한다. 기존 에셋 감사나 신규 생성은 PHASE 16에서 진행한다.
