@@ -55,7 +55,7 @@ import { ACTION_RESULT_ASSETS, getActionResultAsset, getVisibleActionEffects } f
 import { ACTION_RESULT_VIDEOS, getActionResultVideo, isGirlfriendHappy, isGirlfriendSad } from "../src/action-result-videos.mjs";
 import { DEFAULT_GIRLFRIEND_VISUAL_ID, getGirlfriendVisual, getGirlfriendVisualAsset, selectGirlfriendVisual } from "../src/girlfriend-visual-data.mjs";
 import { createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
-import { GAME_MODES, getGameModeConfig, validateScenarioState } from "../src/scenario-state.mjs";
+import { GAME_MODES, getGameModeConfig, isContentAvailableForMode, validateScenarioState } from "../src/scenario-state.mjs";
 
 const coreActionResultAssetIds=["coworker-lunch","dinner-date","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"];
 assert.ok(coreActionResultAssetIds.every(actionId=>actionId in ACTION_RESULT_ASSETS));
@@ -165,6 +165,17 @@ assert.equal(campaignStart.scenario.enabled,true);
 assert.equal(campaignStart.scenario.id,GAME_MODES.MARRIAGE_30);
 assert.equal(validateScenarioState(campaignStart.gameMode,campaignStart.scenario),true);
 assert.equal(validateState(campaignStart),true);
+const campaignOnly={modes:[GAME_MODES.MARRIAGE_30]};
+assert.equal(isContentAvailableForMode(campaignStart,campaignOnly),true);
+assert.equal(isContentAvailableForMode(configuredStart,campaignOnly),false);
+assert.equal(isActionVisible(campaignStart,{id:"campaign-action",modes:[GAME_MODES.MARRIAGE_30]}),true);
+assert.equal(isActionVisible(configuredStart,{id:"campaign-action",modes:[GAME_MODES.MARRIAGE_30]}),false);
+const gatedEvent={...EVENT_DEFINITIONS[0],id:"campaign-event-gate",modes:[GAME_MODES.MARRIAGE_30]};
+assert.equal(getEventDiagnostics(configuredStart,[gatedEvent])[0].blockedReasons.includes("GAME_MODE"),true);
+assert.equal(getEventDiagnostics(campaignStart,[gatedEvent])[0].blockedReasons.includes("GAME_MODE"),false);
+const gatedMicro={id:"campaign-micro-gate",category:"test",text:"mode gate",phases:[0],cooldown:1,effects:{trust:1},modes:[GAME_MODES.MARRIAGE_30]};
+assert.equal(getEligibleMicroEvents(configuredStart,[gatedMicro]).length,0);
+assert.equal(getEligibleMicroEvents(campaignStart,[gatedMicro]).length,1);
 console.log("✓ 시작 설정 3단계·플레이어 이미지·프리미엄 보정·인트로 영상 검증 통과");
 
 const partner = generateGirlfriend(() => 0.5);

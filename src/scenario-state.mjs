@@ -23,6 +23,11 @@ export function getGameModeConfig(value) {
   return GAME_MODE_CONFIGS[normalizeGameMode(value)];
 }
 
+export function isContentAvailableForMode(state, content) {
+  const mode = normalizeGameMode(state?.gameMode);
+  return !content?.modes?.length || content.modes.includes(mode);
+}
+
 export function createScenarioState(mode = GAME_MODES.FREE_ROMANCE) {
   const normalizedMode = normalizeGameMode(mode);
   const enabled = normalizedMode === GAME_MODES.MARRIAGE_30;

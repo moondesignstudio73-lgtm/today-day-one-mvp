@@ -23,6 +23,7 @@ export function getActionAvailability(state, action) {
 }
 
 export function isActionVisible(state,action) {
+  if (!isContentAvailableForMode(state,action)) return false;
   if (action.heroineIds?.length && !action.heroineIds.includes(state.partner?.heroineId)) return false;
   if (action.excludedHeroineIds?.includes(state.partner?.heroineId)) return false;
   if (action.careerIds?.length&&!action.careerIds.includes(state.partner?.career?.id)) return false;
@@ -36,3 +37,4 @@ export function isActionVisible(state,action) {
 export function getAvailableActions(state, actions) {
   return actions.filter(action => getActionAvailability(state, action).available);
 }
+import { isContentAvailableForMode } from "./scenario-state.mjs";

@@ -2,6 +2,7 @@ import { applyEffects } from "./game-core.mjs";
 import { appendTransaction } from "./economy-manager.mjs";
 import { EVENT_DEFINITIONS } from "./events-data.mjs";
 import { activateSituationEvent } from "./situation-event-manager.mjs";
+import { isContentAvailableForMode } from "./scenario-state.mjs";
 
 export const MAX_EVENTS_PER_DAY = 1;
 export const CATEGORY_COOLDOWN_DAYS = 3;
@@ -46,6 +47,7 @@ function relationshipState(state){if(state.affection<350||state.trust<260||state
 
 export function evaluateEventEligibility(state,event){
   const reasons=[];const blocks=[];const history=state.eventHistory??[];const phaseTime=PHASE_TIME[state.phase]??"day";
+  if(!isContentAvailableForMode(state,event))blocks.push("GAME_MODE");
   if(event.heroineIds?.length&&!event.heroineIds.includes(state.partner?.heroineId))blocks.push("HEROINE_ROUTE");
   if(event.excludedHeroineIds?.includes(state.partner?.heroineId))blocks.push("HEROINE_EXCLUDED");
   if(state.partner?.heroineId==="yuna"&&!event.studentSafe)blocks.push("STUDENT_SAFETY");
