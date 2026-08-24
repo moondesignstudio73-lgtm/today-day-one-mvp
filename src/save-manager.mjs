@@ -11,6 +11,7 @@ import { migrateStoryDirectorState } from "./dynamic-story-director.mjs";
 import { migrateJob } from "./jobs-data.mjs?v=6";
 import { migratePlayerProfile } from "./player-profile-data.mjs";
 import { migrateWorldState } from "./world-map-manager.mjs";
+import { migrateScenarioState, normalizeGameMode } from "./scenario-state.mjs";
 
 export class SaveManager {
   static key = "today-day-one.save.v1";
@@ -31,6 +32,8 @@ export class SaveManager {
     if (!raw) return null;
     try {
       const parsed = JSON.parse(raw);
+      parsed.gameMode = normalizeGameMode(parsed.gameMode);
+      parsed.scenario = migrateScenarioState(parsed.gameMode, parsed.scenario);
       parsed.job = migrateJob(parsed.job);
       parsed.player = migratePlayerProfile(parsed.player);
       parsed.world = migrateWorldState(parsed.world,parsed.player);

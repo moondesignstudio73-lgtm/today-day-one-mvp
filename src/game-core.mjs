@@ -12,6 +12,7 @@ import { createDaySnapshot } from "./night-manager.mjs";
 import { createStoryDirectorState, validateStoryDirectorState } from "./dynamic-story-director.mjs";
 import { applyPlayerArchetype, createPlayerProfile, validatePlayerProfile } from "./player-profile-data.mjs";
 import { createWorldState, validateWorldState } from "./world-map-manager.mjs";
+import { createScenarioState, normalizeGameMode, validateScenarioState } from "./scenario-state.mjs";
 
 export const MAX_DAY = 30;
 export const PHASE_COUNT = 4;
@@ -21,6 +22,7 @@ export function clamp(value, min = 0, max = 100) {
 }
 
 export function createInitialState(partner, random = Math.random, setup = {}) {
+  const gameMode = normalizeGameMode(setup.mode);
   const selectedJob = setup.job ? structuredClone(setup.job) : generateJob(random);
   const player = setup.player ? structuredClone(setup.player) : createPlayerProfile();
   const jobStart = applyPlayerArchetype(getJobStartingState(selectedJob, random), player);
@@ -36,6 +38,8 @@ export function createInitialState(partner, random = Math.random, setup = {}) {
   const initialFatigue = player.archetypeId === "handsome" ? 30 : player.archetypeId === "balanced" && selectedJob.id === "day-laborer" ? 50 : jobStart.fatigue;
   const state = {
     version: 1,
+    gameMode,
+    scenario: createScenarioState(gameMode),
     day: 1,
     phase: 0,
     selected: null,
@@ -137,6 +141,7 @@ export function advanceTime(state) {
 export function validateState(value) {
   if (!value || typeof value !== "object") return false;
   if (value.version !== 1 || !Number.isInteger(value.day) || !Number.isInteger(value.phase)) return false;
+  if (value.gameMode !== normalizeGameMode(value.gameMode) || !validateScenarioState(value.gameMode, value.scenario)) return false;
   if (value.day < 1 || value.day > MAX_DAY + 1 || value.phase < 0 || value.phase >= PHASE_COUNT) return false;
   if (!validateGirlfriend(value.partner)) return false;
   if (!validatePlayerProfile(value.player)) return false;
