@@ -5,6 +5,7 @@ import { recordMemory } from "./memory-manager.mjs";
 import { STORY_SCENES } from "./story-data.mjs";
 import { applyHiddenRouteEffects, getHiddenRouteSceneEffects } from "./hidden-route-manager.mjs";
 import { combineChoiceEffects, getMbtiChoiceAdjustment } from "./event-choice-modifier.mjs";
+import { isContentAvailableForMode } from "./scenario-state.mjs";
 
 function hasStoryChoice(state, requirement) {
   return (state.storyHistory ?? []).some(record => record.sceneId === requirement.sceneId && (!requirement.choiceIds || requirement.choiceIds.includes(record.choiceId)));
@@ -22,6 +23,7 @@ export function getEligibleStoryScenes(state, scenes = STORY_SCENES) {
   const history = state.storyHistory ?? [];
   if (history.some(record => record.day === state.day)) return [];
   return scenes.filter(scene => {
+    if (!isContentAvailableForMode(state,scene)) return false;
     if (scene.heroineIds && !scene.heroineIds.includes(state.partner.heroineId)) return false;
     if (state.partner.heroineId === "yuna" && !scene.studentSafe && !scene.heroineIds?.includes("yuna")) return false;
     if (history.some(record => record.sceneId === scene.id)) return false;
@@ -58,6 +60,11 @@ export function resolveStoryChoice(state, sceneId, choiceId, scenes = STORY_SCEN
   if (effects.money) appendTransaction(state,{category:"story",label:scene.title,amount:Math.round(effects.money)});
   state.storyFlags ??= {};
   Object.assign(state.storyFlags,choice.flags ?? {},outcome?.flags ?? {});
+  if (state.scenario?.enabled) {
+    for (const [key,value] of Object.entries({...choice.scenarioEffects,...outcome?.scenarioEffects})) if (Number.isFinite(value) && Number.isFinite(state.scenario[key])) state.scenario[key]=Math.max(0,state.scenario[key]+value);
+    for (const [field,items] of [["clues",choice.clues],["profileUnlocks",choice.profileUnlocks],["unlockedActions",choice.unlockedActions]]) for (const item of items??[]) if (!state.scenario[field].includes(item)) state.scenario[field].push(item);
+    for (const hook of choice.followUpHooks??[]) if (!state.scenario.followUpHooks.includes(hook)) state.scenario.followUpHooks.push(hook);
+  }
   state.futureScore = clamp((state.futureScore ?? 0) + (choice.futureScore ?? 0) + (outcome?.futureScore ?? 0),-100,100);
   const response = outcome?.response ?? choice.response;
   const record = {sceneId:scene.id,arc:scene.arc,choiceId:choice.id,day:state.day,response};

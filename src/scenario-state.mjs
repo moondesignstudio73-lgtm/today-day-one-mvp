@@ -13,7 +13,7 @@ const TRACKED_METRICS = [
   "haeunTrust", "haeunDependency", "homeSearchCount",
   "computerSearchCount", "accidentSearchCount", "coworkerRelation"
 ];
-const COLLECTIONS = ["clues", "contradictions", "profileUnlocks", "unlockedActions"];
+const COLLECTIONS = ["clues", "contradictions", "profileUnlocks", "unlockedActions", "followUpHooks"];
 
 export function normalizeGameMode(value) {
   return value === GAME_MODES.MARRIAGE_30 ? value : GAME_MODES.FREE_ROMANCE;
@@ -48,6 +48,7 @@ export function createScenarioState(mode = GAME_MODES.FREE_ROMANCE) {
     contradictions: [],
     profileUnlocks: [],
     unlockedActions: [],
+    followUpHooks: [],
     truthRevealed: false,
     finalChoiceUnlocked: false
   };

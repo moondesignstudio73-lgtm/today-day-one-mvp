@@ -68,13 +68,13 @@ export function resolvePhasePresentation(state, phaseKey) {
 
 export function resolveStoryPresentation(scene, state) {
   const text = `${scene?.id ?? ""} ${scene?.arc ?? ""} ${scene?.title ?? ""} ${scene?.message ?? ""}`;
-  const backgroundId = backgroundForText(text, state);
-  const expressionId = expressionForText(text);
-  const poseId = poseForText(text);
+  const backgroundId = scene?.presentation?.backgroundId ?? backgroundForText(text, state);
+  const expressionId = scene?.presentation?.expressionId ?? expressionForText(text);
+  const poseId = scene?.presentation?.poseId ?? poseForText(text);
   const eventCgId = MAJOR_CG_PATTERN.test(text) ? `CG_${String(scene?.id ?? "scene").toUpperCase().replace(/[^A-Z0-9]+/g, "_")}` : null;
   return {
     backgroundId,
-    characterId:characterForStory(scene),
+    characterId:scene?.presentation?.characterId ?? characterForStory(scene),
     outfitId:RIVER_PATTERN.test(text) ? "date" : "default",
     expressionId,
     poseId,

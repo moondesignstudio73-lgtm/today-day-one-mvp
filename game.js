@@ -81,6 +81,7 @@ const THEATER_SETTING_KEY="today-day-one-theater-mode";
 const GAMEPLAY_EVENTS_START_DAY = 4;
 
 function areGameplayEventsUnlocked(day=state?.day) { return Number(day) >= GAMEPLAY_EVENTS_START_DAY; }
+function isCampaignPrologueStory(id) { return state?.scenario?.enabled===true && String(id??"").startsWith("m30-day"); }
 
 function persistEventRuntime(save=false){if(!state)return;state.eventRuntime=eventRuntime.snapshot();if(save)SaveManager.save(state);}
 function renderFullscreenButtons(){const active=Boolean(document.fullscreenElement)||document.body.classList.contains("theater-mode");for(const button of [$("#fullscreenButton"),$("#storyFullscreenButton")])if(button){button.setAttribute("aria-pressed",String(active));button.textContent=button.id==="storyFullscreenButton"?(active?"WINDOW":"FULLSCREEN"):(active?"▣ 창모드":"⛶ 전체화면");}}
@@ -362,7 +363,7 @@ function openStoryScene(scene) {
 
 function startImmersiveScene(session) {
   if (!session?.sequence?.length) return;
-  if (["story","event","temptation"].includes(session.type) && !session.debugPreview && !areGameplayEventsUnlocked()) return;
+  if (["story","event","temptation"].includes(session.type) && !session.debugPreview && !areGameplayEventsUnlocked() && !(session.type==="story"&&isCampaignPrologueStory(session.id))) return;
   const runtimeStart=eventRuntime.start({...session,sceneId:session.sequence.find(step=>step.backgroundId)?.label??session.id,triggerReason:session.triggerReason??[]});
   if(!runtimeStart.started){persistEventRuntime(true);return;}
   if (sceneAdvanceTimer) clearTimeout(sceneAdvanceTimer);
@@ -614,7 +615,7 @@ function playNextIntroVideo() {
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
 function startGame() { beginOnboarding(); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(restoreEventCheckpoint,0); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
 
@@ -1239,7 +1240,7 @@ function showEnding(){ state.ended=true; const [title, desc] = determineEnding(s
 }
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
 
-function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);else if(state.day>30)showEnding();else if(state.pendingStoryId&&areGameplayEventsUnlocked())openStoryScene(getStoryScene(state.pendingStoryId));else toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
+function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);else if(state.day>30)showEnding();else if(state.pendingStoryId&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(state.pendingStoryId)))openStoryScene(getStoryScene(state.pendingStoryId));else toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
 function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
 
 if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");

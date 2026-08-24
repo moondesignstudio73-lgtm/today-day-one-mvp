@@ -9,11 +9,14 @@ export function inferReactionExpression(text = "") {
 }
 
 export function createStorySceneSequence(scene, presentation) {
+  const dialogue = scene.dialogueTurns?.length
+    ? scene.dialogueTurns.map(turn=>({...turn,characterId:presentation.characterId,backgroundId:presentation.backgroundId}))
+    : [{ type:"dialogue", speaker:scene.speaker, text:scene.question ?? scene.prompt ?? scene.title, expressionId:presentation.expressionId }];
   return [
     { type:"transition", style:"fade", label:`DAY ${scene.window?.[0] ?? ""} · ${scene.arc}` },
     { type:"narration", text:scene.message },
     { type:"characterEnter", characterId:presentation.characterId, animationId:presentation.animationId },
-    { type:"dialogue", speaker:scene.speaker, text:scene.question ?? scene.prompt ?? scene.title, expressionId:presentation.expressionId },
+    ...dialogue,
     { type:"choice", options:scene.choices.map(choice => ({ id:choice.id, label:choice.label })) }
   ];
 }

@@ -1,6 +1,29 @@
 import { HIDDEN_ROUTE_SCENES } from "./hidden-route-data.mjs";
 import { HEROINE_STORY_SCENES } from "./heroine-data.mjs";
 
+export const MARRIAGE_30_STORY_SCENES = [{
+  id:"m30-day1-hospital-awakening",arc:"잃어버린 1년",window:[1,1],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],
+  title:"눈을 뜬 날",speaker:"하은",message:"소독약 냄새와 일정한 기계음. 눈을 뜨자 낯선 여자가 물컵의 빨대를 입가에 가져왔다.",
+  dramaticPurpose:"혼수 1년과 기억 손실을 확인하고, 하은을 따뜻하고 유능한 현재의 보호자로 소개한다.",
+  knowledgeLedger:{
+    protagonist:{KNOWS:["병원에서 깨어났다","최근 기억이 비어 있다"],BELIEVES:[],SUSPECTS:["부상과 기억 손실이 연결돼 있다"],DOES_NOT_KNOW:["하은과의 과거","사고 경위"],HIDES:[],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["현재 상태를 사실부터 확인한다"],FEARS:["자신의 판단을 잃는 것"]},
+    haeun:{KNOWS:["주인공이 1년 만에 깨어났다","의사가 자극적인 기억 확인을 피하라고 했다"],BELIEVES:["일상부터 되찾는 것이 회복에 도움이 된다"],SUSPECTS:[],DOES_NOT_KNOW:["주인공이 무엇을 언제 떠올릴지"],HIDES:["지금 말하면 부담이 될 과거의 세부사항"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["주인공을 안심시키고 곁에 머문다"],FEARS:["주인공이 자신을 완전히 낯선 사람으로 밀어내는 것"]},
+    doctor:{KNOWS:["혼수 기간","기억 검사 결과","현재 활력징후"],BELIEVES:["회복 속도를 단정할 수 없다"],SUSPECTS:[],DOES_NOT_KNOW:["사고 전 사적 관계"],HIDES:[],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["환자가 무리하지 않고 기본 검사를 받는다"],FEARS:["과도한 자극으로 환자가 불안정해지는 것"]}
+  },
+  dialogueTurns:[
+    {type:"dialogue",speaker:"하은",text:"천천히. 한꺼번에 마시면 또 기침해. …이 말부터 하는 게 맞나? 나 하은이야. 네 여자친구.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"미안한데, 기억이 안 나. 당신도… 내가 왜 여기 있는지도.",expressionId:"calm"},
+    {type:"dialogue",speaker:"담당 의사",text:"교통사고 뒤 정확히 1년 만에 의식을 회복했습니다. 기억은 서두른다고 돌아오지 않습니다. 먼저 오늘 날짜와 몸 상태부터 확인하죠.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"좋아. 어려운 건 선생님한테 맡기고, 나는 물이랑 충전기 담당. 우리 사이 얘기는 네가 물어볼 때만 할게.",expressionId:"smile"}
+  ],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
+  choices:[
+    {id:"verify-medical",label:"의사에게 사고 날짜와 검사 결과부터 확인한다",effects:{trust:4,confidence:5},scenarioEffects:{investigation:8,memoryRecovery:2},clues:["coma-one-year"],profileUnlocks:["haeun-basic"],followUpHooks:["day2-rehabilitation"],response:"의사는 사고 날짜와 검사 순서를 메모해 주었다. 하은은 끼어들지 않고 종이를 내 손 닿는 곳에 놓았다.",memory:"깨어난 날 의료 기록부터 확인함"},
+    {id:"rebuild-routine",label:"하은에게 내가 좋아하던 일상부터 들려 달라고 한다",effects:{affection:10,trust:8},scenarioEffects:{haeunAffection:12,haeunTrust:8},clues:["coma-one-year"],profileUnlocks:["haeun-basic"],unlockedActions:["ask-daily-routine"],followUpHooks:["day2-rehabilitation"],response:"“아침엔 뜨거운 커피부터 찾았고, 양말은 꼭 한 짝씩 잃어버렸어.” 하은은 거창한 약속 대신 사소한 버릇부터 이야기했다.",memory:"하은에게 과거의 일상부터 들은 날"},
+    {id:"observe-first",label:"지금은 단정하지 않고 두 사람의 설명을 메모한다",effects:{trust:2,confidence:7},scenarioEffects:{investigation:5,suspicion:2},clues:["coma-one-year"],profileUnlocks:["haeun-basic"],followUpHooks:["day2-rehabilitation"],response:"날짜, 혼수 기간, 하은이라는 이름을 적었다. 하은은 메모를 훔쳐보지 않고 침대 난간을 올려 주었다.",memory:"깨어난 직후 들은 사실을 구분해 기록함"}
+  ]
+}];
+
 const STANDARD_STORY_SCENES = [
   {
     id:"unread-message", arc:"읽지 않은 메시지", window:[2,3], priority:100, bgm:"theme",
@@ -176,7 +199,7 @@ const STANDARD_STORY_SCENES = [
   }
 ];
 
-export const STORY_SCENES = [...STANDARD_STORY_SCENES,...HIDDEN_ROUTE_SCENES,...HEROINE_STORY_SCENES];
+export const STORY_SCENES = [...MARRIAGE_30_STORY_SCENES,...STANDARD_STORY_SCENES,...HIDDEN_ROUTE_SCENES,...HEROINE_STORY_SCENES];
 
 const FRIEND_SCENE_IDS=new Set(["friend-warning","hidden-friend-question"]);
 const COWORKER_SCENE_IDS=new Set(["coworker-introduction","project-opportunity","promise-clash","hidden-cracks"]);
