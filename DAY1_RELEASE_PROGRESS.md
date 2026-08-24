@@ -1,6 +1,6 @@
 # DAY 1 출시 완성도 진행표
 
-현재 상태: `PHASE 13 캐릭터 표정 명세 완료 / 포즈 명세 대기`
+현재 상태: `PHASE 14 포즈 명세 완료 / 이벤트 CG 선정 대기`
 
 DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에는 DAY 2 이후의 신규 스토리·콘텐츠를 구현하지 않는다. 이미 존재하는 DAY 2~5 코드와 미커밋 DAY 3 변경은 삭제하거나 확장하지 않고 동결한다.
 
@@ -22,7 +22,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 
 - [x] PHASE 12 — 배경 에셋 명세
 - [x] PHASE 13 — 캐릭터 표정 명세
-- [ ] PHASE 14 — 포즈 명세
+- [x] PHASE 14 — 포즈 명세
 - [ ] PHASE 15 — 이벤트 CG 선정 및 프롬프트
 - [ ] PHASE 16 — 기존 에셋 감사 후 생성·수급
 - [ ] PHASE 17 — 이미지 일관성·품질 검사
@@ -44,6 +44,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - `docs/day1/DAY1_SCENARIO_QA_V1.md`
 - `docs/day1/DAY1_BACKGROUND_ASSET_SPEC.md`
 - `docs/day1/DAY1_CHARACTER_EXPRESSION_SPEC.md`
+- `docs/day1/DAY1_CHARACTER_POSE_SPEC.md`
 
 ## 최근 검증
 
@@ -55,6 +56,11 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - `node --check game.js`: 통과.
 - `node --check src/story-data.mjs`: 통과.
 - `tests/simulation.test.mjs` 전체 회귀: 통과.
+- PHASE 14에서 6개 Scene의 거리·접촉·의료 안전 행동을 하은 9포즈, 담당 의사 2포즈, 간호사 3포즈와 주인공 1인칭 손 3상태에 매핑했다.
+- 첫 접촉 선택 3종이 SCENE 01의 물러나는 거리와 SCENE 05의 컵 보조 허락 방식에서 시각적으로 구분되도록 했다.
+- PHASE 14 필수 ID·선택 상태·6개 Scene·하은 9포즈 정적 검사: 통과.
+- `node --check game.js`, `node --check src/story-data.mjs`: 통과.
+- `tests/simulation.test.mjs` 전체 회귀: 통과.
 - PHASE 13에서 잠금된 6개 Scene의 감정 전환을 하은 8종, 담당 의사 3종, 간호사 2종의 표정 큐에 매핑했다.
 - 첫 접촉 선택 3종이 서로 다른 즉시 표정과 공통 합류 표정을 가지며, 초기 악역 코딩·과장된 의료진 감정·얼굴 일관성 붕괴를 막는 규칙을 명시했다.
 - PHASE 13 필수 ID·선택 상태·6개 Scene 매핑 정적 검사: 통과.
@@ -63,4 +69,4 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 
 ## 다음 작업
 
-잠금된 시나리오와 PHASE 13 표정 큐를 기준으로 PHASE 14 하은·담당 의사·간호사의 포즈 명세를 작성한다. 기존 에셋 감사나 신규 생성은 PHASE 16에서 진행한다.
+잠금된 시나리오와 PHASE 12~14 명세를 기준으로 PHASE 15 이벤트 CG 필요 장면을 선정하고 제작 프롬프트를 작성한다. 기존 에셋 감사나 신규 생성은 PHASE 16에서 진행한다.
