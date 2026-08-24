@@ -712,8 +712,11 @@ function render() {
   const todayLogs=getTodayLogs();
   $("#eventLog").innerHTML = todayLogs.length ? todayLogs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${escapeHtml(l.time)}</b><span>${escapeHtml(l.text)}</span></div>`).join("") : `<div class="log-item"><b>DAY ${state.day}</b><span>오늘의 첫 선택을 기다리고 있습니다.</span></div>`;
   const girlfriendOutfits=(state.inventory??[]).map(instance=>({instance,item:getItem(instance.itemId)})).filter(({instance,item})=>instance.owner==="girlfriend"&&item?.category==="heroine-outfit"&&item.heroineId===state.partner.heroineId);
-  $("#girlfriendWardrobeCount").textContent=`보유 의상 ${girlfriendOutfits.length}개`;
-  $("#girlfriendWardrobe").innerHTML=girlfriendOutfits.length?girlfriendOutfits.map(({instance,item})=>`<button type="button" class="girlfriend-wardrobe-item ${instance.equipped?"equipped":""}" data-warehouse-outfit="${instance.instanceId}" aria-pressed="${instance.equipped}"><img src="${outfitImageUrl(item)}" alt="${escapeHtml(item.name)}" loading="lazy"><span><b>${escapeHtml(item.name.replace(`${state.partner.name} · `,""))}</b><small>${instance.equipped?"현재 착용 중":"클릭해서 갈아입기"}</small></span></button>`).join(""):`<div class="girlfriend-wardrobe-empty"><span>👗</span><b>구매한 의상이 없습니다.</b><small>상점에서 의상을 선물하면 여기에 보관됩니다.</small></div>`;
+  const hasEquippedOutfit=girlfriendOutfits.some(({instance})=>instance.equipped);
+  const defaultOutfitImage=state.partner.heroineId==="haeun"?HAEUN_PROFILE_PORTRAITS.calm:state.partner.referenceImage;
+  const defaultOutfitCard=`<button type="button" class="girlfriend-wardrobe-item ${hasEquippedOutfit?"":"equipped"}" data-warehouse-default="true" aria-pressed="${!hasEquippedOutfit}"><img src="${defaultOutfitImage}?v=8" alt="${escapeHtml(state.partner.name)} 기본 복장" loading="lazy"><span><b>기본 복장</b><small>${hasEquippedOutfit?"클릭해서 갈아입기":"현재 착용 중"}</small></span></button>`;
+  $("#girlfriendWardrobeCount").textContent=`보유 의상 ${girlfriendOutfits.length+1}개`;
+  $("#girlfriendWardrobe").innerHTML=defaultOutfitCard+girlfriendOutfits.map(({instance,item})=>`<button type="button" class="girlfriend-wardrobe-item ${instance.equipped?"equipped":""}" data-warehouse-outfit="${instance.instanceId}" aria-pressed="${instance.equipped}"><img src="${outfitImageUrl(item)}" alt="${escapeHtml(item.name)}" loading="lazy"><span><b>${escapeHtml(item.name.replace(`${state.partner.name} · `,""))}</b><small>${instance.equipped?"현재 착용 중":"클릭해서 갈아입기"}</small></span></button>`).join("");
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
   const nextPhase=phases[Math.min(state.phase+1,phases.length-1)];
@@ -1013,6 +1016,14 @@ function handleActionGridClick(event) {
   selectAction(Number(button.dataset.index));
 }
 function handleGirlfriendWardrobeClick(event) {
+  const defaultButton=event.target.closest("[data-warehouse-default]");
+  if(defaultButton&&state){
+    for(const entry of state.inventory??[])if(entry.owner==="girlfriend"&&getItem(entry.itemId)?.category==="heroine-outfit")entry.equipped=false;
+    if(state.girlfriendEquipment)delete state.girlfriendEquipment["heroine-outfit"];
+    state.currentOutfit="default";
+    state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${state.partner.name} 의상 변경 · 기본 복장`});
+    SaveManager.save(state);render();toast(`${state.partner.name} 기본 복장 착용`);return;
+  }
   const button=event.target.closest("[data-warehouse-outfit]");
   if(!button||!state)return;
   const result=equipGirlfriendOutfit(state,button.dataset.warehouseOutfit);
