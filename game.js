@@ -14,7 +14,7 @@ import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
 import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, getPaycheckRange, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=6";
-import { acquireActionItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, purchaseItem } from "./src/inventory-manager.mjs?v=8";
+import { acquireActionItem, addItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, purchaseItem } from "./src/inventory-manager.mjs?v=8";
 import { getItem, ITEMS } from "./src/items-data.mjs?v=5";
 import { giveGift } from "./src/gift-manager.mjs?v=7";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
@@ -74,6 +74,8 @@ let autoMode = false;
 let autoAdvanceTimer = null;
 let immersiveScene = null;
 let sceneAdvanceTimer = null;
+let gameToolsTab = "outfits";
+let selectedToolsNpcId = null;
 const eventRuntime = new EventRuntimeManager({timeoutMs:5000,onWarning:warning=>{if(state){state.logs.push({time:`DAY ${state.day} · WATCHDOG`,text:`${warning.eventId} · ${warning.state} ${warning.elapsed}ms`});persistEventRuntime(true);}},onRecover:()=>{const layer=$("#sceneTransition");if(layer){layer.classList.remove("active");layer.classList.add("hidden");}if(immersiveScene)renderImmersiveStep();}});
 const runtimeWatchdogTimer=setInterval(()=>eventRuntime.watchdog(),1000);
 const modalFocusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
@@ -615,7 +617,7 @@ function playNextIntroVideo() {
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
 function startGame() { beginOnboarding(); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
+function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
 
@@ -1061,6 +1063,45 @@ function finishConversation(reason=""){
   $("#modalContent").innerHTML=`<span class="eyebrow">CONVERSATION RESULT</span><h2>${escapeHtml(summary)}</h2>${reason?`<p class="conversation-end-reason">${escapeHtml(reason)}</p>`:""}<div class="conversation-result-grid"><div><span>대화 횟수</span><b>${session.turn}턴</b></div><div><span>호감도</span><b class="${effect('affection')>=0?'up':'down'}">${effect('affection')>=0?'+':''}${effect('affection')}</b></div><div><span>신뢰도</span><b class="${effect('trust')>=0?'up':'down'}">${effect('trust')>=0?'+':''}${effect('trust')}</b></div><div><span>관계 스트레스</span><b class="${effect('relationshipStress')<=0?'up':'down'}">${effect('relationshipStress')>=0?'+':''}${effect('relationshipStress')}</b></div></div><p class="conversation-effect-limit">대화 한 번의 수치 변화는 항목별 최대 ±3입니다.</p><button id="conversationResultClose" class="primary-button" type="button">확인</button>`;$("#conversationResultClose").addEventListener("click",closeModal);
 }
 
+function closeGameTools() {
+  const layer=$("#gameToolsLayer"),backdrop=$("#gameToolsBackdrop"),trigger=$("#tipToolsButton");
+  layer.classList.add("hidden");backdrop.classList.add("hidden");
+  layer.setAttribute("aria-hidden","true");backdrop.setAttribute("aria-hidden","true");trigger.setAttribute("aria-expanded","false");
+}
+
+function renderGameTools() {
+  if(!state)return;
+  const tabs=[["outfits","의상",HEROINE_OUTFITS.filter(item=>item.heroineId===state.partner.heroineId).length],["events","이벤트",SITUATION_EVENTS.length],["maps","지도",Object.keys(WORLD_MAPS).length],["npcs","NPC",state.npcs?.length??0]];
+  $("#gameToolsTabs").innerHTML=tabs.map(([id,label,count])=>`<button type="button" data-tools-tab="${id}" class="${gameToolsTab===id?"active":""}"><span>${label}</span><b>${count}</b></button>`).join("");
+  const content=$("#gameToolsContent");
+  if(gameToolsTab==="outfits"){
+    const equipped=getEquippedHeroineOutfit(state),outfits=HEROINE_OUTFITS.filter(item=>item.heroineId===state.partner.heroineId);
+    content.innerHTML=`<div class="game-tools-intro"><b>${escapeHtml(state.partner.name)} 전체 의상</b><span>잠금·보유 조건과 관계없이 미리 보고 바로 선택할 수 있습니다.</span></div><div class="tools-outfit-grid">${outfits.map((outfit,index)=>`<button type="button" data-tools-outfit="${outfit.id}" class="tools-outfit-card ${equipped?.id===outfit.id?"selected":""}"><img src="${outfit.productImage}" alt="${escapeHtml(outfit.name)}" loading="lazy"><span>${String(index+1).padStart(2,"0")}</span><b>${escapeHtml(outfit.name.replace(`${state.partner.name} · `,""))}</b><small>${equipped?.id===outfit.id?"현재 착용 중":"이 의상 선택"}</small></button>`).join("")}</div>`;
+  }else if(gameToolsTab==="events"){
+    const groups=SITUATION_EVENTS.reduce((result,event)=>{(result[event.categoryLabel]??=[]).push(event);return result;},{});
+    content.innerHTML=`<div class="game-tools-intro"><b>전체 이벤트</b><span>DAY·조건을 무시하고 선택한 이벤트의 장면과 선택지를 실행합니다.</span></div>${Object.entries(groups).map(([label,events])=>`<section class="tools-event-group"><h3>${escapeHtml(label)} <span>${events.length}</span></h3>${events.map(event=>`<button type="button" class="tools-list-row" data-tools-event="${event.id}"><span><b>${escapeHtml(event.title)}</b><small>${escapeHtml(event.id)} · DAY ${event.dayRange?.[0]??"-"}–${event.dayRange?.[1]??"-"}</small></span><em>실행</em></button>`).join("")}</section>`).join("")}`;
+  }else if(gameToolsTab==="maps"){
+    content.innerHTML=`<div class="game-tools-intro"><b>지도·장소 이벤트</b><span>원하는 장소로 바로 이동하거나 해당 장소의 선택 이벤트를 엽니다.</span></div><div class="tools-map-list">${Object.values(WORLD_MAPS).map(map=>`<section class="tools-map-card"><header><span>${map.theme.toUpperCase()}</span><b>${escapeHtml(map.name)}</b><small>${escapeHtml(map.subtitle)}</small></header><div>${map.locations.map(location=>`<article><span>${location.icon}</span><div><b>${escapeHtml(location.name)}</b><small>${escapeHtml(location.category)} · ${escapeHtml(location.description)}</small></div><button type="button" data-tools-map-go="${map.id}:${location.id}">이동</button>${location.category!=="home"?`<button type="button" data-tools-map-event="${map.id}:${location.id}">이벤트</button>`:""}</article>`).join("")}</div></section>`).join("")}</div>`;
+  }else{
+    selectedToolsNpcId??=state.npcs?.[0]?.id??null;
+    const selected=(state.npcs??[]).find(npc=>npc.id===selectedToolsNpcId),related=selected?SITUATION_EVENTS.filter(event=>event.npcId===selected.id||event.npcId===selected.role):[];
+    content.innerHTML=`<div class="game-tools-intro"><b>NPC 데이터베이스</b><span>NPC를 선택하면 관계 상태와 연결된 이벤트를 확인할 수 있습니다.</span></div>${selected?`<article class="tools-npc-detail"><span>${selected.active?"ACTIVE":"INACTIVE"}</span><h3>${escapeHtml(selected.name)} · ${escapeHtml(selected.role)}</h3><p>${escapeHtml(selected.job??selected.storyState??"")} · 호감 ${selected.affection} · 신뢰 ${selected.trust}</p><small>관계 ${escapeHtml(selected.relationshipType)} · 관심 ${selected.interestInPlayer} · 연인 관심 ${selected.interestInGirlfriend}</small>${related.length?`<div>${related.map(event=>`<button type="button" data-tools-event="${event.id}">${escapeHtml(event.title)} 실행</button>`).join("")}</div>`:""}</article>`:""}<div class="tools-npc-list">${(state.npcs??[]).map(npc=>`<button type="button" data-tools-npc="${npc.id}" class="${npc.id===selectedToolsNpcId?"selected":""}"><span>${npc.active?"●":"○"}</span><div><b>${escapeHtml(npc.name)}</b><small>${escapeHtml(npc.role)} · ${escapeHtml(npc.category)}</small></div><em>${getNpcRelationshipStatus(npc).label}</em></button>`).join("")}</div>`;
+  }
+  document.querySelectorAll("[data-tools-tab]").forEach(button=>button.addEventListener("click",()=>{gameToolsTab=button.dataset.toolsTab;renderGameTools();}));
+  document.querySelectorAll("[data-tools-outfit]").forEach(button=>button.addEventListener("click",()=>{const outfit=HEROINE_OUTFITS.find(item=>item.id===button.dataset.toolsOutfit);if(!outfit)return;let instance=(state.inventory??[]).find(item=>item.itemId===outfit.id&&item.owner==="girlfriend");instance??=addItem(state,outfit.id,"girlfriend","tip-tools");const result=equipGirlfriendOutfit(state,instance.instanceId);if(!result)return;SaveManager.save(state);render();renderGameTools();toast(`${outfit.name} 선택 완료`);}));
+  document.querySelectorAll("[data-tools-event]").forEach(button=>button.addEventListener("click",()=>{const event=SITUATION_EVENTS.find(item=>item.id===button.dataset.toolsEvent);if(!event)return;closeGameTools();$(".play-panel").classList.remove("hidden");$("#nightHome").classList.add("hidden");$("#worldMap").classList.add("hidden");openEventScene(structuredClone(event),{debugPreview:true});}));
+  document.querySelectorAll("[data-tools-npc]").forEach(button=>button.addEventListener("click",()=>{selectedToolsNpcId=button.dataset.toolsNpc;renderGameTools();}));
+  const openMapTarget=(value,withEvent=false)=>{const [mapId,locationId]=value.split(":"),map=WORLD_MAPS[mapId],location=map?.locations.find(item=>item.id===locationId);if(!map||!location)return;state.world.mode="district";state.world.cityId=map.cityId;state.world.districtId=map.id;state.world.x=location.x;state.world.y=location.y;state.world.transportConfirmed=true;if(!state.world.discoveredLocations.includes(location.id))state.world.discoveredLocations.push(location.id);SaveManager.save(state);closeGameTools();renderWorldMap();if(withEvent)setTimeout(()=>openWorldEventLayer(map,location),120);};
+  document.querySelectorAll("[data-tools-map-go]").forEach(button=>button.addEventListener("click",()=>openMapTarget(button.dataset.toolsMapGo)));
+  document.querySelectorAll("[data-tools-map-event]").forEach(button=>button.addEventListener("click",()=>openMapTarget(button.dataset.toolsMapEvent,true)));
+}
+
+function openGameTools(tab=gameToolsTab) {
+  if(!state)return;gameToolsTab=tab;
+  const layer=$("#gameToolsLayer"),backdrop=$("#gameToolsBackdrop"),trigger=$("#tipToolsButton");
+  layer.classList.remove("hidden");backdrop.classList.remove("hidden");layer.setAttribute("aria-hidden","false");backdrop.setAttribute("aria-hidden","false");trigger.setAttribute("aria-expanded","true");renderGameTools();$("#gameToolsClose").focus();
+}
+
 function openDebug() {
   if (!state) return;
   const keys = ["day","phase","appearanceSeed","money","health","energy","fatigue","stress","charm","fashion","confidence","work","social","affection","trust","excitement","attachment","conflict","relationshipStress"];
@@ -1248,6 +1289,10 @@ if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");
 renderSoundButton();
 $("#soundButton").addEventListener("click",()=>{const enabled=sound.toggle();renderSoundButton();if(enabled){sound.play("success");if(state)sound.playScene(phases[state.phase].key,state.day);else sound.playBgm("title",new Date().getDate());}toast(enabled?"효과음과 BGM을 켰어요.":"모든 소리를 껐어요.");});
 $("#debugButton").addEventListener("click",openDebug);
+$("#tipToolsButton").addEventListener("click",()=>openGameTools());
+$("#gameToolsClose").addEventListener("click",closeGameTools);
+$("#gameToolsBackdrop").addEventListener("click",closeGameTools);
+$(".mini-tip").addEventListener("click",()=>openGameTools());
 $("#inventoryButton").addEventListener("click",openInventory);
 $("#shopButton").addEventListener("click",openShop);
 $("#financeButton").addEventListener("click",openFinance);
@@ -1279,5 +1324,6 @@ $("#introVideo").addEventListener("ended",playNextIntroVideo);
 $("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();introVideoIndex=INTRO_VIDEO_PLAYLIST.length-1;unlockIntroStart("프롤로그 영상을 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
 $("#introGameStartButton").addEventListener("click",finishOnboarding);
 document.addEventListener("keydown", handleModalKeydown);
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("#gameToolsLayer").classList.contains("hidden"))closeGameTools();});
 document.addEventListener("fullscreenchange",renderFullscreenButtons);
 window.addEventListener("beforeunload",()=>clearInterval(runtimeWatchdogTimer));
