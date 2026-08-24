@@ -542,3 +542,68 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
   .world-header-actions button{min-width:82px;white-space:nowrap}
   .world-map-header{grid-template-columns:180px minmax(0,1fr) 76px}
 }
+
+/* Keep the night room and district controls visible on shorter PC/tablet screens. */
+.ui-night-mode .night-home{
+  height:calc(100dvh - 116px);
+  min-height:520px;
+  margin:0 0 28px;
+}
+.theater-mode .night-home{
+  height:calc(100dvh - 52px);
+  min-height:520px;
+  margin:0 0 32px;
+}
+.night-room-scene{
+  inset:116px 0 78px;
+  background-size:cover;
+}
+.ui-night-mode .world-map{
+  height:calc(100dvh - 160px);
+  min-height:500px;
+  margin:0 0 28px;
+  grid-template-rows:auto minmax(300px,1fr) auto;
+}
+.ui-night-mode .world-map-canvas{min-height:300px}
+
+@media (min-width:761px) and (max-width:1366px){
+  .ui-night-mode .night-home{height:calc(100dvh - 112px)}
+  .theater-mode .night-home{height:calc(100dvh - 52px)}
+  .night-room-scene{inset:104px 0 72px}
+  .ui-night-mode .world-map,.theater-mode .world-map{
+    height:calc(100dvh - 112px);
+    min-height:500px;
+    margin:0 0 32px;
+    grid-template-rows:auto minmax(300px,1fr) auto;
+  }
+  .world-map-canvas{min-height:300px}
+}
+
+@media (min-width:761px) and (max-height:820px){
+  .night-room-scene{inset:96px 0 66px}
+  .night-home-header{padding-top:20px;padding-bottom:18px}
+  .night-room-scene .room-object{transform:scale(.9);transform-origin:center}
+  .night-room-scene .room-object:hover,.night-room-scene .room-object:focus-visible{transform:translateY(-4px) scale(.9)}
+  .ui-night-mode .world-map,.theater-mode .world-map{
+    height:calc(100dvh - 104px);
+    min-height:470px;
+    margin:0 0 34px;
+  }
+  .world-map-canvas{min-height:270px}
+}
+
+@media(max-width:760px){
+  .ui-night-mode .night-home,.theater-mode .night-home{
+    height:calc(100dvh - 76px);
+    min-height:500px;
+    margin:0 0 24px;
+  }
+  .night-room-scene{inset:96px 0 64px}
+  .ui-night-mode .world-map{
+    height:calc(100dvh - 104px);
+    min-height:470px;
+    margin:0 0 28px;
+    grid-template-rows:auto minmax(270px,1fr) auto;
+  }
+  .world-map-canvas{min-height:270px}
+}
