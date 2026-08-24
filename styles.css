@@ -758,6 +758,12 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 
 /* Touch screens: prevent the play surface from flashing as selected on every tap. */
 @media (hover:none), (pointer:coarse){
+  .ui-classic-mode .topbar .brand,
+  .ui-classic-mode .topbar .brand strong,
+  .ui-classic-mode .topbar .brand small{
+    color:#fff!important;
+    -webkit-text-fill-color:#fff;
+  }
   .play-panel,
   .vn-stage,
   .vn-stage button,
