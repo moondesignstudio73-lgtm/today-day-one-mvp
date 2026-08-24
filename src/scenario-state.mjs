@@ -3,6 +3,11 @@ export const GAME_MODES = Object.freeze({
   MARRIAGE_30: "marriage-in-30-days"
 });
 
+export const GAME_MODE_CONFIGS = Object.freeze({
+  [GAME_MODES.FREE_ROMANCE]: Object.freeze({id:GAME_MODES.FREE_ROMANCE,title:"자유 연애",description:"연인과 성향을 직접 정하고 30일의 일상을 자유롭게 만듭니다.",fixedPartnerId:null}),
+  [GAME_MODES.MARRIAGE_30]: Object.freeze({id:GAME_MODES.MARRIAGE_30,title:"결혼까지 30일!",description:"기억을 잃은 채 깨어난 뒤 하은과 결혼식까지 남은 30일을 따라갑니다.",fixedPartnerId:"haeun"})
+});
+
 const TRACKED_METRICS = [
   "investigation", "suspicion", "memoryRecovery", "haeunAffection",
   "haeunTrust", "haeunDependency", "homeSearchCount",
@@ -12,6 +17,10 @@ const COLLECTIONS = ["clues", "contradictions", "profileUnlocks", "unlockedActio
 
 export function normalizeGameMode(value) {
   return value === GAME_MODES.MARRIAGE_30 ? value : GAME_MODES.FREE_ROMANCE;
+}
+
+export function getGameModeConfig(value) {
+  return GAME_MODE_CONFIGS[normalizeGameMode(value)];
 }
 
 export function createScenarioState(mode = GAME_MODES.FREE_ROMANCE) {

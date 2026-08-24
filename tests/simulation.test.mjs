@@ -55,7 +55,7 @@ import { ACTION_RESULT_ASSETS, getActionResultAsset, getVisibleActionEffects } f
 import { ACTION_RESULT_VIDEOS, getActionResultVideo, isGirlfriendHappy, isGirlfriendSad } from "../src/action-result-videos.mjs";
 import { DEFAULT_GIRLFRIEND_VISUAL_ID, getGirlfriendVisual, getGirlfriendVisualAsset, selectGirlfriendVisual } from "../src/girlfriend-visual-data.mjs";
 import { createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
-import { GAME_MODES, validateScenarioState } from "../src/scenario-state.mjs";
+import { GAME_MODES, getGameModeConfig, validateScenarioState } from "../src/scenario-state.mjs";
 
 const coreActionResultAssetIds=["coworker-lunch","dinner-date","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"];
 assert.ok(coreActionResultAssetIds.every(actionId=>actionId in ACTION_RESULT_ASSETS));
@@ -152,6 +152,7 @@ assert.equal(applyPlayerArchetype({money:1000000,work:40,social:40,confidence:40
 assert.equal(validatePlayerProfile(migratePlayerProfile(null)),true);
 const configuredStart=createInitialState(selectedPartner,()=>0.5,{player:premiumPlayer,job:JOBS.find((job)=>job.id==="used-car-dealer")});
 assert.equal(configuredStart.gameMode,GAME_MODES.FREE_ROMANCE);
+assert.equal(getGameModeConfig(configuredStart.gameMode).fixedPartnerId,null);
 assert.equal(configuredStart.scenario.enabled,false);
 assert.equal(configuredStart.player.name,"민준이");
 assert.equal(configuredStart.job.id,"used-car-dealer");
@@ -159,6 +160,7 @@ assert.equal(configuredStart.money>=5000000,true);
 assert.equal(validateState(configuredStart),true);
 const campaignStart=createInitialState(selectedPartner,()=>0.5,{mode:GAME_MODES.MARRIAGE_30,player:premiumPlayer,job:JOBS.find((job)=>job.id==="used-car-dealer")});
 assert.equal(campaignStart.gameMode,GAME_MODES.MARRIAGE_30);
+assert.equal(getGameModeConfig(campaignStart.gameMode).fixedPartnerId,"haeun");
 assert.equal(campaignStart.scenario.enabled,true);
 assert.equal(campaignStart.scenario.id,GAME_MODES.MARRIAGE_30);
 assert.equal(validateScenarioState(campaignStart.gameMode,campaignStart.scenario),true);

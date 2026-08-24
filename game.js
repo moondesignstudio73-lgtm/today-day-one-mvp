@@ -45,6 +45,7 @@ import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { getGirlfriendVisual } from "./src/girlfriend-visual-data.mjs";
 import { createPlayerProfile, PLAYER_ARCHETYPES, sanitizePlayerNameInput } from "./src/player-profile-data.mjs?v=2";
 import { getRandomPlayerName } from "./src/player-names-data.mjs?v=1";
+import { GAME_MODES, getGameModeConfig } from "./src/scenario-state.mjs?v=1";
 import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=10";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs";
@@ -487,7 +488,7 @@ function restoreEventCheckpoint(){
 const MBTI_TYPES = ["ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP", "ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"];
 const PERSONALITY_LABELS = { romanticism:"로맨틱", independence:"독립적", loyalty:"한결같음", emotionalSensitivity:"섬세함", socialPreference:"사교적", contactImportance:"연락 중시" };
 
-function setOnboardingProgress(step, total = 3) {
+function setOnboardingProgress(step, total = 4) {
   $("#onboardingStepLabel").textContent = `STEP ${step} / ${total}`;
   $("#onboardingProgressBar").style.width = `${step / total * 100}%`;
 }
@@ -511,14 +512,26 @@ function personalitySummary(partner) {
 }
 
 function beginOnboarding() {
-  onboarding = { step:1, partner:null, girlfriendTraitsReady:false, girlfriendJobReady:false, playerArchetype:null, playerName:"", playerJob:null, previewState:null };
+  onboarding = { step:1, mode:null, partner:null, girlfriendTraitsReady:false, girlfriendJobReady:false, playerArchetype:null, playerName:"", playerJob:null, previewState:null };
   $("#introScreen").classList.add("hidden");
   $("#onboardingScreen").classList.remove("hidden");
-  renderGirlfriendSetup();
+  renderModeSetup();
+}
+
+function renderModeSetup() {
+  setOnboardingProgress(1);
+  const modes=[GAME_MODES.FREE_ROMANCE,GAME_MODES.MARRIAGE_30].map(getGameModeConfig);
+  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>GAME MODE</span><h1>어떤 30일을 시작할까요?</h1><p>모드는 저장 데이터에 기록되며 캠페인 진행 중에는 변경할 수 없습니다.</p></header><div class="mode-select-grid">${modes.map(mode=>`<button class="mode-select-card" data-game-mode="${mode.id}" type="button"><small>${mode.fixedPartnerId?"STORY CAMPAIGN":"SANDBOX ROMANCE"}</small><strong>${escapeHtml(mode.title)}</strong><span>${escapeHtml(mode.description)}</span><em>${mode.fixedPartnerId?"하은 고정 · 미스터리 캠페인":"연인·성향·직업 직접 설정"}</em></button>`).join("")}</div>`;
+  document.querySelectorAll("[data-game-mode]").forEach(button=>button.addEventListener("click",()=>{
+    onboarding.mode=button.dataset.gameMode;
+    const config=getGameModeConfig(onboarding.mode);
+    if(config.fixedPartnerId){onboarding.partner=createGirlfriendFromProfile(config.fixedPartnerId);onboarding.girlfriendTraitsReady=true;onboarding.girlfriendJobReady=true;renderPlayerSetup();}
+    else{onboarding.partner=null;onboarding.girlfriendTraitsReady=false;onboarding.girlfriendJobReady=false;renderGirlfriendSetup();}
+  }));
 }
 
 function renderGirlfriendSetup() {
-  setOnboardingProgress(1);
+  onboarding.step=2; setOnboardingProgress(2);
   const candidates = HEROINE_PROFILES.slice(0,3);
   $("#onboardingContent").innerHTML = `
     <header class="setup-heading"><span>GIRLFRIEND SELECT</span><h1>여자친구 캐릭터 선택</h1><p>보라색 머리 캐릭터를 선택한 뒤 MBTI와 직업을 확인하세요. 이름은 그대로 유지됩니다.</p></header>
@@ -553,7 +566,7 @@ function showPremiumConfirmation(archetype) {
 }
 
 function renderPlayerSetup() {
-  onboarding.step=2; setOnboardingProgress(2);
+  onboarding.step=3; setOnboardingProgress(3);
   $("#onboardingContent").innerHTML=`
     <header class="setup-heading"><span>PLAYER SETUP</span><h1>나의 외모 선택</h1><p>외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다.</p></header>
     <div class="setup-card-grid player-select-grid">${PLAYER_ARCHETYPES.map((entry)=>`<button class="setup-character-card ${onboarding.playerArchetype===entry.id?"selected":""}" data-player="${entry.id}" type="button"><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.premium?" · PREMIUM":""}</strong><span>능력 ${entry.abilityRating} · 외모 ${entry.appearanceRating}</span><small>${entry.description}</small></button>`).join("")}</div>
@@ -567,11 +580,12 @@ function renderPlayerSetup() {
 }
 
 function renderSetupSummary() {
-  onboarding.step=3; setOnboardingProgress(3);
+  onboarding.step=4; setOnboardingProgress(4);
   const player=createPlayerProfile(onboarding.playerArchetype,onboarding.playerName);
-  onboarding.previewState=createInitialState(onboarding.partner,Math.random,{player,job:onboarding.playerJob});
+  onboarding.previewState=createInitialState(onboarding.partner,Math.random,{mode:onboarding.mode,player,job:onboarding.playerJob});
   const preview=onboarding.previewState;
-  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>FINAL PROFILE</span><h1>${escapeHtml(player.name)}의 30일이 시작됩니다</h1><p>선택한 설정은 저장 데이터와 모든 게임 시스템에 적용됩니다.</p></header><div class="setup-summary"><img src="${player.image}" alt="${escapeHtml(player.name)}"><div><span>${escapeHtml(player.archetypeName)}</span><h2>${escapeHtml(player.name)}</h2><dl><div><dt>직업</dt><dd>${escapeHtml(preview.job.name)}</dd></div><div><dt>초기 자금</dt><dd>${money(preview.money)}</dd></div><div><dt>매력 / 패션</dt><dd>${preview.charm} / ${preview.fashion}</dd></div><div><dt>업무 / 사교</dt><dd>${preview.work} / ${preview.social}</dd></div></dl></div><div class="summary-partner"><small>GIRLFRIEND</small><strong>${escapeHtml(preview.partner.name)}</strong><span>${escapeHtml(preview.partner.mbti)} · ${escapeHtml(preview.partner.career.name)}</span><p>${personalitySummary(preview.partner)}</p></div></div><button id="openIntroButton" class="primary-button setup-next" type="button">다음 · 프롤로그 보기</button>`;
+  const mode=getGameModeConfig(preview.gameMode);
+  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>FINAL PROFILE · ${escapeHtml(mode.title)}</span><h1>${escapeHtml(player.name)}의 30일이 시작됩니다</h1><p>선택한 모드와 설정은 저장 데이터와 모든 게임 시스템에 적용됩니다.</p></header><div class="setup-summary"><img src="${player.image}" alt="${escapeHtml(player.name)}"><div><span>${escapeHtml(player.archetypeName)}</span><h2>${escapeHtml(player.name)}</h2><dl><div><dt>게임 모드</dt><dd>${escapeHtml(mode.title)}</dd></div><div><dt>직업</dt><dd>${escapeHtml(preview.job.name)}</dd></div><div><dt>초기 자금</dt><dd>${money(preview.money)}</dd></div><div><dt>매력 / 패션</dt><dd>${preview.charm} / ${preview.fashion}</dd></div><div><dt>업무 / 사교</dt><dd>${preview.work} / ${preview.social}</dd></div></dl></div><div class="summary-partner"><small>${preview.scenario.enabled?"FIANCÉE · CAMPAIGN":"GIRLFRIEND"}</small><strong>${escapeHtml(preview.partner.name)}</strong><span>${escapeHtml(preview.partner.mbti)} · ${escapeHtml(preview.partner.career.name)}</span><p>${personalitySummary(preview.partner)}</p></div></div><button id="openIntroButton" class="primary-button setup-next" type="button">다음 · 프롤로그 보기</button>`;
   $("#openIntroButton").addEventListener("click",openStoryIntro);
 }
 
