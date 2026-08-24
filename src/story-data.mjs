@@ -43,6 +43,28 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"use-the-rail",label:"난간만 잡고 걷되 하은에게 걸음 수를 세어 달라고 한다",effects:{confidence:9,health:5,energy:-7,trust:5},scenarioEffects:{investigation:2,memoryRecovery:4,haeunTrust:5},unlockedActions:["solo-rehabilitation"],followUpHooks:["day3-discharge-phone"],response:"“하나. 둘.” 하은은 손을 내밀지 않았다. 마지막 숫자는 내가 선 뒤 한 박자 늦게 말했다. “셋. 됐다.”",memory:"스스로 걷고 하은에게 걸음 수만 부탁함"},
     {id:"review-the-plan",label:"오늘 무리하지 않고 치료사와 일주일 계획부터 세운다",effects:{confidence:6,health:3,work:2},scenarioEffects:{investigation:4,haeunTrust:3},clues:["rehabilitation-schedule"],unlockedActions:["review-medical-plan"],followUpHooks:["day3-discharge-phone"],response:"치료사는 운동 횟수와 중단 기준을 적었다. 하은은 일정표 사진을 찍고 “감독은 안 하고 알람만 맡을게.”라고 말했다.",memory:"재활 속도와 중단 기준을 직접 정함"}
   ]
+},{
+  id:"m30-day3-discharge-phone",arc:"병원 밖으로",window:[3,3],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day2-rehabilitation"},
+  title:"돌아온 휴대폰",speaker:"하은",message:"퇴원 서류 위에 오래된 휴대폰과 병원 보관 봉투가 놓였다. 액정 한쪽에는 사고 때 생긴 금이 남아 있었다.",
+  dramaticPurpose:"퇴원을 생활 회복의 전환점으로 만들고 스마트폰을 조사와 관계 회복의 공용 도구로 해금한다.",
+  knowledgeLedger:{
+    protagonist:{KNOWS:["오늘 퇴원한다","휴대폰은 사고 뒤 병원이 보관했다"],BELIEVES:["기록은 기억과 별개로 확인할 수 있다"],SUSPECTS:["휴대폰에 사고 전 생활 정보가 남아 있을 수 있다"],DOES_NOT_KNOW:["잠금 암호","최근 백업 상태"],HIDES:["알림을 보는 일이 두렵다"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["기기를 자신의 기준으로 확인한다"],FEARS:["기록 속 자신이 낯설게 느껴지는 것"]},
+    haeun:{KNOWS:["휴대폰 잠금 암호의 단서","퇴원 뒤 복약 일정"],BELIEVES:["휴대폰을 돌려주는 것이 주인공의 선택권을 회복시킨다"],SUSPECTS:[],DOES_NOT_KNOW:["어떤 기록이 남아 있는지"],HIDES:["알림을 대신 확인하고 싶은 충동"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["퇴원 준비를 실수 없이 끝낸다"],FEARS:["기록이 주인공을 한꺼번에 압도하는 것"]},
+    nurse:{KNOWS:["보관 봉투 인계 절차","복약과 외래 일정"],BELIEVES:["기기 확인은 환자가 직접 해야 한다"],SUSPECTS:[],DOES_NOT_KNOW:["휴대폰 내용과 두 사람의 과거"],HIDES:[],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["인계 확인과 퇴원 교육을 마친다"],FEARS:["분실 또는 복약 누락"]}
+  },
+  dialogueTurns:[
+    {type:"dialogue",speaker:"간호사",text:"보관 봉투는 본인이 개봉해 주세요. 휴대폰, 지갑, 열쇠 세 가지입니다. 확인 뒤 서명하시면 됩니다.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"암호가 기억나지 않으면?",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"힌트까지만 줄게. 네가 매일 보는 숫자였어. 틀리면 내 탓 말고 과거의 네 탓.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"열어 보고 싶은데, 뭐가 나올지는 겁나네.",expressionId:"worried"},
+    {type:"dialogue",speaker:"하은",text:"그럼 순서를 정하자. 오늘 필요한 것부터. 약 알람, 집 주소, 그리고… 배달 앱 단골 메뉴 정도.",expressionId:"smile"}
+  ],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"phone"},
+  choices:[
+    {id:"inspect-system-first",label:"계정·날짜·백업 상태부터 직접 확인한다",effects:{confidence:7,trust:3},scenarioEffects:{investigation:8,memoryRecovery:3},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-system"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"잠금 화면의 날짜와 계정 이름부터 적었다. 사진과 메시지는 닫아 둔 채, 확인한 사실과 아직 보지 않은 영역을 구분했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["verify-medical"]}}],effects:{confidence:3},scenarioEffects:{investigation:3},response:"병원에서 받은 사고 날짜와 기기 백업 날짜를 나란히 적었다. 아직 결론은 없지만 확인 순서는 분명해졌다."}],memory:"돌아온 휴대폰의 시스템 정보부터 확인함"},
+    {id:"set-up-together",label:"하은과 복약 알람과 필수 연락처만 함께 설정한다",effects:{affection:8,trust:10},scenarioEffects:{haeunAffection:8,haeunTrust:10,memoryRecovery:2},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","call-haeun"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"하은은 자신의 번호를 ‘하은’이라고만 저장했다. 하트를 붙였다가 내 얼굴을 보고 지운 뒤, “이건 네가 기억나면 직접.”이라고 말했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["take-her-hand"]}}],effects:{affection:4},scenarioEffects:{haeunAffection:4},response:"알람 설정을 마친 하은이 손을 내밀었다. 어제처럼 이번에도 잡을지는 내 쪽에서 정할 수 있게, 손바닥만 펴 둔 채였다."}],memory:"하은과 휴대폰의 필수 기능만 다시 설정함"},
+    {id:"seal-until-home",label:"인계 목록만 대조하고 내용 확인은 집에서 하기로 한다",effects:{confidence:8,stress:-4,trust:4},scenarioEffects:{investigation:4,haeunTrust:4},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-at-home"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"휴대폰, 지갑, 열쇠를 목록과 대조한 뒤 다시 봉투에 넣었다. 하은은 재촉하지 않고 봉투를 내 가방 맨 위에 놓았다.",memory:"휴대폰 기록 확인을 집에 도착한 뒤로 미룸"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [

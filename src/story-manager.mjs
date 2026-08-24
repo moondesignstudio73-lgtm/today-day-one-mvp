@@ -61,7 +61,8 @@ export function resolveStoryChoice(state, sceneId, choiceId, scenes = STORY_SCEN
   state.storyFlags ??= {};
   Object.assign(state.storyFlags,choice.flags ?? {},outcome?.flags ?? {});
   if (state.scenario?.enabled) {
-    for (const [key,value] of Object.entries({...choice.scenarioEffects,...outcome?.scenarioEffects})) if (Number.isFinite(value) && Number.isFinite(state.scenario[key])) state.scenario[key]=Math.max(0,state.scenario[key]+value);
+    const scenarioEffectKeys=[...new Set([...Object.keys(choice.scenarioEffects??{}),...Object.keys(outcome?.scenarioEffects??{})])];
+    for (const key of scenarioEffectKeys) { const value=(choice.scenarioEffects?.[key]??0)+(outcome?.scenarioEffects?.[key]??0); if (Number.isFinite(value) && Number.isFinite(state.scenario[key])) state.scenario[key]=Math.max(0,state.scenario[key]+value); }
     for (const [field,items] of [["clues",choice.clues],["profileUnlocks",choice.profileUnlocks],["unlockedActions",choice.unlockedActions]]) for (const item of items??[]) if (!state.scenario[field].includes(item)) state.scenario[field].push(item);
     for (const hook of choice.followUpHooks??[]) if (!state.scenario.followUpHooks.includes(hook)) state.scenario.followUpHooks.push(hook);
   }
