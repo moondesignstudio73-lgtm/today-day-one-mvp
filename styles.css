@@ -742,3 +742,26 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
   }
   .world-map-canvas{min-height:270px}
 }
+
+/* Touch screens: prevent the play surface from flashing as selected on every tap. */
+@media (hover:none), (pointer:coarse){
+  .play-panel,
+  .vn-stage,
+  .vn-stage button,
+  .vn-dialogue,
+  .action-selection-panel,
+  .action-selection-panel button,
+  .immersive-choices,
+  .immersive-choices button,
+  .story-next-button{
+    -webkit-tap-highlight-color:transparent;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  .vn-stage,
+  .vn-dialogue,
+  .action-selection-panel button,
+  .immersive-choices button,
+  .story-next-button{touch-action:manipulation}
+}

@@ -30,7 +30,7 @@ import { SoundManager } from "./src/sound-manager.mjs?v=5";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
-import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=9";
+import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=10";
 import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=9";
 import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=6";
 import { STORY_SCENES } from "./src/story-data.mjs";
@@ -396,7 +396,7 @@ function updateImmersiveCharacter(expressionId="calm") {
   const poseId=immersiveScene?.presentation?.poseId,outfitId=immersiveScene?.presentation?.outfitId;
   renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId,outfitId});
   updatePartnerPortrait(expressionId,poseId,outfitId);
-  const girlfriendEventVideo=characterId==="girlfriend"&&["event","temptation"].includes(immersiveScene?.type)?"assets/characters/girlfriend-standing-2d_transparent.webm":"";
+  const girlfriendEventVideo=characterId==="girlfriend"&&["event","temptation"].includes(immersiveScene?.type)?"assets/characters/girlfriend-standing-2d_transparent.webm?v=2":"";
   syncOutfitCharacterMedia(false,girlfriendEventVideo);
 }
 
