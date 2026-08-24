@@ -38,7 +38,7 @@ import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, g
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
-import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=13";
+import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=14";
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
@@ -398,7 +398,7 @@ function updateImmersiveCharacter(expressionId="calm") {
 
 function syncOutfitCharacterMedia(forceImage=false) {
   const image=$("#vnCharacter"),video=$("#vnCharacterVideo"),outfit=state?getEquippedHeroineOutfit(state):null;
-  const showVideo=Boolean(!forceImage&&outfit?.characterWearingVideo&&state.day%2===0);
+  const showVideo=Boolean(!forceImage&&outfit?.characterWearingVideo);
   if(!video||!image)return;
   video.pause();video.hidden=true;image.hidden=false;
   if(!showVideo){video.removeAttribute("src");video.load();return;}
@@ -669,6 +669,9 @@ function render() {
   $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>({a,i})).filter(({a})=>isActionVisible(state,a)).map(({a,i})=>{ const availability=getActionAvailability(state,a); return `<button class="action-card ${state.selected===i?'selected':''} ${availability.available?'':'locked'}" data-index="${i}" ${availability.available?'':'disabled'}><span class="action-icon">${a.icon}</span><span class="cost">${availability.available?escapeHtml(a.tag):'🔒 '+escapeHtml(availability.reason)}</span><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.desc)}</p></button>`; }).join("");
   const todayLogs=getTodayLogs();
   $("#eventLog").innerHTML = todayLogs.length ? todayLogs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${escapeHtml(l.time)}</b><span>${escapeHtml(l.text)}</span></div>`).join("") : `<div class="log-item"><b>DAY ${state.day}</b><span>오늘의 첫 선택을 기다리고 있습니다.</span></div>`;
+  const girlfriendOutfits=(state.inventory??[]).map(instance=>({instance,item:getItem(instance.itemId)})).filter(({instance,item})=>instance.owner==="girlfriend"&&item?.category==="heroine-outfit"&&item.heroineId===state.partner.heroineId);
+  $("#girlfriendWardrobeCount").textContent=`보유 의상 ${girlfriendOutfits.length}개`;
+  $("#girlfriendWardrobe").innerHTML=girlfriendOutfits.length?girlfriendOutfits.map(({instance,item})=>`<button type="button" class="girlfriend-wardrobe-item ${instance.equipped?"equipped":""}" data-warehouse-outfit="${instance.instanceId}" aria-pressed="${instance.equipped}"><img src="${item.productImage}" alt="${escapeHtml(item.name)}" loading="lazy"><span><b>${escapeHtml(item.name.replace(`${state.partner.name} · `,""))}</b><small>${instance.equipped?"현재 착용 중":"클릭해서 갈아입기"}</small></span></button>`).join(""):`<div class="girlfriend-wardrobe-empty"><span>👗</span><b>구매한 의상이 없습니다.</b><small>상점에서 의상을 선물하면 여기에 보관됩니다.</small></div>`;
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
   const nextPhase=phases[Math.min(state.phase+1,phases.length-1)];
@@ -966,6 +969,14 @@ function handleActionGridClick(event) {
   const button = event.target.closest(".action-card");
   if (!button || button.disabled) return;
   selectAction(Number(button.dataset.index));
+}
+function handleGirlfriendWardrobeClick(event) {
+  const button=event.target.closest("[data-warehouse-outfit]");
+  if(!button||!state)return;
+  const result=equipGirlfriendOutfit(state,button.dataset.warehouseOutfit);
+  if(!result){toast("이 의상으로 갈아입을 수 없습니다.");return;}
+  state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${state.partner.name} 의상 변경 · ${result.item.name}`});
+  SaveManager.save(state);render();toast(`${result.item.name} 착용 · 크로마키 영상 재생`);
 }
 function applyAction() {
   if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
@@ -1312,6 +1323,7 @@ $("#worldMapCanvas").addEventListener("keydown",handleWorldMapKeydown);
 $("#worldMapCanvas").addEventListener("pointerup",handleWorldMapPointer);
 $(".world-dpad").addEventListener("click",handleWorldMoveClick);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
+$("#girlfriendWardrobe").addEventListener("click",handleGirlfriendWardrobeClick);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#storyChoiceLayer").addEventListener("click",event=>{event.stopPropagation();const button=event.target.closest("[data-immersive-choice]");if(button)chooseImmersiveOption(button.dataset.immersiveChoice);});
 $("#visualNovelStage").addEventListener("keydown",event=>{ if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });

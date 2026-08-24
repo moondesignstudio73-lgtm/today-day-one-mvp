@@ -687,6 +687,25 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 .ui-classic-mode .action-selection-panel{top:76px}
 .game-tools-trigger{bottom:96px}
 
+/* Compact girlfriend outfit warehouse below the main scene. */
+.ui-classic-mode .classic-mode .girlfriend-warehouse-panel{
+  flex:0 0 auto;
+  box-sizing:border-box;
+  height:190px;
+  margin-top:12px;
+  padding:10px 16px 9px;
+  overflow:hidden;
+}
+.girlfriend-warehouse-panel .warehouse-title{margin:0 0 8px}
+.girlfriend-wardrobe{display:flex;gap:8px;min-height:105px;overflow-x:auto;overflow-y:hidden;padding:1px 1px 6px;scrollbar-width:thin}
+.girlfriend-wardrobe-item{position:relative;display:grid;grid-template-columns:58px 112px;flex:0 0 178px;align-items:center;gap:8px;box-sizing:border-box;height:102px;padding:6px;border:1px solid #eadfe6;border-radius:14px;background:#faf7f9;color:var(--ink);text-align:left;cursor:pointer;transition:.18s}
+.girlfriend-wardrobe-item:hover,.girlfriend-wardrobe-item:focus-visible{border-color:#d75b7d;background:#fff;transform:translateY(-2px)}
+.girlfriend-wardrobe-item.equipped{border-color:var(--pink);background:#fff3f7;box-shadow:inset 0 0 0 1px #e8587b33}
+.girlfriend-wardrobe-item img{display:block;width:58px;height:88px;object-fit:contain;object-position:center bottom;border-radius:9px;background:#eee8ec}
+.girlfriend-wardrobe-item>span{display:grid;gap:7px;min-width:0}.girlfriend-wardrobe-item b{display:-webkit-box;overflow:hidden;font-size:10px;line-height:1.35;-webkit-box-orient:vertical;-webkit-line-clamp:2}.girlfriend-wardrobe-item small{color:#9a8993;font-size:8px;line-height:1.35}.girlfriend-wardrobe-item.equipped small{color:#c33f68;font-weight:700}
+.girlfriend-wardrobe-empty{display:grid;grid-template-columns:32px 1fr;grid-template-rows:auto auto;align-content:center;column-gap:9px;width:100%;min-height:88px;padding:0 12px;border:1px dashed #dfd3da;border-radius:13px;color:#8d7f88}.girlfriend-wardrobe-empty>span{grid-row:1/3;font-size:24px}.girlfriend-wardrobe-empty>b{font-size:10px}.girlfriend-wardrobe-empty>small{font-size:8px}
+.compact-daily-record{margin-top:2px;border-top:1px solid var(--line)}.compact-daily-record summary{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 0;list-style:none;cursor:pointer}.compact-daily-record summary::-webkit-details-marker{display:none}.compact-daily-record summary b{font-size:9px}.compact-daily-record summary span{color:var(--muted);font-size:8px}.compact-daily-record .event-log{position:absolute;z-index:9;right:16px;bottom:32px;left:16px;max-height:92px;min-height:0;padding:7px 10px;overflow:auto;border:1px solid var(--line);border-radius:11px;background:#fff;box-shadow:0 12px 28px #35263422}.girlfriend-warehouse-panel{position:relative}
+
 @media(min-width:761px) and (max-width:1100px){
   .theater-mode .topbar .brand strong,
   .theater-mode .topbar .brand small,
@@ -698,6 +717,8 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 
 @media(max-width:760px){
   .game-tools-trigger{bottom:72px}
+  .ui-classic-mode .classic-mode .girlfriend-warehouse-panel{height:176px;margin:8px 10px;padding:9px 10px}
+  .girlfriend-wardrobe-item{grid-template-columns:52px 102px;flex-basis:162px;height:94px}.girlfriend-wardrobe-item img{width:52px;height:80px}
 }
 
 @media(max-width:760px){
