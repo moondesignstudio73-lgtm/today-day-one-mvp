@@ -44,23 +44,69 @@ export const MARRIAGE_30_STORY_SCENES = [{
 },{
   id:"m30-day2-rehabilitation",arc:"다시 걷는 연습",window:[2,2],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day1-hospital-awakening"},
   title:"세 걸음의 거리",speaker:"하은",message:"재활실 평행봉 끝에 하은이 운동화를 든 채 기다렸다. 끈은 이미 느슨하게 풀려 있었다.",
+  chapterType:"recovery/relationship-hybrid",targetPlaytimeMinutes:[5,8],timeWindow:"morning",participants:["protagonist","haeun","therapist"],previousChoiceReferences:["m30-day1-hospital-awakening"],
   dramaticPurpose:"하은의 돌봄을 통제보다 실용적인 배려로 보여 주고, 주인공이 회복 방식을 스스로 선택하게 한다.",
+  informationBudget:{mustReveal:["1년의 혼수로 근력이 크게 줄었다","오늘의 안전한 목표는 일어서기와 세 걸음이다","도움의 형태는 주인공이 선택할 수 있다"],mayReveal:["하은이 주인공의 신발 습관을 기억한다","주인공의 몸이 익숙한 운동 리듬 일부에 반응한다"],mustNotReveal:["사고의 진짜 원인","가짜 하은의 정체","하은이 알 수 없는 의료 정보"],playerMaySuspect:["기억과 무관하게 몸에 남은 습관이 있을 수 있다"]},
+  relationshipBudget:{haeunAffection:"small-to-medium",haeunTrust:"small",haeunDependency:"choice-dependent",investigation:"small"},
+  clueBudget:{allowed:["rehabilitation-schedule"],forbidden:["accident-culprit","fake-haeun-proof"]},
+  emotionalCurve:["재활실 긴장 4","생활적 농담 3","첫 기립 기대 5","어지럼과 실패 8","증상 확인 6","작은 신체 기억 5","회복 전략 선택 6","세 걸음의 안도 4"],
+  sceneBeats:["재활실 입장과 안전 기준 확인","운동화와 양말을 통한 하은의 생활적 친밀감","앉은 자세에서 몸 상태와 도움 경계 점검","첫 기립과 어지럼으로 방향 전환","감정 대신 증상을 구분하고 중단 기준 합의","평행봉 체중 이동과 몸에 남은 리듬 발견","손·난간·계획 중 회복 전략 선택","세 걸음 또는 계획 완수와 DAY 3 퇴원 훅"],
+  voiceProfiles:{
+    protagonist:{rhythm:"짧은 증상 보고와 확인 질문",humor:"몸 상태를 과장하지 않는 건조한 반응",emotion:"실패 뒤에도 원인을 구분하고 다음 시도를 정함",relationshipVariation:"하은의 도움을 거절하거나 받을 때 범위를 명확히 말함"},
+    haeun:{rhythm:"대화를 먼저 열고 실용적인 세부로 긴장을 낮춤",humor:"신발·양말·걸음 수 같은 생활 소재",emotion:"손을 내밀되 잡아끌지 않고 주인공의 지시를 기다림",relationshipVariation:"DAY 1 경계를 기억해 도움의 거리와 말투를 조절"},
+    therapist:{rhythm:"짧고 단계적인 의료 안내",humor:"거의 없음",emotion:"실패를 평가하지 않고 증상과 안전 기준으로 환원",relationshipVariation:"두 사람의 관계가 아니라 환자의 선택을 우선"}
+  },
   knowledgeLedger:{
     protagonist:{KNOWS:["1년 동안 근력이 크게 줄었다","하은이 병실 물품과 일정을 챙겼다"],BELIEVES:["회복에는 반복 훈련이 필요하다"],SUSPECTS:[],DOES_NOT_KNOW:["사고 전 자신의 재활 경험","하은과의 생활 방식"],HIDES:["서 있는 것만으로 겁이 난다"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["스스로 움직일 수 있음을 확인한다"],FEARS:["하은에게 전적으로 의존하게 되는 것"]},
     haeun:{KNOWS:["주인공이 도움받는 것을 답답해한다","물리치료사의 안전 지침"],BELIEVES:["선택권을 주는 편이 주인공을 안심시킨다"],SUSPECTS:[],DOES_NOT_KNOW:["주인공이 느끼는 공포의 크기"],HIDES:["밤새 병실 의자에서 잤다"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["주인공이 안전하게 첫 걸음을 끝낸다"],FEARS:["넘어져 회복이 늦어지는 것"]},
     therapist:{KNOWS:["오늘 가능한 운동 범위","낙상 위험"],BELIEVES:["환자가 속도를 선택해야 훈련이 지속된다"],SUSPECTS:[],DOES_NOT_KNOW:["두 사람의 관계 세부"],HIDES:[],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["보조 하에 세 걸음을 완수한다"],FEARS:["환자가 무리해 다치는 것"]}
   },
+  lineLayers:[
+    {line:"신겨 주면 자존심 상할 것 같아서 여기까지만 서비스.",surface:"운동화 준비 범위를 설명한다",emotion:"도와주고 싶지만 침범할까 조심스럽다",intention:"주인공이 허용할 도움의 범위를 먼저 선택하게 한다"},
+    {line:"겁난 건 실패가 아니라, 내 몸이 어디까지 내 말을 듣는지 모르는 거야.",surface:"기립 실패의 두려움을 구분한다",emotion:"통제력을 잃은 공포가 있다",intention:"감정적 위로보다 검증 가능한 다음 단계를 요구한다"}
+  ],
   dialogueTurns:[
+    {type:"narration",text:"휠체어 바퀴가 재활실 문턱을 넘자 고무 매트 냄새와 낮은 카운트 소리가 먼저 들어왔다. 평행봉 사이의 거리는 병실에서 보던 것보다 길었다."},
     {type:"dialogue",speaker:"하은",text:"운동화 끈은 풀어 놨어. 신겨 주면 자존심 상할 것 같아서 여기까지만 서비스.",expressionId:"smile"},
     {type:"dialogue",speaker:"나",text:"내가 그런 걸 싫어했어?",expressionId:"calm"},
     {type:"dialogue",speaker:"하은",text:"도움 자체보다, 묻지도 않고 도와주는 걸 싫어했지. 오늘도 같으면 네가 정해.",expressionId:"smile"},
-    {type:"dialogue",speaker:"물리치료사",text:"목표는 세 걸음입니다. 손을 잡을지, 난간만 잡을지 먼저 선택하세요. 중간에 바꿔도 실패가 아닙니다.",expressionId:"calm"}
+    {type:"dialogue",speaker:"나",text:"양말까지 준비한 건 어디까지 서비스지?",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"그건 병원 매점 서비스. 네가 발목 조이는 양말 싫어해서 한 치수 큰 걸로 샀고.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"그건 기억이 아니라 취향 정보로 보관할게.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"좋아. 오늘 하나 적립. 나중에 틀렸다고 해도 환불은 안 돼.",expressionId:"smile"},
+    {type:"dialogue",speaker:"물리치료사",text:"시작 전에 확인합니다. 어지럼, 메스꺼움, 다리 통증 중 지금 있는 증상이 있습니까?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"앉아 있을 때는 없습니다. 일어서면 모르겠습니다.",expressionId:"calm"},
+    {type:"dialogue",speaker:"물리치료사",text:"모르는 걸 확인하는 게 오늘 운동입니다. 첫 목표는 서서 열을 세는 것, 그다음이 세 걸음입니다.",expressionId:"calm"},
+    {type:"narration",text:"치료사는 발판을 치우고 휠체어 브레이크를 잠갔다. 하은은 오른쪽에 섰지만 손은 등 뒤로 모았다."},
+    {type:"dialogue",speaker:"물리치료사",text:"발은 어깨너비. 상체를 앞으로 보내고, 셋에 일어납니다. 하나, 둘—",expressionId:"calm"},
+    {type:"narration",text:"팔걸이를 밀었다. 허벅지가 떨렸고 무릎은 펴졌지만, 시야 가장자리가 빠르게 좁아졌다."},
+    {type:"dialogue",speaker:"나",text:"잠깐. 시야가 어두워집니다.",expressionId:"worried"},
+    {type:"dialogue",speaker:"물리치료사",text:"바로 앉습니다. 무릎 통증은요?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"통증은 없고 어지럼만. 숨은 괜찮습니다.",expressionId:"calm"},
+    {type:"narration",text:"의자에 다시 닿자 하은의 손이 한 번 올라왔다가 멈췄다. 내가 고개를 끄덕인 뒤에야 물병을 건넸다."},
+    {type:"dialogue",speaker:"하은",text:"물 한 모금. 빨대는 빼 놨어. 그것도 싫어했거든.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"싫어한 게 많네.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"좋아한 것도 많아. 오늘은 싫어한 것부터 알아야 덜 싸우니까.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"겁난 건 실패가 아니라, 내 몸이 어디까지 내 말을 듣는지 모르는 거야.",expressionId:"worried"},
+    {type:"dialogue",speaker:"물리치료사",text:"그럼 범위를 숫자로 정하겠습니다. 어지럼이 열 중 다섯을 넘으면 중단. 다음에는 서서 셋까지만 셉니다.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"손잡이는 제가 잡고, 상태만 물어봐 주세요.",expressionId:"calm"},
+    {type:"narration",text:"두 번째에는 발바닥으로 바닥을 밀었다. 하나, 둘, 셋. 시야는 흔들렸지만 닫히지 않았다."},
+    {type:"dialogue",speaker:"하은",text:"셋. 앉을래, 아니면 체중만 한번 옮겨 볼래?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"오른발부터.",expressionId:"calm"},
+    {type:"narration",text:"오른발에 무게를 싣고 왼발 뒤꿈치를 들었다. 몸이 먼저 짧은 호흡을 내쉬었다. 생각하지 않은 리듬이었다."},
+    {type:"dialogue",speaker:"나",text:"방금 숨 쉬는 순서가 익숙했어.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"예전에 운동할 때도 힘주기 전에 그렇게 숨 내쉬었어. 기억난 거야?",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"장면은 없어. 몸이 먼저 한 거야. 같은 건지 더 봐야 해.",expressionId:"calm"},
+    {type:"dialogue",speaker:"물리치료사",text:"좋은 구분입니다. 신체 습관일 수 있지만 기억 회복으로 단정하지 않습니다. 이제 세 걸음 방식을 정하세요.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"손, 걸음 수 세기, 아니면 오늘은 계획표. 어느 쪽이든 내가 서운해하는 선택지는 없어.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"중간에 바꾸면?",expressionId:"calm"},
+    {type:"dialogue",speaker:"물리치료사",text:"그것도 판단입니다. 목표는 자존심이 아니라 반복 가능한 회복입니다.",expressionId:"calm"}
   ],
   presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
   choices:[
-    {id:"take-her-hand",label:"하은의 손을 잡고 세 걸음을 완주한다",effects:{affection:9,trust:10,health:4,energy:-5},scenarioEffects:{haeunAffection:10,haeunTrust:8,memoryRecovery:2},unlockedActions:["rehab-with-haeun"],followUpHooks:["day3-discharge-phone"],response:"하은은 힘을 주어 끌지 않고 손바닥만 받쳤다. 세 번째 걸음 뒤에야 “봤지? 내 역할 별로 없었어.” 하고 웃었다.",memory:"하은의 손을 잡고 재활 첫 세 걸음을 걸음"},
-    {id:"use-the-rail",label:"난간만 잡고 걷되 하은에게 걸음 수를 세어 달라고 한다",effects:{confidence:9,health:5,energy:-7,trust:5},scenarioEffects:{investigation:2,memoryRecovery:4,haeunTrust:5},unlockedActions:["solo-rehabilitation"],followUpHooks:["day3-discharge-phone"],response:"“하나. 둘.” 하은은 손을 내밀지 않았다. 마지막 숫자는 내가 선 뒤 한 박자 늦게 말했다. “셋. 됐다.”",memory:"스스로 걷고 하은에게 걸음 수만 부탁함"},
-    {id:"review-the-plan",label:"오늘 무리하지 않고 치료사와 일주일 계획부터 세운다",effects:{confidence:6,health:3,work:2},scenarioEffects:{investigation:4,haeunTrust:3},clues:["rehabilitation-schedule"],unlockedActions:["review-medical-plan"],followUpHooks:["day3-discharge-phone"],response:"치료사는 운동 횟수와 중단 기준을 적었다. 하은은 일정표 사진을 찍고 “감독은 안 하고 알람만 맡을게.”라고 말했다.",memory:"재활 속도와 중단 기준을 직접 정함"}
+    {id:"take-her-hand",label:"하은의 손을 잡되 힘을 주는 방향은 내가 말하며 세 걸음을 걷는다",effects:{affection:9,trust:10,health:4,energy:-5},scenarioEffects:{haeunAffection:10,haeunTrust:8,memoryRecovery:2},unlockedActions:["rehab-with-haeun"],followUpHooks:["day3-discharge-phone"],response:"하은은 손바닥만 받치고 내가 ‘앞’이라고 말할 때만 힘을 보탰다. 세 번째 발이 바닥에 닿자 “봤지? 내 역할 별로 없었어.” 하고 웃었다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["accept-support"]}}],unlockedActions:["consistent-support-boundary"],response:"어제처럼 하은의 팔을 잡았지만 오늘은 힘의 방향을 내가 정했다. 하은은 세 걸음 뒤 손을 먼저 놓으며 말했다. “도움받는 것도 네 방식대로 하면 되는 거네.”"}],memory:"하은의 손을 잡고 힘의 방향을 지시하며 재활 첫 세 걸음을 걸음"},
+    {id:"use-the-rail",label:"난간만 잡고 걷되 하은에게 증상과 걸음 수만 확인해 달라고 한다",effects:{confidence:9,health:5,energy:-7,trust:5},scenarioEffects:{investigation:2,memoryRecovery:4,haeunTrust:5},unlockedActions:["solo-rehabilitation"],followUpHooks:["day3-discharge-phone"],response:"“하나. 어지럼?” “둘. 무릎?” 하은은 손을 내밀지 않고 필요한 것만 물었다. 내가 선 뒤 한 박자 늦게 마지막 숫자를 말했다. “셋. 됐다.”",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["set-boundary"]}}],unlockedActions:["consistent-boundary-rehab"],response:"어제 요청한 거리 그대로 하은은 난간 밖에 섰다. 대신 걸음과 증상을 정확히 확인했다. 세 번째 걸음 뒤 내가 먼저 손을 내밀자, 하은은 하이파이브만 짧게 받아 줬다."}],memory:"난간을 잡고 하은에게 증상과 걸음 수 확인만 부탁함"},
+    {id:"review-the-plan",label:"오늘은 기립 성공에서 멈추고 치료사와 일주일 반복 계획을 수치로 만든다",effects:{confidence:6,health:3,work:2},scenarioEffects:{investigation:4,haeunTrust:3},clues:["rehabilitation-schedule"],unlockedActions:["review-medical-plan"],followUpHooks:["day3-discharge-phone"],response:"치료사는 운동 횟수와 중단 기준을 적었다. 하은은 일정표 사진을 찍고 “감독은 안 하고 알람만 맡을게.”라고 말했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["controlled-help"]}}],unlockedActions:["controlled-recovery-plan"],response:"어제 도움 범위를 나눴던 방식으로 치료사·하은·내 역할을 적었다. 하은은 자신의 칸에 ‘알람과 운동화’만 쓰고 펜을 내려놨다. “이 이상은 네가 추가할 때만.”"}],memory:"기립 성공을 기준으로 재활 속도와 중단 조건을 직접 계획함"}
   ]
 },{
   id:"m30-day3-discharge-phone",arc:"병원 밖으로",window:[3,3],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day2-rehabilitation"},
