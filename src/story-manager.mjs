@@ -19,6 +19,10 @@ export function getStoryScene(sceneId, scenes = STORY_SCENES) {
   return scenes.find(scene => scene.id === sceneId) ?? null;
 }
 
+export function getAvailableStoryChoices(state, scene) {
+  return (scene?.choices ?? []).filter(choice => meetsStoryConditions(state,choice.conditions));
+}
+
 export function getEligibleStoryScenes(state, scenes = STORY_SCENES) {
   const history = state.storyHistory ?? [];
   if (history.some(record => record.day === state.day)) return [];
@@ -44,7 +48,7 @@ function selectOutcome(state, choice) {
 
 export function resolveStoryChoice(state, sceneId, choiceId, scenes = STORY_SCENES) {
   const scene = getStoryScene(sceneId,scenes);
-  const choice = scene?.choices.find(item => item.id === choiceId);
+  const choice = getAvailableStoryChoices(state,scene).find(item => item.id === choiceId);
   if (!scene || !choice || (state.storyHistory ?? []).some(record => record.sceneId === sceneId)) return null;
   const outcome = selectOutcome(state,choice);
   const conditionalEffects = combineChoiceEffects(choice.effects ?? {},outcome?.effects ?? {});
@@ -63,8 +67,8 @@ export function resolveStoryChoice(state, sceneId, choiceId, scenes = STORY_SCEN
   if (state.scenario?.enabled) {
     const scenarioEffectKeys=[...new Set([...Object.keys(choice.scenarioEffects??{}),...Object.keys(outcome?.scenarioEffects??{})])];
     for (const key of scenarioEffectKeys) { const value=(choice.scenarioEffects?.[key]??0)+(outcome?.scenarioEffects?.[key]??0); if (Number.isFinite(value) && Number.isFinite(state.scenario[key])) state.scenario[key]=Math.max(0,state.scenario[key]+value); }
-    for (const [field,items] of [["clues",choice.clues],["profileUnlocks",choice.profileUnlocks],["unlockedActions",choice.unlockedActions]]) for (const item of items??[]) if (!state.scenario[field].includes(item)) state.scenario[field].push(item);
-    for (const hook of choice.followUpHooks??[]) if (!state.scenario.followUpHooks.includes(hook)) state.scenario.followUpHooks.push(hook);
+    for (const [field,items] of [["clues",[...(choice.clues??[]),...(outcome?.clues??[])]],["profileUnlocks",[...(choice.profileUnlocks??[]),...(outcome?.profileUnlocks??[])]],["unlockedActions",[...(choice.unlockedActions??[]),...(outcome?.unlockedActions??[])]]]) for (const item of items) if (!state.scenario[field].includes(item)) state.scenario[field].push(item);
+    for (const hook of [...(choice.followUpHooks??[]),...(outcome?.followUpHooks??[])]) if (!state.scenario.followUpHooks.includes(hook)) state.scenario.followUpHooks.push(hook);
   }
   state.futureScore = clamp((state.futureScore ?? 0) + (choice.futureScore ?? 0) + (outcome?.futureScore ?? 0),-100,100);
   const response = outcome?.response ?? choice.response;

@@ -84,6 +84,55 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"set-up-together",label:"하은과 복약 알람과 필수 연락처만 함께 설정한다",effects:{affection:8,trust:10},scenarioEffects:{haeunAffection:8,haeunTrust:10,memoryRecovery:2},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","call-haeun"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"하은은 자신의 번호를 ‘하은’이라고만 저장했다. 하트를 붙였다가 내 얼굴을 보고 지운 뒤, “이건 네가 기억나면 직접.”이라고 말했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["take-her-hand"]}}],effects:{affection:4},scenarioEffects:{haeunAffection:4},response:"알람 설정을 마친 하은이 손을 내밀었다. 어제처럼 이번에도 잡을지는 내 쪽에서 정할 수 있게, 손바닥만 펴 둔 채였다."}],memory:"하은과 휴대폰의 필수 기능만 다시 설정함"},
     {id:"seal-until-home",label:"인계 목록만 대조하고 내용 확인은 집에서 하기로 한다",effects:{confidence:8,stress:-4,trust:4},scenarioEffects:{investigation:4,haeunTrust:4},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-at-home"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"휴대폰, 지갑, 열쇠를 목록과 대조한 뒤 다시 봉투에 넣었다. 하은은 재촉하지 않고 봉투를 내 가방 맨 위에 놓았다.",memory:"휴대폰 기록 확인을 집에 도착한 뒤로 미룸"}
   ]
+},{
+  id:"m30-day4-arrive-home",arc:"낯선 나의 집",window:[4,4],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day3-discharge-phone"},
+  title:"현관 안의 생활",speaker:"하은",message:"열쇠는 맞았지만 문 안쪽의 냄새도, 신발장에 놓인 운동화도 내 기억에는 없었다. 하은은 먼저 들어가지 않고 장바구니 손잡이만 고쳐 잡았다.",
+  dramaticPurpose:"주인공이 자신의 집을 첫 조사 공간으로 받아들이게 하고, 하은과 함께 살았던 생활의 온기를 미스터리보다 먼저 축적한다.",
+  emotionalCurve:["퇴원 안도 3","낯섦 5","생활적 웃음 4","상실감 7","과거의 온기 6","주도권 회복 5","내일의 부담 4"],
+  sceneBeats:["맞는 열쇠와 낯선 현관","하은이 입장 허락을 기다림","슬리퍼와 냉장고 메모를 통한 생활 대화","자신의 필체를 알아보지 못하는 상실","스마트폰 처리 방식에 따른 첫 조사 전략","집 조사 상태 저장","DAY 5 직장 복귀 예고"],
+  voiceProfiles:{
+    protagonist:{rhythm:"짧은 관찰과 확인 질문",humor:"마른 반문",emotion:"행동 순서와 시선으로 드러냄",relationshipVariation:"하은의 익숙함을 인정하되 입장과 조사 범위를 직접 정함"},
+    haeun:{rhythm:"주인공보다 조금 길고 먼저 말을 엶",humor:"생활 습관을 이용한 가벼운 놀림",emotion:"재촉하지 않고 손을 멈추거나 실용적인 일을 함",relationshipVariation:"연인의 익숙함과 낯선 사람에게 필요한 허락을 함께 지킴"}
+  },
+  knowledgeLedger:{
+    protagonist:{KNOWS:["열쇠가 이 집 문을 연다","DAY 3에 휴대폰과 지갑을 돌려받았다"],BELIEVES:["집 안의 물건은 과거 생활을 확인할 자료다"],SUSPECTS:[],DOES_NOT_KNOW:["집 안 물건의 배치 이유","하은이 이 집에서 보낸 시간"],HIDES:["자기 집에서 손님처럼 느끼는 공포"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["조사 범위와 순서를 스스로 정한다","오늘 밤 안전하게 쉴 수 있는 상태를 만든다"],FEARS:["기록 속 생활이 자신의 것처럼 느껴지지 않는 것"]},
+    haeun:{KNOWS:["집의 기본 배치","주인공이 쓰던 슬리퍼와 식사 습관","내일 직장 복귀 연락이 올 예정"],BELIEVES:["일상적인 물건부터 보여 주는 편이 부담이 적다"],SUSPECTS:[],DOES_NOT_KNOW:["주인공이 어떤 물건에서 기억을 되찾을지"],HIDES:["이 집에서 기다린 지난 1년의 외로움"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["주인공이 이 공간의 주도권을 되찾는다","첫 식사를 챙긴다"],FEARS:["자신의 익숙한 행동이 침범처럼 느껴지는 것"]}
+  },
+  lineLayers:[
+    {line:"들어가도 돼?",surface:"입장 허락을 묻는다",emotion:"익숙했던 집 앞에서 조심스럽다",intention:"주인공에게 공간의 결정권을 돌려준다"},
+    {line:"이건 네 글씨야.",surface:"냉장고 메모의 필체를 알려 준다",emotion:"함께한 생활을 기억하는 사람은 자신뿐이라 아프다",intention:"설명으로 몰아붙이지 않고 과거의 흔적을 건넨다"}
+  ],
+  dialogueTurns:[
+    {type:"narration",text:"열쇠가 한 번에 돌아갔다. 손은 잠금장치를 기억하는데 나는 현관 너머를 몰랐다."},
+    {type:"dialogue",speaker:"하은",text:"들어가도 돼? 예전엔 비밀번호 누르고 들어왔는데, 오늘은 네 집이니까 네가 정해.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"예전에도 내 집이었잖아.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"그때는 나도 초대받은 사람인 줄 알았거든. 냉장고 반 칸을 차지한 뒤로 애매해졌지만.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"반 칸이나?",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"정정. 야채 칸까지 치면 조금 더. 대신 유통기한 지난 건 내가 버렸어. 공정하지?",expressionId:"smile"},
+    {type:"narration",text:"내가 고개를 끄덕이자 하은이 들어왔다. 신발을 벗은 뒤에도 장바구니는 내려놓지 않았다. 어디에 둘지 내가 먼저 말할 때까지 기다렸다."},
+    {type:"dialogue",speaker:"나",text:"주방에 둬. 위치는… 보이는 쪽이겠지.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"응. 오늘은 틀려도 집이 뭐라고 안 해. 나도 뭐라고 안 하고.",expressionId:"smile"},
+    {type:"narration",text:"거실은 정돈되어 있었다. 소파 팔걸이의 눌린 자리, 충전기 두 개, 책상 아래 가지런하지 않은 슬리퍼. 모두 누군가 살았다는 흔적이었지만 내 흔적이라는 감각은 없었다."},
+    {type:"dialogue",speaker:"하은",text:"왼쪽 회색 슬리퍼가 네 거야. 오른쪽은 내가 자꾸 두고 가서 아예 여기 살게 된 거고.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"슬리퍼가 집주인보다 기억이 좋네.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"걔는 일 년 동안 자리 지켰으니까. 선배 대우 해 줘.",expressionId:"smile"},
+    {type:"narration",text:"냉장고 문에는 짧은 메모가 자석에 눌려 있었다. ‘하은—우유 사 오면 날짜 써 두기.’ 끝의 획이 낯설었다."},
+    {type:"dialogue",speaker:"나",text:"이 글씨도 내 거야?",expressionId:"worried"},
+    {type:"dialogue",speaker:"하은",text:"응. 내가 같은 우유를 두 번 사 온 날 붙였어. 너는 잔소리 아니고 재고 관리라고 했고.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"내가 쓴 건데 알아보지 못하겠어.",expressionId:"worried"},
+    {type:"narration",text:"하은은 ‘곧 기억날 거야’라고 말하지 않았다. 장바구니에서 새 우유를 꺼내 메모 아래 날짜를 적었다."},
+    {type:"dialogue",speaker:"하은",text:"그럼 오늘 날짜부터 네가 확인해 줘. 틀리면 이번엔 진짜 재고 관리 책임자 탓이야.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"확인할 게 많아. 집도, 휴대폰도. 한꺼번에는 안 해.",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"좋아. 밥 먹을 자리랑 약 둘 자리만 먼저 만들자. 나머지는 네 순서대로.",expressionId:"calm"},
+    {type:"narration",text:"책상 위에 휴대폰과 병원 봉투를 놓았다. 내일 오전에는 회사에서 복귀 절차를 설명하러 사람이 온다고 했다. 오늘 정한 확인 순서가 첫 출근에도 이어질 것이다."}
+  ],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
+  choices:[
+    {id:"map-home-basics",label:"하은에게 손대지 말아 달라고 하고 방별 용도와 위험한 곳부터 표시한다",effects:{confidence:8,trust:4,energy:-4},scenarioEffects:{investigation:6,memoryRecovery:2,homeSearchCount:1},clues:["home-layout-baseline"],unlockedActions:["inspect-home-basics"],followUpHooks:["day5-work-return"],response:"나는 현관부터 침실까지 문을 하나씩 열고, 약과 서류를 둘 자리를 정했다. 하은은 묻는 것만 답했다. 마지막에 내가 소파를 가리키자 그제야 장바구니를 내려놓았다.",memory:"집의 기본 구조와 안전한 생활 공간을 직접 확인함"},
+    {id:"cross-check-digital-address",conditions:[{storyChoice:{sceneId:"m30-day3-discharge-phone",choiceIds:["inspect-system-first"]}}],label:"휴대폰 계정의 등록 주소와 현관 우편물을 먼저 대조한다",effects:{confidence:6,trust:3},scenarioEffects:{investigation:10,memoryRecovery:3,homeSearchCount:1},clues:["account-home-address-match"],unlockedActions:["inspect-phone-system","inspect-home-records"],followUpHooks:["day5-work-return"],response:"계정 주소, 공과금 고지서, 현관 호수가 일치했다. 확인된 사실을 메모하자 하은이 우편물을 날짜순으로 밀어 주었다. “추리는 네가. 정리는 내가.”",memory:"휴대폰 계정 주소와 집의 우편 기록을 대조함"},
+    {id:"restore-routine-together",conditions:[{storyChoice:{sceneId:"m30-day3-discharge-phone",choiceIds:["set-up-together"]}}],label:"하은과 복약 자리와 저녁 동선만 함께 다시 만든다",effects:{affection:10,trust:10,health:3,stress:-4},scenarioEffects:{haeunAffection:10,haeunTrust:8,haeunDependency:2,homeSearchCount:1},unlockedActions:["home-routine-with-haeun","call-haeun"],followUpHooks:["day5-work-return"],response:"약은 물컵 옆, 충전기는 소파 가까이에 두었다. 하은은 “예전처럼”이라는 말을 쓰지 않고 매번 위치를 물었다. 둘이 만든 첫 동선은 과거의 복원이 아니라 오늘의 합의였다.",memory:"하은과 집에서 지킬 복약·저녁 동선을 새로 정함"},
+    {id:"open-phone-at-desk",conditions:[{storyChoice:{sceneId:"m30-day3-discharge-phone",choiceIds:["seal-until-home"]}}],label:"책상에 앉아 봉투를 열고 최근 알림과 집 관련 기록만 확인한다",effects:{confidence:8,stress:2,trust:4},scenarioEffects:{investigation:9,memoryRecovery:5,homeSearchCount:1},clues:["phone-first-open-at-home"],unlockedActions:["inspect-phone-at-home","inspect-home-records"],followUpHooks:["day5-work-return"],response:"알림 범위를 날짜와 집 주소 관련 항목으로 제한했다. 하은은 화면을 보지 않고 주방에서 죽을 데웠다. 확인할 것과 미룰 것을 내가 정하자, 낯선 책상이 조금은 내 자리가 됐다.",memory:"집 책상에서 휴대폰 기록의 확인 범위를 정해 처음 열어 봄"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [

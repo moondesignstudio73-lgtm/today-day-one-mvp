@@ -8,7 +8,7 @@ export function inferReactionExpression(text = "") {
   return "calm";
 }
 
-export function createStorySceneSequence(scene, presentation) {
+export function createStorySceneSequence(scene, presentation, choices = scene.choices) {
   const dialogue = scene.dialogueTurns?.length
     ? scene.dialogueTurns.map(turn=>({...turn,characterId:presentation.characterId,backgroundId:presentation.backgroundId}))
     : [{ type:"dialogue", speaker:scene.speaker, text:scene.question ?? scene.prompt ?? scene.title, expressionId:presentation.expressionId }];
@@ -17,7 +17,7 @@ export function createStorySceneSequence(scene, presentation) {
     { type:"narration", text:scene.message },
     { type:"characterEnter", characterId:presentation.characterId, animationId:presentation.animationId },
     ...dialogue,
-    { type:"choice", options:scene.choices.map(choice => ({ id:choice.id, label:choice.label })) }
+    { type:"choice", options:choices.map(choice => ({ id:choice.id, label:choice.label })) }
   ];
 }
 
