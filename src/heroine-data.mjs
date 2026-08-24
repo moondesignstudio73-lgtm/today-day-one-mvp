@@ -8,6 +8,19 @@ const outfitKinds = [
   ["party","스페셜 파티룩",15,310000,"파티"], ["travel","트래블 룩",10,145000,"여행"]
 ];
 
+const haeunOutfitKinds = [
+  ["soft-minimal","아이보리 소프트 미니멀 룩",1,79000,"미니멀"],
+  ["navy-office","네이비 시그니처 오피스 수트",1,229000,"오피스"],
+  ["ivory-wrap","아이보리 로맨틱 랩 드레스",3,148000,"데이트"],
+  ["weekend-casual","베이지 위크엔드 캐주얼",1,89000,"캐주얼"],
+  ["sage-active","세이지 밸런스 액티브 셋업",4,198000,"스포티"],
+  ["camel-coat","카멜 클래식 롱 코트",8,198000,"겨울"],
+  ["summer-white","화이트 브리즈 서머 셋업",6,198000,"여름"],
+  ["black-evening","블랙 이브닝 랩 드레스",12,998000,"엘레강트"],
+  ["teal-dress","딥 틸 우아한 미디 드레스",15,1490000,"파티"],
+  ["black-mini","블랙 리브드 미니 원피스",10,2200000,"데이트"]
+];
+
 export const HEROINE_PROFILES = [
   {
     id:"haeun", name:"하은", age:29, job:"재무기획자", height:166, bodyType:"슬림 밸런스", archetype:"안정형 직장인", bio:"재무기획자 · 차분하고 현실적인 인상",
@@ -53,7 +66,7 @@ const HAEUN_OUTFIT_VIDEOS = Object.freeze({
   8:"https://raw.githubusercontent.com/superstarman35/game/gh-pages/assets/heroines/haeun/videos/08_transparent.webm"
 });
 
-export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=="yuna").flatMap(profile => outfitKinds.map(([kind,label,day,price,tag],index) => ({
+export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=="yuna").flatMap(profile => (profile.id === "haeun" ? haeunOutfitKinds : outfitKinds).map(([kind,label,day,price,tag],index) => ({
   id:`outfit-${profile.id}-${String(index + 1).padStart(2,"0")}`, outfitId:`OUTFIT_${profile.id.toUpperCase()}_${kind.toUpperCase()}_${String(index + 1).padStart(3,"0")}`,
   icon:"👗", name:`${profile.name} · ${label}`, brand:"Atelier One Day", category:"heroine-outfit", heroineId:profile.id,
   price, luxuryLevel:Math.max(1,Math.ceil(price / 70000)), attractivenessBonus:2 + Math.ceil(index / 2), fashionBonus:4 + index,
