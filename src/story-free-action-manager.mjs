@@ -1,6 +1,6 @@
 import { applyEffects } from "./game-core.mjs?v=9";
 import { createDaySnapshot, getDailyReport } from "./night-manager.mjs?v=2";
-import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=3";
+import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=4";
 
 export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   1:Object.freeze([Object.freeze({
@@ -16,6 +16,11 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   3:Object.freeze([Object.freeze({
     id:"day3-discharge-room-day",storySceneId:"m30-day3-discharge-phone",phase:"day",phaseIndex:1,location:"hospital",locationLabel:"퇴원 병실",maxActions:1,
     title:"DAY TIME · 퇴원 병실",description:"보관품 인계와 퇴원 설명이 끝났다. 병원을 나서기 전 한 가지 준비만 마친다.",nextSchedule:"준비를 마치면 DAY 4, 집으로 돌아간다.",
+    eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:false,jobUnlocked:false,mapUnlocked:false,healthRiskAllowed:false})
+  })]),
+  4:Object.freeze([Object.freeze({
+    id:"day4-home-night",storySceneId:"m30-day4-arrive-home",phase:"night",phaseIndex:3,location:"home",locationLabel:"나의 집",maxActions:1,
+    title:"NIGHT TIME · 나의 집",description:"하은과 증언 장부를 정리한 뒤다. 오늘 확인한 범위 안에서 한 가지 행동만 하고 쉰다.",nextSchedule:"오늘을 마치면 DAY 5, 회사 복귀 확인으로 넘어간다.",
     eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:false,jobUnlocked:false,mapUnlocked:false,healthRiskAllowed:false})
   })])
 });
@@ -44,6 +49,14 @@ export const DAY3_DISCHARGE_ACTIONS=Object.freeze([
   Object.freeze({id:"rest-before-discharge",icon:"☾",title:"출발 전에 잠깐 쉰다",description:"추가 확인을 멈추고 이동할 체력을 남긴다.",effects:{energy:12,fatigue:-9,stress:-5,health:2},scenarioEffects:{},flag:"day3_recovery_rest",summary:"병원을 나서기 전 몸 상태를 안정시키고 체력을 아꼈다."})
 ]);
 
+export const DAY4_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"finish-testimony-ledger",icon:"≡",title:"증언 장부를 마무리한다",description:"확인한 사실·출처가 붙은 증언·미확인 내용을 세 칸에 정리한다.",effects:{confidence:5,energy:-3,stress:-1},scenarioEffects:{investigation:3},flag:"day4_free_finish_ledger",requiresAction:"testimony-ledger",summary:"오늘 들은 말을 출처와 확인 상태에 따라 분리해 남겼다."}),
+  Object.freeze({id:"archive-jihoon-followup",icon:"□",title:"지훈의 자료 요청을 저장한다",description:"다음에 받을 원본 사진 목록만 메모하고 추가 연락은 내일로 미룬다.",effects:{social:3,confidence:3,energy:-2},scenarioEffects:{investigation:2},flag:"day4_free_archive_jihoon",requiresAction:"friend-archive-followup",summary:"지훈에게 확인할 다음 자료의 범위를 명확히 남겼다."}),
+  Object.freeze({id:"hold-work-message",icon:"▣",title:"회사 메시지를 내일 일정으로 보낸다",description:"민호의 메시지는 열어 둔 채 답변과 업무 확인은 DAY 5로 미룬다.",effects:{confidence:4,stress:-3,energy:-1},scenarioEffects:{},flag:"day4_free_hold_work_message",requiresFlag:"day4WorkContactPending",summary:"회사 연락을 섣불리 해석하지 않고 내일 확인할 일정으로 분리했다."}),
+  Object.freeze({id:"check-in-with-haeun",icon:"♥",title:"하은과 오늘의 경계를 확인한다",description:"공유한 내용과 아직 말하지 않은 내용을 서로 한 문장씩 확인한다.",effects:{trust:7,affection:3,energy:-2,stress:-2},scenarioEffects:{haeunTrust:3},flag:"day4_free_haeun_boundary",summary:"서로 알고 있는 범위와 기다려야 할 부분을 다시 확인했다."}),
+  Object.freeze({id:"rest-after-social-recovery",icon:"☾",title:"기록을 덮고 쉰다",description:"친구와 과거에 대한 추가 확인을 멈추고 회복을 우선한다.",effects:{energy:14,fatigue:-11,stress:-7,health:2},scenarioEffects:{},flag:"day4_recovery_rest",summary:"오늘의 자료를 더 해석하지 않고 몸과 머리를 쉬게 했다."})
+]);
+
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
   Object.freeze({id:"shop",label:"온라인 쇼핑",reason:"스마트폰 기능이 아직 해금되지 않았습니다."}),
@@ -52,7 +65,7 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"contacts",label:"인맥",reason:"기억과 연락처가 아직 복구되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -118,5 +131,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS];return [1,2,3].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&DAY1_HOSPITAL_ACTIONS.length===5&&DAY2_HOME_ACTIONS.length===5&&DAY3_DISCHARGE_ACTIONS.length===5&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===5;
+  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS];return [1,2,3,4].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===5;
 }

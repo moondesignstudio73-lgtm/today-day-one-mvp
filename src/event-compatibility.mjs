@@ -50,12 +50,34 @@ const DAY3_DISCHARGE_CHECK=Object.freeze({
   ],futureEventWeights:{health:1.1},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY4_HOME_LEDGER_REVIEW=Object.freeze({
+  id:"context-day4-home-ledger-review",title:"세 칸의 빈자리",category:"romance",categoryLabel:"스토리 공용 이벤트",
+  hook:"하은이 돌아가기 전, 증언 장부의 비어 있는 한 칸을 가리켰다.",message:"확인되지 않은 말을 어디까지 함께 보관할지 정해야 했다.",question:"오늘의 마지막 기록을 어떤 방식으로 남길까?",
+  allowedLocations:["home"],allowedPhases:["night"],dayRange:[4,4],heroineIds:["haeun"],requiredFeatures:["testimony-ledger"],requiredStoryFlags:["day4RuntimeComplete"],
+  cooldown:30,maxTriggerCount:1,probability:.35,priority:220,baseWeight:100,tensionLevel:"low",effects:{trust:1},
+  storyFlag:"context-day4-home-ledger-review:COMPLETED",forbiddenFlags:["context-day4-home-ledger-review:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/home/BG_HOME_NIGHT_001.webp",result:"assets/backgrounds/home/BG_HOME_NIGHT_001.webp",status:"ready"},
+  presentation:{backgroundId:"home-night",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},
+  scenes:[{id:"context-day4-home-ledger-review-scene",title:"세 칸의 빈자리",backgroundId:"home-night",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"night",timeOfDay:"night",weather:"clear",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"하은이 돌아가기 전, 증언 장부의 ‘미확인’ 칸에서 펜을 멈췄다."},
+    {type:"dialogue",speaker:"하은",text:"여기 적힌 말들, 내가 아는 내용으로 채우지 않는 게 맞지?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"응. 겹치는 사실은 표시하되 빈칸을 없애려고 하지는 말자."},
+    {type:"dialogue",speaker:"하은",text:"좋아. 모르는 걸 같이 견디는 것도 지금 우리 방식으로 할게.",expressionId:"smile"},
+    {type:"narration",speaker:"내레이션",text:"장부의 빈칸은 실패가 아니라, 다음 확인 전까지 지켜야 할 경계로 남았다."}
+  ]}],
+  choices:[
+    {id:"mark-shared-facts",label:"둘이 직접 확인한 사실에만 공동 표시한다",preferenceTags:["BOUNDARY","LOGICAL"],effects:{trust:6,confidence:3,stress:-2},response:"같이 확인한 사실에만 작은 표시를 남기고 나머지는 각자의 기억으로 두었다.",flag:"context-day4-home-ledger-review:SHARED_FACTS",memory:"DAY 4 밤, 하은과 직접 확인한 사실만 증언 장부에 공동 표시했다.",futureEventWeights:{investigation:1.2}},
+    {id:"close-ledger-together",label:"미확인 칸은 그대로 두고 함께 장부를 덮는다",preferenceTags:["EMPATHY","PRACTICAL"],effects:{trust:5,affection:3,stress:-4},response:"답을 억지로 채우지 않고 오늘의 확인은 여기까지라고 합의했다.",flag:"context-day4-home-ledger-review:CLOSE_TOGETHER",memory:"DAY 4 밤, 미확인 증언을 남겨 둔 채 하은과 장부를 덮었다.",futureEventWeights:{romance:1.15}}
+  ],futureEventWeights:{romance:1.05,investigation:1.1},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
   Object.freeze({id:"context-hospital-corridor-memory",title:"익숙한 복도 소리",text:"복도에서 들린 카트 바퀴 소리가 잠깐 익숙하게 느껴졌다.",category:"memory",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{stress:1},scenarioEffects:{memoryRecovery:1},storyFlag:"day1_event_corridor_familiarity"}),
   DAY2_HOME_CHECK_IN,
-  DAY3_DISCHARGE_CHECK
+  DAY3_DISCHARGE_CHECK,
+  DAY4_HOME_LEDGER_REVIEW
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);
