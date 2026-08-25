@@ -2,7 +2,7 @@ export const PHASES = [
   { key:"morning", label:"MORNING · 아침", time:"08:00", icon:"☀", title:"새로운 하루의 시작", text:"연인의 메시지와 함께 아침이 밝았다. 오늘의 첫 선택은?" },
   { key:"day", label:"DAYTIME · 낮", time:"12:30", icon:"◐", title:"바쁜 하루의 한가운데", text:"업무도 관계도 놓칠 수 없다. 점심시간을 어떻게 보낼까?" },
   { key:"evening", label:"EVENING · 저녁", time:"19:00", icon:"◇", title:"퇴근 후의 선택", text:"하루 중 가장 자유로운 시간. 누구와 무엇을 할지 선택하자." },
-  { key:"night", label:"NIGHT · 밤", time:"23:20", icon:"☾", title:"하루가 끝나기 전에", text:"잠들기 전, 오늘을 마무리할 마지막 시간이 남았다." }
+  { key:"night", label:"NIGHT · 밤", time:"22:00", icon:"☾", title:"하루가 끝나기 전에", text:"잠들기 전, 오늘을 마무리할 마지막 시간이 남았다." }
 ];
 
 export const ACTIONS = {
@@ -22,7 +22,7 @@ export const ACTIONS = {
     { id:"stock-check", icon:"📈", title:"주식 확인하기", desc:"변동성 있는 시장에 작은 승부를 건다.", costLabel:"위험", timeCost:1, random:true, effects:{ stress:5 }, tag:"투자" }
   ],
   evening: [
-    { id:"evening-idle", icon:"☁️", title:"아무것도 안 하기", desc:"약속을 잡지 않고 혼자 가만히 시간을 보낸다.", costLabel:"변화 없음", timeCost:1, effects:{}, tag:"휴식" },
+    { id:"evening-go-home", icon:"🏠", title:"집으로 가기", desc:"약속을 잡지 않고 곧바로 귀가해 저녁 7시부터 집에서 시간을 보낸다.", costLabel:"19:00 귀가", timeCost:1, nightArrivalMinutes:19*60, effects:{ stress:-4, fatigue:-3, energy:4 }, tag:"귀가" },
     { id:"dinner-date", icon:"🌙", title:"근사한 데이트", desc:"예약해 둔 레스토랑에서 특별한 저녁을 보낸다.", costLabel:"₩120,000", timeCost:1, requirements:[{ stat:"money", operator:">=", value:120000, message:"자산 ₩120,000 이상 필요" },{ stat:"energy", operator:">=", value:10, message:"체력 10 이상 필요" }], effects:{ money:-120000, affection:24, trust:12, stress:-12, energy:-8 }, tag:"데이트" },
     { id:"gift-shopping", icon:"🛍️", title:"선물 쇼핑", desc:"그녀가 좋아할 만한 작은 선물을 고른다.", costLabel:"₩75,000", timeCost:1, itemId:"rose-parfum", itemOwner:"gift", autoGift:true, effects:{ money:-75000, charm:3, confidence:2 }, tag:"쇼핑" },
     { id:"overtime", icon:"🌃", title:"야근하기", desc:"관계보다 오늘의 성과를 선택한다.", costLabel:"수입 +₩70,000", timeCost:1, effects:{ money:70000, work:12, affection:-12, energy:-16, fatigue:16, stress:20 }, tag:"성공" },

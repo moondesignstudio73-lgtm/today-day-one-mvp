@@ -1,6 +1,9 @@
 import { HEROINE_OUTFITS } from "./heroine-data.mjs";
 import { YUNA_GIFT_ITEMS } from "./yuna-data.mjs";
 
+const SHOP_PRODUCT_IMAGE_ROOT = "assets/items/shop-products";
+const withShopProductImage = item => ({...item, productImage:`${SHOP_PRODUCT_IMAGE_ROOT}/${item.id}.png`});
+
 const BASE_ITEMS = [
   { id:"linen-shirt", icon:"👔", name:"루미에르 린넨 셔츠", brand:"Lumière", category:"clothes", price:55000, luxuryLevel:1, attractivenessBonus:3, fashionBonus:8, preferenceTags:["미니멀","데일리"] },
   { id:"rose-parfum", icon:"🌹", name:"로지에 블룸 향수", brand:"Rosier", category:"perfume", price:75000, luxuryLevel:2, attractivenessBonus:4, fashionBonus:2, preferenceTags:["로맨틱","향수"] },
@@ -12,9 +15,9 @@ const BASE_ITEMS = [
   { id:"aurora-phone", icon:"📱", name:"오로라 프로 스마트폰", brand:"Aurora", category:"smartphone", price:1350000, luxuryLevel:5, attractivenessBonus:4, fashionBonus:5, preferenceTags:["테크","럭셔리"] },
   { id:"solstice-ev", icon:"🚗", name:"솔스티스 전기 세단", brand:"Solstice", category:"car", price:20000000, luxuryLevel:6, attractivenessBonus:10, fashionBonus:8, preferenceTags:["드라이브","테크","럭셔리"] },
   { id:"skyline-studio", icon:"🏙️", name:"스카이라인 리버뷰 스튜디오", brand:"Skyline Living", category:"home", price:24000000, luxuryLevel:7, attractivenessBonus:12, fashionBonus:10, preferenceTags:["주거","안정","럭셔리"] }
-];
+].map(withShopProductImage);
 
-export const ITEMS = [...BASE_ITEMS,...YUNA_GIFT_ITEMS,...HEROINE_OUTFITS];
+export const ITEMS = [...BASE_ITEMS,...YUNA_GIFT_ITEMS.map(withShopProductImage),...HEROINE_OUTFITS];
 
 export function getItem(itemId) {
   return ITEMS.find(item => item.id === itemId) ?? null;

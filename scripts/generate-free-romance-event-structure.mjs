@@ -1,0 +1,178 @@
+import { writeFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+import { SITUATION_EVENTS } from "../src/situation-events-data.mjs";
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const output = resolve(root, "free-romance-event-structure.html");
+const EXCLUDED = new Set(["situation-shared-umbrella"]);
+
+const GROUPS = [
+  {
+    id: "random-before-evening",
+    order: 1,
+    title: "저녁 전 랜덤 이벤트",
+    color: "#e75b82",
+    rule: "하루 행동 도중 1회만 판정 · 저녁 시작 전 · 장소 이동 없이 현재 화면에서 발생",
+    implementation: "timeOfDay=day, trigger=random-before-evening, maxPerDay=1, transition=none",
+  },
+  {
+    id: "location-visit",
+    order: 2,
+    title: "장소 이동 시 이벤트",
+    color: "#4678d8",
+    rule: "지도에서 지정 장소에 입장한 직후에만 발생 · 랜덤 이벤트 풀에서는 제외",
+    implementation: "trigger=location-enter, requiredLocationId 필수, transition=none",
+  },
+  {
+    id: "low-trust",
+    order: 3,
+    title: "신뢰도 200 이하 이벤트",
+    color: "#d24949",
+    rule: "신뢰도 200 이하일 때 우선 판정 · 같은 날 반복 금지 · 관계 회복 또는 갈등 선택 제공",
+    implementation: "trust<=200, trigger=low-trust, priority=high, cooldownDays>=2",
+  },
+  {
+    id: "coworker-temptation",
+    order: 4,
+    title: "유혹 이벤트 · 직장동료",
+    color: "#8d56c7",
+    rule: "여성 직장동료가 존재하고 관심도 조건을 만족할 때만 발생 · 여자친구 장면과 분리",
+    implementation: "npc=female-coworker, trigger=temptation, girlfriendVideo=false",
+  },
+  {
+    id: "friend-advice",
+    order: 5,
+    title: "친구의 조언 이벤트",
+    color: "#ba7b25",
+    rule: "여자친구에게 힘든 일이 생긴 뒤 힌트만 표시 · 플레이어가 친구가 있는 장소를 직접 방문해야 발생",
+    implementation: "partnerHardshipFlag=true + location-enter(friendLocation) · 자동 팝업 금지",
+  },
+  {
+    id: "friend-related",
+    order: 6,
+    title: "친구 관련 이벤트",
+    color: "#2d9277",
+    rule: "친구 소개·평가·가족 이야기처럼 관계망 자체가 주제인 이벤트 · 조언 이벤트와 분리",
+    implementation: "npc=best-friend, trigger=random-before-evening 또는 location-enter",
+  },
+];
+
+const PLAN = {
+  "situation-midnight-drive": ["random-before-evening", "현재 위치", "girlfriend", "저녁 전 연락으로 약속 여부만 결정. 실제 심야 장면 이동은 하지 않음"],
+  "situation-front-door-surprise": ["random-before-evening", "현재 위치", "girlfriend", "낮 행동 종료 후 랜덤 연락/방문 이벤트"],
+  "situation-drunk-pickup": ["random-before-evening", "현재 위치", "girlfriend", "저녁 전 연락으로 데리러 갈지 결정"],
+  "situation-future-night-talk": ["random-before-evening", "현재 위치", "girlfriend", "DAY 후반에 미래 대화 약속을 잡는 간단 이벤트"],
+  "situation-deadline-versus-date": ["random-before-evening", "office-day", "team-lead", "직장 행동 뒤 저녁 전 발생"],
+  "situation-overtime-team-dinner": ["random-before-evening", "office-day", "team-lead", "직장 행동 뒤 회식 참여 여부 결정"],
+  "situation-office-rumor": ["random-before-evening", "office-day", "team-lead", "회사 소문에 대한 대응 선택"],
+  "situation-promotion-relocation": ["random-before-evening", "office-day", "team-lead", "DAY 후반 직장 제안 이벤트"],
+  "situation-budget-date": ["random-before-evening", "현재 위치", "girlfriend", "데이트 전 예산을 상의하는 이벤트"],
+  "situation-birthday-preparation": ["random-before-evening", "현재 위치", "girlfriend", "생일 전 준비 방향 결정"],
+  "situation-birthday-wrong-gift": ["random-before-evening", "현재 위치", "girlfriend", "선물 반응과 해결 방법 선택"],
+  "situation-ex-girlfriend-reunion": ["location-visit", "cafe", "유리 · 전 여자친구", "DAY 7~23 중 카페 입장 시 50% 확률로 성인인 전 여자친구 유리와 우연히 재회. 1회 발생 후 종료", "50%"],
+  "situation-her-ex-returns": ["random-before-evening", "현재 위치", "girlfriend", "전 남자친구 연락 사실을 공유하는 단일 화면"],
+
+  "situation-fine-dining-truth": ["location-visit", "western 또는 date", "girlfriend", "레스토랑 방문 시에만 발생"],
+  "situation-couple-item-shopping": ["location-visit", "shopping", "girlfriend", "쇼핑 장소 방문 시에만 발생"],
+  "situation-first-trip": ["location-visit", "transport 또는 landmark", "girlfriend", "여행지/교통 장소에서만 발생"],
+  "situation-haeun-home-outside-talk": ["location-visit", "girlfriend-home", "girlfriend", "하은의 집 방문 · 신뢰도 700 이하"],
+  "situation-haeun-home-tea-talk": ["location-visit", "girlfriend-home", "girlfriend", "하은의 집 방문 · 신뢰도 701~900"],
+  "situation-haeun-home-meal": ["location-visit", "girlfriend-home", "girlfriend", "하은의 집 방문 · 신뢰도 901 이상"],
+  "yuna-convenience-encounter": ["location-visit", "yuna-convenience-store", "girlfriend", "유나 캐릭터 전용 · 편의점 입장"],
+  "yuna-shared-rainy-umbrella": ["location-visit", "yuna-rainy-street", "girlfriend", "유나 캐릭터 전용 · 비 오는 거리"],
+  "yuna-failed-exam": ["location-visit", "yuna-library", "girlfriend", "유나 캐릭터 전용 · 도서관 입장"],
+  "yuna-almost-caught": ["location-visit", "yuna-school-front", "girlfriend", "유나 캐릭터 전용 · 학교 앞"],
+  "yuna-festival-invitation": ["location-visit", "yuna-school-festival", "girlfriend", "초대 연락 이후 축제 장소 방문 시 발생"],
+  "yuna-amusement-park-date": ["location-visit", "yuna-amusement-park", "girlfriend", "약속 이후 놀이공원 방문 시 발생"],
+  "yuna-classmate-confession": ["location-visit", "yuna-classroom", "girlfriend", "유나 캐릭터 전용 · 학교 장소"],
+  "yuna-career-talk": ["location-visit", "yuna-academy-district", "girlfriend", "유나 캐릭터 전용 · 학원가"],
+  "yuna-quiet-misunderstanding": ["location-visit", "yuna-bus-stop", "girlfriend", "유나 캐릭터 전용 · 버스 정류장"],
+  "yuna-honest-heart": ["location-visit", "yuna-evening-neighborhood", "girlfriend", "유나 캐릭터 전용 · 저녁 동네"],
+
+  "situation-phone-notification-seen": ["low-trust", "현재 위치", "girlfriend", "신뢰도 200 이하에서만 휴대폰 의심 이벤트"],
+  "situation-girlfriend-with-stranger": ["low-trust", "현재 위치", "girlfriend", "신뢰도 200 이하에서 오해/확인 선택"],
+  "situation-caught-with-coworker": ["low-trust", "현재 위치", "girlfriend", "유혹 선택 이력이 있을 때 우선 발생"],
+  "situation-travel-big-fight": ["low-trust", "현재 위치", "girlfriend", "여행 이력 + 신뢰도 200 이하"],
+  "situation-late-night-reconciliation": ["low-trust", "girlfriend-home", "girlfriend", "갈등 이벤트 후 여자친구 집 방문 시 화해 가능"],
+
+  "situation-coworker-private-drink": ["coworker-temptation", "office-day", "female-coworker", "동료 관심도 조건 + 퇴근 전"],
+  "situation-team-dinner-spark": ["coworker-temptation", "office-day", "female-coworker", "회식 참여 이력 + 동료 관심도 조건"],
+  "situation-almost-confession": ["coworker-temptation", "office-day", "female-coworker", "이전 유혹 이벤트 진행 이력 필요"],
+  "situation-late-dinner-coworker": ["coworker-temptation", "office-day", "female-coworker", "야근 행동 뒤 발생"],
+  "situation-second-secret-meeting": ["coworker-temptation", "office-day", "female-coworker", "비밀 만남 선택 이력 필요"],
+
+  "situation-meet-her-friends": ["friend-related", "cafe", "best-friend", "연인의 친구를 소개받는 이벤트"],
+  "situation-friends-evaluate-partner": ["friend-related", "cafe", "best-friend", "내 친구들이 연인을 평가하는 이벤트"],
+  "situation-parents-first-story": ["friend-related", "cafe", "best-friend", "가족 이야기를 듣는 관계망 이벤트"],
+};
+
+const EVENT_OVERRIDES = {
+  "situation-ex-girlfriend-reunion": {
+    title: "전 여자친구 유리와의 우연한 재회",
+    previewImage: "assets/heroines/yuri/outfits/02.webp",
+    profile: "유리 · 28세 성인 · 고서 복원가 · 전 여자친구",
+    choiceRule: "유리의 유혹을 받아들이면 유리 호감도 +15. 거절하면 유리 호감도는 오르지 않으며 현재 연인과의 신뢰를 지킨다.",
+  },
+};
+
+const NEW_EVENTS = [
+  {
+    id: "friend-advice-partner-work-stress",
+    title: "요즘 많이 힘들어 보인다는 친구의 말",
+    groupId: "friend-advice",
+    location: "친구가 있는 cafe",
+    actor: "best-friend",
+    condition: "partnerHardshipFlag=true · 여자친구 스트레스/피로 임계치 초과 · 친구 장소 방문",
+    note: "친구는 상태를 단정하지 않고 최근 여자친구가 힘들어 보였다는 힌트만 제공. 이후 플레이어가 여자친구에게 직접 확인.",
+  },
+  {
+    id: "friend-advice-partner-contact-drop",
+    title: "연락이 줄어든 이유를 확인해 보라는 조언",
+    groupId: "friend-advice",
+    location: "친구가 있는 cafe",
+    actor: "best-friend",
+    condition: "partnerHardshipFlag=true · 연락 빈도 감소/갈등 이력 · 친구 장소 방문",
+    note: "친구 방문 전에는 발생하지 않음. 조언을 들은 뒤 여자친구 집 또는 메시지에서 상태 확인 이벤트 해금.",
+  },
+];
+
+const sourceEvents = SITUATION_EVENTS.filter((event) => !EXCLUDED.has(event.id));
+const missing = sourceEvents.filter((event) => !PLAN[event.id]).map((event) => event.id);
+const unknown = Object.keys(PLAN).filter((id) => !sourceEvents.some((event) => event.id === id));
+if (missing.length || unknown.length) throw new Error(`분류 오류 — 누락: ${missing.join(", ") || "없음"} / 미존재: ${unknown.join(", ") || "없음"}`);
+
+const currentCondition = (event) => (event.conditions ?? []).map((item) => `${item.stat} ${item.operator} ${item.value}`).join(" · ") || "없음";
+const events = sourceEvents.map((event) => {
+  const [groupId, location, actor, note, proposedProbability = null] = PLAN[event.id];
+  const override = EVENT_OVERRIDES[event.id] ?? {};
+  return {
+    id: event.id,
+    title: override.title ?? event.title,
+    currentCategory: event.categoryLabel ?? event.category,
+    groupId,
+    proposedLocation: location,
+    actor,
+    note,
+    proposedProbability,
+    previewImage: override.previewImage ?? null,
+    profile: override.profile ?? null,
+    choiceRule: override.choiceRule ?? null,
+    current: {
+      timeOfDay: event.timeOfDay,
+      location: event.location,
+      condition: currentCondition(event),
+      dayRange: event.dayRange,
+      probability: event.probability,
+      npcRequirements: event.npcRequirements ?? [],
+    },
+  };
+});
+
+const payload = JSON.stringify({ groups: GROUPS, events, newEvents: NEW_EVENTS }).replaceAll("</script>", "<\\/script>");
+const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>자유연애 이벤트 발생 구조 검토안</title><style>
+:root{font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif;color:#25222a;background:#f5f2f4;line-height:1.55}*{box-sizing:border-box}body{margin:0}button,input,textarea{font:inherit}header{position:sticky;top:0;z-index:10;background:rgba(26,23,31,.96);color:white;padding:22px 28px;box-shadow:0 8px 28px #2119272a}header>div{max-width:1440px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}.eyebrow{color:#ffb5ca;font-size:12px;font-weight:900;letter-spacing:.13em}h1{margin:3px 0;font-size:26px}header p{margin:0;color:#d7d0db;font-size:13px}.toolbar{margin-top:15px!important}.toolbar input{flex:1;min-width:200px;border:1px solid #625b6c;border-radius:10px;padding:10px 13px;background:#312c38;color:white}.toolbar button{border:1px solid #6a6272;border-radius:10px;padding:9px 13px;background:#3b3442;color:white;cursor:pointer}.toolbar button.primary{background:#e75b82;border-color:#e75b82}.wrap{max-width:1440px;margin:24px auto;padding:0 22px 70px}.architecture{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}.architecture article{background:#fff;border:1px solid #e5dee4;border-radius:16px;padding:17px}.architecture b{display:block;margin-bottom:5px}.architecture small{color:#766f79}.warning{grid-column:1/-1;background:#fff6df!important;border-color:#ebca79!important}.warning strong{color:#9a6410}.group{margin:22px 0;background:#fff;border:1px solid #e4dce3;border-radius:20px;overflow:hidden}.group-head{display:grid;grid-template-columns:auto 1fr auto;gap:15px;align-items:start;padding:20px 22px;border-left:8px solid var(--group)}.order{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;color:white;background:var(--group);font-weight:900}.group h2{margin:0;font-size:21px}.group-head p{margin:5px 0 0;color:#69616d}.count{padding:6px 12px;border-radius:999px;background:#f0ebef;font-weight:800}.implementation{margin:0 22px 18px;padding:11px 14px;border-radius:10px;background:#f7f4f6;color:#5e5761;font-family:ui-monospace,monospace;font-size:12px}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 22px 22px}.card{border:1px solid #e8e1e6;border-radius:14px;padding:16px;background:#fdfcfd}.card.new{border:2px dashed #d39c42;background:#fffaf0}.card-top{display:flex;justify-content:space-between;gap:10px}.card h3{margin:0;font-size:16px}.card code{display:block;margin-top:3px;color:#8a7f8c;font-size:11px;word-break:break-all}.badge{white-space:nowrap;height:max-content;padding:4px 8px;border-radius:99px;background:#eee8ee;font-size:11px;font-weight:800}.badge.new{background:#f7dfae;color:#845610}.spec{display:grid;grid-template-columns:100px 1fr;gap:6px 10px;margin:14px 0;font-size:13px}.spec dt{color:#8c828e}.spec dd{margin:0;font-weight:650}.note{padding:10px 12px;border-radius:9px;background:#f3eef2;font-size:13px}.character-profile{display:grid;grid-template-columns:110px 1fr;gap:14px;margin:12px 0;padding:12px;border:1px solid #d8ccd5;border-radius:12px;background:#fff}.character-profile img{width:110px;height:150px;object-fit:cover;object-position:top;border-radius:9px;background:#eee}.character-profile b{display:block;margin-bottom:7px}.choice-rule{margin-top:10px;padding:9px 10px;border-radius:8px;background:#f9e9ef;color:#79354b;font-size:12px}.current{margin-top:12px;border-top:1px dashed #ded5dc;padding-top:10px;color:#776e79;font-size:12px}.current summary{cursor:pointer;font-weight:800}.current dl{margin:8px 0 0}.memo{width:100%;min-height:64px;margin-top:12px;resize:vertical;border:1px solid #d9ced6;border-radius:9px;padding:9px;background:white}.empty{grid-column:1/-1;padding:20px;border:2px dashed #ddd2da;border-radius:12px;text-align:center;color:#817782}.footnote{color:#6c636f;font-size:13px;text-align:center}.hidden{display:none!important}@media(max-width:900px){.architecture,.cards{grid-template-columns:1fr}.group-head{grid-template-columns:auto 1fr}.count{grid-column:2}.toolbar{flex-wrap:wrap}header{position:relative}}
+</style></head><body><header><div><div><span class="eyebrow">LOCAL REVIEW · ACTUAL GAME DATA NOT MODIFIED</span><h1>자유연애 이벤트 발생 구조 검토안</h1><p>기존 이벤트 ${events.length}개를 발생 방식 중심으로 재분류했습니다. 우산 귀갓길 이벤트는 제외 상태입니다.</p></div><b>6개 발생 그룹</b></div><div class="toolbar"><input id="search" type="search" placeholder="이벤트 이름, ID, 장소, 조건 검색"><button id="expand">현재값 펼치기</button><button id="collapse">현재값 접기</button><button id="copyNotes">메모 복사</button><button id="downloadNotes" class="primary">메모 JSON 저장</button></div></header><main class="wrap"><section class="architecture"><article><b>공통 화면 규칙</b><small>이벤트당 질문 2개 · 화면 전환 없음 · 고정 배경 1개</small></article><article><b>발생 우선순위</b><small>신뢰도 위험 → 장소 전용 → 유혹/친구 → 일반 랜덤</small></article><article><b>하루 중복 제한</b><small>랜덤 이벤트는 하루 1회, 장소 이벤트는 장소별 쿨다운 적용</small></article><article class="warning"><strong>현재 게임과의 차이</strong><small> 현재 데이터에는 신뢰도 200 이하 전용 조건과 친구 방문형 조언 이벤트가 없습니다. 아래 구조는 실제 구현 전에 검토할 설계안입니다.</small></article></section><section id="groups"></section><p class="footnote">메모는 이 브라우저에 자동 저장됩니다. 전달할 때는 상단의 ‘메모 복사’ 또는 ‘메모 JSON 저장’을 사용하세요.</p></main><script>const DATA=${payload};const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const fmt=v=>Array.isArray(v)?v.join(' ~ '):String(v??'');function eventCard(e,isNew=false){const key='event-structure-note:'+e.id;const current=e.current?'<details class="current"><summary>현재 게임 값 보기</summary><dl class="spec"><dt>현재 분류</dt><dd>'+esc(e.currentCategory)+'</dd><dt>시간</dt><dd>'+esc(e.current.timeOfDay)+'</dd><dt>장소값</dt><dd>'+esc(e.current.location)+'</dd><dt>조건</dt><dd>'+esc(e.current.condition)+'</dd><dt>DAY 범위</dt><dd>'+esc(fmt(e.current.dayRange))+'</dd><dt>확률</dt><dd>'+esc(e.current.probability)+'</dd></dl></details>':'';const profile=e.previewImage?'<div class="character-profile"><img src="'+esc(e.previewImage)+'" alt="'+esc(e.profile)+'"><div><b>'+esc(e.profile)+'</b><span>기본 이미지: '+esc(e.previewImage)+'</span><div class="choice-rule">'+esc(e.choiceRule)+'</div></div></div>':'';return '<article class="card '+(isNew?'new':'')+'" data-search="'+esc(JSON.stringify(e).toLowerCase())+'"><div class="card-top"><div><h3>'+esc(e.title)+'</h3><code>'+esc(e.id)+'</code></div><span class="badge '+(isNew?'new':'')+'">'+(isNew?'신규 필요':'기존 재분류')+'</span></div><dl class="spec"><dt>발생 장소</dt><dd>'+esc(e.proposedLocation??e.location)+'</dd><dt>등장인물</dt><dd>'+esc(e.actor)+'</dd>'+(e.proposedProbability?'<dt>제안 확률</dt><dd>'+esc(e.proposedProbability)+'</dd>':'')+(isNew?'<dt>발생 조건</dt><dd>'+esc(e.condition)+'</dd>':'')+'</dl>'+profile+'<div class="note">'+esc(e.note)+'</div>'+current+'<textarea class="memo" data-note="'+esc(e.id)+'" placeholder="삭제·수정·이동 의견을 적어 주세요.">'+esc(localStorage.getItem(key)||'')+'</textarea></article>'}function render(){const q=document.querySelector('#search').value.trim().toLowerCase();document.querySelector('#groups').innerHTML=DATA.groups.map(g=>{const existing=DATA.events.filter(e=>e.groupId===g.id);const fresh=DATA.newEvents.filter(e=>e.groupId===g.id);const all=[...existing,...fresh];const cards=existing.map(e=>eventCard(e)).concat(fresh.map(e=>eventCard(e,true))).join('');return '<section class="group" style="--group:'+g.color+'"><div class="group-head"><span class="order">'+g.order+'</span><div><h2>'+esc(g.title)+'</h2><p>'+esc(g.rule)+'</p></div><span class="count">'+all.length+'개</span></div><div class="implementation">'+esc(g.implementation)+'</div><div class="cards">'+(cards||'<p class="empty">배치된 이벤트 없음</p>')+'</div></section>'}).join('');bindNotes();filter()}function bindNotes(){document.querySelectorAll('[data-note]').forEach(el=>el.addEventListener('input',()=>localStorage.setItem('event-structure-note:'+el.dataset.note,el.value)))}function filter(){const q=document.querySelector('#search').value.trim().toLowerCase();document.querySelectorAll('.card').forEach(card=>card.classList.toggle('hidden',!!q&&!card.dataset.search.includes(q)));document.querySelectorAll('.group').forEach(group=>group.classList.toggle('hidden',!!q&&!group.querySelector('.card:not(.hidden)')))}function notes(){return [...document.querySelectorAll('[data-note]')].map(el=>({eventId:el.dataset.note,comment:el.value.trim()})).filter(x=>x.comment)}render();document.querySelector('#search').addEventListener('input',filter);document.querySelector('#expand').onclick=()=>document.querySelectorAll('.current').forEach(x=>x.open=true);document.querySelector('#collapse').onclick=()=>document.querySelectorAll('.current').forEach(x=>x.open=false);document.querySelector('#copyNotes').onclick=async()=>{const text=notes().map(x=>'['+x.eventId+']\\n'+x.comment).join('\\n\\n');if(!text){alert('작성된 메모가 없습니다.');return}await navigator.clipboard.writeText(text);alert('검토 메모를 복사했습니다.')};document.querySelector('#downloadNotes').onclick=()=>{const blob=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),notes:notes()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='free-romance-event-review-notes.json';a.click();URL.revokeObjectURL(a.href)};</script></body></html>`;
+
+await writeFile(output, html, "utf8");
+console.log(`Generated ${output} with ${events.length} existing events and ${NEW_EVENTS.length} new proposals.`);

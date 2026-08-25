@@ -112,12 +112,14 @@ const BASE_SITUATION_EVENTS=BLUEPRINTS.map(buildEvent);
 const PLAYER_EX_EVENT_IDS=new Set(["situation-ex-girlfriend-reunion"]);
 for(const event of BASE_SITUATION_EVENTS){
   if(!PLAYER_EX_EVENT_IDS.has(event.id))continue;
+  event.title="전 여자친구 유리와의 우연한 재회";
   event.eventType="ETC";
   event.npcId="player-ex";
+  event.npcName="유리";
   event.scenes.forEach(scene=>{
     scene.characterIds=["player-ex"];
     scene.dialogueTurns.forEach(turn=>{
-      if(turn.speaker==="연인")turn.speaker="전 여자친구 · 가은";
+      if(turn.speaker==="연인")turn.speaker="전 여자친구 · 유리";
     });
   });
 }

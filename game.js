@@ -1,5 +1,5 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=9";
-import { SaveManager } from "./src/save-manager.mjs?v=12";
+import { SaveManager } from "./src/save-manager.mjs?v=13";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=6";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=5";
@@ -8,14 +8,14 @@ import { EventRuntimeManager } from "./src/event-runtime-manager.mjs?v=4";
 import { getMicroEventDiagnostics, rollMicroEvents } from "./src/micro-event-manager.mjs?v=5";
 import { auditEventSystems } from "./src/event-audit.mjs?v=4";
 import { EVENT_DEFINITIONS } from "./src/events-data.mjs?v=5";
-import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=7";
+import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=8";
 import { getActionAvailability, getWeekdayName, isActionVisible, isWeekend } from "./src/action-manager.mjs?v=5";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
 import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, getPaycheckRange, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=6";
 import { acquireActionItem, addItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, purchaseItem } from "./src/inventory-manager.mjs?v=8";
-import { getItem, ITEMS } from "./src/items-data.mjs?v=6";
+import { getItem, ITEMS } from "./src/items-data.mjs?v=7";
 import { giveGift } from "./src/gift-manager.mjs?v=7";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
@@ -35,10 +35,10 @@ import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=10";
-import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=9";
+import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=12";
 import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=6";
 import { STORY_SCENES } from "./src/story-data.mjs";
-import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, resetForNextDay, spendNightTime } from "./src/night-manager.mjs";
+import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, resetForNextDay, setNightStartTime, spendNightTime } from "./src/night-manager.mjs?v=2";
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
@@ -50,9 +50,10 @@ import { getGirlfriendVisual } from "./src/girlfriend-visual-data.mjs";
 import { createPlayerProfile, PLAYER_ARCHETYPES, sanitizePlayerNameInput } from "./src/player-profile-data.mjs?v=2";
 import { getRandomPlayerName } from "./src/player-names-data.mjs?v=1";
 import { GAME_MODES, getGameModeConfig } from "./src/scenario-state.mjs?v=1";
-import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=10";
+import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=11";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
-import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs";
+import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=2";
+import { getMapLocationAsset } from "./src/map-location-assets.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -116,9 +117,10 @@ function closeModal() {
   modal.classList.remove("world-event-active");
   modal.classList.remove("transport-modal-active");
   modal.classList.remove("today-record-active");
+  modal.classList.remove("relationship-directory-active");
   if (modalReturnFocus?.isConnected) modalReturnFocus.focus();
   modalReturnFocus = null;
-  if (state && !state.ended && !state.breakup) { if(state.phase===3)renderNightHome();else sound.playScene(phases[state.phase].key,state.day); }
+  if (state && !state.ended && !state.breakup) { if(state.phase===3){if(state.world?.mode==="district")renderWorldMap();else renderNightHome();}else sound.playScene(phases[state.phase].key,state.day); }
 }
 
 function formatActionEffectValue(effect) {
@@ -268,7 +270,7 @@ function handleModalKeydown(event) {
   focusable[getWrappedFocusIndex(currentIndex, focusable.length, event.shiftKey)].focus();
 }
 
-function renderSoundButton(){ const button=$("#soundButton");const label=sound.enabled?"사운드 끄기":"사운드 켜기";button.textContent=sound.enabled?"🔊":"🔇";button.setAttribute("aria-pressed",String(sound.enabled));button.setAttribute("aria-label",label);button.title=label; }
+function renderSoundButton(){ const button=$("#soundButton");const label=sound.enabled?"사운드 끄기":"사운드 켜기";button.innerHTML=`<i class="fa-solid ${sound.enabled?"fa-volume-high":"fa-volume-xmark"}" aria-hidden="true"></i>`;button.setAttribute("aria-pressed",String(sound.enabled));button.setAttribute("aria-label",label);button.title=label; }
 
 function finishDialogueTyping() {
   if (!dialogueTimer) return false;
@@ -413,7 +415,7 @@ function updateImmersiveCharacter(expressionId="calm") {
   const poseId=immersiveScene?.presentation?.poseId,outfitId=immersiveScene?.presentation?.outfitId;
   renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId,outfitId});
   updatePartnerPortrait(expressionId,poseId,outfitId);
-  const girlfriendEventVideo=characterId==="girlfriend"&&["event","temptation"].includes(immersiveScene?.type)?"assets/characters/girlfriend-standing-2d_transparent.webm?v=3":"";
+  const girlfriendEventVideo=characterId==="girlfriend"&&["event","temptation"].includes(immersiveScene?.type)?"assets/characters/girlfriend-standing-2d_transparent.webm?v=5":"";
   syncOutfitCharacterMedia(false,girlfriendEventVideo);
 }
 
@@ -482,7 +484,8 @@ function renderImmersiveStep() {
   if (step.type === "expressionChange") { updateImmersiveCharacter(step.expressionId); queueSceneStep(220); return; }
   if (step.type === "choice") { if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime(true);renderImmersiveChoices(step.options); return; }
   if (step.expressionId) updateImmersiveCharacter(step.expressionId);
-  $("#sceneTitle").textContent=step.type === "narration" ? "내레이션" : step.speaker;
+  $("#sceneTitle").textContent=step.type === "narration" ? "" : step.speaker;
+  $("#sceneTitle").classList.toggle("hidden",step.type === "narration");
   $("#visualNovelStage").classList.toggle("narration-mode",step.type === "narration");
   typeDialogue(step.text);
   if(eventRuntime.state!=="WAITING_DIALOGUE")eventRuntime.transition("WAITING_DIALOGUE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime();
@@ -502,7 +505,7 @@ function showSceneTransition(step) {
 }
 function renderImmersiveChoices(options=[]) {
   const layer=$("#storyChoiceLayer");
-  layer.innerHTML=options.map(option=>`<button type="button" data-immersive-choice="${escapeHtml(option.id)}">${escapeHtml(option.label)}</button>`).join("");
+  layer.innerHTML=`<p class="choice-prompt">어떻게 대답할까?</p>${options.map((option,index)=>`<button type="button" data-immersive-choice="${escapeHtml(option.id)}"><span>${String(index+1).padStart(2,"0")}</span><b>${escapeHtml(option.label)}</b></button>`).join("")}`;
   layer.classList.remove("hidden");
   layer.querySelector("button")?.focus();
 }
@@ -563,17 +566,20 @@ function personalitySummary(partner) {
     .map(([key,value]) => `${PERSONALITY_LABELS[key]} ${value}`).join(" · ");
 }
 
+function markScreenArrival(element){if(!element)return;element.classList.remove("screen-arrival");requestAnimationFrame(()=>element.classList.add("screen-arrival"));setTimeout(()=>element.classList.remove("screen-arrival"),520);}
+
 function beginOnboarding() {
   onboarding = { step:1, mode:null, partner:null, girlfriendTraitsReady:false, girlfriendJobReady:false, playerArchetype:null, playerName:"", playerJob:null, previewState:null };
   $("#introScreen").classList.add("hidden");
   $("#onboardingScreen").classList.remove("hidden");
   renderModeSetup();
+  markScreenArrival($("#onboardingScreen"));
 }
 
 function renderModeSetup() {
   setOnboardingProgress(1);
   const modes=[GAME_MODES.FREE_ROMANCE,GAME_MODES.MARRIAGE_30].map(getGameModeConfig);
-  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>GAME MODE</span><h1>어떤 30일을 시작할까요?</h1><p>모드는 저장 데이터에 기록되며 캠페인 진행 중에는 변경할 수 없습니다.</p></header><div class="mode-select-grid">${modes.map(mode=>`<button class="mode-select-card" data-game-mode="${mode.id}" type="button"><small>${mode.fixedPartnerId?"STORY CAMPAIGN":"SANDBOX ROMANCE"}</small><strong>${escapeHtml(mode.title)}</strong><span>${escapeHtml(mode.description)}</span><em>${mode.fixedPartnerId?"하은 고정 · 미스터리 캠페인":"연인·성향·직업 직접 설정"}</em></button>`).join("")}</div>`;
+  $("#onboardingContent").innerHTML=`<header class="setup-heading mode-heading"><span>MODE SELECT</span><h1>어떤 이야기를 시작할까요?</h1><p>같은 30일, 전혀 다른 방식으로 살아갑니다.</p></header><div class="mode-select-grid">${modes.map(mode=>{const story=Boolean(mode.fixedPartnerId);return `<button class="mode-select-card ${story?"story-mode-card":"free-mode-card"}" data-game-mode="${mode.id}" type="button"><span class="mode-card-image" style="--mode-image:url('${story?"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png":"assets/maps/gangnam-25d.jpg"}')"><img src="${story?"assets/characters/day1/haeun/poses/haeun-pose-standing-bedside-restraint-2d.png":"assets/characters/girlfriend-standing-smile-2d.png"}" alt=""></span><span class="mode-card-copy"><small>${story?"STORY MODE":"FREE MODE"}</small><strong>${story?"《결혼까지 30일!》":"나만의 30일"}</strong><span>${story?"기억을 잃은 나와 30일 뒤 결혼한다는 여자친구. 감춰진 기억을 따라가는 로맨스 미스터리.":"직업도, 사랑도, 돈도, 인간관계도. 원하는 삶과 관계를 직접 만들어 보세요."}</span><em>${story?"기억상실 · 로맨스 · 미스터리 · 선택형 스토리":"연애 · 직장 · 자산 · 쇼핑 · 인맥 · 자유 선택"}</em><b>${story?"이야기 시작":"자유롭게 시작"} →</b></span></button>`;}).join("")}</div>`;
   document.querySelectorAll("[data-game-mode]").forEach(button=>button.addEventListener("click",()=>{
     onboarding.mode=button.dataset.gameMode;
     const config=getGameModeConfig(onboarding.mode);
@@ -644,6 +650,7 @@ function renderSetupSummary() {
 function openStoryIntro() {
   $("#onboardingScreen").classList.add("hidden");
   $("#storyIntroScreen").classList.remove("hidden");
+  markScreenArrival($("#storyIntroScreen"));
   const video=$("#introVideo");
   introVideoIndex=0;
   video.src=INTRO_VIDEO_PLAYLIST[introVideoIndex];
@@ -666,7 +673,7 @@ function playNextIntroVideo() {
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
 function startGame() { beginOnboarding(); }
-function showGame() { requestInitialFullscreen(); state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
+function showGame() { requestInitialFullscreen(); state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); markScreenArrival($("#gameScreen")); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function outfitImageUrl(item) { return item?.heroineId==="haeun"&&item?.productImage?`${item.productImage}?v=8`:item?.productImage??""; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
@@ -706,9 +713,15 @@ function getTodayLogs(){return (state?.logs??[]).filter(entry=>getLogDay(entry)=
 
 function render() {
   const p = state.partner, phase = phases[state.phase];
+  const storyCampaign=state.scenario?.enabled===true;
+  document.body.classList.toggle("campaign-story-mode",storyCampaign);
+  document.body.classList.toggle("campaign-free-mode",!storyCampaign);
+  $("#gameScreen").classList.toggle("campaign-story-mode",storyCampaign);
+  $("#gameScreen").classList.toggle("campaign-free-mode",!storyCampaign);
+  document.body.dataset.gameMode=storyCampaign?"story":"free";
   document.body.dataset.heroine=p.heroineId;document.documentElement.style.setProperty("--heroine-accent",p.uiAccent??"#ff91b5");
   $("#dayLabel").textContent = `${state.day} · ${getWeekdayName(state.day)}`; $("#phaseIcon").textContent = phase.icon;
-  const mode=getGameModeConfig(state.gameMode),modeBadge=$("#gameModeBadge");modeBadge.textContent=mode.title;modeBadge.classList.remove("hidden");modeBadge.dataset.mode=mode.id;
+  const mode=getGameModeConfig(state.gameMode),modeBadge=$("#gameModeBadge");modeBadge.textContent=storyCampaign?`STORY · D-${Math.max(0,31-state.day)}`:"FREE MODE";modeBadge.classList.remove("hidden");modeBadge.dataset.mode=mode.id;modeBadge.setAttribute("aria-label",storyCampaign?`${mode.title}, 결혼식까지 ${Math.max(0,31-state.day)}일`:mode.title);
   if (state.phase === 3) { if(state.world?.mode==="district")renderWorldMap();else renderNightHome(); return; }
   document.body.classList.add("ui-classic-mode");
   document.body.classList.remove("ui-story-mode");
@@ -723,7 +736,7 @@ function render() {
   const sceneSoundKey = `${state.day}-${phase.key}`;
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
-  $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
+  $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title; $("#sceneTitle").classList.remove("hidden");
   const campaignProfileLocked=state.scenario?.enabled===true;
   typeDialogue(phase.text); $("#partnerName").textContent = campaignProfileLocked?`${p.name} · ${p.age}세`:p.name; $("#partnerMbti").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-mbti")?"🔒":p.mbti ?? "----"; $("#partnerJob").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-career")?"직업 · 🔒":p.career?.name ?? p.job; $("#partnerTrait").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-personality")?"성향 · 🔒":`성향 · ${p.archetype}`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));
@@ -754,7 +767,11 @@ function render() {
   const defaultOutfitCard=`<button type="button" class="girlfriend-wardrobe-item ${hasEquippedOutfit?"":"equipped"}" data-warehouse-default="true" aria-pressed="${!hasEquippedOutfit}"><img src="${defaultOutfitImage}?v=8" alt="${escapeHtml(state.partner.name)} 기본 복장" loading="lazy"><span><b>기본 복장</b><small>${hasEquippedOutfit?"클릭해서 갈아입기":"현재 착용 중"}</small></span></button>`;
   $("#girlfriendWardrobeCount").textContent=`보유 의상 ${girlfriendOutfits.length+1}개`;
   $("#girlfriendWardrobe").innerHTML=defaultOutfitCard+girlfriendOutfits.map(({instance,item})=>`<button type="button" class="girlfriend-wardrobe-item ${instance.equipped?"equipped":""}" data-warehouse-outfit="${instance.instanceId}" aria-pressed="${instance.equipped}"><img src="${outfitImageUrl(item)}" alt="${escapeHtml(item.name)}" loading="lazy"><span><b>${escapeHtml(item.name.replace(`${state.partner.name} · `,""))}</b><small>${instance.equipped?"현재 착용 중":"클릭해서 갈아입기"}</small></span></button>`).join("");
-  $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
+  const activeNpcs=(state.npcs??[]).filter(npc=>npc.active);
+  const activeFriends=activeNpcs.filter(npc=>npc.category==="friend").length;
+  $("#turnCount").textContent = `${state.phase+1}번째 선택`;
+  $("#relationshipCount").textContent=`${activeNpcs.length}명 · 친구 ${activeFriends}명`;
+  $("#nextButton").disabled = state.selected === null;
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
   const nextPhase=phases[Math.min(state.phase+1,phases.length-1)];
   preloadSceneAssets([resolvePhasePresentation({...state,phase:Math.min(state.phase+1,3)},nextPhase.key)]);
@@ -806,27 +823,33 @@ function renderNightHome() {
 }
 
 function renderWorldMap() {
-  syncOutfitCharacterMedia(true);
+  const worldMap=$("#worldMap"),wasHidden=worldMap.classList.contains("hidden");
+  if(wasHidden)syncOutfitCharacterMedia(true);
   const night=ensureNightState(state);
   const world=state.world;
   const map=WORLD_MAPS[world.districtId]??WORLD_MAPS.dongsu;
   document.body.classList.remove("ui-story-mode","ui-classic-mode");document.body.classList.add("ui-night-mode");
   $("#gameScreen").classList.remove("story-mode","classic-mode");$("#gameScreen").classList.add("night-mode");
-  $(".play-panel").classList.add("hidden");$("#nightHome").classList.add("hidden");$("#worldMap").classList.remove("hidden");
+  $(".play-panel").classList.add("hidden");$("#nightHome").classList.add("hidden");worldMap.classList.remove("hidden");
   $("#worldCityLabel").textContent=`${map.cityId.toUpperCase()} · ${map.theme==="premium"?"PREMIUM DISTRICT":map.theme==="coast"?"COAST DISTRICT":"LOCAL DISTRICT"}`;
   $("#worldMapTitle").textContent=map.name;$("#worldMapSubtitle").textContent=map.subtitle;
   const transport=TRANSPORT_OPTIONS.find(option=>option.id===world.transport)??TRANSPORT_OPTIONS[0];
   $("#worldClock").textContent=`${formatNightTime(night.minutes)} · ${getWeekdayName(state.day)}`;$("#worldTransport").textContent=`${transport.icon} ${transport.name}${world.transportConfirmed?"":" 선택 필요"}`;
   const canvas=$("#worldMapCanvas");canvas.dataset.theme=map.theme;canvas.dataset.district=map.id;
-  $("#worldScenery").innerHTML=getWorldSceneryMarkup(map);
-  $("#worldRoadLayer").innerHTML=getRoadCells(map).map(cell=>`<i class="world-road-cell" style="--map-x:${cell.x/(map.width-1)*100}%;--map-y:${cell.y/(map.height-1)*100}%"></i>`).join("");
-  $("#worldLocationLayer").innerHTML=map.locations.map(location=>`<button class="world-location ${world.discoveredLocations.includes(location.id)?"discovered":""}" type="button" data-world-location="${escapeHtml(location.id)}" style="--map-x:${location.x/(map.width-1)*100}%;--map-y:${location.y/(map.height-1)*100}%"><span>${location.icon}</span><b>${escapeHtml(getWorldLocationName(location))}</b><small>${escapeHtml(location.category)}</small></button>`).join("");
+  const discoveredIds=world.discoveredLocations.filter(id=>map.locations.some(location=>location.id===id)).sort().join(",");
+  const layerKey=`${map.id}:${discoveredIds}:${state.partner?.name??""}`;
+  if(canvas.dataset.layerKey!==layerKey){
+    canvas.dataset.layerKey=layerKey;
+    $("#worldScenery").innerHTML=getWorldSceneryMarkup(map);
+    $("#worldRoadLayer").innerHTML=getRoadCells(map).map(cell=>`<i class="world-road-cell" style="--map-x:${cell.x/(map.width-1)*100}%;--map-y:${cell.y/(map.height-1)*100}%"></i>`).join("");
+    $("#worldLocationLayer").innerHTML=map.locations.map(location=>`<button class="world-location ${world.discoveredLocations.includes(location.id)?"discovered":""}" type="button" data-world-location="${escapeHtml(location.id)}" style="--map-x:${location.x/(map.width-1)*100}%;--map-y:${location.y/(map.height-1)*100}%"><span>${location.icon}</span><b>${escapeHtml(getWorldLocationName(location))}</b><small>${escapeHtml(location.category)}</small></button>`).join("");
+  }
   const player=$("#worldPlayer");player.style.setProperty("--map-x",String(world.x/(map.width-1)));player.style.setProperty("--map-y",String(world.y/(map.height-1)));player.dataset.transport=world.transport;player.dataset.archetype=state.player?.archetypeId??"balanced";$("#worldPlayerName").textContent=state.player?.name??"나";
   $("#worldPlayerSprite").src=state.player?.mapImage??"assets/characters/map/PLAYER_BALANCED.png";
   const nearby=getNearbyLocation(world);const enter=$("#enterLocationButton");
   if(nearby){$("#nearbyLocation").innerHTML=`<b>${escapeHtml(nearby.name)}</b><span>${escapeHtml(nearby.description)}</span>`;enter.disabled=false;enter.textContent=nearby.category==="home"?"귀가하기":"장소 입장";enter.dataset.locationId=nearby.id;}
   else{$("#nearbyLocation").innerHTML="<b>동네를 둘러보세요</b><span>장소 가까이 이동하면 입장할 수 있습니다.</span>";enter.disabled=true;enter.textContent="장소 입장";delete enter.dataset.locationId;}
-  canvas.focus({preventScroll:true});
+  if(wasHidden)requestAnimationFrame(()=>canvas.focus({preventScroll:true}));
 }
 
 function openWorldMap() {
@@ -961,21 +984,35 @@ const WORLD_EVENT_MAP_IMAGES={local:"assets/maps/dongsu-25d.jpg",premium:"assets
 const WORLD_EVENT_COPY={korean:["따뜻한 음식 냄새가 두 사람의 긴장을 조금 누그러뜨렸다.","무엇을 먹으며 어떤 이야기를 나눌까?"],japanese:["조용한 식당 안에서 서로의 하루를 돌아볼 시간이 생겼다.","오늘 대화를 어떻게 시작할까?"],chinese:["분주한 식당의 소리 사이로 둘만의 대화가 이어졌다.","이 시간을 어떻게 보낼까?"],western:["차분한 조명 아래 평소보다 진지한 이야기를 꺼낼 수 있을 것 같다.","어떤 마음을 먼저 전할까?"],diet:["건강한 식사를 고르며 서로의 생활 습관을 자연스럽게 이야기했다.","서로에게 어떤 제안을 할까?"],cafe:["따뜻한 음료가 놓이자 미뤄 둔 이야기를 꺼내기 좋은 분위기가 됐다.","무엇부터 이야기할까?"],bar:["밤의 소음과 조명 속에서 평소보다 솔직한 말이 나올 것 같다.","오늘은 어떤 태도를 선택할까?"],club:["음악과 조명 속에서 새로운 사람들과 시선이 오갔다.","연인과 이 시간을 어떻게 보낼까?"],gym:["함께 몸을 움직이며 서로의 속도와 방식을 확인했다.","오늘 운동을 어떻게 이어 갈까?"],amusement:["화려한 불빛과 놀이기구가 평범한 밤을 특별하게 만들었다.","어떤 추억을 먼저 만들까?"],landmark:["도시의 불빛이 내려다보이는 곳에서 두 사람의 미래가 가까이 느껴졌다.","이 순간 어떤 말을 전할까?"],shopping:["여러 물건을 비교하며 취향과 소비 기준의 차이가 드러났다.","무엇을 기준으로 고를까?"],culture:["작품과 음악을 함께 보며 서로 몰랐던 취향을 발견했다.","발견한 마음을 어떻게 표현할까?"],date:["천천히 걷는 동안 말하지 못했던 이야기가 떠올랐다.","어떤 대화를 시작할까?"],transport:["다음 목적지로 향하기 전 잠시 숨을 고를 시간이 생겼다.","이동하기 전에 무엇을 할까?"]};
 
 function getHaeunHomeMapEvent(){if(state.partner?.heroineId!=="haeun")return null;const id=state.trust<=700?"situation-haeun-home-outside-talk":state.trust<=900?"situation-haeun-home-tea-talk":"situation-haeun-home-meal";return SITUATION_EVENTS.find(event=>event.id===id)??null;}
-function getWorldEventImage(map,event=null){return event?.image?.intro??WORLD_EVENT_MAP_IMAGES[map.theme]??WORLD_EVENT_MAP_IMAGES.local;}
+function getWorldEventImage(map,event=null,location=null){return event?.image?.intro??getMapLocationAsset(location?.id)??WORLD_EVENT_MAP_IMAGES[map.theme]??WORLD_EVENT_MAP_IMAGES.local;}
 function finishWorldEventLayer(){$("#modal").classList.remove("world-event-active");closeModal();renderWorldMap();}
 function showWorldEventResult({map,image,title,response,effects={},mbtiLabel=""}){const labels={affection:"호감도",trust:"신뢰도",excitement:"흥미도",stress:"스트레스",energy:"에너지",fatigue:"피로",social:"사회성",confidence:"자신감",relationshipStress:"관계 스트레스"};const changes=Object.entries(effects).filter(([,value])=>Number(value)).map(([key,value])=>`<span class="${value>=0?"up":"down"}">${escapeHtml(labels[key]??key)} ${value>=0?"+":""}${Math.round(value)}</span>`).join("");$("#modalContent").innerHTML=`<article class="world-event-layer"><img class="world-event-image" src="${escapeHtml(image)}" alt="${escapeHtml(title)}"><div class="world-event-copy"><span class="eyebrow">${escapeHtml(map.name)} · EVENT RESULT</span><h2>${escapeHtml(title)}</h2><p class="world-event-response">${escapeHtml(response)}</p>${mbtiLabel?`<p class="world-event-mbti">${escapeHtml(mbtiLabel)}에 맞는 반응이 추가로 반영됐습니다.</p>`:""}<div class="world-event-effects">${changes||"<span>특별한 수치 변화 없음</span>"}</div><button id="worldEventClose" class="primary-button" type="button">확인 · 지도로 돌아가기</button></div></article>`;$("#worldEventClose").addEventListener("click",finishWorldEventLayer);}
 
 function openWorldEventLayer(map,location){
-  const haeunEvent=location.category==="girlfriend-home"?getHaeunHomeMapEvent():null,image=getWorldEventImage(map,haeunEvent);
+  const haeunEvent=location.category==="girlfriend-home"?getHaeunHomeMapEvent():null,image=getWorldEventImage(map,haeunEvent,location);
   const [message,question]=haeunEvent?[haeunEvent.message,haeunEvent.question]:(WORLD_EVENT_COPY[location.category]??[location.description,"이곳에서 무엇을 할까?"]);
   const choices=haeunEvent?.choices??[{id:"talk",label:"함께 둘러보며 솔직하게 대화한다",response:"장소를 천천히 둘러보며 서로의 생각을 편하게 나눴다.",effects:{affection:4,trust:3}},{id:"enjoy",label:"이곳에서 할 수 있는 활동을 즐긴다",response:"복잡한 생각은 잠시 내려놓고 지금의 경험을 함께 즐겼다.",effects:{excitement:6,stress:-3}},{id:"remember",label:"사진과 작은 추억을 남긴다",response:"평범한 방문이 나중에도 떠올릴 수 있는 두 사람의 기억이 됐다.",effects:{affection:5,confidence:2}}];
   $("#modal").classList.add("world-event-active");$("#modalContent").innerHTML=`<article class="world-event-layer"><img class="world-event-image" src="${escapeHtml(image)}" alt="${escapeHtml(getWorldLocationName(location))} 이벤트"><div class="world-event-copy"><span class="eyebrow">${escapeHtml(map.name)} · LOCATION EVENT</span><h2>${location.icon} ${escapeHtml(getWorldLocationName(location))}</h2><p>${escapeHtml(message)}</p><strong class="world-event-question">${escapeHtml(question)}</strong><div class="world-event-choices">${choices.map(choice=>`<button type="button" data-world-event-choice="${escapeHtml(choice.id)}">${escapeHtml(choice.label)}</button>`).join("")}</div></div></article>`;
   document.querySelectorAll("[data-world-event-choice]").forEach(button=>button.addEventListener("click",()=>{const choice=choices.find(item=>item.id===button.dataset.worldEventChoice);if(!choice)return;let effects=choice.effects??{},response=choice.response??choice.memory,mbtiLabel="";if(haeunEvent){const result=resolveSituationEventChoice(state,haeunEvent,choice.id);if(!result)return;effects=result.effects;response=choice.response??choice.memory;mbtiLabel=result.mbtiAdjustment?.label??"";}else applyEffects(state,effects);recordMemory(state,{type:"map-event",summary:`${getWorldLocationName(location)}: ${choice.label}`,importance:3,tags:["지도",map.id,location.id,choice.id]});state.logs.push({time:`DAY ${state.day} · MAP EVENT`,text:`${getWorldLocationName(location)} — ${choice.label}`});SaveManager.save(state);showWorldEventResult({map,image,title:getWorldLocationName(location),response,effects,mbtiLabel});}));
 }
 
+function hasLateNightSpecialEvent(location) {
+  if(location.category==="girlfriend-home"&&getHaeunHomeMapEvent())return true;
+  const activeEvent=state.eventRuntime?.activeEvent;
+  return Boolean(location.lateNightEventId||(activeEvent&&[activeEvent.locationId,activeEvent.scene?.locationId,activeEvent.event?.locationId].includes(location.id)));
+}
+
+function openClosedVenuePopup(map,location) {
+  const locationName=getWorldLocationName(location),time=formatNightTime(ensureNightState(state).minutes);
+  $("#modalContent").innerHTML=`<span class="eyebrow">${escapeHtml(map.name)} · CLOSED · ${escapeHtml(time)}</span><h2>🌙 오늘 영업은 끝났어요</h2><p>${escapeHtml(locationName)}은 이미 문을 닫았습니다.</p><div class="venue-menu-preview"><small>밤 10시 이후 이용 안내</small><strong>대부분의 카페·식당·상점은 영업이 종료됩니다. 술집과 심야 장소는 계속 이용할 수 있으며, 특별 이벤트가 발생한 장소는 예외적으로 입장할 수 있습니다.</strong></div><button id="closedVenueConfirm" class="primary-button" type="button">확인 · 지도로 돌아가기</button>`;
+  openModal();
+  $("#closedVenueConfirm").addEventListener("click",()=>{closeModal();renderWorldMap();});
+}
+
 function openWorldLocation(locationId) {
   const id=locationId??$("#enterLocationButton").dataset.locationId;if(!id)return;const map=WORLD_MAPS[state.world.districtId];const location=map.locations.find(item=>item.id===id);if(!location)return;
   const locationName=getWorldLocationName(location),home=location.category==="home";
+  if(!home&&!isWorldLocationOpen(location,ensureNightState(state).minutes,{hasSpecialEvent:hasLateNightSpecialEvent(location)})){openClosedVenuePopup(map,location);return;}
   $("#modalContent").innerHTML=`<span class="eyebrow">${escapeHtml(map.name)} · ARRIVAL</span><h2>${location.icon} ${escapeHtml(locationName)}</h2><p>${escapeHtml(location.description)}</p>${home?"":`<div class="venue-menu-preview"><small>이곳에서 할 수 있는 일</small><strong>${escapeHtml(getVenueMenu(location))}</strong></div>`}<p class="venue-visit-question">${escapeHtml(locationName)}에 방문하시겠습니까?</p><div class="venue-confirm-actions"><button id="visitLocationCancel" type="button">아니오</button><button id="visitLocationConfirm" class="primary-button" type="button">예${home?" · 귀가하기":" · 방문하기"}</button></div>`;openModal();
   $("#visitLocationCancel").addEventListener("click",closeModal);
   $("#visitLocationConfirm").addEventListener("click",()=>{if(home){closeModal();returnToNightHome();return;}const result=spendNightTime(state,20,`${location.name} 방문`);if(!result.ok){toast(result.reason);return;}discoverLocation(state.world,location.id,state.day);state.logs.push({time:`DAY ${state.day} · MAP`,text:`${map.name}의 ${location.name}에 방문했다.`});SaveManager.save(state);openWorldEventLayer(map,location);});
@@ -1120,6 +1157,7 @@ function applyAction() {
   state.selected = null;
   const finishedDay = state.phase === 3; const completedDay = state.day;
   advanceTime(state);
+  if(action.nightArrivalMinutes!=null)setNightStartTime(state,action.nightArrivalMinutes,"일찍 귀가");
   const initiatedMessage = eventsUnlocked ? maybeGenerateInitiatedMessage(state) : null;
   if (initiatedMessage) { state.logs.push({time:`DAY ${state.day} · MESSAGE`,text:`${state.partner.name}: ${initiatedMessage.text}`}); toast(`${state.partner.name}에게 메시지가 왔어요`); }
   if (finishedDay) { dailyEvent(completedDay); advanceStockMarket(state); const transactions=processDayEndEconomy(state,completedDay); transactions.forEach(entry=>state.logs.push({time:`DAY ${completedDay} · ECONOMY`,text:`${entry.label} ${entry.amount>=0?'+':''}${money(entry.amount)}`})); runDailyStoryDirector(state,completedDay); SaveManager.save(state); if(state.day<=30){resetForNextDay(state);resetWorldForNextDay();} }
@@ -1145,7 +1183,7 @@ function applyAction() {
   });
 }
 
-function resultText(a) { if(a.tag==="데이트") return `${state.partner.name}의 표정이 한결 밝아졌다.`; if(a.tag==="성공") return "미래를 위한 한 걸음을 내디뎠다."; if(a.tag==="유혹") return "새로운 인연의 기척이 느껴진다."; if(a.tag==="연락") return "짧은 대화가 두 사람을 조금 더 가깝게 했다."; return "선택의 결과가 하루에 남았다."; }
+function resultText(a) { if(a.id==="evening-go-home")return "저녁 7시에 집에 도착해 여유로운 밤을 시작했다."; if(a.tag==="데이트") return `${state.partner.name}의 표정이 한결 밝아졌다.`; if(a.tag==="성공") return "미래를 위한 한 걸음을 내디뎠다."; if(a.tag==="유혹") return "새로운 인연의 기척이 느껴진다."; if(a.tag==="연락") return "짧은 대화가 두 사람을 조금 더 가깝게 했다."; return "선택의 결과가 하루에 남았다."; }
 function dailyEvent(completedDay) { if(completedDay%5===0){ const good=Math.random()>.45; const amount=good?60000:-35000; const label=good?"예상하지 못한 성과급":"갑작스러운 생활비 지출"; recordTransaction(state,{day:completedDay,category:"event",label,amount}); state.logs.push({time:`DAY ${completedDay} · EVENT`,text:`${label}${good?"이 들어왔다.":"이 생겼다."}`}); } if(completedDay%7===0){state.affection=clamp(state.affection-18,0,1000);state.trust=clamp(state.trust-8,0,1000);state.logs.push({time:`DAY ${completedDay} · RELATIONSHIP`,text:"연락이 뜸했던 영향으로 호감도와 신뢰도가 낮아졌다."});} }
 
 function openChat(mode="message") {
@@ -1214,8 +1252,8 @@ function renderGameTools() {
     content.innerHTML=`<div class="game-tools-intro"><b>지도·장소 이벤트</b><span>원하는 장소로 바로 이동하거나 해당 장소의 선택 이벤트를 엽니다.</span></div><div class="tools-map-list">${Object.values(WORLD_MAPS).map(map=>`<section class="tools-map-card"><header><span>${map.theme.toUpperCase()}</span><b>${escapeHtml(map.name)}</b><small>${escapeHtml(map.subtitle)}</small></header><div>${map.locations.map(location=>`<article><span>${location.icon}</span><div><b>${escapeHtml(location.name)}</b><small>${escapeHtml(location.category)} · ${escapeHtml(location.description)}</small></div><button type="button" data-tools-map-go="${map.id}:${location.id}">이동</button>${location.category!=="home"?`<button type="button" data-tools-map-event="${map.id}:${location.id}">이벤트</button>`:""}</article>`).join("")}</div></section>`).join("")}</div>`;
   }else{
     selectedToolsNpcId??=state.npcs?.[0]?.id??null;
-    const selected=(state.npcs??[]).find(npc=>npc.id===selectedToolsNpcId),related=selected?SITUATION_EVENTS.filter(event=>event.npcId===selected.id||event.npcId===selected.role):[];
-    content.innerHTML=`<div class="game-tools-intro"><b>NPC 데이터베이스</b><span>NPC를 선택하면 관계 상태와 연결된 이벤트를 확인할 수 있습니다.</span></div>${selected?`<article class="tools-npc-detail"><span>${selected.active?"ACTIVE":"INACTIVE"}</span><h3>${escapeHtml(selected.name)} · ${escapeHtml(selected.role)}</h3><p>${escapeHtml(selected.job??selected.storyState??"")} · 호감 ${selected.affection} · 신뢰 ${selected.trust}</p><small>관계 ${escapeHtml(selected.relationshipType)} · 관심 ${selected.interestInPlayer} · 연인 관심 ${selected.interestInGirlfriend}</small>${related.length?`<div>${related.map(event=>`<button type="button" data-tools-event="${event.id}">${escapeHtml(event.title)} 실행</button>`).join("")}</div>`:""}</article>`:""}<div class="tools-npc-list">${(state.npcs??[]).map(npc=>`<button type="button" data-tools-npc="${npc.id}" class="${npc.id===selectedToolsNpcId?"selected":""}"><span>${npc.active?"●":"○"}</span><div><b>${escapeHtml(npc.name)}</b><small>${escapeHtml(npc.role)} · ${escapeHtml(npc.category)}</small></div><em>${getNpcRelationshipStatus(npc).label}</em></button>`).join("")}</div>`;
+    const selected=(state.npcs??[]).find(npc=>npc.id===selectedToolsNpcId),selectedSprite=selected?getNpcSprite(selected.id):"",related=selected?SITUATION_EVENTS.filter(event=>event.npcId===selected.id||event.npcId===selected.role):[];
+    content.innerHTML=`<div class="game-tools-intro"><b>NPC 데이터베이스</b><span>NPC를 선택하면 관계 상태와 연결된 이벤트를 확인할 수 있습니다.</span></div>${selected?`<article class="tools-npc-detail">${selectedSprite?`<img class="tools-npc-portrait" src="${selectedSprite}" alt="${escapeHtml(selected.name)}">`:""}<div class="tools-npc-copy"><span>${selected.active?"ACTIVE":"INACTIVE"}</span><h3>${escapeHtml(selected.name)} · ${escapeHtml(selected.role)}</h3><p>${escapeHtml(selected.job??selected.storyState??"")} · ${selected.age}세 · 호감 ${selected.affection} · 신뢰 ${selected.trust}</p><small>관계 ${escapeHtml(selected.relationshipType)} · 관심 ${selected.interestInPlayer} · 연인 관심 ${selected.interestInGirlfriend}</small>${related.length?`<div>${related.map(event=>`<button type="button" data-tools-event="${event.id}">${escapeHtml(event.title)} 실행</button>`).join("")}</div>`:""}</div></article>`:""}<div class="tools-npc-list">${(state.npcs??[]).map(npc=>`<button type="button" data-tools-npc="${npc.id}" class="${npc.id===selectedToolsNpcId?"selected":""}"><span>${npc.active?"●":"○"}</span><div><b>${escapeHtml(npc.name)}</b><small>${escapeHtml(npc.role)} · ${escapeHtml(npc.category)}</small></div><em>${getNpcRelationshipStatus(npc).label}</em></button>`).join("")}</div>`;
   }
   document.querySelectorAll("[data-tools-tab]").forEach(button=>button.addEventListener("click",()=>{gameToolsTab=button.dataset.toolsTab;renderGameTools();}));
   document.querySelectorAll("[data-tools-outfit]").forEach(button=>button.addEventListener("click",()=>{const outfit=HEROINE_OUTFITS.find(item=>item.id===button.dataset.toolsOutfit);if(!outfit)return;let instance=(state.inventory??[]).find(item=>item.itemId===outfit.id&&item.owner==="girlfriend");instance??=addItem(state,outfit.id,"girlfriend","tip-tools");const result=equipGirlfriendOutfit(state,instance.instanceId);if(!result)return;SaveManager.save(state);render();renderGameTools();toast(`${outfit.name} 선택 완료`);}));
@@ -1283,7 +1321,7 @@ function openEventViewer() {
 function openCharacterManager() {
   const equipped=getEquippedHeroineOutfit(state);
   const heroineCards=HEROINE_PROFILES.map(profile=>`<article class="character-admin-card ${profile.id===state.partner.heroineId?'active':''}"><img src="${profile.referenceImage}" alt="${escapeHtml(profile.name)}"><div><small>${escapeHtml(profile.id)} · ${escapeHtml(profile.archetype)}</small><b>${escapeHtml(profile.name)} · ${profile.age}세</b><span>${escapeHtml(profile.job)} · 의상 ${HEROINE_OUTFITS.filter(outfit=>outfit.heroineId===profile.id).length}종</span><em>${profile.id===state.partner.heroineId?`현재 히로인 · ${escapeHtml(equipped?.name??"기본 의상")}`:"다음 회차 후보"}</em></div></article>`).join("");
-  const npcCards=(state.npcs??[]).map(character=>{const status=getNpcRelationshipStatus(character);return `<article class="character-admin-card npc-admin ${character.active?'active':''}"><div><small>${escapeHtml(character.id)} · ${escapeHtml(character.category)}</small><b>${escapeHtml(character.name)} · ${escapeHtml(character.role)}</b><span>호감 ${character.affection} · 신뢰 ${character.trust} · ${escapeHtml(character.storyState)}</span><em>${character.active?'ACTIVE':'INACTIVE'} · ${escapeHtml(status.label)}</em></div></article>`;}).join("");
+  const npcCards=(state.npcs??[]).map(character=>{const status=getNpcRelationshipStatus(character),sprite=getNpcSprite(character.id);return `<article class="character-admin-card npc-admin ${character.active?'active':''}"><img src="${sprite}" alt="${escapeHtml(character.name)}" loading="lazy"><div><small>${escapeHtml(character.id)} · ${escapeHtml(character.category)}</small><b>${escapeHtml(character.name)} · ${escapeHtml(character.role)}</b><span>호감 ${character.affection} · 신뢰 ${character.trust} · ${escapeHtml(character.storyState)}</span><em>${character.active?'ACTIVE':'INACTIVE'} · ${escapeHtml(status.label)}</em></div></article>`;}).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">CHARACTER DATABASE</span><h2>캐릭터 관리</h2><p>이번 회차 활성 NPC ${(state.npcs??[]).filter(character=>character.active).length}명 · 관계망 ${NPC_SOCIAL_GRAPH.length}개 · 현재 의상 ${escapeHtml(equipped?.outfitId??"DEFAULT")}</p><h3>히로인</h3><div class="character-admin-grid">${heroineCards}</div><h3>NPC Social Graph</h3><div class="character-admin-grid">${npcCards}</div>`;openModal();
 }
 
@@ -1342,9 +1380,31 @@ function openPeople() {
   const breakupRisk = calculateBreakupRisk(state);
   const career=state.partner.career;
   const partnerCard=career?`<div class="npc-card partner-career-card"><div class="npc-details"><small>MY PARTNER · ${escapeHtml(career.workplace)}</small><b>${escapeHtml(state.partner.name)} · ${escapeHtml(career.name)}</b><span>${escapeHtml(career.workPattern)} · 월수입 ${money(career.incomeRange[0])}~${money(career.incomeRange[1])}</span><span><strong>${escapeHtml(career.perkName)}</strong> · ${escapeHtml(career.perkDescription)}</span><em>목표 · ${escapeHtml(career.careerGoal)}</em></div></div>`:"";
-  const cards = state.npcs.filter(npc=>npc.active).map(npc=>{ const status=npc.relationshipType==='rival'?calculateRivalRisk(state,npc):getNpcRelationshipStatus(npc); const interest=npc.relationshipType==='rival'?`연인 관심 ${npc.interestInGirlfriend} · 위험 ${status.score}`:`내 관심 ${npc.interestInPlayer}`; const sprite=getNpcSprite(npc.id); return `<div class="npc-card${sprite?' illustrated':''}">${sprite?`<img src="${sprite}" alt="" aria-hidden="true">`:''}<div class="npc-details"><small>${npc.role}</small><b>${npc.name}</b><span>호감 ${npc.affection} · 신뢰 ${npc.trust} · ${interest}</span></div><em data-tone="${status.tone}">${status.label}</em></div>`; }).join("");
-  $("#modalContent").innerHTML=`<span class="eyebrow">HUMAN RELATIONSHIPS</span><h2>나의 인맥</h2><p>현재 연애 위기 ${breakupRisk.score} · ${breakupRisk.label}</p>${partnerCard}<h3>주변 인물</h3><div class="npc-list">${cards}</div>`;
+  const activeNpcs=(state.npcs??[]).filter(npc=>npc.active);
+  const groupDefinitions=[
+    {id:"friend",label:"친구",description:"서로의 일상을 나누는 가까운 사람",matches:npc=>npc.category==="friend"},
+    {id:"office",label:"직장 동료",description:"회사와 업무에서 만나는 사람",matches:npc=>npc.category==="office"},
+    {id:"past",label:"과거 인연",description:"지금의 관계에 영향을 줄 수 있는 인물",matches:npc=>npc.relationshipType==="ex"},
+    {id:"other",label:"주변 인물",description:"생활 속에서 알게 된 사람",matches:()=>true}
+  ];
+  const assigned=new Set();
+  const renderRelationshipCard=npc=>{
+    const status=npc.relationshipType==='rival'?calculateRivalRisk(state,npc):getNpcRelationshipStatus(npc);
+    const relationshipIndex=Math.round((Number(npc.affection??0)+Number(npc.trust??0))/2);
+    const interest=npc.interestTarget==="girlfriend"?`여자친구 관심 ${npc.interestInGirlfriend}`:npc.interestTarget==="player"?`나에 대한 관심 ${npc.interestInPlayer}`:"특별한 관심 없음";
+    const sprite=getNpcSprite(npc.id);
+    return `<article class="relationship-card${sprite?' illustrated':''}">${sprite?`<img src="${sprite}" alt="${escapeHtml(npc.name)}" loading="lazy">`:''}<div class="relationship-card-copy"><small>${escapeHtml(npc.role)} · ${escapeHtml(npc.job)}</small><b>${escapeHtml(npc.name)}</b><span>관계 지수 <strong>${relationshipIndex}</strong> · 호감 ${npc.affection} · 신뢰 ${npc.trust}</span><i><em style="width:${Math.max(0,Math.min(100,relationshipIndex))}%"></em></i><span>${interest}</span></div><mark data-tone="${status.tone}">${escapeHtml(status.label)}</mark></article>`;
+  };
+  const groups=groupDefinitions.map(group=>{
+    const members=activeNpcs.filter(npc=>!assigned.has(npc.id)&&group.matches(npc));
+    members.forEach(npc=>assigned.add(npc.id));
+    if(!members.length)return "";
+    return `<section class="relationship-group" data-group="${group.id}"><header><div><h3>${group.label}</h3><p>${group.description}</p></div><b>${members.length}명</b></header><div class="relationship-card-list">${members.map(renderRelationshipCard).join("")}</div></section>`;
+  }).join("");
+  $("#modal").classList.add("relationship-directory-active");
+  $("#modalContent").innerHTML=`<article class="relationship-directory"><header><span class="eyebrow">RELATIONSHIP DIRECTORY</span><h2>인맥 관계</h2><p>관계 지수는 각 인물의 호감도와 신뢰도를 평균한 값입니다. 현재 연애 위기 ${breakupRisk.score} · ${breakupRisk.label}</p></header>${partnerCard}<div class="relationship-groups">${groups||"<p>아직 알게 된 인물이 없습니다.</p>"}</div><button id="relationshipDirectoryClose" class="primary-button" type="button">닫기</button></article>`;
   openModal();
+  $("#relationshipDirectoryClose").addEventListener("click",closeModal);
 }
 
 function showBreakup(breakup) {
@@ -1414,6 +1474,7 @@ function toast(message){ const t=$("#toast");t.textContent=message;t.classList.a
 
 function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);else if(state.day>30)showEnding();else if(state.pendingStoryId&&!state.eventRuntime?.activeEvent&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(state.pendingStoryId)))openStoryScene(getStoryScene(state.pendingStoryId));else if(!state.eventRuntime?.activeEvent)toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
 function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
+function openContinuePreview(){const loaded=SaveManager.load();if(!loaded){toast("이어할 저장 데이터가 없어요.");return;}const story=loaded.scenario?.enabled===true,mode=getGameModeConfig(loaded.gameMode),updated=loaded.updatedAt?new Intl.DateTimeFormat("ko-KR",{dateStyle:"medium",timeStyle:"short"}).format(new Date(loaded.updatedAt)):"저장 시각 없음";$("#modalContent").innerHTML=`<section class="continue-preview"><span>${story?"STORY MODE":"FREE MODE"}</span><h2>${story?"《결혼까지 30일!》":"나만의 30일"}</h2><div><strong>DAY ${loaded.day}</strong>${story?`<b>D-${Math.max(0,31-loaded.day)}</b>`:""}</div><p>${escapeHtml(mode.description)}</p><small>마지막 플레이 · ${escapeHtml(updated)}</small><button id="continueResumeButton" class="primary-button" type="button">이어하기 →</button></section>`;openModal();$("#continueResumeButton").addEventListener("click",()=>{closeModal();loadGame();});}
 
 if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");
 renderSoundButton();
@@ -1444,6 +1505,7 @@ $(".world-dpad").addEventListener("click",handleWorldMoveClick);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
 $("#girlfriendWardrobe").addEventListener("click",handleGirlfriendWardrobeClick);
 $("#todayRecordButton").addEventListener("click",openTodayLog);
+$("#relationshipDirectoryButton").addEventListener("click",openPeople);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#storyChoiceLayer").addEventListener("click",event=>{event.stopPropagation();const button=event.target.closest("[data-immersive-choice]");if(button)chooseImmersiveOption(button.dataset.immersiveChoice);});
 $("#storyChoiceLayer").addEventListener("keydown",event=>{const button=event.target.closest("[data-immersive-choice]");if(!button||(event.key!=="Enter"&&event.key!==" "))return;event.preventDefault();event.stopPropagation();chooseImmersiveOption(button.dataset.immersiveChoice);});
@@ -1452,7 +1514,7 @@ $("#autoButton").addEventListener("click",toggleAutoMode);
 $("#skipButton").addEventListener("click",skipImmersiveScene);
 $("#fullscreenButton").addEventListener("click",toggleFullscreen);
 $("#storyFullscreenButton").addEventListener("click",toggleFullscreen);
-$("#startButton").addEventListener("click",startGame); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#actionResultConfirm").addEventListener("click",confirmActionResult); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
+$("#startButton").addEventListener("click",startGame); $("#titleContinueButton")?.addEventListener("click",openContinuePreview); $("#titleSettingsButton")?.addEventListener("click",()=>{$("#modalContent").innerHTML=`<span class="eyebrow">SETTINGS</span><h2>환경설정</h2><p>타이틀 화면에서는 사운드 설정을 변경할 수 있습니다.</p><button id="titleSoundToggle" class="primary-button" type="button">${sound.enabled?"사운드 끄기":"사운드 켜기"}</button>`;openModal();$("#titleSoundToggle").addEventListener("click",()=>{$("#soundButton").click();closeModal();});}); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#actionResultConfirm").addEventListener("click",confirmActionResult); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
 $("#introVideo").addEventListener("ended",playNextIntroVideo);
 $("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();introVideoIndex=INTRO_VIDEO_PLAYLIST.length-1;unlockIntroStart("프롤로그 영상을 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
 $("#introGameStartButton").addEventListener("click",finishOnboarding);

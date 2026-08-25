@@ -27,7 +27,7 @@ export const NPC_ARCHETYPES = [
   npc("male-rival","민준",34,"male","벤처 대표","조건 좋은 남자","rival","rival","girlfriend","여유·집요",62,92,5,["rival","wealth"],["heroine-best-friend"]),
   npc("heroine-senior","시우",33,"male","크리에이티브 디렉터","여자친구 직장 선배","rival","rival","girlfriend","능숙·세심",55,82,4,["rival","work"],["male-rival"]),
   npc("heroine-ex","도윤",31,"male","뮤지션","여자친구의 전 연인","rival","ex","girlfriend","감성·미련",58,88,2,["rival","ex"],["heroine-best-friend"]),
-  npc("player-ex","가은",29,"female","패션 MD","플레이어의 전 연인","rival","ex","player","도도·향수",54,36,76,["ex","temptation"],["edit-shop-staff"]),
+  npc("player-ex","유리",28,"female","고서 복원가","전 여자친구","rival","ex","player","차분·미스터리·여운",54,36,76,["ex","temptation"],["edit-shop-staff"]),
   npc("ambitious-admirer","세아",30,"female","변호사","플레이어에게 호감 있는 여성","rival","admirer","player","직설·자신감",64,30,90,["temptation","career"],["client-manager"]),
   npc("gentle-admirer","은호",28,"male","수의사","여자친구에게 호감 있는 남성","rival","admirer","girlfriend","온화·꾸준",50,70,3,["rival","daily"],["cafe-staff"]),
 

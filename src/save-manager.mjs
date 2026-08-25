@@ -16,19 +16,24 @@ import { migrateScenarioState, normalizeGameMode } from "./scenario-state.mjs";
 export class SaveManager {
   static key = "today-day-one.save.v1";
 
-  static hasSave(storage = localStorage) {
-    return storage.getItem(this.key) !== null;
+  static keyForMode(mode) {
+    return `${this.key}.${normalizeGameMode(mode)==="marriage-in-30-days"?"story":"free"}`;
+  }
+
+  static hasSave(storage = localStorage, mode = null) {
+    return storage.getItem(mode?this.keyForMode(mode):this.key) !== null;
   }
 
   static save(state, storage = localStorage) {
     const snapshot = structuredClone(state);
     snapshot.updatedAt = new Date().toISOString();
+    storage.setItem(this.keyForMode(snapshot.gameMode), JSON.stringify(snapshot));
     storage.setItem(this.key, JSON.stringify(snapshot));
     return snapshot;
   }
 
-  static load(storage = localStorage) {
-    const raw = storage.getItem(this.key);
+  static load(storage = localStorage, mode = null) {
+    const raw = storage.getItem(mode?this.keyForMode(mode):this.key);
     if (!raw) return null;
     try {
       const parsed = JSON.parse(raw);
@@ -74,7 +79,10 @@ export class SaveManager {
     }
   }
 
-  static clear(storage = localStorage) {
+  static clear(storage = localStorage, mode = null) {
+    if(mode){storage.removeItem(this.keyForMode(mode));return;}
     storage.removeItem(this.key);
+    storage.removeItem(this.keyForMode("free-romance"));
+    storage.removeItem(this.keyForMode("marriage-in-30-days"));
   }
 }
