@@ -1,5 +1,5 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=9";
-import { SaveManager } from "./src/save-manager.mjs?v=12";
+import { SaveManager } from "./src/save-manager.mjs?v=13";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=6";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=5";

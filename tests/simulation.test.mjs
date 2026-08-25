@@ -913,6 +913,12 @@ assert.ok(restoredCampaign.scenario.unlockedActions.includes("smartphone-basic")
 assert.ok(restoredCampaign.scenario.clues.includes("phone-return-receipt"));
 assert.equal(restoredCampaign.scenario.seojinAffection,2);
 assert.equal(restoredCampaign.scenario.seojinStatusInterest,13);
+assert.ok(campaignStorage.getItem(SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)));
+const freeSlotState=createInitialState(partner,()=>0.5,{mode:GAME_MODES.FREE_ROMANCE});
+SaveManager.save(freeSlotState,campaignStorage);
+assert.equal(SaveManager.load(campaignStorage,GAME_MODES.MARRIAGE_30).gameMode,GAME_MODES.MARRIAGE_30);
+assert.equal(SaveManager.load(campaignStorage,GAME_MODES.FREE_ROMANCE).gameMode,GAME_MODES.FREE_ROMANCE);
+assert.equal(SaveManager.load(campaignStorage).gameMode,GAME_MODES.FREE_ROMANCE);
 const preSeojinAxesSave=structuredClone(campaignStoryState);
 delete preSeojinAxesSave.scenario.seojinAffection;
 delete preSeojinAxesSave.scenario.seojinStatusInterest;
