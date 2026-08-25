@@ -451,7 +451,7 @@ campaignStoryState.day=5;
 const workReturnScene=selectNextStoryScene(campaignStoryState);
 assert.equal(workReturnScene.id,"m30-day5-work-return");
 assert.equal(workReturnScene.requires.sceneId,homeArrivalScene.id);
-assert.deepEqual(workReturnScene.targetPlaytimeMinutes,[5,8]);
+assert.deepEqual(workReturnScene.targetPlaytimeMinutes,[12,16]);
 assert.equal(workReturnScene.sceneBeats.length,8);
 assert.ok(workReturnScene.dialogueTurns.length>=30);
 assert.deepEqual(Object.keys(workReturnScene.voiceProfiles),["protagonist","haeun","seojin","teamLead"]);

@@ -239,7 +239,7 @@ export const MARRIAGE_30_STORY_SCENES = [{
 },{
   id:"m30-day5-work-return",arc:"다시 만난 자리",window:[5,5],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day4-arrive-home"},
   title:"내 자리에 앉는 법",speaker:"윤서진",message:"출입증 사진 속 남자는 익숙한 표정으로 웃고 있었다. 회사 로비의 회전문 앞에서 하은은 내 넥타이를 한 번 보고 손을 거뒀다.",
-  chapterType:"daily-life/workplace-hybrid",targetPlaytimeMinutes:[5,8],timeWindow:"morning",participants:["protagonist","haeun","seojin","team-lead"],
+  chapterType:"daily-life/workplace-hybrid",targetPlaytimeMinutes:[12,16],timeWindow:"morning",participants:["protagonist","haeun","seojin","team-lead"],
   previousChoiceReferences:["m30-day4-arrive-home"],
   dramaticPurpose:"주인공이 과거의 직장 평판에 휩쓸리지 않고 복귀 방식을 선택하게 하며, 윤서진이 사람에 대한 호감과 능력·성장 가능성 평가를 서로 다른 축으로 시작하게 한다.",
   informationBudget:{mustReveal:["주인공은 사고 전 서비스 전략 업무를 맡았다","오늘은 정식 근무가 아니라 두 시간 적응 방문이다","윤서진은 주인공의 과거 업무 방식을 알고 있다"],mayReveal:["주인공이 실패를 문서로 남기던 습관","윤서진이 병원 소식을 꾸준히 확인했다"],mustNotReveal:["사고의 진짜 배후","가짜 하은의 정체","윤서진이 알 수 없는 사고 세부"],playerMaySuspect:["서진은 단순한 동료보다 주인공의 복귀에 관심이 많다"]},
