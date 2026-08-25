@@ -561,11 +561,14 @@ function personalitySummary(partner) {
     .map(([key,value]) => `${PERSONALITY_LABELS[key]} ${value}`).join(" · ");
 }
 
+function markScreenArrival(element){if(!element)return;element.classList.remove("screen-arrival");requestAnimationFrame(()=>element.classList.add("screen-arrival"));setTimeout(()=>element.classList.remove("screen-arrival"),520);}
+
 function beginOnboarding() {
   onboarding = { step:1, mode:null, partner:null, girlfriendTraitsReady:false, girlfriendJobReady:false, playerArchetype:null, playerName:"", playerJob:null, previewState:null };
   $("#introScreen").classList.add("hidden");
   $("#onboardingScreen").classList.remove("hidden");
   renderModeSetup();
+  markScreenArrival($("#onboardingScreen"));
 }
 
 function renderModeSetup() {
@@ -642,6 +645,7 @@ function renderSetupSummary() {
 function openStoryIntro() {
   $("#onboardingScreen").classList.add("hidden");
   $("#storyIntroScreen").classList.remove("hidden");
+  markScreenArrival($("#storyIntroScreen"));
   const video=$("#introVideo");
   introVideoIndex=0;
   video.src=INTRO_VIDEO_PLAYLIST[introVideoIndex];
@@ -664,7 +668,7 @@ function playNextIntroVideo() {
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
 function startGame() { beginOnboarding(); }
-function showGame() { requestInitialFullscreen(); state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
+function showGame() { requestInitialFullscreen(); state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); markScreenArrival($("#gameScreen")); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function outfitImageUrl(item) { return item?.heroineId==="haeun"&&item?.productImage?`${item.productImage}?v=8`:item?.productImage??""; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
