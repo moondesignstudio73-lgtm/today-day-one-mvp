@@ -465,7 +465,15 @@ function renderImmersiveStep() {
   if(step.type==="sfx"){if(step.stopCueId)sound.stopCue(step.stopCueId);else if(step.sfxId)sound.playCue(step.sfxId);queueSceneStep(40);return;}
   if(step.type==="animation"){queueSceneStep(40);return;}
   if(step.type==="itemShow"){const layer=step.layer==="npcRear"?$("#vnNpcRear"):$("#vnNpcFront");layer.hidden=!step.source;if(step.source)layer.src=step.source;queueSceneStep(120);return;}
-  if(step.type==="cgShow"){const layer=$("#vnEventCg");layer.src=step.source;layer.hidden=false;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=setTimeout(()=>{layer.hidden=true;sceneAdvanceTimer=null;renderImmersiveStep();},step.duration??1800);return;}
+  if(step.type==="cgShow"){
+    const layer=$("#vnEventCg");
+    const owner=immersiveScene.id;
+    layer.src=step.source;layer.hidden=false;
+    eventRuntime.input.lock(owner,"StoryCg");
+    if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);
+    sceneAdvanceTimer=setTimeout(()=>{layer.hidden=true;sceneAdvanceTimer=null;eventRuntime.input.unlock(owner);if(immersiveScene?.id===owner)renderImmersiveStep();},step.duration??1800);
+    return;
+  }
   if (step.type === "expressionChange") { updateImmersiveCharacter(step.expressionId); queueSceneStep(220); return; }
   if (step.type === "choice") { if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime(true);renderImmersiveChoices(step.options); return; }
   if (step.expressionId) updateImmersiveCharacter(step.expressionId);
@@ -476,7 +484,12 @@ function renderImmersiveStep() {
   scheduleAutoAdvance();
 }
 
-function queueSceneStep(delay) { if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=setTimeout(()=>{sceneAdvanceTimer=null;renderImmersiveStep();},delay); }
+function queueSceneStep(delay) {
+  const owner=immersiveScene?.id;
+  if(owner)eventRuntime.input.lock(owner,"StoryAutoCue");
+  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);
+  sceneAdvanceTimer=setTimeout(()=>{sceneAdvanceTimer=null;eventRuntime.input.unlock(owner);if(immersiveScene?.id===owner)renderImmersiveStep();},delay);
+}
 function showSceneTransition(step) {
   const layer=$("#sceneTransition");layer.className=`scene-transition ${step.style??"fade"}`;layer.querySelector("span").textContent=step.label??"";
   requestAnimationFrame(()=>layer.classList.add("active"));
@@ -1428,7 +1441,8 @@ $("#girlfriendWardrobe").addEventListener("click",handleGirlfriendWardrobeClick)
 $("#todayRecordButton").addEventListener("click",openTodayLog);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#storyChoiceLayer").addEventListener("click",event=>{event.stopPropagation();const button=event.target.closest("[data-immersive-choice]");if(button)chooseImmersiveOption(button.dataset.immersiveChoice);});
-$("#visualNovelStage").addEventListener("keydown",event=>{ if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });
+$("#storyChoiceLayer").addEventListener("keydown",event=>{const button=event.target.closest("[data-immersive-choice]");if(!button||(event.key!=="Enter"&&event.key!==" "))return;event.preventDefault();event.stopPropagation();chooseImmersiveOption(button.dataset.immersiveChoice);});
+$("#visualNovelStage").addEventListener("keydown",event=>{ if(event.target.closest?.("[data-immersive-choice]"))return;if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });
 $("#autoButton").addEventListener("click",toggleAutoMode);
 $("#skipButton").addEventListener("click",skipImmersiveScene);
 $("#fullscreenButton").addEventListener("click",toggleFullscreen);
