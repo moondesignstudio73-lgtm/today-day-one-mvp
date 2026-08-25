@@ -63,7 +63,7 @@ for(const checkin of DAY8_CHECKIN_CHOICES){
       assert.equal(state.storyFlags.day8IndependentErrandCompleted,true);
       assert.equal(state.storyFlags.day9SecondOfficeAdaptationPending,true);
       assert.equal(getLockedDay8LegacyChoice(state),share.id);
-      assert.deepEqual(getLockedDay8ResumePresentation(state),{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"});
+      assert.deepEqual(getLockedDay8ResumePresentation(state),{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:"assets/characters/story-outfits/haeun-day8-errand-sage-2d-v1.png",expressionId:"smile",poseId:"standing"});
       for(const id of [checkin.id,purchase.id,share.id])assert.equal(state.storyFlags[id],true,`${id} memory`);
       for(const id of ["independent-errand-contract","current-household-choice","return-debrief-rule"])assert.equal(state.scenario.clues.filter(value=>value===id).length,1,`${id} exactly once`);
       for(const id of ["independent-neighborhood-errand","review-current-mail","prepare-limited-office-return"])assert.equal(state.scenario.unlockedActions.filter(value=>value===id).length,1,`${id} exactly once`);

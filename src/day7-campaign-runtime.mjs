@@ -1,4 +1,5 @@
 import {DAY7_PRESENTATION_SCENES} from "./day7-presentation-data.mjs";
+import {STORY_OUTFIT_ASSETS} from "./story-outfit-assets.mjs?v=2";
 
 const ID="m30-day7-first-present-date";
 const n=(text,extra={})=>({type:"narration",text,...extra});
@@ -6,7 +7,7 @@ const d=(speaker,text,expressionId="calm",extra={})=>({type:"dialogue",speaker,t
 const choice=options=>({type:"choice",options});
 const enter=(expressionId="calm",poseId="standing")=>({type:"characterEnter",characterId:"girlfriend",expressionId,poseId,animationId:"idle-breathe"});
 const branchBackground=(view,state)=>view.branchBackgrounds?.[state.storyFlags?.day6DatePlan]??view.backgroundId;
-const scene=(key,label,state={})=>{const view=DAY7_PRESENTATION_SCENES[key];const backgroundId=branchBackground(view,state);return [{type:"transition",style:view.transition,label,backgroundId,characterId:view.characterId,expressionId:view.expressionId,poseId:view.poseId,bgmId:view.bgm.category},{type:"sfx",sfxId:view.sfx[0]}].filter(step=>step.type!=="sfx"||step.sfxId);};
+const scene=(key,label,state={})=>{const view=DAY7_PRESENTATION_SCENES[key];const backgroundId=branchBackground(view,state);return [{type:"transition",style:view.transition,label,backgroundId,characterId:view.characterId,characterAssetUrl:STORY_OUTFIT_ASSETS.day7,expressionId:view.expressionId,poseId:view.poseId,bgmId:view.bgm.category},{type:"sfx",sfxId:view.sfx[0]}].filter(step=>step.type!=="sfx"||step.sfxId);};
 
 export const LOCKED_DAY7_SCENE_ID=ID;
 export const DAY7_OPENING_CHOICES=Object.freeze([
@@ -126,7 +127,7 @@ function remember(state,id){state.storyFlags??={};state.storyFlags[id]=true;}
 function preserveSeojin(state,before){if(state.scenario){state.scenario.seojinAffection=before[0];state.scenario.seojinStatusInterest=before[1];}}
 
 export function getLockedDay7Segment(state,stage=state.storyFlags?.day7RuntimeStage??0){if(stage===0)return segment0(state);if(stage===1)return segment1(state);if(stage===2)return segment2(state);return segment3(state);}
-export function getLockedDay7ResumePresentation(state){const stage=state.storyFlags?.day7RuntimeStage??0;if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"};if(stage===1)return {backgroundId:"day7-bookshop-day",characterId:"girlfriend",expressionId:"smile",poseId:"standing"};if(stage===2){const view=DAY7_PRESENTATION_SCENES.S05_RECOVERY_ADJUST;return {backgroundId:branchBackground(view,state),characterId:"girlfriend",expressionId:"calm",poseId:"standing"};}return {backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"phone"};}
+export function getLockedDay7ResumePresentation(state){const stage=state.storyFlags?.day7RuntimeStage??0;if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day7,expressionId:"smile",poseId:"standing"};if(stage===1)return {backgroundId:"day7-bookshop-day",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day7,expressionId:"smile",poseId:"standing"};if(stage===2){const view=DAY7_PRESENTATION_SCENES.S05_RECOVERY_ADJUST;return {backgroundId:branchBackground(view,state),characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day7,expressionId:"calm",poseId:"standing"};}return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day7,expressionId:"smile",poseId:"phone"};}
 
 export function applyLockedDay7ChoiceState(state,id){
   state.storyFlags??={};const seojinBefore=[state.scenario?.seojinAffection,state.scenario?.seojinStatusInterest];
