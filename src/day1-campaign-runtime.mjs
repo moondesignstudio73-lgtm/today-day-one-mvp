@@ -5,13 +5,13 @@ const NPC="assets/npcs/day1/";
 const CG="assets/events/day1/";
 
 const n=(text,extra={})=>({type:"narration",text,...extra});
-const d=(speaker,text,expressionId="calm-attentive",extra={})=>({type:"dialogue",speaker,text,expressionId,...extra});
+const d=(speaker,text,expressionId="calm-attentive",extra={})=>({type:"dialogue",speaker,text,expressionId,focusCharacterId:speaker==="하은"?"haeun":speaker==="담당 의사"?"doctor":speaker==="간호사"?"nurse":"pov",...extra});
 const tr=(label,backgroundId=BG_BEDSIDE,extra={})=>({type:"transition",style:"fade",label,backgroundId,...extra});
 const sfx=id=>({type:"sfx",sfxId:id});
 const bgm=id=>({type:"animation",bgmCue:id});
 const cg=(source,duration=1800)=>({type:"cgShow",source,duration});
-const sprite=(asset,expressionId)=>({type:"characterEnter",characterId:"girlfriend",assetUrl:`${HAEUN}${asset}`,expressionId,animationId:"idle-breathe"});
-const npc=(layer,source)=>({type:"itemShow",layer,source:source?`${NPC}${source}`:""});
+const sprite=(asset,expressionId,stage={positionPreset:"right",depth:"normal"})=>({type:"characterEnter",characterId:"haeun",assetUrl:`${HAEUN}${asset}`,expressionId,animationId:"idle-breathe",stage});
+const npc=(layer,source,characterId,stage)=>({type:"itemShow",layer,source:source?`${NPC}${source}`:"",characterId,stage});
 
 export const LOCKED_DAY1_SCENE_ID="m30-day1-hospital-awakening";
 export const DAY1_CONTACT_CHOICES=Object.freeze([
@@ -43,9 +43,9 @@ const SEGMENT_0=[
   tr("DAY 1 · 눈을 뜨다",BG_CEILING,{bgmCue:"S01_B01_BLACK"}),bgm("S01_B01_BLACK"),sfx("SFX_CART_DISTANT"),
   n("처음에는 소리인지, 머릿속에서 울리는 감각인지 구분할 수 없었다. 혀끝이 말라 있었고, 왼손등이 당겼다."),bgm("S01_B02_FOCUS"),sfx("AMB_HOSPITAL_ROOM_DAY"),
   n("천장. 수액. 기계음. 병원인가."),n("고개를 돌리자 침대 옆 의자에 보라색 머리의 여자가 앉아 있었다. 손에는 꺼진 휴대폰이 들려 있었다."),
-  sprite("poses/haeun-pose-seated-dozing-2d.png","resting-tired"),sfx("SFX_PHONE_SOFT_DROP"),cg(`${CG}cg-day1-first-eye-contact-v2.png`,2600),
+  sprite("poses/haeun-pose-seated-dozing-2d.png","resting-tired",{positionPreset:"right",depth:"normal"}),sfx("SFX_PHONE_SOFT_DROP"),cg(`${CG}cg-day1-first-eye-contact-v2.png`,2600),
   d("하은","……어?","startled-relief"),sprite("poses/haeun-pose-rise-and-pause-2d.png","startled-relief"),d("하은","나 보여?"),d("하은","손가락은? 움직일 수 있어?"),n("검지를 조금 움직이자 하은이 숨을 길게 내쉬었다."),d("하은","드디어…….","teary-relief"),
-  sprite("poses/haeun-pose-careful-embrace-2d.png","teary-relief"),n("그녀가 몸을 숙여 나를 끌어안았다. 따뜻한 체온보다 갈비뼈를 누르는 통증이 먼저 느껴졌다."),n("나를 아는 사람이다. 문제는 내가 이 사람을 모른다는 것."),
+  sprite("poses/haeun-pose-careful-embrace-2d.png","teary-relief",{positionPreset:"foregroundRight",depth:"foreground"}),n("그녀가 몸을 숙여 나를 끌어안았다. 따뜻한 체온보다 갈비뼈를 누르는 통증이 먼저 느껴졌다."),n("나를 아는 사람이다. 문제는 내가 이 사람을 모른다는 것."),
   {type:"choice",options:DAY1_CONTACT_CHOICES}
 ];
 

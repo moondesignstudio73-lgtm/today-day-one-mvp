@@ -928,6 +928,10 @@ assert.ok(restoredCampaign.scenario.unlockedActions.includes("smartphone-basic")
 assert.ok(restoredCampaign.scenario.clues.includes("phone-return-receipt"));
 assert.equal(restoredCampaign.scenario.seojinAffection,2);
 assert.equal(restoredCampaign.scenario.seojinStatusInterest,13);
+assert.equal(getGameModeConfig(GAME_MODES.MARRIAGE_30).label,"STORY MODE");
+assert.equal(getGameModeConfig(GAME_MODES.MARRIAGE_30).campaignId,"marriage-in-30-days");
+assert.equal(getGameModeConfig(GAME_MODES.FREE_ROMANCE).label,"FREE MODE");
+assert.equal(getGameModeConfig(GAME_MODES.FREE_ROMANCE).campaignId,null);
 assert.ok(campaignStorage.getItem(SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)));
 const freeSlotState=createInitialState(partner,()=>0.5,{mode:GAME_MODES.FREE_ROMANCE});
 SaveManager.save(freeSlotState,campaignStorage);

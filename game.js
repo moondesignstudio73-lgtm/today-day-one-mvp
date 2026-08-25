@@ -49,7 +49,7 @@ import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
 import { getGirlfriendVisual } from "./src/girlfriend-visual-data.mjs";
 import { createPlayerProfile, PLAYER_ARCHETYPES, sanitizePlayerNameInput } from "./src/player-profile-data.mjs?v=2";
 import { getRandomPlayerName } from "./src/player-names-data.mjs?v=1";
-import { GAME_MODES, getGameModeConfig } from "./src/scenario-state.mjs?v=1";
+import { GAME_MODES, getGameModeConfig } from "./src/scenario-state.mjs?v=2";
 import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=11";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=2";
@@ -62,6 +62,7 @@ document.documentElement.classList.toggle("touch-device",touchDevice);
 
 let state;
 let onboarding = null;
+let titleTransitioning = false;
 const INTRO_VIDEO_PLAYLIST = ["assets/video/intro.mp4", "assets/video/intro2.mp4"];
 let introVideoIndex = 0;
 const sound = new SoundManager();
@@ -393,6 +394,7 @@ function startImmersiveScene(session) {
   immersiveScene={...session,index:0,currentStep:null,activeCharacterAssetUrl:session.presentation?.characterAssetUrl??null};
   document.body.classList.remove("ui-classic-mode");
   document.body.classList.add("ui-story-mode");
+  $(".story-toolbar").classList.remove("hidden");
   $("#gameScreen").classList.remove("classic-mode");
   $("#gameScreen").classList.add("story-mode");
   $("#visualNovelStage").classList.toggle("location-event-scene",Boolean(session.locationEvent));
@@ -404,16 +406,44 @@ function startImmersiveScene(session) {
   $("#actionGrid").classList.add("hidden");
   $("#nextButton").classList.add("hidden");
   applyScenePresentation(session.presentation);
+  preloadImmersiveAssets(session.sequence);
   eventRuntime.markAssets(session.presentation?.backgroundUrl?"READY":"FALLBACK");eventRuntime.transition("TRANSITIONING");persistEventRuntime(true);
   updateImmersiveCharacter(session.presentation.expressionId);
+  if(session.id===LOCKED_DAY1_SCENE_ID){$("#vnCharacter").hidden=true;delete $("#vnCharacter").dataset.day1Pose;}
   renderImmersiveStep();
+}
+
+function preloadImmersiveAssets(sequence=[]) {
+  if(typeof Image==="undefined")return [];
+  const urls=[...new Set(sequence.flatMap(step=>[step?.assetUrl,step?.source,step?.backgroundId?getBackgroundAsset(step.backgroundId):""]).filter(Boolean))];
+  urls.forEach(source=>{const image=new Image();image.decoding="async";image.src=source;});
+  return urls;
+}
+
+function applyCharacterStage(element,stage={},characterId="") {
+  if(!element)return;
+  element.dataset.characterId=characterId;
+  element.dataset.position=stage.positionPreset??(characterId==="doctor"?"center":characterId==="nurse"?"left":"right");
+  element.dataset.depth=stage.depth??(characterId==="nurse"?"background":"normal");
+}
+
+function updateDay1Focus(focusCharacterId="pov",effect="") {
+  const stage=$("#visualNovelStage");
+  if(!stage)return;
+  stage.dataset.focusCharacter=focusCharacterId;
+  stage.dataset.sceneEffect=effect;
+  for(const element of [$("#vnCharacter"),$("#vnNpcFront"),$("#vnNpcRear")]){
+    if(!element)continue;
+    const active=element.dataset.characterId===focusCharacterId;
+    element.dataset.focus=active?"active":"sub";
+  }
 }
 
 function updateImmersiveCharacter(expressionId="calm") {
   const character=$("#vnCharacter");
   const characterId=immersiveScene?.presentation?.characterId??"girlfriend";
-  if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID){const allowed=new Set(["resting-tired","startled-relief","teary-relief","apologetic-worried","calm-attentive","warm-playful","soft-vulnerable","gentle-resolve"]);const id=allowed.has(expressionId)?expressionId:"calm-attentive";character.src=`assets/characters/day1/haeun/expressions/haeun-expression-${id}-2d.png`;character.dataset.expression=id;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
-  if(immersiveScene?.id===LOCKED_DAY2_SCENE_ID&&immersiveScene.activeCharacterAssetUrl){character.src=immersiveScene.activeCharacterAssetUrl;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
+  if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID){const allowed=new Set(["resting-tired","startled-relief","teary-relief","apologetic-worried","calm-attentive","warm-playful","soft-vulnerable","gentle-resolve"]);const id=allowed.has(expressionId)?expressionId:"calm-attentive";if(!character.dataset.day1Pose){character.src=`assets/characters/day1/haeun/expressions/haeun-expression-${id}-2d.png`;}character.dataset.expression=id;applyCharacterStage(character,{},"haeun");$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
+  if(immersiveScene?.id===LOCKED_DAY2_SCENE_ID&&immersiveScene.activeCharacterAssetUrl){character.src=immersiveScene.activeCharacterAssetUrl;character.hidden=false;character.dataset.expression=expressionId;applyCharacterStage(character,{},"haeun");$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   updateGiftVehicleLayer(characterId);
   const npcSprite=characterId!=="girlfriend"?getNpcSprite(characterId):"";
   if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
@@ -475,10 +505,10 @@ function renderImmersiveStep() {
     if(step.bgmId)sound.playBgm(step.bgmId,state.day);
   }
   if (step.type === "transition") { if(eventRuntime.state!=="TRANSITIONING")eventRuntime.transition("TRANSITIONING",{sceneId:step.label});eventRuntime.input.lock(immersiveScene.id,"StoryTransition");showSceneTransition(step); return; }
-  if (step.type === "characterEnter") { if(step.assetUrl){immersiveScene.activeCharacterAssetUrl=step.assetUrl;$("#vnCharacter").src=step.assetUrl;$("#vnCharacter").dataset.expression=step.expressionId??"calm-attentive";syncOutfitCharacterMedia(true);}else updateImmersiveCharacter(step.expressionId??immersiveScene.presentation.expressionId);$("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
+  if (step.type === "characterEnter") { if(step.assetUrl){immersiveScene.activeCharacterAssetUrl=step.assetUrl;$("#vnCharacter").src=step.assetUrl;$("#vnCharacter").hidden=false;$("#vnCharacter").dataset.day1Pose=step.assetUrl;$("#vnCharacter").dataset.expression=step.expressionId??"calm-attentive";applyCharacterStage($("#vnCharacter"),step.stage,step.characterId??"haeun");syncOutfitCharacterMedia(true);}else updateImmersiveCharacter(step.expressionId??immersiveScene.presentation.expressionId);$("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
   if(step.type==="sfx"){if(step.stopCueId)sound.stopCue(step.stopCueId);else if(step.sfxId)sound.playCue(step.sfxId);queueSceneStep(40);return;}
   if(step.type==="animation"){queueSceneStep(40);return;}
-  if(step.type==="itemShow"){const layer=step.layer==="npcRear"?$("#vnNpcRear"):$("#vnNpcFront");layer.hidden=!step.source;if(step.source)layer.src=step.source;queueSceneStep(120);return;}
+  if(step.type==="itemShow"){const layer=step.layer==="npcRear"?$("#vnNpcRear"):$("#vnNpcFront");layer.hidden=!step.source;if(step.source)layer.src=step.source;applyCharacterStage(layer,step.stage,step.characterId??(step.layer==="npcRear"?"nurse":"doctor"));queueSceneStep(120);return;}
   if(step.type==="cgShow"){
     const layer=$("#vnEventCg");
     const owner=immersiveScene.id;
@@ -490,7 +520,8 @@ function renderImmersiveStep() {
   }
   if (step.type === "expressionChange") { updateImmersiveCharacter(step.expressionId); queueSceneStep(220); return; }
   if (step.type === "choice") { if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime(true);renderImmersiveChoices(step.options); return; }
-  if (step.expressionId) updateImmersiveCharacter(step.expressionId);
+  if (step.expressionId&&immersiveScene?.id!==LOCKED_DAY1_SCENE_ID) updateImmersiveCharacter(step.expressionId);
+  if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID)updateDay1Focus(step.focusCharacterId??(step.type==="narration"?"pov":"haeun"),step.effect??"");
   $("#sceneTitle").textContent=step.type === "narration" ? "" : step.speaker;
   $("#sceneTitle").classList.toggle("hidden",step.type === "narration");
   $("#visualNovelStage").classList.toggle("narration-mode",step.type === "narration");
@@ -536,8 +567,8 @@ function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentSte
 function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){if(eventRuntime.state==="TRANSITIONING")eventRuntime.transition("PLAYING");if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");immersiveScene.index=immersiveScene.sequence.indexOf(choice)+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
 function finishImmersiveScene() {
   if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;if(completedSession?.id===LOCKED_DAY1_SCENE_ID&&state.storyFlags?.day1QuestionStrategy)state.pendingStoryId=null;if(completedSession?.id===LOCKED_DAY2_SCENE_ID&&state.storyFlags?.day2ContactStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY2_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY2_SCENE_ID,getLockedDay2LegacyChoice(state));state.storyFlags.day2RuntimeComplete=true;state.pendingStoryId=null;}eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
-  $("#visualNovelStage").classList.remove("narration-mode","location-event-scene");$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
-  SaveManager.save(state);render();const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);
+  $("#visualNovelStage").classList.remove("narration-mode","location-event-scene");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
+  SaveManager.save(state);render();$(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true);const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);
 }
 
 function restoreEventCheckpoint(){
@@ -579,6 +610,8 @@ function markScreenArrival(element){if(!element)return;element.classList.remove(
 
 function beginOnboarding() {
   onboarding = { step:1, mode:null, partner:null, girlfriendTraitsReady:false, girlfriendJobReady:false, playerArchetype:null, playerName:"", playerJob:null, previewState:null };
+  document.body.classList.remove("title-ui");
+  document.body.classList.add("onboarding-ui","mode-select-stage");
   $("#introScreen").classList.add("hidden");
   $("#onboardingScreen").classList.remove("hidden");
   renderModeSetup();
@@ -586,9 +619,10 @@ function beginOnboarding() {
 }
 
 function renderModeSetup() {
+  document.body.classList.add("mode-select-stage");
   setOnboardingProgress(1);
   const modes=[GAME_MODES.FREE_ROMANCE,GAME_MODES.MARRIAGE_30].map(getGameModeConfig);
-  $("#onboardingContent").innerHTML=`<header class="setup-heading mode-heading"><span>MODE SELECT</span><h1>어떤 이야기를 시작할까요?</h1><p>같은 30일, 전혀 다른 방식으로 살아갑니다.</p></header><div class="mode-select-grid">${modes.map(mode=>{const story=Boolean(mode.fixedPartnerId);return `<button class="mode-select-card ${story?"story-mode-card":"free-mode-card"}" data-game-mode="${mode.id}" type="button"><span class="mode-card-image" style="--mode-image:url('${story?"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png":"assets/maps/gangnam-25d.jpg"}')"><img src="${story?"assets/characters/day1/haeun/poses/haeun-pose-standing-bedside-restraint-2d.png":"assets/characters/girlfriend-standing-smile-2d.png"}" alt=""></span><span class="mode-card-copy"><small>${story?"STORY MODE":"FREE MODE"}</small><strong>${story?"《결혼까지 30일!》":"나만의 30일"}</strong><span>${story?"기억을 잃은 나와 30일 뒤 결혼한다는 여자친구. 감춰진 기억을 따라가는 로맨스 미스터리.":"직업도, 사랑도, 돈도, 인간관계도. 원하는 삶과 관계를 직접 만들어 보세요."}</span><em>${story?"기억상실 · 로맨스 · 미스터리 · 선택형 스토리":"연애 · 직장 · 자산 · 쇼핑 · 인맥 · 자유 선택"}</em><b>${story?"이야기 시작":"자유롭게 시작"} →</b></span></button>`;}).join("")}</div>`;
+  $("#onboardingContent").innerHTML=`<header class="setup-heading mode-heading"><span>MODE SELECT</span><h1>모드 선택</h1><p>플레이할 모드를 선택해주세요.</p></header><div class="mode-select-grid">${modes.map(mode=>{const story=mode.kind==="story";const tags=story?["기억상실","로맨스","미스터리","선택형 스토리"]:["연애","직장","자산","쇼핑","인맥","자유"];return `<button class="mode-select-card ${story?"story-mode-card":"free-mode-card"}" data-game-mode="${mode.id}" type="button"><span class="mode-card-image" style="--mode-image:url('${story?"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png":"assets/maps/gangnam-25d.jpg"}')"><img src="${story?"assets/characters/day1/haeun/poses/haeun-pose-standing-bedside-restraint-2d.png":"assets/characters/girlfriend-standing-smile-2d.png"}" alt=""></span><span class="mode-card-copy"><small>${escapeHtml(mode.label)}</small><strong>《${escapeHtml(mode.title)}》</strong><span>${story?"기억을 잃은 나와 30일 뒤 결혼한다는 여자친구.<br>감춰진 기억을 따라가는 로맨스 미스터리.":"직업도, 사랑도, 돈도, 인간관계도.<br>원하는 삶과 관계를 직접 만들어 보세요."}</span><em>${tags.map(tag=>`<i>${tag}</i>`).join("")}</em><b>${story?"스토리 시작하기":"자유롭게 시작하기"} <span>→</span></b></span></button>`;}).join("")}</div>`;
   document.querySelectorAll("[data-game-mode]").forEach(button=>button.addEventListener("click",()=>{
     onboarding.mode=button.dataset.gameMode;
     const config=getGameModeConfig(onboarding.mode);
@@ -598,6 +632,7 @@ function renderModeSetup() {
 }
 
 function renderGirlfriendSetup() {
+  document.body.classList.remove("mode-select-stage");
   onboarding.step=2; setOnboardingProgress(2);
   const candidates = HEROINE_PROFILES.slice(0,3);
   $("#onboardingContent").innerHTML = `
@@ -633,6 +668,7 @@ function showPremiumConfirmation(archetype) {
 }
 
 function renderPlayerSetup() {
+  document.body.classList.remove("mode-select-stage");
   onboarding.step=3; setOnboardingProgress(3);
   $("#onboardingContent").innerHTML=`
     <header class="setup-heading"><span>PLAYER SETUP</span><h1>나의 외모 선택</h1><p>외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다.</p></header>
@@ -647,12 +683,13 @@ function renderPlayerSetup() {
 }
 
 function renderSetupSummary() {
+  document.body.classList.remove("mode-select-stage");
   onboarding.step=4; setOnboardingProgress(4);
   const player=createPlayerProfile(onboarding.playerArchetype,onboarding.playerName);
   onboarding.previewState=createInitialState(onboarding.partner,Math.random,{mode:onboarding.mode,player,job:onboarding.playerJob});
   const preview=onboarding.previewState;
   const mode=getGameModeConfig(preview.gameMode);
-  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>FINAL PROFILE · ${escapeHtml(mode.title)}</span><h1>${escapeHtml(player.name)}의 30일이 시작됩니다</h1><p>선택한 모드와 설정은 저장 데이터와 모든 게임 시스템에 적용됩니다.</p></header><div class="setup-summary"><img src="${player.image}" alt="${escapeHtml(player.name)}"><div><span>${escapeHtml(player.archetypeName)}</span><h2>${escapeHtml(player.name)}</h2><dl><div><dt>게임 모드</dt><dd>${escapeHtml(mode.title)}</dd></div><div><dt>직업</dt><dd>${escapeHtml(preview.job.name)}</dd></div><div><dt>초기 자금</dt><dd>${money(preview.money)}</dd></div><div><dt>매력 / 패션</dt><dd>${preview.charm} / ${preview.fashion}</dd></div><div><dt>업무 / 사교</dt><dd>${preview.work} / ${preview.social}</dd></div></dl></div><div class="summary-partner"><small>${preview.scenario.enabled?"FIANCÉE · CAMPAIGN":"GIRLFRIEND"}</small><strong>${escapeHtml(preview.partner.name)}${preview.scenario.enabled?` · ${preview.partner.age}세`:""}</strong><span>${preview.scenario.enabled?"MBTI 🔒 · 직업 🔒":`${escapeHtml(preview.partner.mbti)} · ${escapeHtml(preview.partner.career.name)}`}</span><p>${preview.scenario.enabled?"프로필은 함께 보낸 시간과 확인한 기록에 따라 해금됩니다.":personalitySummary(preview.partner)}</p></div></div><button id="openIntroButton" class="primary-button setup-next" type="button">다음 · 프롤로그 보기</button>`;
+  $("#onboardingContent").innerHTML=`<header class="setup-heading"><span>FINAL PROFILE · ${escapeHtml(mode.label)}</span><h1>${escapeHtml(player.name)}의 30일이 시작됩니다</h1><p>선택한 모드와 설정은 저장 데이터와 모든 게임 시스템에 적용됩니다.</p></header><div class="setup-summary"><img src="${player.image}" alt="${escapeHtml(player.name)}"><div><span>${escapeHtml(player.archetypeName)}</span><h2>${escapeHtml(player.name)}</h2><dl><div><dt>게임 모드</dt><dd>${escapeHtml(mode.label)} · ${escapeHtml(mode.title)}</dd></div><div><dt>직업</dt><dd>${escapeHtml(preview.job.name)}</dd></div><div><dt>초기 자금</dt><dd>${money(preview.money)}</dd></div><div><dt>매력 / 패션</dt><dd>${preview.charm} / ${preview.fashion}</dd></div><div><dt>업무 / 사교</dt><dd>${preview.work} / ${preview.social}</dd></div></dl></div><div class="summary-partner"><small>${preview.scenario.enabled?"FIANCÉE · CAMPAIGN":"GIRLFRIEND"}</small><strong>${escapeHtml(preview.partner.name)}${preview.scenario.enabled?` · ${preview.partner.age}세`:""}</strong><span>${preview.scenario.enabled?"MBTI 🔒 · 직업 🔒":`${escapeHtml(preview.partner.mbti)} · ${escapeHtml(preview.partner.career.name)}`}</span><p>${preview.scenario.enabled?"프로필은 함께 보낸 시간과 확인한 기록에 따라 해금됩니다.":personalitySummary(preview.partner)}</p></div></div><button id="openIntroButton" class="primary-button setup-next" type="button">다음 · 프롤로그 보기</button>`;
   $("#openIntroButton").addEventListener("click",openStoryIntro);
 }
 
@@ -681,8 +718,8 @@ function playNextIntroVideo() {
 
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
-function startGame() { beginOnboarding(); }
-function showGame() { requestInitialFullscreen(); state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); markScreenArrival($("#gameScreen")); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
+function startGame() { if(titleTransitioning)return;titleTransitioning=true;$("#startButton").disabled=true;beginOnboarding(); }
+function showGame() { requestInitialFullscreen(); state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); markScreenArrival($("#gameScreen")); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function outfitImageUrl(item) { return item?.heroineId==="haeun"&&item?.productImage?`${item.productImage}?v=8`:item?.productImage??""; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
