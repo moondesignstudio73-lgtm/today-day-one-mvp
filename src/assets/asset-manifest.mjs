@@ -101,6 +101,7 @@ export const BACKGROUND_ASSETS = {
   "neighborhood-street-day":"assets/backgrounds/street/BG_RELATIONSHIP_STREET_DAY_001.png",
   "neighborhood-cafe-day":"assets/backgrounds/map-locations/004_small-cafe.png",
   "neighborhood-park-day":"assets/backgrounds/map-locations/035_running-park.png",
+  "day7-gallery-day":"assets/backgrounds/map-locations/016_gallery.png",
   "cafe-rain-evening":"assets/backgrounds/cafe/BG_CAFE_RAIN_EVENING_001.webp",
   "river-night":"assets/backgrounds/street/BG_RIVER_NIGHT_001.webp",
   ...YUNA_BACKGROUNDS

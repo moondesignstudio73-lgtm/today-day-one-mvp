@@ -179,3 +179,11 @@
 - `docs/day7/DAY7_SCENARIO_QA_V1.md`에서 총 81개 조합, Voice·지식 장부·정보 예산·저장 복원·DAY 8 독립 심부름 훅을 PASS 판정했다.
 - `tests/day7-scenario.test.mjs`와 전체 `tests/simulation.test.mjs` 회귀가 PASS했다. 플레이 대사 범위에서 후반 반전·사고 정보·D-DAY 조기 노출을 차단한다.
 - 다음 관문은 DAY 7 기존 에셋 감사와 Scene별 연출·오디오 매핑이다.
+
+### 2026-08-26 DAY 7 기존 에셋·연출·오디오 관문 기록
+
+- `docs/day7/DAY7_ASSET_DIRECTION_AUDIO_AUDIT.md`에서 8개 Scene을 감사해 집·거리·카페·전시관은 기존 자산 재사용 PASS로 확정했다.
+- 학교 도서실과 야간 놀이공원 수변은 작은 책방·낮 강변으로 오용하지 않고, 전용 16:9 무인 배경 2종을 필수 신규 자산으로 분리했다.
+- `src/day7-presentation-data.mjs`에 Scene별 배경/분기 배경·표정·포즈·카메라·전환·BGM·SFX와 필수 자산 경로를 정의했다. 위기 BGM과 불안 과장 표정을 금지한다.
+- DAY 7 시나리오·프레젠테이션 집중 검사, 문법 검사, 전체 시뮬레이션 회귀가 PASS했다.
+- 다음 관문은 작은 책방·낮 강변 배경 2종 제작과 이미지 품질 검사다. 두 자산이 PASS하기 전 런타임 구현을 완료 처리하지 않는다.
