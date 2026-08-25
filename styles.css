@@ -986,6 +986,51 @@ body:has(#introScreen:not(.hidden)) .shell,body:has(#onboardingScreen:not(.hidde
 body:has(#introScreen:not(.hidden)) .topbar,body:has(#onboardingScreen:not(.hidden)) .topbar{position:relative;z-index:20;width:min(1540px,calc(100% - 56px));height:84px;margin:auto}
 body:has(#introScreen:not(.hidden)) .day-pill,body:has(#onboardingScreen:not(.hidden)) .day-pill,body:has(#introScreen:not(.hidden)) #resetButton,body:has(#onboardingScreen:not(.hidden)) #resetButton{display:none}
 body:has(#onboardingScreen:not(.hidden)) .top-actions{display:none}
+
+/* Story header owns its controls. Never mix the legacy top-actions into the
+   campaign toolbar, and reserve independent left/center/right columns. */
+body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar,
+body.campaign-story-mode.theater-mode.ui-story-mode:not(.ui-night-mode) .topbar{
+  display:grid;
+  grid-template-columns:minmax(190px,1fr) auto minmax(390px,1fr);
+  align-items:center;
+  gap:18px;
+  padding:0 18px;
+  background:linear-gradient(90deg,#090a12f7,#211c29f2 58%,#3a303bf2);
+  color:#fff;
+}
+body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar .brand{
+  grid-column:1;
+  min-width:0;
+  color:#fff;
+}
+body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar .brand :is(strong,small){
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar>.day-pill{
+  position:static;
+  grid-column:2;
+  min-width:280px;
+  margin:0;
+  transform:none;
+}
+body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar>.story-toolbar{
+  position:static;
+  grid-column:3;
+  justify-self:end;
+  margin:0;
+  white-space:nowrap;
+}
+body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar>.top-actions{
+  display:none!important;
+}
+@media(max-width:1100px){
+  body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar{grid-template-columns:52px auto minmax(330px,1fr);gap:10px;padding-inline:10px}
+  body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar .brand>span:last-child{display:none}
+  body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar>.day-pill{min-width:230px;padding-inline:14px}
+  body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar>.story-toolbar button{min-width:48px;padding-inline:7px}
+}
 .title-subtitle{display:flex;align-items:center;gap:18px;width:max-content;color:#9b8ca2;font:600 11px Outfit;letter-spacing:.38em}.title-subtitle:before,.title-subtitle:after{content:"";width:70px;height:1px;background:#dccbd2}
 .intro-screen{position:relative;isolation:isolate;min-height:calc(100dvh - 84px);grid-template-columns:minmax(420px,.9fr) minmax(520px,1.1fr);gap:clamp(24px,5vw,86px);overflow:hidden;padding:clamp(36px,6vh,78px) max(6vw,40px) 0;background:radial-gradient(circle at 22% 20%,#fff 0 12%,transparent 39%),linear-gradient(120deg,#fffaf5 12%,#fff4f3 52%,#f6eef9)}
 .intro-screen:before{content:"";position:absolute;z-index:-1;right:0;bottom:0;left:0;height:37%;opacity:.4;background:linear-gradient(180deg,transparent,#e8dce9),url('assets/maps/gangnam-25d.jpg') center 47%/cover no-repeat;filter:saturate(.6);mask-image:linear-gradient(transparent,#000)}
