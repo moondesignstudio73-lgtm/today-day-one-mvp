@@ -23,15 +23,40 @@ export const CHARACTER_ASSETS = {
 export const NPC_ASSETS = {
   "female-coworker":"assets/npcs/female-coworker-clean.png",
   "office-rookie":"assets/npcs/office-rookie-clean.png",
+  "team-lead":"assets/npcs/team-lead.png",
+  "office-best-male":"assets/npcs/office-best-male.png",
+  "office-rival":"assets/npcs/office-rival.png",
+  "office-partner":"assets/npcs/office-partner.png",
+  "client-manager":"assets/npcs/client-manager.png",
+  "office-party":"assets/npcs/office-party.png",
+  "office-gossip":"assets/npcs/office-gossip.png",
+  "executive-director":"assets/npcs/executive-director.png",
+  "best-friend":"assets/npcs/male-support-clean.png",
+  "heroine-best-friend":"assets/npcs/heroine-best-friend.png",
+  "female-friend":"assets/npcs/female-friend.png",
+  "male-friend":"assets/npcs/male-friend.png",
+  "college-friend":"assets/npcs/college-friend.png",
+  "investor-friend":"assets/npcs/investor-friend.png",
+  "drinking-friend":"assets/npcs/drinking-friend.png",
+  "love-advisor":"assets/npcs/love-advisor.png",
   "male-rival":"assets/npcs/male-rival-clean.png",
   "player-ex":"assets/heroines/yuri/outfits/02.webp"
 };
 
 export const GIFT_VISUAL_ASSETS = Object.freeze({
-  "mini-bag":"assets/items/visual-gifts/mini-bag.png",
-  "silver-necklace":"assets/items/visual-gifts/silver-necklace.png",
-  "aurora-phone":"assets/items/visual-gifts/aurora-phone.png",
-  "rose-parfum":"assets/items/visual-gifts/rose-parfum.png"
+  "linen-shirt":"assets/items/shop-products/linen-shirt.png",
+  "rose-parfum":"assets/items/shop-products/rose-parfum.png",
+  "urban-sneakers":"assets/items/shop-products/urban-sneakers.png",
+  "classic-watch":"assets/items/shop-products/classic-watch.png",
+  "mini-bag":"assets/items/shop-products/mini-bag.png",
+  "silver-necklace":"assets/items/shop-products/silver-necklace.png",
+  "velvet-lip-kit":"assets/items/shop-products/velvet-lip-kit.png",
+  "aurora-phone":"assets/items/shop-products/aurora-phone.png",
+  "skyline-studio":"assets/items/shop-products/skyline-studio.png",
+  "yuna-star-hairpin":"assets/items/shop-products/yuna-star-hairpin.png",
+  "yuna-study-note":"assets/items/shop-products/yuna-study-note.png",
+  "yuna-bag-keyring":"assets/items/shop-products/yuna-bag-keyring.png",
+  "yuna-snack-box":"assets/items/shop-products/yuna-snack-box.png"
 });
 
 export const GIFT_VEHICLE_ASSETS = Object.freeze({
