@@ -134,6 +134,25 @@ const DAY7_HOME_DATE_MEMORY=Object.freeze({
   ],futureEventWeights:{romance:1.15,recovery:1.1},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY8_HOME_MAIL_DEADLINE=Object.freeze({
+  id:"context-day8-home-mail-deadline",title:"우편 봉투의 기한",category:"daily",categoryLabel:"스토리 공용 이벤트",
+  hook:"첫 독립 심부름에서 가져온 우편 봉투의 처리 기한이 눈에 들어왔다.",message:"과거의 수취 관계를 추측하지 않고 현재 확인 가능한 정보만 정리해야 했다.",question:"이 우편을 어떤 기준으로 처리할까?",
+  allowedLocations:["home"],allowedPhases:["evening"],dayRange:[8,8],heroineIds:["haeun"],requiredFeatures:["review-current-mail"],requiredStoryFlags:["day8RuntimeComplete","day8IndependentErrandCompleted"],
+  cooldown:30,maxTriggerCount:1,probability:.35,priority:260,baseWeight:100,tensionLevel:"low",effects:{confidence:1},storyFlag:"context-day8-home-mail-deadline:COMPLETED",forbiddenFlags:["context-day8-home-mail-deadline:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",result:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",status:"ready"},presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},
+  scenes:[{id:"context-day8-home-mail-deadline-scene",title:"우편 봉투의 기한",backgroundId:"day2-home-entry",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"evening",timeOfDay:"evening",weather:"clear",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"식탁에 올려 둔 우편 봉투에는 현재 주소와 발송일, 그리고 가까운 처리 기한이 적혀 있었다."},
+    {type:"dialogue",speaker:"하은",text:"이름이 익숙해도 내가 과거 관계를 대신 설명하지는 않을게. 지금 확인되는 것부터 볼까?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"발송처와 기한만 기록하자. 예전 회원 번호나 수취 이유는 추측하지 않고."},
+    {type:"dialogue",speaker:"하은",text:"좋아. 필요한 전화도 원본 번호가 아니라 봉투의 공식 안내로 확인하자.",expressionId:"smile"},
+    {type:"narration",speaker:"내레이션",text:"봉투는 잃어버린 과거의 단서가 아니라, 지금 처리해야 할 현재의 일정으로 분류되었다."}
+  ]}],
+  choices:[
+    {id:"file-by-deadline",label:"발송처·기한만 기록해 처리 목록에 넣는다",preferenceTags:["LOGICAL","PLANNED"],effects:{confidence:5,stress:-2},response:"확인 가능한 발송처와 기한만 기록하고 과거 관계는 빈칸으로 남겼다.",flag:"context-day8-home-mail-deadline:FILED",memory:"DAY 8 우편을 현재 발송처와 처리 기한 기준으로 분류했다.",futureEventWeights:{daily:1.2}},
+    {id:"schedule-official-check",label:"공식 안내 번호 확인을 내일 일정으로 저장한다",preferenceTags:["BOUNDARY","PRACTICAL"],effects:{trust:4,confidence:3,stress:-3},response:"봉투의 공식 채널만 확인하기로 하고 오늘은 더 열어 보지 않았다.",flag:"context-day8-home-mail-deadline:OFFICIAL_CHECK",memory:"DAY 8 우편의 공식 안내 채널 확인을 다음 일정으로 남겼다.",futureEventWeights:{investigation:1.15}}
+  ],futureEventWeights:{daily:1.1,investigation:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
@@ -143,7 +162,8 @@ export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   DAY4_HOME_LEDGER_REVIEW,
   DAY5_OFFICE_HANDOFF,
   DAY6_HOME_PAYMENT_BOUNDARY,
-  DAY7_HOME_DATE_MEMORY
+  DAY7_HOME_DATE_MEMORY,
+  DAY8_HOME_MAIL_DEADLINE
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);

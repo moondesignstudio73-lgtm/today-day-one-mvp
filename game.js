@@ -62,8 +62,8 @@ import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEf
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=2";
 import { getMapLocationAsset } from "./src/map-location-assets.mjs";
-import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=8";
-import { getSharedEventById } from "./src/event-compatibility.mjs?v=7";
+import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=9";
+import { getSharedEventById } from "./src/event-compatibility.mjs?v=8";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -754,6 +754,7 @@ function finishImmersiveScene() {
   if(completedSession?.id===LOCKED_DAY7_SCENE_ID&&state.storyFlags?.day7MemoryStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY7_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY7_SCENE_ID,getLockedDay7LegacyChoice(state));state.storyFlags.day7RuntimeComplete=true;state.pendingStoryId=null;}
   if(completedSession?.id===LOCKED_DAY7_SCENE_ID&&state.storyFlags?.day7RuntimeComplete&&!state.storyFlags?.day7FreeActionComplete){const freeAction={type:"freeAction",id:"day7-home-evening",phase:"evening",location:"home",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(completedSession?.id===LOCKED_DAY8_SCENE_ID&&state.storyFlags?.day8ShareStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY8_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY8_SCENE_ID,getLockedDay8LegacyChoice(state));state.storyFlags.day8RuntimeComplete=true;state.pendingStoryId=null;}
+  if(completedSession?.id===LOCKED_DAY8_SCENE_ID&&state.storyFlags?.day8RuntimeComplete&&!state.storyFlags?.day8FreeActionComplete){const freeAction={type:"freeAction",id:"day8-home-evening",phase:"evening",location:"home",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(completedSession?.id===LOCKED_DAY9_SCENE_ID&&state.storyFlags?.day9DebriefStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY9_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY9_SCENE_ID,getLockedDay9LegacyChoice(state));state.storyFlags.day9RuntimeComplete=true;state.pendingStoryId=null;}
   const returnToFreeAction=Boolean(completedSession?.fromStoryFreeAction&&markStoryFreeActionEventComplete(state,completedSession.id));
   const nextCampaignScene=returnToFreeAction?null:advanceCampaignChapter(completedSession);
