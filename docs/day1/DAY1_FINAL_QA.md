@@ -58,6 +58,6 @@
 - `node --check game.js`, `node --check src/day1-campaign-runtime.mjs`: PASS.
 - `scripts/process-day1-sprites.py`: 재현 실행 PASS.
 
-## 승인 대기
+## 사용자 최종 승인
 
-PHASE 23은 완료됐지만 DAY 1은 아직 `COMPLETE`가 아니다. 사용자가 실제 배포본을 확인하고 최종 승인한 뒤에만 PHASE 24와 `DAY 1 — COMPLETE`를 기록한다. 승인 전에는 DAY 2 이후 신규 콘텐츠를 시작하지 않는다.
+2026-08-25 사용자가 실제 배포본을 최종 승인했다. PHASE 24와 `DAY 1 — COMPLETE`를 확정한다. 다음 DAY는 사용자가 명시적으로 시작할 때까지 진행하지 않는다.
