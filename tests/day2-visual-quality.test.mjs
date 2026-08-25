@@ -10,6 +10,7 @@ const dimensions = source => {
   assert.equal(existsSync(url), true, source);
   const file = readFileSync(url);
   assert.equal(file.subarray(1, 4).toString(), "PNG", source);
+  assert.equal(file[25], 6, `${source}: expected RGBA PNG color type`);
   return { width:file.readUInt32BE(16), height:file.readUInt32BE(20) };
 };
 
@@ -21,6 +22,12 @@ for (const source of Object.values(DAY2_RUNTIME_OVERLAYS.pov)) {
   const { height } = dimensions(source);
   assert.ok(height >= 900, `${source}: POV overlay must be at least 900px tall`);
 }
+assert.equal(
+  [...Object.values(DAY2_RUNTIME_OVERLAYS.haeun), ...Object.values(DAY2_RUNTIME_OVERLAYS.pov)]
+    .some(source => source.includes("-hq-v2.png")),
+  false,
+  "runtime must not use upscaled pseudo-HQ overlays",
+);
 
 const presentation = flags => getLockedDay2ResumePresentation({storyFlags:flags});
 assert.equal(presentation({day2RuntimeStage:3}).backgroundId, "day2-car-interior");
@@ -37,4 +44,4 @@ assert.match(game, /applyScenePresentation\(immersiveScene\.presentation\)/);
 assert.match(game, /immersiveScene\.activeCharacterAssetUrl=step\.assetUrl/);
 assert.match(game, /\$\("#vnNpcFront"\)\.hidden=true/);
 
-console.log("✓ DAY 2 고해상도 오버레이·단계별 화면 복원 계약 PASS");
+console.log("✓ DAY 2 전면 재생성 오버레이·단계별 화면 복원 계약 PASS");

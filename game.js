@@ -28,9 +28,11 @@ import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKE
 import { analyzePlayHistory } from "./src/ending-manager.mjs";
 import { SoundManager } from "./src/sound-manager.mjs?v=6";
 import { DAY1_BGM_CUES } from "./src/day1-audio-data.mjs";
-import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs?v=2";
+import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs?v=4";
 import { DAY2_BGM_CUES } from "./src/day2-audio-data.mjs";
-import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyChoice, getLockedDay2ResumePresentation, getLockedDay2Segment } from "./src/day2-campaign-runtime.mjs?v=2";
+import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyChoice, getLockedDay2ResumePresentation, getLockedDay2Segment } from "./src/day2-campaign-runtime.mjs?v=4";
+import { LOCKED_DAY4_SCENE_ID, applyLockedDay4ChoiceState, getLockedDay4LegacyChoice, getLockedDay4ResumePresentation, getLockedDay4Segment } from "./src/day4-campaign-runtime.mjs?v=1";
+import { LOCKED_DAY5_SCENE_ID, applyLockedDay5ChoiceState, getLockedDay5LegacyChoice, getLockedDay5ResumePresentation, getLockedDay5Segment } from "./src/day5-campaign-runtime.mjs?v=1";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
@@ -124,6 +126,7 @@ function closeModal() {
   modal.classList.remove("today-record-active");
   modal.classList.remove("relationship-directory-active");
   modal.classList.remove("item-detail-active");
+  modal.classList.remove("intro-guide-active");
   if (modalReturnFocus?.isConnected) modalReturnFocus.focus();
   modalReturnFocus = null;
   if (state && !state.ended && !state.breakup) { if(state.phase===3){if(state.world?.mode==="district")renderWorldMap();else renderNightHome();}else sound.playScene(phases[state.phase].key,state.day); }
@@ -377,6 +380,8 @@ function openStoryScene(scene) {
   if (!scene) return;
   const lockedDay1=scene.id===LOCKED_DAY1_SCENE_ID;
   const lockedDay2=scene.id===LOCKED_DAY2_SCENE_ID;
+  const lockedDay4=scene.id===LOCKED_DAY4_SCENE_ID;
+  const lockedDay5=scene.id===LOCKED_DAY5_SCENE_ID;
   const presentation=resolveStoryPresentation(scene,state);
   if(!(lockedDay1&&state.storyFlags?.day1QuestionStrategy))state.pendingStoryId = scene.id;
   if(presentation.eventCgId&&!state.cgCollection.some(entry=>entry.id===presentation.eventCgId))state.cgCollection.push({id:presentation.eventCgId,title:scene.title,image:presentation.backgroundUrl,day:state.day});
@@ -384,10 +389,14 @@ function openStoryScene(scene) {
   if(!lockedDay1&&!lockedDay2)sound.playBgm(scene.bgm ?? "theme",state.day);
   const lockedSegment=state.storyFlags?.day1QuestionStrategy?2:state.storyFlags?.day1ContactStrategy?1:0;
   const day2Resume=lockedDay2?getLockedDay2ResumePresentation(state):null;
-  const lockedPresentation=lockedDay1?{...presentation,backgroundId:"day1-hospital-ceiling",backgroundUrl:getBackgroundAsset("day1-hospital-ceiling"),expressionId:"resting-tired",poseId:"seated-dozing"}:lockedDay2?{...presentation,...day2Resume,backgroundUrl:getBackgroundAsset(day2Resume.backgroundId),expressionId:"calm-attentive",poseId:"standing"}:presentation;
-  startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
+  const day4Resume=lockedDay4?getLockedDay4ResumePresentation(state):null;
+  const day5Resume=lockedDay5?getLockedDay5ResumePresentation(state):null;
+  const lockedPresentation=lockedDay1?{...presentation,backgroundId:"day1-hospital-ceiling",backgroundUrl:getBackgroundAsset("day1-hospital-ceiling"),expressionId:"resting-tired",poseId:"seated-dozing"}:lockedDay2?{...presentation,...day2Resume,backgroundUrl:getBackgroundAsset(day2Resume.backgroundId),expressionId:"calm-attentive",poseId:"standing"}:lockedDay4?{...presentation,...day4Resume,backgroundUrl:getBackgroundAsset(day4Resume.backgroundId),expressionId:"calm",poseId:"standing"}:lockedDay5?{...presentation,...day5Resume,backgroundUrl:getBackgroundAsset(day5Resume.backgroundId),expressionId:"calm",poseId:"standing"}:presentation;
+  startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):lockedDay4?getLockedDay4Segment(state):lockedDay5?getLockedDay5Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
     if(lockedDay1){const stage=applyLockedDay1ChoiceState(state,choiceId);if(!stage)return null;if(stage.stage==="contact"){SaveManager.save(state);return getLockedDay1Segment(state,1);}const result=resolveStoryChoice(state,scene.id,stage.legacyChoiceId);if(!result)return null;SaveManager.save(state);return getLockedDay1Segment(state,2);}
     if(lockedDay2){const result=applyLockedDay2ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay2Segment(state,result.stage);}
+    if(lockedDay4){const result=applyLockedDay4ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay4Segment(state,result.stage);}
+    if(lockedDay5){const result=applyLockedDay5ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay5Segment(state,result.stage);}
     const result=resolveStoryChoice(state,scene.id,choiceId);
     if(!result)return null;
     state.logs.push({time:`DAY ${state.day} · STORY`,text:`${scene.title} — ${result.choice.label}`});
@@ -407,6 +416,14 @@ function startImmersiveScene(session) {
     const resumeVisual=getLockedDay2ResumePresentation(state);
     immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
     immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl;
+  }
+  if(session.id===LOCKED_DAY4_SCENE_ID){
+    const resumeVisual=getLockedDay4ResumePresentation(state);
+    immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
+  }
+  if(session.id===LOCKED_DAY5_SCENE_ID){
+    const resumeVisual=getLockedDay5ResumePresentation(state);
+    immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
   }
   document.body.classList.remove("ui-classic-mode");
   document.body.classList.add("ui-story-mode");
@@ -462,7 +479,8 @@ function updateImmersiveCharacter(expressionId="calm") {
   if(immersiveScene?.id===LOCKED_DAY2_SCENE_ID&&immersiveScene.activeCharacterAssetUrl){character.src=immersiveScene.activeCharacterAssetUrl;character.hidden=false;character.dataset.expression=expressionId;applyCharacterStage(character,{},"haeun");$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   updateGiftVehicleLayer(characterId);
   const npcSprite=characterId!=="girlfriend"?getNpcSprite(characterId):"";
-  if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
+  const yuriEventVideo=characterId==="player-ex"&&["event","temptation"].includes(immersiveScene?.type)?"assets/heroines/yuri/yuri-ex-girlfriend-2d-01.webm?v=1":"";
+  if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(!yuriEventVideo,yuriEventVideo);return;}
   if(characterId==="girlfriend"&&immersiveScene?.previewOutfitImage){character.src=immersiveScene.previewOutfitImage;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   state.currentExpression=expressionId;
   const poseId=immersiveScene?.presentation?.poseId,outfitId=immersiveScene?.presentation?.outfitId;
@@ -565,9 +583,14 @@ function showSceneTransition(step) {
 }
 function renderImmersiveChoices(options=[]) {
   const layer=$("#storyChoiceLayer");
-  const exploration=immersiveScene?.id==="m30-day4-arrive-home";
+  const day4Stage=state.storyFlags?.day4RuntimeStage??0;
+  const exploration=immersiveScene?.id===LOCKED_DAY4_SCENE_ID&&day4Stage===0;
+  const day4Prompts={1:"오래된 연락에 어떻게 응답할까?",2:"과거의 나를 어떤 방식으로 확인할까?",3:"사고에 관해 어디까지 물을까?",4:"오늘 확인한 내용을 하은과 어떻게 나눌까?"};
+  const day5Stage=state.storyFlags?.day5RuntimeStage??0;
+  const day5Prompts={0:"회사 문턱에서 무엇을 먼저 확인할까?",1:"윤서진과의 관계를 어떤 방식으로 확인할까?",2:"첫 업무 자료를 어떤 방식으로 검토할까?",3:"다음 복귀의 우선순위를 어디에 둘까?"};
   layer.classList.toggle("exploration-hotspots",exploration);
-  layer.innerHTML=`<p class="choice-prompt">${exploration?"집 안에서 무엇을 먼저 확인할까?":"어떻게 대답할까?"}</p>${options.map((option,index)=>`<button type="button" data-immersive-choice="${escapeHtml(option.id)}"><span>${exploration?"◇":String(index+1).padStart(2,"0")}</span><b>${escapeHtml(option.label)}</b></button>`).join("")}`;
+  const prompt=immersiveScene?.id===LOCKED_DAY4_SCENE_ID?(exploration?"집 안에서 무엇을 먼저 확인할까?":day4Prompts[day4Stage]??"어떤 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY5_SCENE_ID?(day5Prompts[day5Stage]??"어떤 복귀 전략을 선택할까?"):"어떻게 대답할까?";
+  layer.innerHTML=`<p class="choice-prompt">${prompt}</p>${options.map((option,index)=>`<button type="button" data-immersive-choice="${escapeHtml(option.id)}"><span>${exploration?"◇":String(index+1).padStart(2,"0")}</span><b>${escapeHtml(option.label)}</b></button>`).join("")}`;
   layer.classList.remove("hidden");
   layer.querySelector("button")?.focus();
 }
@@ -595,7 +618,15 @@ function chooseImmersiveOption(choiceId) {
   renderImmersiveStep();
 }
 function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentStep?.type==="choice"||eventRuntime.input.snapshot().locked)return;if(eventRuntime.state==="WAITING_DIALOGUE")eventRuntime.transition("PLAYING");renderImmersiveStep(); }
-function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){if(eventRuntime.state==="TRANSITIONING")eventRuntime.transition("PLAYING");if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");immersiveScene.index=immersiveScene.sequence.indexOf(choice)+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
+function applySkippedScenePresentation(choiceIndex){
+  const skipped=immersiveScene.sequence.slice(0,choiceIndex);
+  const transition=skipped.filter(step=>step.type==="transition").at(-1);
+  const characterStep=skipped.filter(step=>step.type==="characterEnter"||step.type==="expressionChange").at(-1);
+  if(transition){immersiveScene.presentation={...immersiveScene.presentation,backgroundId:transition.backgroundId??immersiveScene.presentation.backgroundId,backgroundUrl:transition.backgroundId?getBackgroundAsset(transition.backgroundId):immersiveScene.presentation.backgroundUrl,characterId:transition.characterId??immersiveScene.presentation.characterId,expressionId:transition.expressionId??immersiveScene.presentation.expressionId,poseId:transition.poseId??immersiveScene.presentation.poseId,outfitId:transition.outfitId??immersiveScene.presentation.outfitId,weather:transition.weather??immersiveScene.presentation.weather,timeOfDay:transition.timeOfDay??immersiveScene.presentation.timeOfDay};applyScenePresentation(immersiveScene.presentation);}
+  if(characterStep?.assetUrl){immersiveScene.activeCharacterAssetUrl=characterStep.assetUrl;$("#vnCharacter").src=characterStep.assetUrl;$("#vnCharacter").hidden=false;applyCharacterStage($("#vnCharacter"),characterStep.stage,characterStep.characterId??immersiveScene.presentation.characterId);}
+  else if(transition||characterStep)updateImmersiveCharacter(characterStep?.expressionId??transition?.expressionId??immersiveScene.presentation.expressionId);
+}
+function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){const choiceIndex=immersiveScene.sequence.indexOf(choice);applySkippedScenePresentation(choiceIndex);if(eventRuntime.state==="TRANSITIONING")eventRuntime.transition("PLAYING");if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");immersiveScene.index=choiceIndex+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1,backgroundId:immersiveScene.presentation?.backgroundId});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
 function advanceCampaignChapter(completedSession) {
   if(state.scenario?.enabled!==true)return null;
   const match=String(completedSession?.id??"").match(/^m30-day(\d+)-/);
@@ -609,7 +640,7 @@ function advanceCampaignChapter(completedSession) {
   return selectNextStoryScene(state);
 }
 function finishImmersiveScene() {
-  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;if(completedSession?.id===LOCKED_DAY1_SCENE_ID&&state.storyFlags?.day1QuestionStrategy)state.pendingStoryId=null;if(completedSession?.id===LOCKED_DAY2_SCENE_ID&&state.storyFlags?.day2ContactStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY2_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY2_SCENE_ID,getLockedDay2LegacyChoice(state));state.storyFlags.day2RuntimeComplete=true;state.pendingStoryId=null;}const nextCampaignScene=advanceCampaignChapter(completedSession);eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
+  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;if(completedSession?.id===LOCKED_DAY1_SCENE_ID&&state.storyFlags?.day1QuestionStrategy)state.pendingStoryId=null;if(completedSession?.id===LOCKED_DAY2_SCENE_ID&&state.storyFlags?.day2ContactStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY2_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY2_SCENE_ID,getLockedDay2LegacyChoice(state));state.storyFlags.day2RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY4_SCENE_ID&&state.storyFlags?.day4SharingStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY4_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY4_SCENE_ID,getLockedDay4LegacyChoice(state));state.storyFlags.day4RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY5_SCENE_ID&&state.storyFlags?.day5ReturnStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY5_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY5_SCENE_ID,getLockedDay5LegacyChoice(state));state.storyFlags.day5RuntimeComplete=true;state.pendingStoryId=null;}const nextCampaignScene=advanceCampaignChapter(completedSession);eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
   $("#visualNovelStage").classList.remove("narration-mode","location-event-scene");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
   SaveManager.save(state);render();$(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true);const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);else if(nextCampaignScene)setTimeout(()=>openStoryScene(nextCampaignScene),0);
 }
@@ -677,10 +708,10 @@ function renderModeSetup() {
 function renderGirlfriendSetup() {
   document.body.classList.remove("mode-select-stage");
   onboarding.step=2; setOnboardingProgress(2);
-  const candidates = HEROINE_PROFILES.slice(0,3);
+  const candidates = ["haeun","nari","yuri"].map(id=>HEROINE_PROFILES.find(profile=>profile.id===id)).filter(Boolean);
   $("#onboardingContent").innerHTML = `
     <header class="setup-heading"><span>GIRLFRIEND SELECT</span><h1>여자친구 캐릭터 선택</h1><p>보라색 머리 캐릭터를 선택한 뒤 MBTI와 직업을 확인하세요. 이름은 그대로 유지됩니다.</p></header>
-    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>`<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${profile.referenceImage}?v=7" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`).join("")}</div>
+    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>{const image=profile.id==="yuri"?"assets/heroines/yuri/yuri-ex-girlfriend-2d.png?v=2":`${profile.referenceImage}?v=7`;return `<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${image}" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`;}).join("")}</div>
     <div class="roll-panel ${onboarding.partner?"":"locked"}">
       <div class="roll-row"><div><small>MBTI</small><b id="girlfriendTraitRoll">${onboarding.girlfriendTraitsReady?escapeHtml(onboarding.partner.mbti):"버튼을 눌러 MBTI 선택"}</b></div><button id="rollGirlfriendTraits" type="button" ${onboarding.partner?"":"disabled"}>MBTI 랜덤 선택</button></div>
       <div class="roll-row"><div><small>CAREER</small><b id="girlfriendJobRoll">${onboarding.girlfriendJobReady?escapeHtml(onboarding.partner.career.name):"여자친구의 직업"}</b></div><button id="rollGirlfriendJob" type="button" ${onboarding.partner?"":"disabled"}>직업 랜덤 선택</button></div>
@@ -718,15 +749,16 @@ function renderPlayerSetup() {
   $("#onboardingContent").innerHTML=`
     <header class="setup-heading"><span>PLAYER SETUP</span><h1>${storyMode?"이름과 직업 설정":"나의 외모 선택"}</h1><p>${storyMode?"STORY MODE의 주인공 외형은 고정됩니다. 이름과 직업만 선택해 주세요.":"외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다."}</p></header>
     <div class="setup-card-grid player-select-grid ${storyMode?"story-player-locked":""}">${PLAYER_ARCHETYPES.map((entry)=>{const fixed=storyMode&&entry.id==="balanced",locked=storyMode&&!fixed;return `<button class="setup-character-card ${onboarding.playerArchetype===entry.id?"selected":""} ${locked?"story-locked":""}" data-player="${entry.id}" type="button" ${storyMode?'disabled aria-disabled="true"':""}><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.premium?" · PREMIUM":""}</strong><span>${fixed?"STORY MODE 고정":locked?"🔒 STORY MODE 잠금":`능력 ${entry.abilityRating} · 외모 ${entry.appearanceRating}`}</span><small>${locked?"FREE MODE에서 선택할 수 있습니다.":entry.description}</small></button>`;}).join("")}</div>
-    <div class="player-input-panel"><label for="playerNameInput">내 이름 <small>최대 3글자 · 한글 또는 영문</small></label><div class="player-name-roll"><input id="playerNameInput" value="${escapeHtml(onboarding.playerName)}" placeholder="이름" autocomplete="off" spellcheck="false" inputmode="text" aria-describedby="playerNameNotice"><button id="rollPlayerName" type="button">내 이름 랜덤 선택</button></div><small id="playerNameNotice" class="player-name-notice" aria-live="polite"></small><div class="roll-row"><div><small>MY CAREER</small><b id="playerJobRoll">${onboarding.playerJob?escapeHtml(onboarding.playerJob.name):"버튼을 눌러 직업 선택"}</b></div><button id="rollPlayerJob" type="button">내 직업 랜덤 선택</button></div></div>
+    <div class="player-input-panel"><label for="playerNameInput">남자친구 이름 <small>최대 3글자 · 한글 또는 영문</small></label><div class="player-name-roll"><input id="playerNameInput" value="${escapeHtml(onboarding.playerName)}" placeholder="이름을 직접 입력하세요" autocomplete="off" spellcheck="false" inputmode="text" aria-describedby="playerNameNotice"><button id="rollPlayerName" type="button">내 이름 랜덤 선택</button></div><small id="playerNameNotice" class="player-name-notice" aria-live="polite"></small><div class="roll-row"><div><small>MY CAREER</small><b id="playerJobRoll">${onboarding.playerJob?escapeHtml(onboarding.playerJob.name):"버튼을 눌러 직업 선택"}</b></div><button id="rollPlayerJob" type="button">내 직업 랜덤 선택</button></div></div>
     <button id="playerSetupNext" class="primary-button setup-next" type="button" ${onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob?"":"disabled"}>최종 결과 확인</button>`;
   if(!storyMode)document.querySelectorAll("[data-player]").forEach((button)=>button.addEventListener("click",()=>{const archetype=PLAYER_ARCHETYPES.find((entry)=>entry.id===button.dataset.player);if(archetype.premium)showPremiumConfirmation(archetype);else selectPlayerArchetype(archetype.id);}));
   const nameInput=$("#playerNameInput");
   let composingName=false;
-  const commitPlayerName=()=>{const result=sanitizePlayerNameInput(nameInput.value);onboarding.playerName=result.value;nameInput.value=result.value;$("#playerNameNotice").textContent=result.reason;$("#playerNameNotice").classList.toggle("warning",Boolean(result.reason));$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);};
+  const commitPlayerName=(normalizeField=false)=>{const result=sanitizePlayerNameInput(nameInput.value);onboarding.playerName=result.value;if(normalizeField)nameInput.value=result.value;$("#playerNameNotice").textContent=result.reason;$("#playerNameNotice").classList.toggle("warning",Boolean(result.reason));$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);};
   nameInput.addEventListener("compositionstart",()=>{composingName=true;});
-  nameInput.addEventListener("compositionend",()=>{composingName=false;commitPlayerName();});
-  nameInput.addEventListener("input",()=>{if(!composingName)commitPlayerName();});
+  nameInput.addEventListener("compositionend",()=>{composingName=false;commitPlayerName(true);});
+  nameInput.addEventListener("input",()=>{if(!composingName)commitPlayerName(false);});
+  nameInput.addEventListener("blur",()=>commitPlayerName(true));
   $("#rollPlayerName").addEventListener("click",()=>{onboarding.playerName=getRandomPlayerName(onboarding.playerName);$("#playerNameInput").value=onboarding.playerName;$("#playerNameNotice").textContent="200개 이름 중 하나를 선택했어요.";$("#playerNameNotice").classList.remove("warning");$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);});
   $("#rollPlayerJob").addEventListener("click",(event)=>runRoll(event.currentTarget,$("#playerJobRoll"),JOBS.map((job)=>job.name),()=>{onboarding.playerJob=generateJob();$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName);return onboarding.playerJob.name;}));
   $("#playerSetupNext").addEventListener("click",renderSetupSummary);
@@ -864,7 +896,7 @@ function render() {
   $("#affectionValue").textContent = Math.round(state.affection); $("#trustValue").textContent = Math.round(state.trust);
   $("#affectionBar").style.width = `${state.affection/10}%`; $("#trustBar").style.width = `${state.trust/10}%`;
   const traitRows = getVisibleTraitRows(state); const revealedCount = traitRows.filter(row => row.revealed).length;
-  $("#moneyValue").textContent = money(state.money); $("#jobValue").textContent = `${state.player.name} · ${state.job.name} · Lv.${state.jobLevel}`; $("#traitProgress").textContent = `${revealedCount} / 5`;
+  $("#moneyValue").textContent = money(state.money); $("#traitProgress").textContent = `${revealedCount} / 5`;
   $("#playerProfileImage").src=state.player.image;$("#playerProfileImage").alt=`${state.player.name} 주인공 이미지`;$("#playerProfileName").textContent=state.player.name;$("#playerProfileJob").textContent=state.job.name;
   $("#lifeStatus").textContent = state.fatigue >= 70 ? "피로가 누적되는 중" : state.stress > 75 ? "한계에 가까움" : state.energy < 25 ? "휴식이 필요함" : state.confidence >= 70 ? "자신감이 넘치는 중" : state.affection > 750 ? "사랑이 깊어지는 중" : "나쁘지 않은 하루";
   $("#traitList").innerHTML = traitRows.map(row => row.revealed ? `<div class="trait"><span>${row.name}</span><b>${row.value}</b></div>` : `<div class="trait locked"><span>${row.name}</span><b>${row.confidence ? `${row.hint} · ${row.confidence}%` : "???"}</b></div>`).join("");
@@ -1406,16 +1438,24 @@ function closeGameTools() {
 
 function renderGameTools() {
   if(!state)return;
-  const tabs=[["outfits","의상",HEROINE_OUTFITS.filter(item=>item.heroineId===state.partner.heroineId).length],["events","이벤트",SITUATION_EVENTS.length+1],["maps","지도",Object.keys(WORLD_MAPS).length],["npcs","NPC",state.npcs?.length??0]];
+  const yuriEvent=SITUATION_EVENTS.find(event=>event.npcId==="player-ex");
+  const tabs=[["outfits","의상",HEROINE_OUTFITS.filter(item=>item.heroineId===state.partner.heroineId).length],["events","이벤트",SITUATION_EVENTS.length+1],["maps","지도",Object.keys(WORLD_MAPS).length],["npcs","NPC",state.npcs?.length??0],["yuri","전여자친구",1]];
   $("#gameToolsTabs").innerHTML=tabs.map(([id,label,count])=>`<button type="button" data-tools-tab="${id}" class="${gameToolsTab===id?"active":""}"><span>${label}</span><b>${count}</b></button>`).join("");
   const content=$("#gameToolsContent");
   if(gameToolsTab==="outfits"){
     const equipped=getEquippedHeroineOutfit(state),outfits=HEROINE_OUTFITS.filter(item=>item.heroineId===state.partner.heroineId);
     content.innerHTML=`<div class="game-tools-intro"><b>${escapeHtml(state.partner.name)} 전체 의상</b><span>잠금·보유 조건과 관계없이 미리 보고 바로 선택할 수 있습니다.</span></div><div class="tools-outfit-grid">${outfits.map((outfit,index)=>`<button type="button" data-tools-outfit="${outfit.id}" class="tools-outfit-card ${equipped?.id===outfit.id?"selected":""}"><img src="${outfitImageUrl(outfit)}" alt="${escapeHtml(outfit.name)}" loading="lazy"><span>${outfit.eventOnly?"이벤트 의상":String(index+1).padStart(2,"0")}</span><b>${escapeHtml(outfit.name.replace(`${state.partner.name} · `,""))}</b><small>${outfit.eventOnly?"근사한 데이트 10회 보상":money(outfit.price)} · ${equipped?.id===outfit.id?"현재 착용 중":"이 의상 선택"}</small></button>`).join("")}</div>`;
+  }else if(gameToolsTab==="yuri"){
+    const yuriVideos=[
+      {id:"01",label:"대화씬",description:"유리 대화·유혹 이벤트의 가운데 패널 영상",source:"assets/heroines/yuri/yuri-ex-girlfriend-2d-01.webm?v=1",eventId:yuriEvent?.id},
+      {id:"02",label:"특별 영상",description:"유리 특별 이벤트 영상 02",source:"assets/heroines/yuri/yuri-ex-girlfriend-2d-02.webm?v=1"},
+      {id:"03",label:"특별 영상",description:"유리 특별 이벤트 영상 03",source:"assets/heroines/yuri/yuri-ex-girlfriend-2d-03.webm?v=1"}
+    ];
+    content.innerHTML=`<div class="game-tools-intro"><b>전여자친구 · 유리</b><span>유리 영상 01~03을 각각 확인할 수 있습니다. 대화 장면에는 01번 영상이 사용됩니다.</span></div><div class="tools-yuri-video-list">${yuriVideos.map(item=>`<article class="tools-yuri-video-card"><div class="tools-yuri-media"><video src="${item.source}" autoplay loop muted playsinline preload="metadata" aria-label="전여자친구 유리 ${item.id} ${item.label}"></video><span>${item.id}</span></div><div class="tools-yuri-copy"><span>YURI VIDEO ${item.id}</span><h3>유리 ${item.id} · ${item.label}</h3><p>${item.description}</p>${item.eventId?`<button type="button" data-tools-yuri-event="${item.eventId}">01 대화씬 가운데 패널에서 실행</button>`:""}</div></article>`).join("")}</div>`;
   }else if(gameToolsTab==="events"){
     const groups=SITUATION_EVENTS.reduce((result,event)=>{(result[event.categoryLabel]??=[]).push(event);return result;},{});
     const invitation=getPendingLateNightInvitation(state),invitationStatus=invitation?"메시지 도착":state.nightState?.lateNightInvitation?.status==="completed"?"완료":state.day>=LATE_NIGHT_INVITATION_MIN_DAY?"발생 가능":"DAY 6 잠금";
-    content.innerHTML=`<div class="game-tools-intro"><b>전체 이벤트</b><span>일반 이벤트는 조건을 무시하고 실행할 수 있으며, 확률형 특수 이벤트는 발생 조건과 진행 방법을 확인할 수 있습니다.</span></div><section class="tools-event-group"><h3>심야 메시지 이벤트 <span>1</span></h3><button type="button" class="tools-list-row" data-tools-late-invitation><span><b>보고 싶어 · 늦은 밤의 초대</b><small>DAY ${LATE_NIGHT_INVITATION_MIN_DAY}+ · 22:00 이후 · 하루 1회 · ${Math.round(LATE_NIGHT_INVITATION_CHANCE*100)}% · ${escapeHtml(invitationStatus)}</small></span><em>상세</em></button></section>${Object.entries(groups).map(([label,events])=>`<section class="tools-event-group"><h3>${escapeHtml(label)} <span>${events.length}</span></h3>${events.map(event=>`<button type="button" class="tools-list-row" data-tools-event="${event.id}"><span><b>${escapeHtml(event.title)}</b><small>${escapeHtml(event.id)} · DAY ${event.dayRange?.[0]??"-"}–${event.dayRange?.[1]??"-"}</small></span><em>실행</em></button>`).join("")}</section>`).join("")}`;
+    content.innerHTML=`<div class="game-tools-intro"><b>전체 이벤트</b><span>일반 이벤트는 조건을 무시하고 실행할 수 있으며, 확률형 특수 이벤트는 발생 조건과 진행 방법을 확인할 수 있습니다.</span></div>${yuriEvent?`<section class="tools-event-group tools-featured-event"><h3>특별 이벤트 <span>1</span></h3><button type="button" class="tools-list-row" data-tools-yuri-event="${yuriEvent.id}"><span><b>전여자친구 유리</b><small>투명 캐릭터 영상 · 가운데 패널 특별 이벤트</small></span><em>실행</em></button></section>`:""}<section class="tools-event-group"><h3>심야 메시지 이벤트 <span>1</span></h3><button type="button" class="tools-list-row" data-tools-late-invitation><span><b>보고 싶어 · 늦은 밤의 초대</b><small>DAY ${LATE_NIGHT_INVITATION_MIN_DAY}+ · 22:00 이후 · 하루 1회 · ${Math.round(LATE_NIGHT_INVITATION_CHANCE*100)}% · ${escapeHtml(invitationStatus)}</small></span><em>상세</em></button></section>${Object.entries(groups).map(([label,events])=>`<section class="tools-event-group"><h3>${escapeHtml(label)} <span>${events.length}</span></h3>${events.map(event=>`<button type="button" class="tools-list-row" data-tools-event="${event.id}"><span><b>${escapeHtml(event.title)}</b><small>${escapeHtml(event.id)} · DAY ${event.dayRange?.[0]??"-"}–${event.dayRange?.[1]??"-"}</small></span><em>실행</em></button>`).join("")}</section>`).join("")}`;
   }else if(gameToolsTab==="maps"){
     content.innerHTML=`<div class="game-tools-intro"><b>지도·장소 이벤트</b><span>원하는 장소로 바로 이동하거나 해당 장소의 선택 이벤트를 엽니다.</span></div><div class="tools-map-list">${Object.values(WORLD_MAPS).map(map=>`<section class="tools-map-card"><header><span>${map.theme.toUpperCase()}</span><b>${escapeHtml(map.name)}</b><small>${escapeHtml(map.subtitle)}</small></header><div>${map.locations.map(location=>`<article><span>${location.icon}</span><div><b>${escapeHtml(location.name)}</b><small>${escapeHtml(location.category)} · ${escapeHtml(location.description)}</small></div><button type="button" data-tools-map-go="${map.id}:${location.id}">이동</button>${location.category!=="home"?`<button type="button" data-tools-map-event="${map.id}:${location.id}">이벤트</button>`:""}</article>`).join("")}</div></section>`).join("")}</div>`;
   }else{
@@ -1426,6 +1466,7 @@ function renderGameTools() {
   document.querySelectorAll("[data-tools-tab]").forEach(button=>button.addEventListener("click",()=>{gameToolsTab=button.dataset.toolsTab;renderGameTools();}));
   document.querySelectorAll("[data-tools-outfit]").forEach(button=>button.addEventListener("click",()=>{const outfit=HEROINE_OUTFITS.find(item=>item.id===button.dataset.toolsOutfit);if(!outfit)return;let instance=(state.inventory??[]).find(item=>item.itemId===outfit.id&&item.owner==="girlfriend");instance??=addItem(state,outfit.id,"girlfriend","tip-tools");const result=equipGirlfriendOutfit(state,instance.instanceId);if(!result)return;SaveManager.save(state);render();renderGameTools();toast(`${outfit.name} 선택 완료`);}));
   document.querySelectorAll("[data-tools-event]").forEach(button=>button.addEventListener("click",()=>{const event=SITUATION_EVENTS.find(item=>item.id===button.dataset.toolsEvent);if(!event)return;closeGameTools();$(".play-panel").classList.remove("hidden");$("#nightHome").classList.add("hidden");$("#worldMap").classList.add("hidden");openEventScene(structuredClone(event),{debugPreview:true});}));
+  document.querySelector("[data-tools-yuri-event]")?.addEventListener("click",event=>{const selected=SITUATION_EVENTS.find(item=>item.id===event.currentTarget.dataset.toolsYuriEvent);if(!selected)return;closeGameTools();$(".play-panel").classList.remove("hidden");$("#nightHome").classList.add("hidden");$("#worldMap").classList.add("hidden");openEventScene(structuredClone(selected),{debugPreview:true});});
   document.querySelector("[data-tools-late-invitation]")?.addEventListener("click",openLateNightInvitationToolDetail);
   document.querySelectorAll("[data-tools-npc]").forEach(button=>button.addEventListener("click",()=>{selectedToolsNpcId=button.dataset.toolsNpc;renderGameTools();}));
   const openMapTarget=(value,withEvent=false)=>{const [mapId,locationId]=value.split(":"),map=WORLD_MAPS[mapId],location=map?.locations.find(item=>item.id===locationId);if(!map||!location)return;state.world.mode="district";state.world.cityId=map.cityId;state.world.districtId=map.id;state.world.x=location.x;state.world.y=location.y;state.world.transportConfirmed=true;if(!state.world.discoveredLocations.includes(location.id))state.world.discoveredLocations.push(location.id);SaveManager.save(state);closeGameTools();renderWorldMap();if(withEvent)setTimeout(()=>openWorldEventLayer(map,location),120);};
@@ -1690,6 +1731,58 @@ function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("�
 function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
 function openContinuePreview(){const loaded=SaveManager.load();if(!loaded){toast("이어할 저장 데이터가 없어요.");return;}const story=loaded.scenario?.enabled===true,mode=getGameModeConfig(loaded.gameMode),updated=loaded.updatedAt?new Intl.DateTimeFormat("ko-KR",{dateStyle:"medium",timeStyle:"short"}).format(new Date(loaded.updatedAt)):"저장 시각 없음";$("#modalContent").innerHTML=`<section class="continue-preview"><span>${story?"STORY MODE":"FREE MODE"}</span><h2>${story?"《결혼까지 30일!》":"나만의 30일"}</h2><div><strong>DAY ${loaded.day}</strong>${story?`<b>D-${Math.max(0,31-loaded.day)}</b>`:""}</div><p>${escapeHtml(mode.description)}</p><small>마지막 플레이 · ${escapeHtml(updated)}</small><button id="continueResumeButton" class="primary-button" type="button">이어하기 →</button></section>`;openModal();$("#continueResumeButton").addEventListener("click",()=>{closeModal();loadGame();});}
 
+function openTitleIntroduction(){
+  $("#modalContent").innerHTML=`<article class="title-introduction">
+    <header class="title-introduction-hero">
+      <span>WELCOME TO THIRTY DAYS</span>
+      <h2>오늘부터 시작되는<br><em>우리의 30일</em></h2>
+      <p>연애와 일, 돈과 인간관계 사이에서 하루의 선택을 쌓아 가는 로맨스 라이프 시뮬레이션입니다.</p>
+      <nav aria-label="소개글 목차"><a href="#guide-girlfriend">여자친구</a><a href="#guide-player">남자 주인공</a><a href="#guide-howto">플레이 방법</a><a href="#guide-mode">게임 모드</a></nav>
+    </header>
+    <div class="title-introduction-body">
+      <section id="guide-girlfriend" class="guide-section">
+        <div class="guide-heading"><span>01</span><div><small>GIRLFRIEND</small><h3>여자친구 캐릭터</h3></div></div>
+        <p class="guide-lead">여자친구는 성격과 생활 패턴이 서로 다릅니다. 선택한 MBTI와 직업은 연락 방식, 데이트 반응, 바쁜 시간과 관계 변화에 영향을 줍니다.</p>
+        <div class="guide-card-grid guide-card-grid-three">
+          <article><i class="fa-regular fa-heart" aria-hidden="true"></i><b>성격과 관계 성향</b><p>연락 중요도, 질투, 독립성, 낭만성처럼 각자 다른 기준으로 플레이어의 행동을 받아들입니다.</p></article>
+          <article><i class="fa-regular fa-comment-dots" aria-hidden="true"></i><b>16가지 MBTI</b><p>ISTJ부터 ENTJ까지 무작위로 결정되며, 같은 선택이라도 성향에 따라 호감과 대화 반응이 달라집니다.</p></article>
+          <article><i class="fa-solid fa-briefcase" aria-hidden="true"></i><b>다양한 직업군</b><p>재무기획자, 간호사, 승무원, 마케터, 파티시에, 트레이너, 대학생, 프리랜서 등 각자의 일정이 생깁니다.</p></article>
+        </div>
+        <div class="guide-character-note"><strong>현재 만날 수 있는 인물 · 하은</strong><span>차분하고 현실적인 안정형 직장인. 약속과 신뢰를 중요하게 여기며, 관계가 불안할수록 감정보다 해결 방법을 먼저 찾습니다.</span></div>
+      </section>
+      <section id="guide-player" class="guide-section">
+        <div class="guide-heading"><span>02</span><div><small>PLAYER</small><h3>남자 주인공</h3></div></div>
+        <div class="guide-card-grid guide-player-grid">
+          <article><mark>STANDARD</mark><b>기본 캐릭터</b><p>외모와 능력치가 고르게 배치된 균형형. 처음 플레이하거나 안정적으로 성장하고 싶을 때 적합합니다.</p></article>
+          <article><mark>PREMIUM</mark><b>잘생긴 캐릭터</b><p>매력, 패션, 자신감이 높은 외모 특화형. 첫인상과 관계 형성에서 유리하게 출발합니다.</p></article>
+          <article><mark>PREMIUM</mark><b>부자 캐릭터</b><p>높은 초기 자금과 업무·사교 능력을 가진 자산 특화형. 쇼핑과 투자 선택의 폭이 넓습니다.</p></article>
+        </div>
+        <div class="guide-job-strip"><b>남자 주인공 직업군</b><p>프리랜서 · 공무원 · 작가 · N잡 알바생 · 일용직 · 디자이너 · 프로그래머 · 대학생 · 건물주 아들 · 미술작가 · 가수 지망생 · 배우 · 재수생 · 중고차 딜러 · 프로 운동선수</p><small>직업마다 초기 자금, 능력치, 급여, 스트레스와 전용 행동이 달라집니다.</small></div>
+      </section>
+      <section id="guide-howto" class="guide-section">
+        <div class="guide-heading"><span>03</span><div><small>HOW TO PLAY</small><h3>플레이 방법</h3></div></div>
+        <ol class="guide-step-list">
+          <li><span>1</span><div><b>모드와 캐릭터 설정</b><p>게임 모드, 여자친구 성향과 직업, 내 외모·이름·직업을 선택합니다.</p></div></li>
+          <li><span>2</span><div><b>하루의 행동 선택</b><p>아침부터 밤까지 연락, 데이트, 업무, 휴식과 자기관리 중 지금 필요한 행동을 고릅니다.</p></div></li>
+          <li><span>3</span><div><b>관계와 생활 관리</b><p>호감도와 신뢰도뿐 아니라 체력, 피로, 스트레스, 자산과 커리어도 함께 관리합니다.</p></div></li>
+          <li><span>4</span><div><b>선택의 결과 확인</b><p>대화와 사건에서 내린 결정이 다음 장면, 인맥, 관계의 위기와 30일 뒤 결말을 바꿉니다.</p></div></li>
+        </ol>
+      </section>
+      <section id="guide-mode" class="guide-section">
+        <div class="guide-heading"><span>04</span><div><small>GAME MODE</small><h3>어떤 30일을 시작할까요?</h3></div></div>
+        <div class="guide-mode-grid">
+          <article class="story"><small>STORY MODE</small><h4>《결혼까지 30일!》</h4><p>기억을 잃은 주인공과 30일 뒤 결혼을 약속했다는 여자친구의 비밀을 따라가는 로맨스 미스터리입니다.</p><ul><li>주인공 외형과 일부 프로필 고정</li><li>순서가 있는 메인 스토리와 단서</li><li>선택에 따른 이야기와 결말 변화</li></ul></article>
+          <article class="free"><small>FREE MODE</small><h4>《나만의 30일》</h4><p>직업, 사랑, 돈, 쇼핑과 인맥을 자유롭게 관리하며 원하는 삶과 관계를 만들어 가는 모드입니다.</p><ul><li>주인공 외형과 직업 자유 설정</li><li>지도, 투자, 커리어와 생활 콘텐츠</li><li>조건과 확률에 따라 다양한 사건 발생</li></ul></article>
+        </div>
+      </section>
+    </div>
+    <footer><p>완벽한 선택보다 나다운 선택을 해보세요.</p><button id="introductionStartButton" class="primary-button" type="button">게임 시작하기 <span>→</span></button></footer>
+  </article>`;
+  $("#modal").classList.add("intro-guide-active");
+  openModal();
+  $("#introductionStartButton").addEventListener("click",()=>{closeModal();startGame();});
+}
+
 if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");
 renderSoundButton();
 
@@ -1706,7 +1799,7 @@ $("#debugButton").addEventListener("click",openDebug);
 $("#tipToolsButton").addEventListener("click",()=>openGameTools());
 $("#gameToolsClose").addEventListener("click",closeGameTools);
 $("#gameToolsBackdrop").addEventListener("click",closeGameTools);
-$(".mini-tip").addEventListener("click",()=>openGameTools());
+$(".mini-tip")?.addEventListener("click",()=>openGameTools());
 $("#inventoryButton").addEventListener("click",openInventory);
 $("#shopButton").addEventListener("click",openShop);
 $("#financeButton").addEventListener("click",openFinance);
@@ -1738,7 +1831,7 @@ $("#autoButton").addEventListener("click",toggleAutoMode);
 $("#skipButton").addEventListener("click",skipImmersiveScene);
 $("#fullscreenButton").addEventListener("click",toggleFullscreen);
 $("#storyFullscreenButton").addEventListener("click",toggleFullscreen);
-$("#startButton").addEventListener("click",startGame); $("#titleContinueButton")?.addEventListener("click",openContinuePreview); $("#titleSettingsButton")?.addEventListener("click",()=>{$("#modalContent").innerHTML=`<span class="eyebrow">SETTINGS</span><h2>환경설정</h2><p>타이틀 화면에서는 사운드 설정을 변경할 수 있습니다.</p><button id="titleSoundToggle" class="primary-button" type="button">${sound.enabled?"사운드 끄기":"사운드 켜기"}</button>`;openModal();$("#titleSoundToggle").addEventListener("click",()=>{$("#soundButton").click();closeModal();});}); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#actionResultConfirm").addEventListener("click",confirmActionResult); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
+$("#startButton").addEventListener("click",startGame); $("#titleIntroductionButton")?.addEventListener("click",openTitleIntroduction); $("#titleContinueButton")?.addEventListener("click",openContinuePreview); $("#titleSettingsButton")?.addEventListener("click",()=>{$("#modalContent").innerHTML=`<span class="eyebrow">SETTINGS</span><h2>환경설정</h2><p>타이틀 화면에서는 사운드 설정을 변경할 수 있습니다.</p><button id="titleSoundToggle" class="primary-button" type="button">${sound.enabled?"사운드 끄기":"사운드 켜기"}</button>`;openModal();$("#titleSoundToggle").addEventListener("click",()=>{$("#soundButton").click();closeModal();});}); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#actionResultConfirm").addEventListener("click",confirmActionResult); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
 $("#introVideo").addEventListener("ended",playNextIntroVideo);
 $("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();introVideoIndex=activeIntroVideoPlaylist.length-1;unlockIntroStart("프롤로그 영상을 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
 $("#introGameStartButton").addEventListener("click",finishOnboarding);
