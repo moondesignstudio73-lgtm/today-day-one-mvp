@@ -52,6 +52,7 @@ for(const required of ["확인된 사실","민호","윤서진","판단을 빌리
 
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 assert.match(game,/LOCKED_DAY5_SCENE_ID/);
+assert.match(readFileSync(new URL("../src/day5-campaign-runtime.mjs",import.meta.url),"utf8"),/introducedNpcIds","female-coworker","team-lead","office-best-male/);
 assert.match(game,/applyLockedDay5ChoiceState\(state,choiceId\)/);
 assert.match(game,/getLockedDay5LegacyChoice\(state\)/);
 assert.match(game,/day5Prompts/);
