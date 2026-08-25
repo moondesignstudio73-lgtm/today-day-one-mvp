@@ -1,6 +1,6 @@
 # DAY 2 출시 완성도 진행표
 
-현재 상태: `PHASE 9 시나리오 수정본 완료 / PHASE 10 전 경로 연속 QA 대기`
+현재 상태: `DAY 2 — SCENARIO LOCK / PHASE 12 배경 명세 완료 / PHASE 13 표정 명세 대기`
 
 DAY 2의 사용자 기준 원본은 `C:\Users\user\Desktop\《결혼까지 30일!》 DAY 2 — 집으로 시나리오.md`, 제작 지침은 같은 위치의 `《결혼까지 30일!》 DAY 2 시나리오 제작 프롬프트.md`다. 원본 파일은 SCENE 08의 하은 대사 `"오늘 안 떠`에서 실제로 잘려 있으므로, DAY 1 잠금본과 제작 지침을 근거로 누락된 집 탐색·엔딩을 복원했다. DAY 2가 모든 관문을 통과하고 사용자 최종 승인을 받기 전에는 DAY 3 이후의 신규 콘텐츠·에셋·시스템 연결을 확장하지 않는다. 기존 DAY 3~5 코드와 미커밋 변경은 삭제·이동·재작성하지 않는다.
 
@@ -15,12 +15,12 @@ DAY 2의 사용자 기준 원본은 `C:\Users\user\Desktop\《결혼까지 30일
 - [x] PHASE 7 — 복선·지식 장부 검사
 - [x] PHASE 8 — 플레이타임·장면 구조 검사
 - [x] PHASE 9 — 시나리오 수정본 작성
-- [ ] PHASE 10 — 수정본 전 경로 연속 플레이 재검수
-- [ ] PHASE 11 — 사용자 승인 후 `DAY 2 — SCENARIO LOCK`
+- [x] PHASE 10 — 수정본 전 경로 연속 플레이 재검수
+- [x] PHASE 11 — 사용자 승인 후 `DAY 2 — SCENARIO LOCK`
 
 ## 제작 관문
 
-- [ ] PHASE 12 — 배경 에셋 명세
+- [x] PHASE 12 — 배경 에셋 명세
 - [ ] PHASE 13 — 캐릭터 표정 명세
 - [ ] PHASE 14 — 포즈 명세
 - [ ] PHASE 15 — 이벤트 CG 선정 및 프롬프트
@@ -41,6 +41,8 @@ DAY 2의 사용자 기준 원본은 `C:\Users\user\Desktop\《결혼까지 30일
 
 - `docs/day2/DAY2_SCENARIO_AUDIT.md`
 - `docs/day2/DAY2_SCENARIO_REVISION_V1.md`
+- `docs/day2/DAY2_SCENARIO_QA_V1.md`
+- `docs/day2/DAY2_BACKGROUND_ASSET_SPEC.md`
 
 ## 감사 결론
 
@@ -65,4 +67,13 @@ DAY 2의 사용자 기준 원본은 `C:\Users\user\Desktop\《결혼까지 30일
 
 ## 다음 관문
 
-PHASE 10 — `docs/day2/DAY2_SCENARIO_REVISION_V1.md`의 선택·탐색 전 경로, 정보 연속성, 인물 지식, 분량을 재검수하고 `docs/day2/DAY2_SCENARIO_QA_V1.md`를 작성한다. 통과 후에만 SCENARIO LOCK CANDIDATE로 표시하고 사용자 승인을 기다린다.
+PHASE 13 — 잠금된 12개 Scene에 필요한 이하은·주인공 1인칭·의료진 표정 상태를 정의하고 DAY 1 에셋 재사용 후보와 신규 필요 상태를 분리한다.
+
+## PHASE 10~12 완료 기록
+
+- DAY 1의 9개 상태와 DAY 2 전략·탐색을 조합한 27,216개 경로를 동등 조건군으로 전수 검수했다.
+- 대표 경로는 공백 제외 5,362~5,678자로 보통 읽기 약 15.8~16.7분이며, 추가 원본의 12개 Scene을 유지하되 반복·인위적 Pause 없이 의미 단위로 구성됐다.
+- STORY/CHARACTER/CHOICE/CONTINUITY/MYSTERY/DENSITY/ENDING 전 항목이 PASS했고 NEEDS FIX는 0개다.
+- 2026-08-25 사용자 승인을 반영해 `DAY 2 — SCENARIO LOCK`을 확정했다.
+- 승인본의 시간축 보류 조건을 유지해 전역 DAY/D-DAY 규칙 확정 전에는 `D-29`를 플레이어 화면에 표시하지 않는다.
+- 12개 Scene을 덮는 8개 배경 ID와 병원·자동차·집의 공간 연속성, 모바일 안전 영역, 스포일러 금지 기준을 명세했다.
