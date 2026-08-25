@@ -1,5 +1,5 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=9";
-import { SaveManager } from "./src/save-manager.mjs?v=13";
+import { SaveManager } from "./src/save-manager.mjs?v=14";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=7";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=7";
@@ -59,7 +59,7 @@ import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEf
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=2";
 import { getMapLocationAsset } from "./src/map-location-assets.mjs";
-import { DAY1_HOSPITAL_ACTIONS, STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActionWindow, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=1";
+import { DAY1_HOSPITAL_ACTIONS, STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionWindow, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=2";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
