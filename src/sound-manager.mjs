@@ -1,3 +1,5 @@
+import { getDay1AudioCue } from "./day1-audio-data.mjs";
+
 export const SOUND_SETTING_KEY = "today-day-one.sound.v1";
 
 export const SOUND_PRESETS = {
@@ -69,13 +71,14 @@ export class SoundManager {
     this.context = null;
     this.bgm = null;
     this.bgmSource = "";
+    this.cueChannels = new Map();
     this.enabled = this.storage?.getItem(SOUND_SETTING_KEY) === "on";
   }
 
   toggle(force) {
     this.enabled = typeof force === "boolean" ? force : !this.enabled;
     this.storage?.setItem(SOUND_SETTING_KEY,this.enabled ? "on" : "off");
-    if (!this.enabled) this.stopBgm();
+    if (!this.enabled) { this.stopBgm(); this.stopAllCues(); }
     return this.enabled;
   }
 
@@ -104,12 +107,13 @@ export class SoundManager {
     }
   }
 
-  playBgm(category, variant = 0, { loop = true } = {}) {
+  playBgm(category, variant = 0, { loop = true, volume = 0.22 } = {}) {
     if (!this.enabled) return false;
     const source = getBgmTrack(category,variant);
     if (!source) return false;
     try {
       if (this.bgm && this.bgmSource === source) {
+        this.bgm.volume = Math.max(0,Math.min(1,Number(volume) || 0));
         if (this.bgm.paused) this.bgm.play()?.catch?.(()=>{});
         return true;
       }
@@ -117,7 +121,7 @@ export class SoundManager {
       const audio = this.audioFactory(source);
       if (!audio) return false;
       audio.loop = loop;
-      audio.volume = 0.22;
+      audio.volume = Math.max(0,Math.min(1,Number(volume) || 0));
       audio.preload = "auto";
       this.bgm = audio;
       this.bgmSource = source;
@@ -134,6 +138,44 @@ export class SoundManager {
     try { this.bgm?.pause?.(); } catch {}
     this.bgm = null;
     this.bgmSource = "";
+  }
+
+  playCue(cueId) {
+    if (!this.enabled) return false;
+    const preset = getDay1AudioCue(cueId);
+    if (!preset) return false;
+    try {
+      const existing = this.cueChannels.get(cueId);
+      if (existing && preset.loop) {
+        if (existing.paused) existing.play()?.catch?.(()=>{});
+        return true;
+      }
+      const audio = this.audioFactory(preset.source);
+      if (!audio) return false;
+      audio.loop = preset.loop;
+      audio.volume = preset.volume;
+      audio.preload = "auto";
+      if (preset.loop) this.cueChannels.set(cueId,audio);
+      audio.play()?.catch?.(()=>{});
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  stopCue(cueId) {
+    const audio = this.cueChannels.get(cueId);
+    if (!audio) return false;
+    try { audio.pause?.(); } catch {}
+    this.cueChannels.delete(cueId);
+    return true;
+  }
+
+  stopAllCues() {
+    for (const audio of this.cueChannels.values()) {
+      try { audio.pause?.(); } catch {}
+    }
+    this.cueChannels.clear();
   }
 
   playScene(scene, variant = 0) {
