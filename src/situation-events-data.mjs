@@ -109,6 +109,10 @@ function buildEvent([id,title,category,startDay,endDay,hook,pressure,reveal,echo
 }
 
 const BASE_SITUATION_EVENTS=BLUEPRINTS.map(buildEvent);
+BASE_SITUATION_EVENTS.push(
+  buildEvent(["friend-advice-partner-work-stress","요즘 많이 힘들어 보인다는 친구의 말","friends",3,30,"카페에 있던 지훈이 조심스럽게 여자친구의 안부를 물었다.","최근 여자친구가 지쳐 보였지만 대신 단정해서 말하고 싶지는 않다고 했다.","지훈은 추측하지 말고 직접 괜찮은지 물어보라고 조언했다.","친구의 말은 여자친구와 솔직하게 이야기할 계기가 되었다."],100),
+  buildEvent(["friend-advice-partner-contact-drop","연락이 줄어든 이유를 확인하라는 조언","friends",4,30,"지훈이 요즘 두 사람의 연락이 줄어든 것 같다고 말했다.","바쁜 것인지 마음이 힘든 것인지 밖에서 판단할 수는 없었다.","지훈은 여자친구에게 먼저 시간을 내어 물어보라고 했다.","조언을 들은 뒤 미뤄 두었던 대화를 시작하기로 했다."],101)
+);
 const PLAYER_EX_EVENT_IDS=new Set(["situation-ex-girlfriend-reunion"]);
 for(const event of BASE_SITUATION_EVENTS){
   if(!PLAYER_EX_EVENT_IDS.has(event.id))continue;
@@ -135,8 +139,59 @@ for(const event of BASE_SITUATION_EVENTS){
   if(tier.trust[0]!==null)event.conditions.push({stat:"trust",operator:">=",value:tier.trust[0]});
   if(tier.trust[1]!==null)event.conditions.push({stat:"trust",operator:"<=",value:tier.trust[1]});
 }
-for(const event of BASE_SITUATION_EVENTS)event.excludedHeroineIds=["yuna"];
-export const SITUATION_EVENTS=[...BASE_SITUATION_EVENTS,...YUNA_STORY_EVENTS];
+const LOCATION_RULES={
+  "situation-ex-girlfriend-reunion":{categories:["cafe"],probability:.5},
+  "situation-fine-dining-truth":{categories:["western"]},
+  "situation-couple-item-shopping":{categories:["shopping"]},
+  "situation-first-trip":{categories:["transport","landmark"]},
+  "situation-haeun-home-outside-talk":{categories:["girlfriend-home"]},
+  "situation-haeun-home-tea-talk":{categories:["girlfriend-home"]},
+  "situation-haeun-home-meal":{categories:["girlfriend-home"]},
+  "situation-meet-her-friends":{categories:["cafe"]},
+  "situation-friends-evaluate-partner":{categories:["cafe"]},
+  "situation-parents-first-story":{categories:["cafe"]},
+  "situation-friend-advice-partner-work-stress":{categories:["cafe"]},
+  "situation-friend-advice-partner-contact-drop":{categories:["cafe"]}
+};
+const LOW_TRUST_IDS=new Set(["situation-phone-notification-seen","situation-girlfriend-with-stranger","situation-caught-with-coworker","situation-travel-big-fight","situation-late-night-reconciliation"]);
+const FRIEND_ADVICE_IDS=new Set(["situation-friend-advice-partner-work-stress","situation-friend-advice-partner-contact-drop"]);
+const FRIEND_RELATED_IDS=new Set(["situation-meet-her-friends","situation-friends-evaluate-partner","situation-parents-first-story"]);
+const EXCLUDED_FREE_ROMANCE_IDS=new Set(["situation-shared-umbrella"]);
+
+function compactFreeRomanceEvent(event){
+  const route=LOCATION_RULES[event.id];
+  event.modes=["free-romance"];
+  event.triggerGroup=FRIEND_ADVICE_IDS.has(event.id)?"friend-advice":FRIEND_RELATED_IDS.has(event.id)?"friend-related":route?"location-visit":LOW_TRUST_IDS.has(event.id)?"low-trust":event.category==="temptation"?"coworker-temptation":event.category==="friends"?"friend-related":"random-before-evening";
+  event.trigger=route?"location-enter":event.triggerGroup;
+  event.locationCategories=route?.categories??[];
+  if(route?.probability!=null)event.probability=route.probability;
+  if(LOW_TRUST_IDS.has(event.id)&&!event.conditions.some(condition=>condition.stat==="trust"))event.conditions.push({stat:"trust",operator:"<=",value:200});
+  if(event.category==="temptation"){event.npcRequirements=["female-coworker"];event.minimumNpcInterest=45;}
+  if(FRIEND_ADVICE_IDS.has(event.id)){event.npcRequirements=["best-friend"];event.conditions.push({stat:"relationshipStress",operator:">=",value:45});}
+  const source=event.scenes[0],speaker=event.npcName??(event.npcId==="player-ex"?"유리":event.category==="work"?"직장 동료":event.category==="friends"?"지훈":"연인");
+  if(route?.categories?.includes("cafe"))source.backgroundId="cafe-rain-evening";
+  source.title=event.title;source.transition="none";source.characterIds=[event.npcId];source.pose="standing";source.itemIds=[];
+  source.dialogueTurns=[
+    {type:"narration",speaker:"내레이션",text:event.hook},
+    {type:"dialogue",speaker,text:`${event.pressure} 지금 네 생각을 솔직하게 말해 줄래?`,expressionId:"calm"},
+    {type:"dialogue",speaker:"플레이어",text:"먼저 네 이야기를 끝까지 들을게."},
+    {type:"dialogue",speaker,text:event.reveal,expressionId:"worried"},
+    {type:"dialogue",speaker,text:"그럼 앞으로는 어떻게 하는 게 좋을까?",expressionId:"calm"},
+    {type:"dialogue",speaker:"플레이어",text:"피하지 않고 내가 선택한 행동으로 보여 줄게."},
+    {type:"narration",speaker:"내레이션",text:event.echo}
+  ];
+  event.scenes=[source];event.question="두 질문에 대한 마지막 답을 선택해 주세요.";
+  const honest=event.choices.find(choice=>choice.id==="honest"),protect=event.choices.find(choice=>choice.id==="protect"),risk=event.choices.find(choice=>choice.id==="risk");
+  event.choices=event.category==="temptation"?[{...protect,id:"reject",label:"선을 분명히 긋고 관계를 지킨다",flag:`${event.id}:REJECT`},{...risk,id:"accept",label:"상대의 유혹을 받아들인다",flag:`${event.id}:ACCEPT`}]:[honest,protect];
+  if(event.id==="situation-ex-girlfriend-reunion")event.choices=[
+    {...protect,id:"reject",label:"유리의 제안을 거절하고 현재 관계를 지킨다",effects:{trust:8,relationshipStress:-3},flag:`${event.id}:REJECT`,npcEffects:{"player-ex":{affection:0}}},
+    {...risk,id:"accept",label:"유리의 유혹을 받아들인다",effects:{trust:-8,excitement:10,relationshipStress:5},flag:`${event.id}:ACCEPT`,npcEffects:{"player-ex":{affection:15}}}
+  ];
+  event.maxTriggerCount=1;event.repeatable=false;
+  return event;
+}
+for(const event of BASE_SITUATION_EVENTS){event.excludedHeroineIds=["yuna"];compactFreeRomanceEvent(event);}
+export const SITUATION_EVENTS=[...BASE_SITUATION_EVENTS.filter(event=>!EXCLUDED_FREE_ROMANCE_IDS.has(event.id)),...YUNA_STORY_EVENTS];
 const STORY_CHAINS={
   "situation-almost-confession":["situation-late-dinner-coworker"],
   "situation-second-secret-meeting":["situation-coworker-private-drink","situation-almost-confession"],
@@ -150,5 +205,5 @@ export const EVENT_STATE_VALUES=["LOCKED","AVAILABLE","ACTIVE","COMPLETED","FAIL
 export function validateSituationEvents(events=SITUATION_EVENTS) {
   const ids=new Set(events.map(event=>event.id));
   const categories=Object.fromEntries(Object.keys(CATEGORY_CONFIG).map(category=>[category,events.filter(event=>event.category===category).length]));
-  return events.length>=30&&ids.size===events.length&&categories.romance>=6&&categories.temptation>=5&&categories.conflict>=5&&categories.work>=4&&categories.friends>=3&&categories.money>=2&&categories.travel>=3&&categories.mystery>=2&&events.every(event=>event.scenes.length>=3&&event.scenes.reduce((sum,scene)=>sum+scene.dialogueTurns.length,0)>=30&&event.choices.length>=1&&event.storyFlag&&event.scenes.every(scene=>scene.backgroundId&&scene.characterIds.length&&scene.bgmId&&scene.expression&&scene.pose&&scene.transition)&&event.choices.every(choice=>choice.memory&&choice.flag&&choice.futureEventWeights));
+  return events.length>=30&&ids.size===events.length&&categories.romance>=5&&categories.temptation>=5&&categories.conflict>=5&&categories.work>=4&&categories.friends>=5&&categories.money>=2&&categories.travel>=3&&categories.mystery>=2&&events.every(event=>event.scenes.length>=1&&event.scenes.reduce((sum,scene)=>sum+scene.dialogueTurns.length,0)>=7&&event.choices.length>=1&&event.storyFlag&&event.scenes.every(scene=>scene.backgroundId&&scene.characterIds.length&&scene.bgmId&&scene.expression&&scene.pose&&scene.transition)&&event.choices.every(choice=>choice.memory&&choice.flag&&choice.futureEventWeights));
 }

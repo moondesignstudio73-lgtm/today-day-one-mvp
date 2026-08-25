@@ -48,6 +48,8 @@ function relationshipState(state){if(state.affection<350||state.trust<260||state
 export function evaluateEventEligibility(state,event){
   const reasons=[];const blocks=[];const history=state.eventHistory??[];const phaseTime=PHASE_TIME[state.phase]??"day";
   if(!isContentAvailableForMode(state,event))blocks.push("GAME_MODE");
+  if(state.gameMode==="free-romance"&&event.trigger==="location-enter")blocks.push("LOCATION_ENTER_ONLY");
+  if(state.gameMode==="free-romance"&&event.trigger==="random-before-evening"&&state.phase>=2)blocks.push("BEFORE_EVENING_ONLY");
   if(event.heroineIds?.length&&!event.heroineIds.includes(state.partner?.heroineId))blocks.push("HEROINE_ROUTE");
   if(event.excludedHeroineIds?.includes(state.partner?.heroineId))blocks.push("HEROINE_EXCLUDED");
   if(state.partner?.heroineId==="yuna"&&!event.studentSafe)blocks.push("STUDENT_SAFETY");
@@ -61,6 +63,7 @@ export function evaluateEventEligibility(state,event){
   const missingEvents=(event.requiredEvents??[]).filter(id=>!state.storyFlags?.[`${id}:COMPLETED`]);if(missingEvents.length)blocks.push(`CHAIN_REQUIRED:${missingEvents.join(",")}`);else if(event.requiredEvents?.length)reasons.push(`선행 ${event.requiredEvents.length}개 완료`);
   const missingMemories=(event.requiredMemories??[]).filter(tag=>!(state.memories??[]).some(memory=>memory.tags?.includes(tag)));if(missingMemories.length)blocks.push("REQUIRED_MEMORY");
   const invalidNpcs=(event.npcRequirements??[]).filter(id=>{const npc=(state.npcs??[]).find(item=>item.id===id);return !npc||!npc.active||UNAVAILABLE_NPC_STATES.has(npc.storyState);});if(invalidNpcs.length)blocks.push(`NPC_UNAVAILABLE:${invalidNpcs.join(",")}`);else if(event.npcRequirements?.length)reasons.push(`NPC ${event.npcRequirements.join(",")} 활성`);
+  if(Number.isFinite(event.minimumNpcInterest)){const npc=(state.npcs??[]).find(item=>event.npcRequirements?.includes(item.id));if(!npc||npc.interestInPlayer<event.minimumNpcInterest)blocks.push("NPC_INTEREST_LOW");else reasons.push(`NPC 관심 ${npc.interestInPlayer}`);}
   const relation=relationshipState(state);if(event.relationshipStates?.length&&!event.relationshipStates.includes(relation))blocks.push(`RELATIONSHIP_${relation}`);else if(event.relationshipStates?.length)reasons.push(`관계 ${relation}`);
   if(!meetsConditions(state,event.conditions))blocks.push("STAT_CONDITIONS");else reasons.push("수치 조건 충족");
   const recentCategory=history.find(record=>record.category===event.category&&state.day-record.day<CATEGORY_COOLDOWN_DAYS);if(recentCategory)blocks.push("CATEGORY_COOLDOWN");

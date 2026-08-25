@@ -48,7 +48,7 @@ export function createEventSceneSequence(event) {
     }
     const sequence=[];
     for(const scene of event.scenes){
-      sequence.push({type:"transition",style:scene.transition,label:scene.title,backgroundId:scene.backgroundId,characterId:scene.characterIds[0],expressionId:scene.expression,poseId:scene.pose,outfitId:scene.outfit,bgmId:scene.bgmId,sfxId:scene.sfxId,weather:scene.weather,timeOfDay:scene.timeOfDay});
+      if(scene.transition!=="none")sequence.push({type:"transition",style:scene.transition,label:scene.title,backgroundId:scene.backgroundId,characterId:scene.characterIds[0],expressionId:scene.expression,poseId:scene.pose,outfitId:scene.outfit,bgmId:scene.bgmId,sfxId:scene.sfxId,weather:scene.weather,timeOfDay:scene.timeOfDay});
       sequence.push(...scene.dialogueTurns.map(turn=>({...turn,backgroundId:scene.backgroundId,characterId:scene.characterIds[0],poseId:scene.pose,outfitId:scene.outfit,bgmId:scene.bgmId,sfxId:scene.sfxId,weather:scene.weather,timeOfDay:scene.timeOfDay})));
     }
     if(event.question)sequence.push({type:"narration",text:event.question});
