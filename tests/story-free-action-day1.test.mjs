@@ -45,7 +45,8 @@ assert.equal(recovery.storyFlags.recovery_focus,true);
 
 const eventState=create();beginStoryFreeAction(eventState);
 let roll=0;resolveStoryFreeAction(eventState,"observe-hospital-room",{random:()=>roll++===0?.1:0});
-assert.equal(eventState.eventHistory.at(-1).category,"story-free-action");
+assert.equal(eventState.eventHistory.at(-1).origin,"story-free-action");
+assert.equal(eventState.eventHistory.at(-1).context.location,"hospital");
 
 const persisted=create();beginStoryFreeAction(persisted);resolveStoryFreeAction(persisted,"talk-with-haeun",{random:()=>.99});
 const store=storage();SaveManager.save(persisted,store);const loaded=SaveManager.load(store);
