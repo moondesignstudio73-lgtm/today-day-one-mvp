@@ -307,7 +307,7 @@ export const MARRIAGE_30_STORY_SCENES = [{
   id:"m30-day6-neighborhood",arc:"우리가 사는 동네",window:[6,6],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day5-work-return"},
   title:"우리가 사는 동네",speaker:"하은",message:"약 목록과 임시 예비폰, 빈 동네 지도를 식탁 위에 펼쳤다. 오늘은 익숙한 길을 외우는 대신 돌아올 기준을 만들기로 했다.",
   chapterType:"daily-life/relationship-hybrid",targetPlaytimeMinutes:[10,14],timeWindow:"late-morning-to-afternoon",participants:["protagonist","haeun","pharmacist","cafe-staff"],previousChoiceReferences:["m30-day5-work-return"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"calm",poseId:"phone"},
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day6,expressionId:"calm",poseId:"phone"},
   choices:[
     {id:"date_new_place",label:"둘 다 처음인 곳에서 같은 출발선으로 시작한다",response:"둘 다 처음인 작은 전시관을 첫 현재형 데이트 장소로 정했다.",memory:"둘 다 처음인 장소에서 현재형 데이트를 시작하기로 함"},
     {id:"date_revisit_with_opt_out",label:"과거 장소를 다시 가되 불편하면 즉시 바꾼다",response:"기억을 시험하지 않고 언제든 장소를 바꿀 수 있는 재방문을 약속했다.",memory:"과거 장소를 기억 시험 없이 다시 가기로 함"},
