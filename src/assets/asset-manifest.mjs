@@ -102,6 +102,8 @@ export const BACKGROUND_ASSETS = {
   "neighborhood-cafe-day":"assets/backgrounds/map-locations/004_small-cafe.png",
   "neighborhood-park-day":"assets/backgrounds/map-locations/035_running-park.png",
   "day7-gallery-day":"assets/backgrounds/map-locations/016_gallery.png",
+  "day7-bookshop-day":"assets/backgrounds/day7/day7-small-bookshop-day-v1.png",
+  "day7-river-promenade-day":"assets/backgrounds/day7/day7-river-promenade-day-v1.png",
   "cafe-rain-evening":"assets/backgrounds/cafe/BG_CAFE_RAIN_EVENING_001.webp",
   "river-night":"assets/backgrounds/street/BG_RIVER_NIGHT_001.webp",
   ...YUNA_BACKGROUNDS
