@@ -40,6 +40,21 @@ body.campaign-story-mode:not(.ui-night-mode) .top-actions>#peopleButton,
 body.campaign-story-mode:not(.ui-night-mode) .top-actions>#investmentButton{display:none!important}
 body.campaign-story-mode:not(.ui-night-mode) .game-tools-trigger{display:none!important}
 body.campaign-story-mode .vn-expression-layer{display:none!important}
+/* The VN is a play surface, not draggable document content. Native image dragging
+   creates a blue selection rectangle and a duplicate "ghost" character. Keep
+   this outside touch-only media queries so mouse and pen input are protected. */
+.vn-stage,
+.vn-stage :is(img,video,.vn-backdrop,.vn-dialogue,.immersive-choices){
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+.vn-stage :is(img,video){
+  -webkit-user-drag:none;
+  user-drag:none;
+  pointer-events:none;
+}
+.vn-stage{touch-action:manipulation}
 body.campaign-story-mode:not(.ui-night-mode) .top-actions{display:none}
 body.campaign-story-mode:not(.ui-night-mode) .day-pill{border-color:#ffffff38;background:#11121dc4;color:#f8f1f5;box-shadow:none}
 body.campaign-story-mode:not(.ui-night-mode) .game-mode-badge{color:#ffd0df;letter-spacing:.11em}

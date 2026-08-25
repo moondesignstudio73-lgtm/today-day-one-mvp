@@ -1689,6 +1689,15 @@ function openContinuePreview(){const loaded=SaveManager.load();if(!loaded){toast
 
 if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");
 renderSoundButton();
+
+// Images are native draggable content in desktop browsers. A slightly missed
+// click can otherwise start a drag, showing a blue selection overlay and a
+// duplicate character drag preview over the story scene. Capture both native
+// drag and selection before they reach any dynamically rendered VN element.
+const isProtectedStorySurface=target=>target instanceof Element&&Boolean(target.closest("#visualNovelStage"));
+document.addEventListener("dragstart",event=>{if(isProtectedStorySurface(event.target))event.preventDefault();},true);
+document.addEventListener("selectstart",event=>{if(isProtectedStorySurface(event.target))event.preventDefault();},true);
+$("#visualNovelStage").querySelectorAll("img,video").forEach(media=>media.draggable=false);
 $("#soundButton").addEventListener("click",()=>{const enabled=sound.toggle();renderSoundButton();if(enabled){sound.play("success");if(state)sound.playScene(phases[state.phase].key,state.day);else sound.playBgm("title",new Date().getDate());}toast(enabled?"효과음과 BGM을 켰어요.":"모든 소리를 껐어요.");});
 $("#debugButton").addEventListener("click",openDebug);
 $("#tipToolsButton").addEventListener("click",()=>openGameTools());

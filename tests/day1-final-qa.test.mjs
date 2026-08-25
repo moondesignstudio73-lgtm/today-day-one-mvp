@@ -62,6 +62,9 @@ assert.match(gameSource,/StoryCg/);
 assert.match(gameSource,/StoryAutoCue/);
 assert.match(cssSource,/prefers-reduced-motion:reduce/);
 assert.match(cssSource,/body\.campaign-story-mode \.vn-expression-layer\{display:none!important\}/);
+assert.match(cssSource,/\.vn-stage :is\(img,video\)\{[\s\S]*?-webkit-user-drag:none;[\s\S]*?pointer-events:none;/);
+assert.match(gameSource,/document\.addEventListener\("dragstart",event=>\{if\(isProtectedStorySurface\(event\.target\)\)event\.preventDefault\(\);\},true\);/);
+assert.match(gameSource,/document\.addEventListener\("selectstart",event=>\{if\(isProtectedStorySurface\(event\.target\)\)event\.preventDefault\(\);\},true\);/);
 console.log("✓ DIRECTION — Scene 전환·CG·입력 잠금·감소 모션 PASS");
 
 // AUDIO
