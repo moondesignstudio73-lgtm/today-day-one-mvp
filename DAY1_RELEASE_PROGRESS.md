@@ -1,6 +1,6 @@
 # DAY 1 출시 완성도 진행표
 
-현재 상태: `PHASE 17 이미지 일관성·품질 검사 완료 / PHASE 18 대기`
+현재 상태: `PHASE 18 Scene별 애니메이션·연출 명세 완료 / PHASE 19 대기`
 
 DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에는 DAY 2 이후의 신규 스토리·콘텐츠를 구현하지 않는다. 이미 존재하는 DAY 2~5 코드와 미커밋 DAY 3 변경은 삭제하거나 확장하지 않고 동결한다.
 
@@ -26,7 +26,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - [x] PHASE 15 — 이벤트 CG 선정 및 프롬프트
 - [x] PHASE 16 — 기존 에셋 감사 후 생성·수급
 - [x] PHASE 17 — 이미지 일관성·품질 검사
-- [ ] PHASE 18 — Scene별 애니메이션·연출 명세
+- [x] PHASE 18 — Scene별 애니메이션·연출 명세
 - [ ] PHASE 19 — BGM·SFX 명세 및 적용
 - [ ] PHASE 20 — 실제 게임 구현
 
@@ -48,6 +48,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - `docs/day1/DAY1_EVENT_CG_SPEC.md`
 - `docs/day1/DAY1_ASSET_AUDIT.md`
 - `docs/day1/DAY1_IMAGE_QUALITY_QA.md`
+- `docs/day1/DAY1_DIRECTION_SPEC.md`
 
 ## 최근 검증
 
@@ -62,6 +63,10 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - PHASE 17 QA 문서 필수 판정·교체 CG 2파일 존재·최소 크기 정적 검사: 통과.
 - PHASE 17 진행 기록 후 `node --check game.js`, `node --check src/story-data.mjs`, `tests/simulation.test.mjs` 전체 회귀: 통과.
 - PHASE 17 최종 파생 PNG 26파일의 RGBA·alpha extrema·최소 크기, 표정 8·포즈 9·의료진 6 파일 수, 병실 합성 QA 3장 검사: 통과.
+- PHASE 18에서 잠금된 6개 Scene을 36개 의미 단위 Beat로 나누고 카메라, 입퇴장, 거리, 표정·포즈 전환, CG 삽입과 입력 규칙을 명세했다.
+- 첫 접촉 3전략과 첫 질문 3전략의 즉시 연출·공통 합류·거리 콜백, 선택 직전/직후 저장 복원 계약을 정의했다.
+- 기존 단일 캐릭터 렌더러와 DAY 1 명세의 차이를 감사하고 PHASE 20의 다중 레이어·큐 러너·CG·감소 모션 최소 구현 범위를 분리했다.
+- PHASE 18 명세의 6개 Scene, 선택 6분기, 승인 에셋·CG 3종, 스킵·입력 잠금·감소 모션·저장 복원·폴백 규칙 정적 검사: 통과.
 - `scripts/process-day1-sprites.py` 재실행 재현성·문법 검사, `node --check game.js`, `node --check src/story-data.mjs`, `tests/simulation.test.mjs` 전체 회귀: 통과.
 - PHASE 16에서 기존 배경·하은·의료진·CG·렌더러를 감사하고 재사용·제한 재사용·탈락을 구분했다.
 - 병실 배경 2종, 하은 표정·포즈 소스 2종, 의료진 소스 1종, 이벤트 CG 3종의 신규 후보 8파일을 프로젝트에 수급했다.
@@ -87,4 +92,4 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 
 ## 다음 작업
 
-PHASE 18에서 잠금된 6개 Scene의 카메라, 캐릭터 입퇴장·거리·표정·포즈 전환, CG 삽입, 화면 효과와 선택 분기 연출 타이밍을 명세한다.
+PHASE 19에서 PHASE 18의 오디오 이관 큐를 기준으로 병실 앰비언스, 의료·생활 SFX와 감정 온도를 지키는 BGM을 명세하고 런타임에 적용한다.
