@@ -401,15 +401,43 @@ function startImmersiveScene(session) {
   $("#actionGrid").classList.add("hidden");
   $("#nextButton").classList.add("hidden");
   applyScenePresentation(session.presentation);
+  preloadImmersiveAssets(session.sequence);
   eventRuntime.markAssets(session.presentation?.backgroundUrl?"READY":"FALLBACK");eventRuntime.transition("TRANSITIONING");persistEventRuntime(true);
   updateImmersiveCharacter(session.presentation.expressionId);
+  if(session.id===LOCKED_DAY1_SCENE_ID){$("#vnCharacter").hidden=true;delete $("#vnCharacter").dataset.day1Pose;}
   renderImmersiveStep();
+}
+
+function preloadImmersiveAssets(sequence=[]) {
+  if(typeof Image==="undefined")return [];
+  const urls=[...new Set(sequence.flatMap(step=>[step?.assetUrl,step?.source,step?.backgroundId?getBackgroundAsset(step.backgroundId):""]).filter(Boolean))];
+  urls.forEach(source=>{const image=new Image();image.decoding="async";image.src=source;});
+  return urls;
+}
+
+function applyCharacterStage(element,stage={},characterId="") {
+  if(!element)return;
+  element.dataset.characterId=characterId;
+  element.dataset.position=stage.positionPreset??(characterId==="doctor"?"center":characterId==="nurse"?"left":"right");
+  element.dataset.depth=stage.depth??(characterId==="nurse"?"background":"normal");
+}
+
+function updateDay1Focus(focusCharacterId="pov",effect="") {
+  const stage=$("#visualNovelStage");
+  if(!stage)return;
+  stage.dataset.focusCharacter=focusCharacterId;
+  stage.dataset.sceneEffect=effect;
+  for(const element of [$("#vnCharacter"),$("#vnNpcFront"),$("#vnNpcRear")]){
+    if(!element)continue;
+    const active=element.dataset.characterId===focusCharacterId;
+    element.dataset.focus=active?"active":"sub";
+  }
 }
 
 function updateImmersiveCharacter(expressionId="calm") {
   const character=$("#vnCharacter");
   const characterId=immersiveScene?.presentation?.characterId??"girlfriend";
-  if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID){const allowed=new Set(["resting-tired","startled-relief","teary-relief","apologetic-worried","calm-attentive","warm-playful","soft-vulnerable","gentle-resolve"]);const id=allowed.has(expressionId)?expressionId:"calm-attentive";character.src=`assets/characters/day1/haeun/expressions/haeun-expression-${id}-2d.png`;character.dataset.expression=id;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
+  if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID){const allowed=new Set(["resting-tired","startled-relief","teary-relief","apologetic-worried","calm-attentive","warm-playful","soft-vulnerable","gentle-resolve"]);const id=allowed.has(expressionId)?expressionId:"calm-attentive";if(!character.dataset.day1Pose){character.src=`assets/characters/day1/haeun/expressions/haeun-expression-${id}-2d.png`;}character.dataset.expression=id;applyCharacterStage(character,{},"haeun");$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   updateGiftVehicleLayer(characterId);
   const npcSprite=characterId!=="girlfriend"?getNpcSprite(characterId):"";
   if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
@@ -471,10 +499,10 @@ function renderImmersiveStep() {
     if(step.bgmId)sound.playBgm(step.bgmId,state.day);
   }
   if (step.type === "transition") { if(eventRuntime.state!=="TRANSITIONING")eventRuntime.transition("TRANSITIONING",{sceneId:step.label});eventRuntime.input.lock(immersiveScene.id,"StoryTransition");showSceneTransition(step); return; }
-  if (step.type === "characterEnter") { if(step.assetUrl){$("#vnCharacter").src=step.assetUrl;$("#vnCharacter").dataset.expression=step.expressionId??"calm-attentive";syncOutfitCharacterMedia(true);}else updateImmersiveCharacter(step.expressionId??immersiveScene.presentation.expressionId);$("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
+  if (step.type === "characterEnter") { if(step.assetUrl){$("#vnCharacter").src=step.assetUrl;$("#vnCharacter").hidden=false;$("#vnCharacter").dataset.day1Pose=step.assetUrl;$("#vnCharacter").dataset.expression=step.expressionId??"calm-attentive";applyCharacterStage($("#vnCharacter"),step.stage,step.characterId??"haeun");syncOutfitCharacterMedia(true);}else updateImmersiveCharacter(step.expressionId??immersiveScene.presentation.expressionId);$("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
   if(step.type==="sfx"){if(step.stopCueId)sound.stopCue(step.stopCueId);else if(step.sfxId)sound.playCue(step.sfxId);queueSceneStep(40);return;}
   if(step.type==="animation"){queueSceneStep(40);return;}
-  if(step.type==="itemShow"){const layer=step.layer==="npcRear"?$("#vnNpcRear"):$("#vnNpcFront");layer.hidden=!step.source;if(step.source)layer.src=step.source;queueSceneStep(120);return;}
+  if(step.type==="itemShow"){const layer=step.layer==="npcRear"?$("#vnNpcRear"):$("#vnNpcFront");layer.hidden=!step.source;if(step.source)layer.src=step.source;applyCharacterStage(layer,step.stage,step.characterId??(step.layer==="npcRear"?"nurse":"doctor"));queueSceneStep(120);return;}
   if(step.type==="cgShow"){
     const layer=$("#vnEventCg");
     const owner=immersiveScene.id;
@@ -486,7 +514,8 @@ function renderImmersiveStep() {
   }
   if (step.type === "expressionChange") { updateImmersiveCharacter(step.expressionId); queueSceneStep(220); return; }
   if (step.type === "choice") { if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime(true);renderImmersiveChoices(step.options); return; }
-  if (step.expressionId) updateImmersiveCharacter(step.expressionId);
+  if (step.expressionId&&immersiveScene?.id!==LOCKED_DAY1_SCENE_ID) updateImmersiveCharacter(step.expressionId);
+  if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID)updateDay1Focus(step.focusCharacterId??(step.type==="narration"?"pov":"haeun"),step.effect??"");
   $("#sceneTitle").textContent=step.type === "narration" ? "" : step.speaker;
   $("#sceneTitle").classList.toggle("hidden",step.type === "narration");
   $("#visualNovelStage").classList.toggle("narration-mode",step.type === "narration");
@@ -532,7 +561,7 @@ function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentSte
 function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){if(eventRuntime.state==="TRANSITIONING")eventRuntime.transition("PLAYING");if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");immersiveScene.index=immersiveScene.sequence.indexOf(choice)+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
 function finishImmersiveScene() {
   if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;if(completedSession?.id===LOCKED_DAY1_SCENE_ID&&state.storyFlags?.day1QuestionStrategy)state.pendingStoryId=null;if(completedSession?.id===LOCKED_DAY2_SCENE_ID&&state.storyFlags?.day2ContactStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY2_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY2_SCENE_ID,getLockedDay2LegacyChoice(state));state.storyFlags.day2RuntimeComplete=true;state.pendingStoryId=null;}eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
-  $("#visualNovelStage").classList.remove("narration-mode","location-event-scene");$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
+  $("#visualNovelStage").classList.remove("narration-mode","location-event-scene");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
   SaveManager.save(state);render();$(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true);const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);
 }
 
