@@ -153,6 +153,25 @@ const DAY8_HOME_MAIL_DEADLINE=Object.freeze({
   ],futureEventWeights:{daily:1.1,investigation:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY9_HOME_SEPARATE_FEEDBACK=Object.freeze({
+  id:"context-day9-home-separate-feedback",title:"두 칸으로 온 피드백",category:"work",categoryLabel:"스토리 공용 이벤트",
+  hook:"귀가 보고를 마친 뒤 서진에게서 짧은 피드백 두 문장이 도착했다.",message:"업무 판단과 팀 상호작용을 한 사람의 전체 평가로 섞지 않고 보관해야 했다.",question:"서진의 피드백을 어떤 방식으로 남길까?",
+  allowedLocations:["home"],allowedPhases:["evening"],dayRange:[9,9],heroineIds:["haeun"],requiredFeatures:["current-coworker-lunch","bounded-office-contribution"],requiredStoryFlags:["day9RuntimeComplete","day9SecondOfficeAdaptationCompleted"],npcRequirements:["female-coworker"],
+  cooldown:30,maxTriggerCount:1,probability:.35,priority:270,baseWeight:100,tensionLevel:"low",effects:{work:1},storyFlag:"context-day9-home-separate-feedback:COMPLETED",forbiddenFlags:["context-day9-home-separate-feedback:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",result:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",status:"ready"},presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},
+  scenes:[{id:"context-day9-home-separate-feedback-scene",title:"두 칸으로 온 피드백",backgroundId:"day2-home-entry",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"evening",timeOfDay:"evening",weather:"clear",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"예비폰에 서진의 메시지가 도착했다. 첫 문장은 질문 정리가 정확했다는 업무 기록, 두 번째는 종료 시간을 지켜 안심했다는 개인 반응이었다."},
+    {type:"dialogue",speaker:"하은",text:"좋은 말이어도 둘을 합쳐서 서진 씨가 널 어떻게 생각한다고 결론 내리지는 않을 거지?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"응. 업무 판단은 업무 칸에, 안심했다는 말은 현재 동료 반응 칸에 따로 둘게."},
+    {type:"dialogue",speaker:"하은",text:"그럼 한 문장이 능력 전체도, 관계 전체도 대신하지 않겠네.",expressionId:"smile"},
+    {type:"narration",speaker:"내레이션",text:"같은 사람이 보낸 두 문장은 서로 다른 출처와 의미를 가진 현재 기록으로 분리되었다."}
+  ]}],
+  choices:[
+    {id:"split-work-and-social",label:"업무 판단과 동료 반응을 서로 다른 칸에 저장한다",preferenceTags:["LOGICAL","BOUNDARY"],effects:{work:4,confidence:4,stress:-2},response:"서진의 두 문장을 업무와 상호작용 기록으로 분리했다.",flag:"context-day9-home-separate-feedback:SPLIT",memory:"DAY 9 서진의 피드백을 업무 판단과 동료 반응으로 나눠 저장했다.",futureEventWeights:{work:1.2}},
+    {id:"request-one-source-each",label:"다음에는 각 칸에 근거 하나씩만 요청한다",preferenceTags:["PLANNED","PRACTICAL"],effects:{work:3,trust:3,confidence:3},response:"다음 피드백은 업무 근거 하나와 상호작용 사례 하나로 제한했다.",flag:"context-day9-home-separate-feedback:ONE_SOURCE",memory:"DAY 9 다음 동료 피드백을 분야별 근거 하나씩으로 제한했다.",futureEventWeights:{work:1.15,social:1.1}}
+  ],futureEventWeights:{work:1.15,social:1.05},requiredMemories:[],requiredEvents:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
@@ -163,7 +182,8 @@ export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   DAY5_OFFICE_HANDOFF,
   DAY6_HOME_PAYMENT_BOUNDARY,
   DAY7_HOME_DATE_MEMORY,
-  DAY8_HOME_MAIL_DEADLINE
+  DAY8_HOME_MAIL_DEADLINE,
+  DAY9_HOME_SEPARATE_FEEDBACK
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);
