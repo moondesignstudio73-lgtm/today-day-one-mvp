@@ -102,12 +102,14 @@ function areGameplayEventsUnlocked(day=state?.day) { return Number(day) >= GAMEP
 function isCampaignPrologueStory(id) { return state?.scenario?.enabled===true && String(id??"").startsWith("m30-day"); }
 
 function persistEventRuntime(save=false){if(!state)return;state.eventRuntime=eventRuntime.snapshot();if(save)SaveManager.save(state);}
-function renderFullscreenButtons(){const active=Boolean(document.fullscreenElement)||document.body.classList.contains("theater-mode");for(const button of [$("#fullscreenButton"),$("#storyFullscreenButton")])if(button){button.setAttribute("aria-pressed",String(active));button.textContent=button.id==="storyFullscreenButton"?(active?"WINDOW":"FULLSCREEN"):(active?"▣ 창모드":"⛶ 전체화면");}}
+function isGameplayVisible(){return !$("#gameScreen")?.classList.contains("hidden");}
+function renderFullscreenButtons(){const active=Boolean(document.fullscreenElement);for(const button of [$("#fullscreenButton"),$("#storyFullscreenButton")])if(button){button.setAttribute("aria-pressed",String(active));button.textContent=button.id==="storyFullscreenButton"?(active?"FULLSCREEN ✓":"FULLSCREEN"):(active?"✓ 전체화면":"⛶ 전체화면");}}
 function setTheaterMode(enabled){document.body.classList.toggle("theater-mode",enabled);if(state){state.settings??={};state.settings.theaterMode=enabled;localStorage.setItem(THEATER_SETTING_KEY,String(enabled));SaveManager.save(state);}renderFullscreenButtons();}
-async function toggleFullscreen(event){event?.stopPropagation();if(document.fullscreenElement){await document.exitFullscreen();setTheaterMode(false);return;}if(document.body.classList.contains("theater-mode")){setTheaterMode(false);return;}try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else setTheaterMode(true);}catch{setTheaterMode(true);}renderFullscreenButtons();}
+async function toggleFullscreen(event){event?.stopPropagation();if(isGameplayVisible()){requestInitialFullscreen();return;}if(document.fullscreenElement){await document.exitFullscreen();setTheaterMode(false);return;}try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else setTheaterMode(true);}catch{setTheaterMode(true);}renderFullscreenButtons();}
 function requestInitialFullscreen(){
-  if(document.fullscreenElement||!document.documentElement.requestFullscreen)return;
-  document.documentElement.requestFullscreen().catch(()=>{});
+  document.body.classList.add("theater-mode");
+  if(document.fullscreenElement||!document.documentElement.requestFullscreen){renderFullscreenButtons();return;}
+  document.documentElement.requestFullscreen().catch(()=>{renderFullscreenButtons();});
 }
 
 function openModal() {
@@ -862,8 +864,8 @@ function playNextIntroVideo() {
 }
 
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introLoading").classList.add("hidden");$("#storyIntroComplete").classList.remove("hidden");$("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
-function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
-function startGame() { if(titleTransitioning)return;titleTransitioning=true;$("#startButton").disabled=true;beginOnboarding(); }
+function finishOnboarding() { requestInitialFullscreen();state=onboarding.previewState; SaveManager.save(state); showGame(); }
+function startGame() { if(titleTransitioning)return;requestInitialFullscreen();titleTransitioning=true;$("#startButton").disabled=true;beginOnboarding(); }
 function restoreCampaignChapterProgress() {
   if(state.scenario?.enabled!==true||state.pendingStoryId)return false;
   let changed=false;
@@ -1809,7 +1811,7 @@ function resetActiveRuntimeForLoad() {
   $("#storyChoiceLayer")?.classList.add("hidden");
   $("#vnEventCg")?.setAttribute("hidden","");
 }
-function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } resetActiveRuntimeForLoad(); state = loaded; showGame(); const pendingStory=getStoryScene(state.pendingStoryId); if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);else if(state.day>30)showEnding();else if(pendingStory&&!state.eventRuntime?.activeEvent&&isContentAvailableForMode(state,pendingStory)&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(state.pendingStoryId)))openStoryScene(pendingStory);else if(!state.eventRuntime?.activeEvent)toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
+function loadGame() { requestInitialFullscreen();const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } resetActiveRuntimeForLoad(); state = loaded; showGame(); const pendingStory=getStoryScene(state.pendingStoryId); if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);else if(state.day>30)showEnding();else if(pendingStory&&!state.eventRuntime?.activeEvent&&isContentAvailableForMode(state,pendingStory)&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(state.pendingStoryId)))openStoryScene(pendingStory);else if(!state.eventRuntime?.activeEvent)toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
 function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
 function openContinuePreview(){const loaded=SaveManager.load();if(!loaded){toast("이어할 저장 데이터가 없어요.");return;}const story=loaded.scenario?.enabled===true,mode=getGameModeConfig(loaded.gameMode),updated=loaded.updatedAt?new Intl.DateTimeFormat("ko-KR",{dateStyle:"medium",timeStyle:"short"}).format(new Date(loaded.updatedAt)):"저장 시각 없음";$("#modalContent").innerHTML=`<section class="continue-preview"><span>${story?"STORY MODE":"FREE MODE"}</span><h2>${story?"《결혼까지 30일!》":"나만의 30일"}</h2><div><strong>DAY ${loaded.day}</strong>${story?`<b>D-${Math.max(0,31-loaded.day)}</b>`:""}</div><p>${escapeHtml(mode.description)}</p><small>마지막 플레이 · ${escapeHtml(updated)}</small><button id="continueResumeButton" class="primary-button" type="button">이어하기 →</button></section>`;openModal();$("#continueResumeButton").addEventListener("click",()=>{closeModal();loadGame();});}
 
@@ -1926,5 +1928,6 @@ $("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();int
 $("#introGameStartButton").addEventListener("click",finishOnboarding);
 document.addEventListener("keydown", handleModalKeydown);
 document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("#gameToolsLayer").classList.contains("hidden"))closeGameTools();});
-document.addEventListener("fullscreenchange",renderFullscreenButtons);
+document.addEventListener("fullscreenchange",()=>{if(isGameplayVisible()&&!document.fullscreenElement)document.body.classList.add("theater-mode");renderFullscreenButtons();});
+document.addEventListener("pointerdown",()=>{if(isGameplayVisible()&&!document.fullscreenElement)requestInitialFullscreen();},true);
 window.addEventListener("beforeunload",()=>clearInterval(runtimeWatchdogTimer));
