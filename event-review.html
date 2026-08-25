@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>오늘부터 1일 · 이벤트 검토표</title>
+  <link rel="stylesheet" href="event-review.css">
+</head>
+<body>
+  <header class="review-header">
+    <div>
+      <small>FREE ROMANCE · CONTENT AUDIT</small>
+      <h1>이벤트 구성 검토표</h1>
+      <p>조건·장소·화면 이동·대사·선택 결과를 한 화면에서 확인합니다.</p>
+    </div>
+    <nav>
+      <a href="index.html">게임으로 돌아가기</a>
+      <button id="expandAll" type="button">전체 펼치기</button>
+      <button id="collapseAll" type="button">전체 접기</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="summary" class="summary-grid" aria-label="데이터 요약"></section>
+
+    <section class="filters" aria-label="검색과 필터">
+      <label class="search"><span>검색</span><input id="searchInput" type="search" placeholder="ID, 제목, 장소, 대사 검색"></label>
+      <label><span>구성</span><select id="typeFilter"></select></label>
+      <label><span>분류</span><select id="categoryFilter"><option value="all">전체 분류</option></select></label>
+      <label><span>검토 포인트</span><select id="issueFilter"><option value="all">전체</option><option value="movement">화면 이동 3회 이상</option><option value="long">대사 20개 이상</option><option value="no-choice">선택지 없음</option><option value="negative">부정 결과 포함</option></select></label>
+      <label class="check"><input id="freeOnly" type="checkbox"><span>자유연애 모드만</span></label>
+    </section>
+
+    <div class="legend">
+      <span><i class="free"></i> 자유연애</span><span><i class="campaign"></i> 30일 모드</span>
+      <b id="resultCount"></b>
+    </div>
+    <section id="eventList" class="event-list" aria-live="polite"></section>
+  </main>
+
+  <template id="emptyTemplate"><article class="empty"><h2>조건에 맞는 항목이 없습니다.</h2><p>검색어나 필터를 변경해 주세요.</p></article></template>
+  <script type="module" src="event-review.js"></script>
+</body>
+</html>
