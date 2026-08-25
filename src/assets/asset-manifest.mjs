@@ -98,6 +98,9 @@ export const BACKGROUND_ASSETS = {
   "home-morning":"assets/backgrounds/morning-studio-2d.png",
   "home-night":"assets/backgrounds/home/BG_HOME_NIGHT_001.webp",
   "office-day":"assets/backgrounds/office/BG_OFFICE_DAY_001.webp",
+  "neighborhood-street-day":"assets/backgrounds/street/BG_RELATIONSHIP_STREET_DAY_001.png",
+  "neighborhood-cafe-day":"assets/backgrounds/map-locations/004_small-cafe.png",
+  "neighborhood-park-day":"assets/backgrounds/map-locations/035_running-park.png",
   "cafe-rain-evening":"assets/backgrounds/cafe/BG_CAFE_RAIN_EVENING_001.webp",
   "river-night":"assets/backgrounds/street/BG_RIVER_NIGHT_001.webp",
   ...YUNA_BACKGROUNDS
