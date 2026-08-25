@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="styles.css?v=66">
+  <link rel="stylesheet" href="styles.css?v=67">
   <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
@@ -117,10 +117,13 @@
       <section class="play-panel">
         <div class="vn-stage panel" id="visualNovelStage" role="button" tabindex="0" aria-label="대화 전체 표시">
           <div class="vn-backdrop" id="vnBackdrop" aria-hidden="true"></div>
+          <img class="vn-day1-npc vn-day1-npc-rear" id="vnNpcRear" alt="" aria-hidden="true" hidden>
           <img class="vn-gift-vehicle" id="vnGiftVehicleLayer" alt="" aria-hidden="true" hidden>
           <img class="vn-character" id="vnCharacter" src="assets/characters/girlfriend-standing-2d.png?v=9" alt="" aria-hidden="true">
+          <img class="vn-day1-npc vn-day1-npc-front" id="vnNpcFront" alt="" aria-hidden="true" hidden>
           <video class="vn-character vn-character-video" id="vnCharacterVideo" muted playsinline loop preload="metadata" aria-hidden="true" hidden></video>
           <img class="vn-character-accessory" id="vnAccessoryLayer" alt="" aria-hidden="true" hidden>
+          <img class="vn-day1-event-cg" id="vnEventCg" alt="" aria-hidden="true" hidden>
           <div id="vnExpressionLayer" class="vn-expression-layer" aria-live="polite"></div>
           <div id="vnEquipmentLayer" class="vn-equipment-layer" aria-live="polite"></div>
           <div class="vn-scene-meta"><span class="eyebrow" id="phaseLabel">MORNING · 아침</span><span class="clock" id="clockLabel">08:00</span></div>
@@ -236,6 +239,6 @@
     </article>
   </section>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=87"></script>
+  <script type="module" src="game.js?v=88"></script>
 </body>
 </html>

@@ -323,6 +323,7 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 @media(max-width:560px){.atlas-district-grid{grid-template-columns:1fr}}
 
 /* Keep the detached story toolbar anchored to its center panel. */
+.vn-day1-npc{position:absolute;z-index:4;bottom:17%;max-height:68%;max-width:38%;object-fit:contain;filter:drop-shadow(0 14px 18px #17203338);pointer-events:none}.vn-day1-npc-rear{left:4%}.vn-day1-npc-front{left:22%}.vn-day1-event-cg{position:absolute;z-index:12;inset:0;width:100%;height:100%;object-fit:cover;background:#111;pointer-events:none;animation:day1-cg-in .18s ease both}@keyframes day1-cg-in{from{opacity:0}to{opacity:1}}@media(prefers-reduced-motion:reduce){.vn-day1-event-cg{animation:none}.vn-day1-npc{transition:none}}
 .story-mode .play-panel{position:relative}
 .world-location{
   z-index:4;

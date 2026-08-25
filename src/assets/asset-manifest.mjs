@@ -55,6 +55,8 @@ const FEMALE_NPC_FALLBACK = "assets/npcs/female-coworker-clean.png";
 const MALE_NPC_FALLBACK = "assets/npcs/male-support-clean.png";
 
 export const BACKGROUND_ASSETS = {
+  "day1-hospital-ceiling":"assets/backgrounds/hospital/day1-hospital-pov-ceiling-v1.png",
+  "day1-hospital-bedside":"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png",
   "home-morning":"assets/backgrounds/morning-studio-2d.png",
   "home-night":"assets/backgrounds/home/BG_HOME_NIGHT_001.webp",
   "office-day":"assets/backgrounds/office/BG_OFFICE_DAY_001.webp",
