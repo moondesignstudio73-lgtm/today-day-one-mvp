@@ -1,6 +1,6 @@
 import { applyEffects } from "./game-core.mjs?v=9";
 import { createDaySnapshot, getDailyReport } from "./night-manager.mjs?v=2";
-import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=4";
+import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=5";
 
 export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   1:Object.freeze([Object.freeze({
@@ -22,6 +22,11 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
     id:"day4-home-night",storySceneId:"m30-day4-arrive-home",phase:"night",phaseIndex:3,location:"home",locationLabel:"나의 집",maxActions:1,
     title:"NIGHT TIME · 나의 집",description:"하은과 증언 장부를 정리한 뒤다. 오늘 확인한 범위 안에서 한 가지 행동만 하고 쉰다.",nextSchedule:"오늘을 마치면 DAY 5, 회사 복귀 확인으로 넘어간다.",
     eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:false,jobUnlocked:false,mapUnlocked:false,healthRiskAllowed:false})
+  })]),
+  5:Object.freeze([Object.freeze({
+    id:"day5-office-evening",storySceneId:"m30-day5-work-return",phase:"evening",phaseIndex:2,location:"office",locationLabel:"회사 사무실",maxActions:1,
+    title:"EVENING · 회사 사무실",description:"두 시간의 복귀 확인을 마쳤다. 업무를 늘리지 않고 퇴근 전 한 가지 정리만 한다.",nextSchedule:"정리를 마치면 DAY 6, 다시 시작한 생활로 넘어간다.",
+    eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:false,jobUnlocked:true,mapUnlocked:false,healthRiskAllowed:false})
   })])
 });
 
@@ -57,15 +62,24 @@ export const DAY4_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"rest-after-social-recovery",icon:"☾",title:"기록을 덮고 쉰다",description:"친구와 과거에 대한 추가 확인을 멈추고 회복을 우선한다.",effects:{energy:14,fatigue:-11,stress:-7,health:2},scenarioEffects:{},flag:"day4_recovery_rest",summary:"오늘의 자료를 더 해석하지 않고 몸과 머리를 쉬게 했다."})
 ]);
 
+export const DAY5_OFFICE_ACTIONS=Object.freeze([
+  Object.freeze({id:"archive-current-work-boundary",icon:"≡",title:"오늘의 업무 경계를 기록한다",description:"확인한 자료·보류한 판단·다음 방문 범위를 세 줄로 남긴다.",effects:{work:4,confidence:5,energy:-3,stress:-1},scenarioEffects:{investigation:2},flag:"day5_free_work_boundary",requiresAction:"day5-work-trial",summary:"성과가 아니라 오늘 지킨 업무 범위와 중단 기준을 기록했다."}),
+  Object.freeze({id:"confirm-team-map",icon:"◇",title:"민호와 현재 팀 지도만 확인한다",description:"오늘 만난 사람의 현재 역할만 대조하고 과거 평가는 다음으로 미룬다.",effects:{social:4,work:2,energy:-2},scenarioEffects:{coworkerRelation:2},flag:"day5_free_team_map",requiresAction:"day5-team-map",summary:"민호와 현재 팀의 역할 관계만 짧게 확인했다."}),
+  Object.freeze({id:"save-next-briefing",icon:"▣",title:"다음 방문 브리핑을 예약한다",description:"다음에 확인할 자료와 시간 제한을 일정에 저장한다.",effects:{work:4,confidence:4,energy:-2},scenarioEffects:{seojinStatusInterest:2},flag:"day5_free_next_briefing",requiresFlag:"day5ReturnPlanReady",summary:"다음 방문의 자료·시간·중단 조건을 일정으로 남겼다."}),
+  Object.freeze({id:"message-haeun-after-work",icon:"♥",title:"하은에게 종료 상태만 알린다",description:"물과 약, 두 시간 종료 여부만 짧게 답하고 보고는 집에서 한다.",effects:{trust:6,affection:2,energy:-1,stress:-2},scenarioEffects:{haeunTrust:2},flag:"day5_free_haeun_update",requiresFlag:"haeun_contact_unlocked",summary:"하은에게 필요한 안전 정보만 공유하고 긴 설명은 미뤘다."}),
+  Object.freeze({id:"leave-office-on-time",icon:"☾",title:"정한 시간에 바로 퇴근한다",description:"추가 자료를 열지 않고 회복을 위해 회사를 나선다.",effects:{energy:11,fatigue:-9,stress:-6,health:2},scenarioEffects:{},flag:"day5_recovery_leave_on_time",summary:"두 시간이라는 중단 기준을 지키고 제시간에 회사를 나섰다."})
+]);
+
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
   Object.freeze({id:"shop",label:"온라인 쇼핑",reason:"스마트폰 기능이 아직 해금되지 않았습니다."}),
   Object.freeze({id:"investment",label:"투자",reason:"금융 정보와 계정이 아직 복구되지 않았습니다."}),
   Object.freeze({id:"map",label:"지도",reason:"아직 자유롭게 이동할 수 없습니다."}),
-  Object.freeze({id:"contacts",label:"인맥",reason:"기억과 연락처가 아직 복구되지 않았습니다."})
+  Object.freeze({id:"contacts",label:"인맥",reason:"기억과 연락처가 아직 복구되지 않았습니다."}),
+  Object.freeze({id:"job",label:"직장",reason:"단계적 복귀 범위가 아직 합의되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -75,14 +89,15 @@ export function getStoryFreeActions(state){return (ACTIONS_BY_DAY[state.day]??[]
 
 export function ensureStoryFeatureUnlocks(state){
   state.scenario??={};
-  state.scenario.featureUnlocks??={phone:false,messages:false,contacts:false,shop:false,investment:false,map:false};
+  state.scenario.featureUnlocks??={phone:false,messages:false,contacts:false,shop:false,investment:false,map:false,job:false};
   return state.scenario.featureUnlocks;
 }
 
 export function getStoryFeatureAvailability(state,featureId){
   const feature=STORY_FEATURES.find(item=>item.id===featureId);
   const storyPhone=featureId==="phone"&&state.scenario?.unlockedActions?.includes("smartphone-basic");
-  const unlocked=Boolean(ensureStoryFeatureUnlocks(state)[featureId]||storyPhone);
+  const storyJob=featureId==="job"&&state.scenario?.unlockedActions?.includes("day5-work-trial");
+  const unlocked=Boolean(ensureStoryFeatureUnlocks(state)[featureId]||storyPhone||storyJob);
   const day2PhoneReason=state.day===2&&featureId==="phone"&&state.storyFlags?.haeun_contact_unlocked?"예비폰은 하은·병원 연락만 가능하며 일반 앱은 잠겨 있습니다.":null;
   return {id:featureId,label:feature?.label??featureId,available:unlocked,reason:unlocked?"":day2PhoneReason??feature?.reason??"아직 해금되지 않았습니다."};
 }
@@ -131,5 +146,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS];return [1,2,3,4].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===5;
+  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS,...DAY5_OFFICE_ACTIONS];return [1,2,3,4,5].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }

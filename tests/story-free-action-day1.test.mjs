@@ -17,7 +17,7 @@ const create=()=>createInitialState(createGirlfriendFromProfile("haeun",()=>.5),
 
 assert.equal(validateStoryFreeActionData(),true);
 assert.equal(DAY1_HOSPITAL_ACTIONS.length,5);
-assert.equal(STORY_FEATURES.length,5);
+assert.equal(STORY_FEATURES.length,6);
 assert.ok(STORY_FEATURES.every(feature=>!getStoryFeatureAvailability(create(),feature.id).available));
 
 const ending=getLockedDay1Segment(create(),2);

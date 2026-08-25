@@ -205,7 +205,7 @@ export function applyLockedDay5ChoiceState(state,id){
   }
   if(DAY5_RETURN_CHOICES.some(item=>item.id===id)){
     state.storyFlags.day5ReturnStrategy=id;state.storyFlags.day5RuntimeStage=4;state.storyFlags.day5ReturnPlanReady=true;remember(state,id);
-    addCollection(state,"profileUnlocks","seojin-basic");addCollection(state,"unlockedActions","day5-team-map","day5-work-trial","day6-life-restart");addCollection(state,"followUpHooks","day6-life-restart");
+    addCollection(state,"profileUnlocks","seojin-basic");addCollection(state,"unlockedActions","day5-team-map","day5-work-trial","day6-life-restart");addCollection(state,"followUpHooks","day6-life-restart");addCollection(state,"introducedNpcIds","female-coworker","team-lead","office-best-male");
     return {stage:4};
   }
   return null;
