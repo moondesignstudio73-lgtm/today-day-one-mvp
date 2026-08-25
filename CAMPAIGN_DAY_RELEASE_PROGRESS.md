@@ -163,3 +163,11 @@
 - `index.html` 모듈 캐시는 통합 SHA용 `game.js?v=115`로 갱신했다.
 - DAY 1 최종 QA, DAY 6 시나리오·프레젠테이션·런타임 검사, 문법 검사, 전체 시뮬레이션 회귀가 모두 PASS했다.
 - 다음 관문: 병합 커밋을 origin과 gh-pages에 일반 push하고 Actions·공개 페이지를 확인한다.
+
+### 2026-08-26 DAY 6 배포 완료 기록
+
+- 승인 병합 뒤 도착한 원격 의상 자산 변경도 일반 merge로 통합해 DAY 3~5 하은 의상 자산과 DAY 6 런타임을 함께 보존했다.
+- `game.js` 문법 검사, DAY 1·4·5·6 집중 검사, 신규 의상 품질 검사, 전체 `tests/simulation.test.mjs` 회귀가 모두 PASS했다.
+- 병합 커밋 `6e956e7`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했으며, 동일 SHA의 GitHub Pages Actions 2건이 성공했다.
+- 캐시 우회 공개 페이지와 DAY 6 런타임 모듈이 HTTP 200으로 제공되고 `game.js?v=115`, `m30-day6` 계약이 반영됐음을 확인했다.
+- DAY 6의 출시 관문을 완료했다. 다음 대상은 DAY 7 시나리오 계약·초안·내러티브 QA다.
