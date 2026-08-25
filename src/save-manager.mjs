@@ -55,6 +55,7 @@ export class SaveManager {
       parsed.storyHistory ??= [];
       parsed.storyFlags ??= {};
       parsed.storyFreeAction ??= null;
+      parsed.eventCompatibility ??= {dailyCounts:{},lastCandidates:[],lastSelected:null};
       parsed.futureScore ??= 0;
       parsed.pendingStoryId ??= null;
       parsed.cgCollection ??= [];

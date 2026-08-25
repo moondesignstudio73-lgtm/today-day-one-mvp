@@ -1,5 +1,6 @@
 import { applyEffects } from "./game-core.mjs?v=9";
 import { createDaySnapshot, getDailyReport } from "./night-manager.mjs?v=2";
+import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=1";
 
 export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   1:Object.freeze([Object.freeze({
@@ -31,12 +32,6 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"contacts",label:"인맥",reason:"기억과 연락처가 아직 복구되지 않았습니다."})
 ]);
 
-const MICRO_EVENTS=Object.freeze([
-  Object.freeze({id:"haeun-water",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",effects:{trust:2},flag:"day1_event_haeun_water"}),
-  Object.freeze({id:"nurse-check",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",effects:{health:1},flag:"day1_event_nurse_check"}),
-  Object.freeze({id:"corridor-familiarity",text:"복도에서 들린 카트 바퀴 소리가 잠깐 익숙하게 느껴졌다.",effects:{stress:1},scenarioEffects:{memoryRecovery:1},flag:"day1_event_corridor_familiarity"})
-]);
-
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
 }
@@ -57,6 +52,7 @@ export function beginStoryFreeAction(state,windowId="day1-hospital-evening"){
   const definition=getStoryFreeActionWindow(state.day,windowId);
   if(!definition)return null;
   ensureStoryFeatureUnlocks(state);
+  state.currentLocation=definition.location;
   const current=state.storyFreeAction;
   if(current?.windowId===windowId&&current.day===state.day&&current.status!=="COMPLETE")return current;
   state.phase=definition.phaseIndex;
@@ -74,16 +70,7 @@ function applyScenarioEffects(state,effects={}){
 }
 
 export function rollStoryFreeActionEvent(state,random=Math.random){
-  if(Number(random())>=.35)return null;
-  const candidates=MICRO_EVENTS.filter(event=>!state.storyFlags?.[event.flag]);
-  if(!candidates.length)return null;
-  const event=candidates[Math.min(candidates.length-1,Math.floor(Number(random())*candidates.length))];
-  applyEffects(state,event.effects??{});
-  applyScenarioEffects(state,event.scenarioEffects??{});
-  state.storyFlags??={};state.storyFlags[event.flag]=true;
-  state.eventHistory??=[];
-  state.eventHistory.push({id:event.id,day:state.day,phase:state.phase,title:"병원의 짧은 순간",message:event.text,category:"story-free-action",tensionLevel:"low",npcIds:[],status:"COMPLETED"});
-  return {id:event.id,text:event.text};
+  return rollSharedFreeActionEvent(state,{random,overrides:{occurrence:"free-action-result",location:"hospital",phase:"evening"}});
 }
 
 export function resolveStoryFreeAction(state,actionId,{random=Math.random}={}){
