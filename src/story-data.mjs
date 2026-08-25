@@ -124,7 +124,7 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {type:"dialogue",speaker:"나",text:"열어 보고 싶은데, 뭐가 나올지는 겁나네.",expressionId:"worried"},
     {type:"dialogue",speaker:"하은",text:"그럼 순서를 정하자. 오늘 필요한 것부터. 약 알람, 집 주소, 그리고… 배달 앱 단골 메뉴 정도.",expressionId:"smile"}
   ],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"phone"},
+  presentation:{backgroundId:"day2-hospital-bedside",characterId:"girlfriend",expressionId:"smile",poseId:"phone"},
   choices:[
     {id:"inspect-system-first",label:"계정·날짜·백업 상태부터 직접 확인한다",effects:{confidence:7,trust:3},scenarioEffects:{investigation:8,memoryRecovery:3},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-system"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"잠금 화면의 날짜와 계정 이름부터 적었다. 사진과 메시지는 닫아 둔 채, 확인한 사실과 아직 보지 않은 영역을 구분했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["set-boundary"]}}],effects:{confidence:3},scenarioEffects:{investigation:3},response:"병원에서 받은 사고 날짜와 기기 백업 날짜를 나란히 적었다. 아직 결론은 없지만 확인 순서는 분명해졌다."}],memory:"돌아온 휴대폰의 시스템 정보부터 확인함"},
     {id:"set-up-together",label:"하은과 복약 알람과 필수 연락처만 함께 설정한다",effects:{affection:8,trust:10},scenarioEffects:{haeunAffection:8,haeunTrust:10,memoryRecovery:2},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","call-haeun"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"하은은 자신의 번호를 ‘하은’이라고만 저장했다. 하트를 붙였다가 내 얼굴을 보고 지운 뒤, “이건 네가 기억나면 직접.”이라고 말했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["take-her-hand"]}}],effects:{affection:4},scenarioEffects:{haeunAffection:4},response:"알람 설정을 마친 하은이 손을 내밀었다. 어제처럼 이번에도 잡을지는 내 쪽에서 정할 수 있게, 손바닥만 펴 둔 채였다."}],memory:"하은과 휴대폰의 필수 기능만 다시 설정함"},
@@ -172,7 +172,7 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {type:"dialogue",speaker:"하은",text:"좋아. 밥 먹을 자리랑 약 둘 자리만 먼저 만들자. 나머지는 네 순서대로.",expressionId:"calm"},
     {type:"narration",text:"책상 위에 휴대폰과 병원 봉투를 놓았다. 내일 오전에는 회사에서 복귀 절차를 설명하러 사람이 온다고 했다. 오늘 정한 확인 순서가 첫 출근에도 이어질 것이다."}
   ],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
+  presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
   choices:[
     {id:"map-home-basics",label:"하은에게 손대지 말아 달라고 하고 방별 용도와 위험한 곳부터 표시한다",effects:{confidence:8,trust:4,energy:-4},scenarioEffects:{investigation:6,memoryRecovery:2,homeSearchCount:1},clues:["home-layout-baseline"],unlockedActions:["inspect-home-basics"],followUpHooks:["day5-work-return"],response:"나는 현관부터 침실까지 문을 하나씩 열고, 약과 서류를 둘 자리를 정했다. 하은은 묻는 것만 답했다. 마지막에 내가 소파를 가리키자 그제야 장바구니를 내려놓았다.",memory:"집의 기본 구조와 안전한 생활 공간을 직접 확인함"},
     {id:"cross-check-digital-address",conditions:[{storyChoice:{sceneId:"m30-day3-discharge-phone",choiceIds:["inspect-system-first"]}}],label:"휴대폰 계정의 등록 주소와 현관 우편물을 먼저 대조한다",effects:{confidence:6,trust:3},scenarioEffects:{investigation:10,memoryRecovery:3,homeSearchCount:1},clues:["account-home-address-match"],unlockedActions:["inspect-phone-system","inspect-home-records"],followUpHooks:["day5-work-return"],response:"계정 주소, 공과금 고지서, 현관 호수가 일치했다. 확인된 사실을 메모하자 하은이 우편물을 날짜순으로 밀어 주었다. “추리는 네가. 정리는 내가.”",memory:"휴대폰 계정 주소와 집의 우편 기록을 대조함"},
