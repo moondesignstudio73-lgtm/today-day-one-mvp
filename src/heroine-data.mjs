@@ -66,7 +66,7 @@ const HAEUN_OUTFIT_VIDEOS = Object.freeze({
   3:"assets/heroines/haeun/videos/03_transparent.webm",
   4:"assets/heroines/haeun/videos/04_transparent.webm",
   5:"assets/heroines/haeun/videos/05_transparent.webm",
-  6:"assets/heroines/haeun/videos/06_transparent.webm",
+  6:"assets/heroines/haeun/videos/06_transparent.webm?v=2",
   7:"assets/heroines/haeun/videos/07_transparent.webm",
   8:"assets/heroines/haeun/videos/08_transparent.webm",
   9:"assets/heroines/haeun/videos/09_transparent.webm",
