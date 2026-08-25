@@ -312,7 +312,7 @@ function scheduleAutoAdvance() {
   if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
   if (immersiveScene) {
     if (sceneAdvanceTimer) clearTimeout(sceneAdvanceTimer);
-    sceneAdvanceTimer = autoMode && immersiveScene.currentStep?.type !== "choice" ? setTimeout(()=>{sceneAdvanceTimer=null;handleDialogueAdvance();},1600) : null;
+    sceneAdvanceTimer = autoMode && immersiveScene.currentStep?.type !== "choice" ? setTimeout(()=>{sceneAdvanceTimer=null;if(finishDialogueTyping()){scheduleAutoAdvance();return;}handleDialogueAdvance();},1600) : null;
     return;
   }
   autoAdvanceTimer = autoMode && state?.selected !== null ? setTimeout(()=>{autoAdvanceTimer=null;applyAction();},1200) : null;

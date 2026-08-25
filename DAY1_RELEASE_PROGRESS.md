@@ -1,6 +1,6 @@
 # DAY 1 출시 완성도 진행표
 
-현재 상태: `PHASE 22 플레이타임 측정 완료 / PHASE 23 대기`
+현재 상태: `PHASE 23 최종 7영역 QA 완료 / PHASE 24 사용자 최종 승인 대기`
 
 DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에는 DAY 2 이후의 신규 스토리·콘텐츠를 구현하지 않는다. 이미 존재하는 DAY 2~5 코드와 미커밋 DAY 3 변경은 삭제하거나 확장하지 않고 동결한다.
 
@@ -34,7 +34,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 
 - [x] PHASE 21 — 처음부터 끝까지 실제 플레이 QA
 - [x] PHASE 22 — 일반 읽기 속도 플레이타임 측정
-- [ ] PHASE 23 — STORY/VISUAL/DIRECTION/AUDIO/GAMEPLAY/UX/BUG 전 항목 PASS
+- [x] PHASE 23 — STORY/VISUAL/DIRECTION/AUDIO/GAMEPLAY/UX/BUG 전 항목 PASS
 - [ ] PHASE 24 — 사용자 최종 승인 후 `DAY 1 — COMPLETE`
 
 ## 현재 산출물
@@ -53,6 +53,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - `docs/day1/DAY1_IMPLEMENTATION_REPORT.md`
 - `docs/day1/DAY1_PLAYTHROUGH_QA.md`
 - `docs/day1/DAY1_PLAYTIME_REPORT.md`
+- `docs/day1/DAY1_FINAL_QA.md`
 
 ## 최근 검증
 
@@ -85,6 +86,9 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - PHASE 22에서 실제 런타임의 9개 선택 경로를 읽기 시간·Scene 전환·CG·자동 큐·선택 숙고 시간으로 계측했다.
 - 보통 340자/분에서 9.25~9.60분, 빠른 400자/분에서 8.08~8.39분으로 전 경로가 목표 7~10분을 통과했다.
 - 최단·최장 경로 차이는 0.35분이며 반복 대사나 인위적 Pause 추가 없이 현재 잠금본의 플레이 밀도를 유지했다.
+- PHASE 23 최종 검사에서 STORY/VISUAL/DIRECTION/AUDIO/GAMEPLAY/UX/BUG 7영역이 전부 PASS했고 남은 NEEDS FIX는 0개다.
+- AUTO ON의 긴 대사 진행 정지를 수정하고 실제 화면에서 다음 스텝 진행·선택 정지·모바일·오디오·콘솔 오류 0건을 재확인했다.
+- 이미지 후처리 재현, DAY 1 집중 검사, 문법 검사, 전체 시뮬레이션 회귀가 모두 통과했다.
 - `scripts/process-day1-sprites.py` 재실행 재현성·문법 검사, `node --check game.js`, `node --check src/story-data.mjs`, `tests/simulation.test.mjs` 전체 회귀: 통과.
 - PHASE 16에서 기존 배경·하은·의료진·CG·렌더러를 감사하고 재사용·제한 재사용·탈락을 구분했다.
 - 병실 배경 2종, 하은 표정·포즈 소스 2종, 의료진 소스 1종, 이벤트 CG 3종의 신규 후보 8파일을 프로젝트에 수급했다.
@@ -110,4 +114,4 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 
 ## 다음 작업
 
-PHASE 23에서 STORY/VISUAL/DIRECTION/AUDIO/GAMEPLAY/UX/BUG 7개 영역을 최종 검사하고 NEEDS FIX가 하나라도 있으면 완료 처리하지 않는다.
+PHASE 24 사용자 최종 승인을 기다린다. 승인 전에는 DAY 1 COMPLETE로 표시하거나 DAY 2 신규 콘텐츠를 시작하지 않는다.
