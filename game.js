@@ -29,6 +29,8 @@ import { analyzePlayHistory } from "./src/ending-manager.mjs";
 import { SoundManager } from "./src/sound-manager.mjs?v=5";
 import { DAY1_BGM_CUES } from "./src/day1-audio-data.mjs";
 import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs";
+import { DAY2_BGM_CUES } from "./src/day2-audio-data.mjs";
+import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyChoice, getLockedDay2Segment } from "./src/day2-campaign-runtime.mjs";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
@@ -359,14 +361,17 @@ function openGameMenu() {
 function openStoryScene(scene) {
   if (!scene) return;
   const lockedDay1=scene.id===LOCKED_DAY1_SCENE_ID;
+  const lockedDay2=scene.id===LOCKED_DAY2_SCENE_ID;
   const presentation=resolveStoryPresentation(scene,state);
   if(!(lockedDay1&&state.storyFlags?.day1QuestionStrategy))state.pendingStoryId = scene.id;
   if(presentation.eventCgId&&!state.cgCollection.some(entry=>entry.id===presentation.eventCgId))state.cgCollection.push({id:presentation.eventCgId,title:scene.title,image:presentation.backgroundUrl,day:state.day});
   SaveManager.save(state);
-  if(!lockedDay1)sound.playBgm(scene.bgm ?? "theme",state.day);
+  if(!lockedDay1&&!lockedDay2)sound.playBgm(scene.bgm ?? "theme",state.day);
   const lockedSegment=state.storyFlags?.day1QuestionStrategy?2:state.storyFlags?.day1ContactStrategy?1:0;
-  startImmersiveScene({id:scene.id,type:"story",presentation:lockedDay1?{...presentation,backgroundId:"day1-hospital-ceiling",backgroundUrl:getBackgroundAsset("day1-hospital-ceiling"),expressionId:"resting-tired",poseId:"seated-dozing"}:presentation,sequence:lockedDay1?getLockedDay1Segment(state,lockedSegment):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
+  const lockedPresentation=lockedDay1?{...presentation,backgroundId:"day1-hospital-ceiling",backgroundUrl:getBackgroundAsset("day1-hospital-ceiling"),expressionId:"resting-tired",poseId:"seated-dozing"}:lockedDay2?{...presentation,backgroundId:"day2-hospital-bedside",backgroundUrl:getBackgroundAsset("day2-hospital-bedside"),expressionId:"calm-attentive",poseId:"standing"}:presentation;
+  startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
     if(lockedDay1){const stage=applyLockedDay1ChoiceState(state,choiceId);if(!stage)return null;if(stage.stage==="contact"){SaveManager.save(state);return getLockedDay1Segment(state,1);}const result=resolveStoryChoice(state,scene.id,stage.legacyChoiceId);if(!result)return null;SaveManager.save(state);return getLockedDay1Segment(state,2);}
+    if(lockedDay2){const result=applyLockedDay2ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay2Segment(state,result.stage);}
     const result=resolveStoryChoice(state,scene.id,choiceId);
     if(!result)return null;
     state.logs.push({time:`DAY ${state.day} · STORY`,text:`${scene.title} — ${result.choice.label}`});
@@ -454,7 +459,7 @@ function renderImmersiveStep() {
   $("#storyChoiceLayer").classList.add("hidden");
   $("#storyChoiceLayer").innerHTML="";
   if (!step || step.type === "sceneEnd") { finishImmersiveScene(); return; }
-  if(step.bgmCue){const cue=DAY1_BGM_CUES[step.bgmCue];if(cue?.action==="stop"||cue?.action==="silence")sound.stopBgm();else if(cue)sound.playBgm(cue.category,cue.variant,{volume:cue.volume});}
+  if(step.bgmCue){const cue=DAY1_BGM_CUES[step.bgmCue]??DAY2_BGM_CUES[step.bgmCue];if(cue?.action==="stop"||cue?.action==="silence")sound.stopBgm();else if(cue)sound.playBgm(cue.category,cue.variant,{volume:cue.volume});}
   if(step.backgroundId){
     immersiveScene.presentation={...immersiveScene.presentation,backgroundId:step.backgroundId,backgroundUrl:getBackgroundAsset(step.backgroundId),characterId:step.characterId??immersiveScene.presentation.characterId,expressionId:step.expressionId??immersiveScene.presentation.expressionId,poseId:step.poseId??immersiveScene.presentation.poseId,outfitId:step.outfitId??immersiveScene.presentation.outfitId,weather:step.weather??immersiveScene.presentation.weather,timeOfDay:step.timeOfDay??immersiveScene.presentation.timeOfDay};
     applyScenePresentation(immersiveScene.presentation);
@@ -518,7 +523,7 @@ function chooseImmersiveOption(choiceId) {
 function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentStep?.type==="choice"||eventRuntime.input.snapshot().locked)return;if(eventRuntime.state==="WAITING_DIALOGUE")eventRuntime.transition("PLAYING");renderImmersiveStep(); }
 function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){if(eventRuntime.state==="TRANSITIONING")eventRuntime.transition("PLAYING");if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");immersiveScene.index=immersiveScene.sequence.indexOf(choice)+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
 function finishImmersiveScene() {
-  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;if(completedSession?.id===LOCKED_DAY1_SCENE_ID&&state.storyFlags?.day1QuestionStrategy)state.pendingStoryId=null;eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
+  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;if(completedSession?.id===LOCKED_DAY1_SCENE_ID&&state.storyFlags?.day1QuestionStrategy)state.pendingStoryId=null;if(completedSession?.id===LOCKED_DAY2_SCENE_ID&&state.storyFlags?.day2ContactStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY2_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY2_SCENE_ID,getLockedDay2LegacyChoice(state));state.storyFlags.day2RuntimeComplete=true;state.pendingStoryId=null;}eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
   $("#visualNovelStage").classList.remove("narration-mode");$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
   SaveManager.save(state);render();const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);
 }
