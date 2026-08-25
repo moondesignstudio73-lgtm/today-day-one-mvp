@@ -1,6 +1,6 @@
 import { HIDDEN_ROUTE_SCENES } from "./hidden-route-data.mjs";
 import { HEROINE_STORY_SCENES } from "./heroine-data.mjs";
-import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs";
+import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs?v=2";
 
 export const MARRIAGE_30_STORY_SCENES = [{
   id:"m30-day1-hospital-awakening",arc:"잃어버린 1년",window:[1,1],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],
@@ -317,7 +317,7 @@ export const MARRIAGE_30_STORY_SCENES = [{
   id:"m30-day7-first-present-date",arc:"오늘부터 우리의 데이트",window:[7,7],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day6-neighborhood"},
   title:"오늘부터 우리의 데이트",speaker:"하은",message:"DAY 6에 정한 방식으로 첫 현재형 데이트를 시작한다. 계획을 지키는 것보다 함께 바꾸는 규칙을 지키기로 했다.",
   chapterType:"relationship/daily-life-hybrid",targetPlaytimeMinutes:[9,13],timeWindow:"late-morning-to-late-afternoon",participants:["protagonist","haeun","bookshop-owner","gallery-staff"],previousChoiceReferences:["m30-day6-neighborhood"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day7,expressionId:"smile",poseId:"standing"},
   choices:[
     {id:"date7_record_shared_photo",label:"고른 물건과 손만 나오게 사진을 남기고 함께 제목을 붙인다",response:"오늘 함께 고른 물건과 손만 담은 사진에 둘만의 제목을 붙였다.",memory:"첫 현재형 데이트를 함께 고른 물건의 사진으로 남김"},
     {id:"date7_record_two_sentences",label:"각자 기억하고 싶은 한 문장을 써서 서로 바꿔 읽는다",response:"서로의 한 문장을 바꿔 읽으며 오늘의 기억을 과거와 분리해 남겼다.",memory:"첫 현재형 데이트를 서로 쓴 두 문장으로 남김"},
@@ -327,11 +327,21 @@ export const MARRIAGE_30_STORY_SCENES = [{
   id:"m30-day8-independent-errand",arc:"혼자 할 것, 같이 할 것",window:[8,8],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day7-first-present-date"},
   title:"혼자 할 것, 같이 할 것",speaker:"하은",message:"약 관련 확인은 함께 마친 뒤 우편함과 세제 구매는 혼자 처리한다. 출발 전에 정한 연락 계약은 두 사람 모두가 지킨다.",
   chapterType:"daily-life/independence-hybrid",targetPlaytimeMinutes:[9,13],timeWindow:"morning-to-early-afternoon",participants:["protagonist","haeun","pharmacist","household-store-staff"],previousChoiceReferences:["m30-day7-first-present-date"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
   choices:[
     {id:"errand8_sort_receipt_together",label:"영수증과 우편물을 함께 분류하며 처리 결과를 공유한다",response:"우편물과 영수증을 함께 분류하며 혼자 처리한 하루를 현재의 생활 기록으로 남겼다.",memory:"혼자 다녀온 생활 심부름의 결과를 함께 분류함"},
     {id:"errand8_explain_decision_log",label:"관찰·가능성·확인·선택 순서로 판단 기록을 설명한다",response:"결과보다 판단 순서를 설명해 기억 공백 속에서도 사용할 수 있는 생활 기준을 공유했다.",memory:"혼자 처리한 심부름의 판단 과정을 현재 기록으로 남김"},
     {id:"errand8_set_next_solo_boundary",label:"오늘의 예외를 정리하고 다음 혼자 외출의 경계를 합의한다",response:"혼자 처리할 일과 함께 확인할 일, 변경 시 연락할 조건을 다음 외출 규칙으로 저장했다.",memory:"다음 혼자 외출의 연락·공유 경계를 합의함"}
+  ]
+},{
+  id:"m30-day9-second-office-adaptation",arc:"두 번째 출근, 현재의 방식",window:[9,9],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day8-independent-errand"},
+  title:"두 번째 출근, 현재의 방식",speaker:"윤서진",message:"DAY 5에 합의한 제한 범위와 DAY 8에 검증한 독립 행동 규칙을 들고 두 번째 직장 적응 방문을 시작한다.",
+  chapterType:"work/independence/relationship-hybrid",targetPlaytimeMinutes:[9,13],timeWindow:"morning-to-early-afternoon",participants:["protagonist","haeun","minho","team-lead","seojin"],previousChoiceReferences:["m30-day5-work-return","m30-day8-independent-errand"],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
+  choices:[
+    {id:"office9_debrief_name_limits",label:"막힌 지점과 불편했던 순간을 먼저 공개하고 다음 제한을 조정한다",response:"취약함을 숨기지 않되 업무 평가와 섞지 않는 피드백 계약을 남겼다.",memory:"두 번째 직장 적응 방문의 불편과 제한을 직접 말함"},
+    {id:"office9_debrief_write_protocol",label:"책임 분리 절차와 다음 3시간 블록의 평가 기준을 문서화한다",response:"현재의 책임 분리 절차를 재현 가능한 다음 방문 기준으로 저장했다.",memory:"다음 3시간 직장 리듬의 업무 절차를 문서화함"},
+    {id:"office9_debrief_targeted_feedback",label:"서진에게 업무 판단 하나, 민호에게 상호작용 하나만 묻는다",response:"업무와 관계의 평가자를 분리해 과잉 일반화하지 않는 피드백을 받았다.",memory:"업무 판단과 팀 상호작용 피드백을 분리해 받음"}
   ]
 }];
 
