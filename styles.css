@@ -861,3 +861,15 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
   .world-location:hover{transform:translate(-50%,-50%)}
   .world-map button:focus:not(:focus-visible){outline:none;box-shadow:none}
 }
+
+/* FREE MODE: character-first life simulation, not a stack of floating web cards. */
+body.campaign-free-mode.ui-classic-mode .game-screen.classic-mode{grid-template-columns:230px minmax(600px,1fr) 230px;gap:12px}
+body.campaign-free-mode.ui-classic-mode .classic-mode>.play-panel{z-index:2}
+body.campaign-free-mode.ui-classic-mode .classic-mode>.profile-panel,
+body.campaign-free-mode.ui-classic-mode .classic-mode>.life-panel{padding:17px;border-color:#e4d9df;border-radius:7px;background:#fffdfa;box-shadow:4px 5px 0 #e8dde2;backdrop-filter:none}
+body.campaign-free-mode.ui-classic-mode .classic-mode .vn-stage{border-radius:8px;box-shadow:8px 9px 0 #dfd1d8}
+body.campaign-free-mode.ui-classic-mode .classic-mode .girlfriend-warehouse-panel{border-radius:7px;box-shadow:none;backdrop-filter:none}
+body.campaign-free-mode.ui-classic-mode .money-card,
+body.campaign-free-mode.ui-classic-mode .mini-tip{border-radius:5px;box-shadow:none}
+@media(max-width:1100px){body.campaign-free-mode.ui-classic-mode .game-screen.classic-mode{grid-template-columns:210px minmax(0,1fr)}}
+@media(max-width:760px){body.campaign-free-mode.ui-classic-mode .game-screen.classic-mode{grid-template-columns:1fr;gap:8px}body.campaign-free-mode.ui-classic-mode .classic-mode .vn-stage{border-radius:0;box-shadow:none}}
