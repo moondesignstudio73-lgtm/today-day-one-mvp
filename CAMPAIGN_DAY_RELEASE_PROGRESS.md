@@ -171,3 +171,11 @@
 - 병합 커밋 `6e956e7`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했으며, 동일 SHA의 GitHub Pages Actions 2건이 성공했다.
 - 캐시 우회 공개 페이지와 DAY 6 런타임 모듈이 HTTP 200으로 제공되고 `game.js?v=115`, `m30-day6` 계약이 반영됐음을 확인했다.
 - DAY 6의 출시 관문을 완료했다. 다음 대상은 DAY 7 시나리오 계약·초안·내러티브 QA다.
+
+### 2026-08-26 DAY 7 시나리오·내러티브 QA 관문 기록
+
+- 두 내러티브 스킬과 필수 참고자료를 적용해 `docs/day7/DAY7_SCENARIO_DRAFT_V1.md`에 첫 현재형 데이트를 다루는 8개 Scene·3개 전략 선택·9~13분 시나리오를 작성했다.
+- DAY 6의 새 장소·조건부 재방문·교대 선택 3분기를 장소·역할·대사로 콜백하고, 체력 변수는 관계 실패가 아닌 계획 수정 전략으로 처리했다.
+- `docs/day7/DAY7_SCENARIO_QA_V1.md`에서 총 81개 조합, Voice·지식 장부·정보 예산·저장 복원·DAY 8 독립 심부름 훅을 PASS 판정했다.
+- `tests/day7-scenario.test.mjs`와 전체 `tests/simulation.test.mjs` 회귀가 PASS했다. 플레이 대사 범위에서 후반 반전·사고 정보·D-DAY 조기 노출을 차단한다.
+- 다음 관문은 DAY 7 기존 에셋 감사와 Scene별 연출·오디오 매핑이다.
