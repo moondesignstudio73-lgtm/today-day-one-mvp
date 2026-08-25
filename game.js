@@ -552,6 +552,7 @@ function renderStoryFreeAction(step){
   const definition=getStoryFreeActionWindow(state.day,step.id);
   const progress=beginStoryFreeAction(state,step.id);
   if(!definition||!progress){renderImmersiveStep();return;}
+  if(progress.status==="REPORT"){renderDay1HospitalNight();return;}
   state.pendingStoryId=LOCKED_DAY1_SCENE_ID;
   $("#skipButton").classList.add("hidden");
   $("#storyChoiceLayer").classList.add("hidden");
@@ -562,11 +563,6 @@ function renderStoryFreeAction(step){
     const actionRows=DAY1_HOSPITAL_ACTIONS.map(action=>`<button type="button" class="story-free-action-card" data-story-free-action="${escapeHtml(action.id)}"><span aria-hidden="true">${action.icon}</span><b>${escapeHtml(action.title)}</b><small>${escapeHtml(action.description)}</small></button>`).join("");
     const locks=STORY_FEATURES.map(feature=>{const availability=getStoryFeatureAvailability(state,feature.id);return `<div class="story-feature-lock" aria-label="${escapeHtml(feature.label)} 잠금"><b>🔒 ${escapeHtml(feature.label)}</b><small>${escapeHtml(availability.reason)}</small></div>`;}).join("");
     layer.innerHTML=`<article class="story-free-action-shell"><header><span>DAY ${state.day} · FREE ACTION</span><h2>${escapeHtml(definition.title)}</h2><p>${escapeHtml(definition.description)}</p><div><b>현재 위치 · ${escapeHtml(definition.locationLabel)}</b><small>다음 일정 · ${escapeHtml(definition.nextSchedule)}</small></div></header><section class="story-free-status"><span>체력 <b>${Math.round(state.energy)}</b></span><span>건강 <b>${Math.round(state.health)}</b></span><span>피로 <b>${Math.round(state.fatigue)}</b></span><span>스트레스 <b>${Math.round(state.stress)}</b></span><span>관계 <b>${Math.round((state.affection+state.trust)/2)}</b></span></section><div class="story-free-action-grid">${actionRows}</div><aside class="story-feature-locks"><h3>생활 기능</h3>${locks}</aside></article>`;
-  }else{
-    const report=getStoryFreeActionReport(state).filter(row=>["energy","fatigue","stress","health","affection","trust"].includes(row.key));
-    const result=progress.result??{title:"자유행동",summary:"오늘의 선택을 마쳤다."};
-    const rows=report.map(row=>`<div><span>${escapeHtml(row.label)}</span><b>${row.before} → ${row.after}</b><em class="${row.delta>=0?"up":"down"}">${row.delta>=0?"+":""}${row.delta}</em></div>`).join("");
-    layer.innerHTML=`<article class="story-free-report"><span>DAY 1 REPORT</span><h2>${escapeHtml(result.title)}</h2><p>${escapeHtml(result.summary)}</p>${progress.event?`<blockquote>${escapeHtml(progress.event.text)}</blockquote>`:""}<section>${rows||"<div><span>오늘의 변화</span><b>차분히 하루를 정리했다.</b></div>"}</section><button id="completeStoryFreeAction" type="button">DAY 1 COMPLETE · 다음 날로</button></article>`;
   }
   eventRuntime.input.unlock(immersiveScene?.id);
   persistEventRuntime(true);SaveManager.save(state);
@@ -938,7 +934,7 @@ function render() {
   document.body.dataset.heroine=p.heroineId;document.documentElement.style.setProperty("--heroine-accent",p.uiAccent??"#ff91b5");
   $("#dayLabel").textContent = `${state.day} · ${getWeekdayName(state.day)}`; $("#phaseIcon").textContent = phase.icon;
   const mode=getGameModeConfig(state.gameMode),modeBadge=$("#gameModeBadge");modeBadge.textContent=storyCampaign?`STORY · D-${Math.max(0,31-state.day)}`:"FREE MODE";modeBadge.classList.remove("hidden");modeBadge.dataset.mode=mode.id;modeBadge.setAttribute("aria-label",storyCampaign?`${mode.title}, 결혼식까지 ${Math.max(0,31-state.day)}일`:mode.title);
-  if (state.phase === 3) { if(state.world?.mode==="district")renderWorldMap();else renderNightHome(); return; }
+  if (state.phase === 3) { if(isDay1HospitalNight())renderDay1HospitalNight();else if(state.world?.mode==="district")renderWorldMap();else renderNightHome(); return; }
   document.body.classList.add("ui-classic-mode");
   document.body.classList.remove("ui-story-mode");
   document.body.classList.remove("ui-night-mode");
@@ -1045,6 +1041,28 @@ function renderNightHome() {
   $("#nightHomeTip").textContent = night.activities.length ? `오늘 밤: ${night.activities.map(item=>item.label).join(" · ")}` : "밤 활동은 시간을 사용합니다. 늦게 잘수록 내일 더 피곤해져요.";
   const soundKey = `${state.day}-night-home`;
   if (soundKey !== lastSceneSoundKey) { lastSceneSoundKey=soundKey;sound.playScene("night",state.day); }
+}
+
+function isDay1HospitalNight(){return state?.scenario?.enabled===true&&state.day===1&&state.storyFreeAction?.status==="REPORT";}
+
+function renderDay1HospitalNight(){
+  closeStoryFreeAction();state.phase=3;
+  const night=ensureNightState(state);night.minutes=22*60;night.messagesRead=true;
+  document.body.classList.remove("ui-story-mode","ui-classic-mode");document.body.classList.add("ui-night-mode","day1-hospital-night-mode");
+  $("#gameScreen").classList.remove("story-mode","classic-mode");$("#gameScreen").classList.add("night-mode");
+  $(".play-panel").classList.add("hidden");$("#nightHome").classList.remove("hidden");$("#nightHome").classList.add("day1-hospital-night");$("#worldMap").classList.add("hidden");
+  const roomScene=$("#nightRoomScene");roomScene.classList.add("has-room-background");roomScene.style.backgroundImage='linear-gradient(180deg,#16203970,#0c101dcc),url("assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png")';roomScene.style.backgroundSize="cover";roomScene.style.backgroundPosition="center";
+  $(".night-home-header span").textContent="NIGHT TIME · 병실";$(".night-home-header h2").textContent="하은이 돌아간 뒤, 조용해진 병실";
+  $("#nightClock").textContent="22:00";$("#nightDayLabel").textContent=`DAY 1 · ${getWeekdayName(1)}`;$("#nightHomeTip").textContent="오늘의 기록을 확인한 뒤 침대에서 쉬면 DAY 2로 넘어갑니다.";$("#phoneBadge").classList.add("hidden");
+  const soundKey="1-hospital-night";if(soundKey!==lastSceneSoundKey){lastSceneSoundKey=soundKey;sound.playScene("night",1);}SaveManager.save(state);
+}
+
+function leaveDay1HospitalNight(){document.body.classList.remove("day1-hospital-night-mode");$("#nightHome").classList.remove("day1-hospital-night");}
+
+function sleepInDay1Hospital(){
+  const progress=state.storyFreeAction;if(!progress||progress.status!=="REPORT")return;
+  $("#modalContent").innerHTML=`<span class="eyebrow">DAY 1 · 병실 · 22:00</span><h2>오늘은 이만 쉬어야겠다.</h2><p>오늘의 선택과 기록을 저장하고 DAY 2로 넘어갑니다.</p><button id="day1HospitalSleepConfirm" class="primary-button" type="button">침대에서 쉬기 · SAVE · DAY 2 →</button>`;openModal();
+  $("#day1HospitalSleepConfirm").addEventListener("click",()=>{completeStoryFreeAction(state);leaveDay1HospitalNight();SaveManager.save(state);closeModal();if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID){finishImmersiveScene();return;}state.pendingStoryId=null;const next=advanceCampaignChapter({id:LOCKED_DAY1_SCENE_ID});eventRuntime.reset();SaveManager.save(state);render();if(next)setTimeout(()=>openStoryScene(next),0);});
 }
 
 function renderWorldMap() {
@@ -1349,6 +1367,7 @@ function goToSleep() {
 
 function handleRoomAction(event) {
   const button=event.target.closest("[data-room-action]");if(!button)return;
+  if(isDay1HospitalNight()){if(button.dataset.roomAction==="report")openDailyReport();else if(button.dataset.roomAction==="bed")sleepInDay1Hospital();return;}
   const handlers={phone:openGameMenu,pc:openNightPc,wardrobe:openInventory,report:openDailyReport,bed:goToSleep,exit:openWorldMap};handlers[button.dataset.roomAction]?.();
 }
 
