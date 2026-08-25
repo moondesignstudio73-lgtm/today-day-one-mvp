@@ -1,6 +1,6 @@
 import { applyEffects } from "./game-core.mjs?v=9";
 import { createDaySnapshot, getDailyReport } from "./night-manager.mjs?v=2";
-import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=6";
+import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=7";
 
 export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   1:Object.freeze([Object.freeze({
@@ -31,6 +31,11 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   6:Object.freeze([Object.freeze({
     id:"day6-home-evening",storySceneId:"m30-day6-neighborhood",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,
     title:"EVENING · 나의 집",description:"동네 생활 반경과 첫 현재형 데이트 방식을 정한 뒤다. 오늘 만든 기준 안에서 한 가지 행동만 한다.",nextSchedule:"정리를 마치면 DAY 7, 첫 현재형 데이트로 넘어간다.",
+    eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:false,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
+  })]),
+  7:Object.freeze([Object.freeze({
+    id:"day7-home-evening",storySceneId:"m30-day7-first-present-date",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,
+    title:"EVENING · 나의 집",description:"첫 현재형 데이트를 무리 없이 조정하고 돌아왔다. 오늘 남길 기록이나 내일 준비 중 하나만 고른다.",nextSchedule:"정리를 마치면 DAY 8, 첫 독립 심부름으로 넘어간다.",
     eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:false,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
   })])
 });
@@ -83,6 +88,14 @@ export const DAY6_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"rest-after-neighborhood-walk",icon:"☾",title:"지도와 영수증을 덮고 쉰다",description:"오늘 확인한 생활 반경을 더 넓히지 않고 회복을 우선한다.",effects:{energy:14,fatigue:-11,stress:-7,health:3},scenarioEffects:{},flag:"day6_recovery_rest",summary:"동네 외출 뒤 추가 확인을 멈추고 충분히 쉬었다."})
 ]);
 
+export const DAY7_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"review-present-date-memory",icon:"▧",title:"오늘의 데이트 기록을 확인한다",description:"사진·두 문장·공동 규칙 중 오늘 선택한 기록만 다시 확인한다.",effects:{affection:4,trust:4,confidence:3,energy:-2},scenarioEffects:{haeunAffection:2,haeunTrust:2},flag:"day7_free_review_date_memory",requiresAction:"review-present-date-memory",summary:"과거 재현이 아닌 오늘 함께 만든 데이트 기록을 확인했다."}),
+  Object.freeze({id:"record-recovery-adjustment",icon:"＋",title:"일정 변경과 증상을 기록한다",description:"멈춘 시각·증상·줄인 활동과 회복 결과를 현재 기록으로 남긴다.",effects:{health:3,confidence:4,energy:-2,stress:-2},scenarioEffects:{},flag:"day7_free_recovery_adjustment",requiresFlag:"day7ChangeSharedNotFailed",summary:"계획을 줄인 일을 실패가 아닌 안전한 변경으로 기록했다."}),
+  Object.freeze({id:"prepare-independent-errand",icon:"⌖",title:"내일 혼자 할 일을 준비한다",description:"우편함과 세제 구입 경로만 확인하고 약 관련 전화는 공동 확인으로 남긴다.",effects:{confidence:5,energy:-3,stress:1},scenarioEffects:{investigation:2},flag:"day7_free_prepare_errand",requiresAction:"plan-independent-errand",summary:"혼자 할 일과 함께 확인할 일을 분리해 DAY 8 준비를 마쳤다."}),
+  Object.freeze({id:"confirm-change-rule-with-haeun",icon:"♥",title:"하은과 변경 규칙을 저장한다",description:"계획은 함께 세우고 변경은 실패로 세지 않는다는 규칙을 확인한다.",effects:{trust:7,affection:4,energy:-2,stress:-3},scenarioEffects:{haeunTrust:3,haeunAffection:2},flag:"day7_free_shared_change_rule",requiresAction:"shared-change-rule",summary:"하은과 계획 변경을 실패로 보지 않는 공동 규칙을 저장했다."}),
+  Object.freeze({id:"rest-after-first-date",icon:"☾",title:"오늘 기록을 덮고 쉰다",description:"데이트를 더 평가하지 않고 체력과 회복을 우선한다.",effects:{energy:15,fatigue:-12,stress:-8,health:4},scenarioEffects:{},flag:"day7_recovery_rest",summary:"첫 데이트의 의미를 더 해석하지 않고 충분히 쉬었다."})
+]);
+
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
   Object.freeze({id:"shop",label:"온라인 쇼핑",reason:"스마트폰 기능이 아직 해금되지 않았습니다."}),
@@ -92,7 +105,7 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"job",label:"직장",reason:"단계적 복귀 범위가 아직 합의되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -161,5 +174,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS,...DAY5_OFFICE_ACTIONS,...DAY6_HOME_ACTIONS];return [1,2,3,4,5,6].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS,...DAY5_OFFICE_ACTIONS,...DAY6_HOME_ACTIONS,...DAY7_HOME_ACTIONS];return [1,2,3,4,5,6,7].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }

@@ -113,6 +113,27 @@ const DAY6_HOME_PAYMENT_BOUNDARY=Object.freeze({
   ],futureEventWeights:{money:1.1,romance:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY7_HOME_DATE_MEMORY=Object.freeze({
+  id:"context-day7-home-date-memory",title:"오늘 것만 남긴 사진",category:"romance",categoryLabel:"스토리 공용 이벤트",
+  hook:"하은이 책과 영수증만 담긴 사진의 제목 입력란을 열었다.",message:"과거를 증명하지 않으면서 오늘의 데이트를 어떤 이름으로 남길지 정할 차례였다.",question:"첫 현재형 데이트의 기록을 어떻게 보관할까?",
+  allowedLocations:["home"],allowedPhases:["evening"],dayRange:[7,7],heroineIds:["haeun"],requiredFeatures:["review-present-date-memory"],requiredStoryFlags:["day7RuntimeComplete","day7FirstPresentDateCompleted"],
+  cooldown:30,maxTriggerCount:1,probability:.35,priority:250,baseWeight:100,tensionLevel:"low",effects:{affection:1},
+  storyFlag:"context-day7-home-date-memory:COMPLETED",forbiddenFlags:["context-day7-home-date-memory:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",result:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",status:"ready"},
+  presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"smile",poseId:"phone"},
+  scenes:[{id:"context-day7-home-date-memory-scene",title:"오늘 것만 남긴 사진",backgroundId:"day2-home-entry",characterIds:["girlfriend"],expression:"smile",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"evening",timeOfDay:"evening",weather:"clear",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"하은이 책과 영수증, 접힌 지도만 담긴 사진의 제목 입력란을 열었다."},
+    {type:"dialogue",speaker:"하은",text:"과거 데이트 증거 말고, 오늘 우리가 바꾼 걸 기억하는 제목이면 좋겠어.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"계획보다 잘한 날보다, 같이 멈추고 바꾼 날이 정확해."},
+    {type:"dialogue",speaker:"하은",text:"응. 지친 얼굴은 없고, 오늘 고른 것과 바꾼 규칙만 남기자.",expressionId:"calm"},
+    {type:"narration",speaker:"내레이션",text:"사진은 잃어버린 과거를 대신하지 않고, 오늘 함께 만든 선택의 출처가 되었다."}
+  ]}],
+  choices:[
+    {id:"title-shared-change",label:"‘같이 멈추고 바꾼 날’로 제목을 붙인다",preferenceTags:["EMPATHY","BOUNDARY"],effects:{affection:6,trust:5,stress:-3},response:"계획 변경을 실패가 아닌 함께 지킨 규칙으로 사진에 남겼다.",flag:"context-day7-home-date-memory:SHARED_CHANGE",memory:"DAY 7 데이트 사진을 ‘같이 멈추고 바꾼 날’로 저장했다.",futureEventWeights:{romance:1.2}},
+    {id:"store-private-album",label:"공개하지 않는 현재형 데이트 앨범에만 보관한다",preferenceTags:["PRACTICAL","PRIVATE"],effects:{trust:6,confidence:3,stress:-2},response:"사진을 과거 관계의 증거로 공유하지 않고 둘만의 현재 기록으로 보관했다.",flag:"context-day7-home-date-memory:PRIVATE_ALBUM",memory:"DAY 7 첫 현재형 데이트 사진을 비공개 공동 기록으로 보관했다.",futureEventWeights:{romance:1.15}}
+  ],futureEventWeights:{romance:1.15,recovery:1.1},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
@@ -121,7 +142,8 @@ export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   DAY3_DISCHARGE_CHECK,
   DAY4_HOME_LEDGER_REVIEW,
   DAY5_OFFICE_HANDOFF,
-  DAY6_HOME_PAYMENT_BOUNDARY
+  DAY6_HOME_PAYMENT_BOUNDARY,
+  DAY7_HOME_DATE_MEMORY
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);
