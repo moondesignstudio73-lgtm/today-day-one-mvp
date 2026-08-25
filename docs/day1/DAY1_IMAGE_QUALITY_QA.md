@@ -21,7 +21,7 @@
 | `haeun-day1-expressions-v1.png` | REPLACED | 1659×948 `RGB`라 투명도가 전혀 없고 체크무늬가 실제 픽셀로 굽혀졌다. | clean v2와 개별 8파일로 교체 |
 | `haeun-day1-expressions-clean-v2.png` + 개별 8파일 | PASS | 동일 얼굴 정렬·8감정을 보존하고 실제 RGBA의 완전 투명/불투명 범위를 갖는다. 병실 합성에서 체크무늬·검은 구멍·후광이 없다. | 최종 후보 승인 |
 | `haeun-day1-poses-v1.png` | REPLACED | 1024×1536 `RGB`이며 체크무늬가 실제 픽셀이다. | clean v2와 개별 9파일로 교체 |
-| `haeun-day1-poses-clean-v2.png` + 개별 9파일 | PASS | 실제 배치 경계로 비균등 분리해 머리·손·의자를 보존했다. 포옹·거리 회복·컵 보조·장난·달력 결심 포즈가 병실 합성에서 읽힌다. | 최종 후보 승인 |
+| 독립 제작한 하은 DAY 1 포즈 9파일 | PASS | 3×3 시트 파생본을 폐기하고 각 장면의 동작 의미에 맞춰 개별 제작했다. 모두 실제 RGBA 알파를 가지며 포옹·거리 회복·컵 보조·장난·달력 결심 포즈의 자연스러운 중심과 스케일을 통일했다. | 최종 후보 승인 |
 | `medical-staff-day1-poses-v1.png` | REPLACED | 인물·후광 전체가 반투명하고 완전 불투명 픽셀이 없었다. | clean v2와 개별 6파일로 교체 |
 | `medical-staff-day1-poses-clean-v2.png` + 개별 6파일 | PASS | 저알파 후광을 제거하고 인물 본체를 정상 불투명화했다. 의사 3상태와 간호사 3상태가 병실 배경에서 색 손실 없이 읽힌다. | 최종 후보 승인 |
 | `cg-day1-first-eye-contact-v1.png` | REPLACED | 접촉 전 손·따뜻한 첫인상·꺼진 휴대폰은 합격이나 바지가 잠금 명세의 밝은색과 달랐다. | `v2`로 교체 |

@@ -317,26 +317,13 @@ def main() -> None:
         "haeun-day1-expressions-clean-v2.png",
         close_bottom=True,
     )
-    outputs += process_checker_sheet(
-        "haeun-day1-poses-v1.png",
-        3,
-        3,
-        HAEUN_POSES,
-        ROOT / "assets" / "characters" / "day1" / "haeun" / "poses",
-        "haeun-day1-poses-clean-v2.png",
-        close_bottom=False,
-        custom_boxes=[
-            (0, 0, 350, 500),
-            (300, 0, 700, 500),
-            (600, 0, 1024, 500),
-            (0, 480, 350, 985),
-            (300, 480, 680, 985),
-            (590, 480, 1024, 985),
-            (0, 960, 360, 1536),
-            (290, 960, 700, 1536),
-            (590, 960, 1024, 1536),
-        ],
-    )
+    # Haeun's DAY 1 poses are independently authored transparent sprites.
+    # Do not rebuild them from the retired 3x3 source sheet: that reintroduces
+    # inconsistent scale, checkerboard residue, and unnatural scene framing.
+    outputs += [
+        ROOT / "assets" / "characters" / "day1" / "haeun" / "poses" / name
+        for name in HAEUN_POSES
+    ]
     outputs += process_medical_staff()
     verify_alpha(outputs)
     expression_paths = [
