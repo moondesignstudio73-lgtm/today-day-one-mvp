@@ -21,8 +21,8 @@ for(const [id,scene] of Object.entries(DAY6_PRESENTATION_SCENES)){
   }
 }
 
-assert.equal(DAY6_PRESENTATION_SCENES.S03_PHARMACY.backgroundId,"neighborhood-street-day");
-assert.equal(DAY6_PRESENTATION_SCENES.S04_MARKET.backgroundId,"neighborhood-street-day");
+assert.equal(DAY6_PRESENTATION_SCENES.S03_PHARMACY.backgroundId,"neighborhood-pharmacy-day");
+assert.equal(DAY6_PRESENTATION_SCENES.S04_MARKET.backgroundId,"neighborhood-market-day");
 assert.equal(DAY6_PRESENTATION_SCENES.S05_CAFE.backgroundId,"neighborhood-cafe-day");
 assert.equal(DAY6_PRESENTATION_SCENES.S07_DATE_PLAN.backgroundId,"neighborhood-park-day");
 assert.ok(!Object.values(DAY6_PRESENTATION_SCENES).some(scene=>scene.backgroundId.includes("department-food")));
@@ -30,4 +30,4 @@ assert.ok(!Object.values(DAY6_PRESENTATION_SCENES).some(scene=>["tense","worried
 const audit=readFileSync(new URL("../docs/day6/DAY6_ASSET_DIRECTION_AUDIO_AUDIT.md",import.meta.url),"utf8");
 for(const phrase of ["백화점 식품관","대체 사용 금지","임시 예비폰","윤서진의 두 수치","PASS"]){assert.match(audit,new RegExp(phrase));}
 
-console.log("✓ DAY 6 기존 에셋 8 Scene·생활 톤·연출/BGM/SFX 매핑 검증 통과");
+console.log("✓ DAY 6 전용 고해상도 배경 8 Scene·생활 톤·연출/BGM/SFX 매핑 검증 통과");

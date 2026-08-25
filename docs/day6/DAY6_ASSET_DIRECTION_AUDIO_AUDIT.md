@@ -1,14 +1,16 @@
 # DAY 6 기존 에셋·연출·오디오 감사
 
 기준 시나리오: `DAY6_SCENARIO_DRAFT_V1.md`  
-목표: 신규 자산을 만들지 않고 기존 자산으로 밝고 생활적인 동네 외출을 구성하되, 장소를 잘못 표현하는 재사용은 피한다.
+목표: 실제 DAY 6 플레이에서 장소·화풍·복장 불일치를 제거하고 밝고 생활적인 동네 외출을 고해상도 전용 자산으로 구성한다.
 
 ## 감사 결론
 
-- **재사용 확정:** 집 아침, 주거 상가 거리, 작은 카페, 도심 공원, 하은 기본/미소/휴대폰 스프라이트.
+- **재사용 확정:** 집 아침, 주거 상가 거리, 도심 공원.
+- **전용 제작 완료:** 동네 약국 내부, 동네 마트 내부, 동네 카페 내부, 하은 DAY 6 동네 외출복.
 - **재사용 제외:** `048_department-food.png`는 백화점 식품관이라 소박한 동네 마트와 규모·가격대가 다르다. 마트 내부로 위장해 쓰지 않는다.
-- **약국·마트 처리:** 현재 장면은 `neighborhood-street-day`에서 외관과 출입을 보여 주고, 처방 봉투·장바구니·영수증을 대사와 소품 클로즈업으로 전달한다. 존재하지 않는 내부 배경을 암시하는 와이드 숏은 금지한다.
-- **향후 선택 자산:** 전용 제작이 승인되면 작은 동네 약국 카운터와 중형 생활 마트 통로를 추가할 수 있다. DAY 6 런타임 연결에는 필수가 아니다.
+- **약국·마트 처리:** 각 장면에 실제 내부 전용 배경을 연결해 선택지와 장소가 정확히 일치한다.
+- **카페 처리:** 실사풍 재사용 이미지를 2D 비주얼노벨 화풍의 전용 카페로 교체했다.
+- **복장 처리:** 출근용 가디건·치마·구두 대신 바람막이·니트·베이지 팬츠·운동화·크로스백의 장시간 보행용 외출복을 DAY 6 전체에 고정한다.
 - **톤:** `daily`와 `dateShopping`만 사용한다. 불안·위기·미스터리 BGM, 의심을 유도하는 하은 표정, 급격한 줌과 글리치는 금지한다.
 
 ## 기존 파일 판정
@@ -16,14 +18,15 @@
 | 용도 | 등록 ID | 파일 | 판정 |
 |---|---|---|---|
 | 집 출발·귀가 지도 | `home-morning` | `assets/backgrounds/morning-studio-2d.png` | 재사용 |
-| 동네 길·약국/마트 외관 | `neighborhood-street-day` | `assets/backgrounds/street/BG_RELATIONSHIP_STREET_DAY_001.png` | 재사용 |
-| 동네 카페 | `neighborhood-cafe-day` | `assets/backgrounds/map-locations/004_small-cafe.png` | 재사용 |
+| 동네 길 | `neighborhood-street-day` | `assets/backgrounds/street/BG_RELATIONSHIP_STREET_DAY_001.png` | 재사용 |
+| 동네 약국 | `neighborhood-pharmacy-day` | `assets/backgrounds/day6/day6-neighborhood-pharmacy-day-v1.png` | 전용 제작 |
+| 동네 마트 | `neighborhood-market-day` | `assets/backgrounds/day6/day6-neighborhood-market-day-v1.png` | 전용 제작 |
+| 동네 카페 | `neighborhood-cafe-day` | `assets/backgrounds/day6/day6-neighborhood-cafe-day-v1.png` | 전용 제작 |
 | 작은 공원 산책 | `neighborhood-park-day` | `assets/backgrounds/map-locations/035_running-park.png` | 재사용 |
-| 하은 생활 표정 | `girlfriend` calm/smile | 기존 캐릭터 매니페스트 | 재사용 |
-| 하은 예비폰 확인 | `girlfriend` calm + phone | 기존 캐릭터 매니페스트 | 재사용 |
+| 하은 DAY 6 외출복 | `STORY_OUTFIT_ASSETS.day6` | `assets/characters/story-outfits/haeun-day6-neighborhood-casual-2d-v1.png` | 전용 제작 |
 | 백화점 식품관 | 미등록 | `assets/backgrounds/map-locations/048_department-food.png` | 마트 대체 사용 금지 |
 
-모든 재사용 파일은 원본을 덮어쓰거나 이동하지 않는다. 새 ID 세 개는 기존 파일을 가리키는 읽기 전용 별칭이다.
+기존 재사용 파일은 원본을 덮어쓰거나 이동하지 않는다. 전용 배경 3장은 1672×941, 캐릭터 스프라이트는 887×1774 RGBA로 저장한다.
 
 ## Scene별 연출 계약
 
@@ -31,8 +34,8 @@
 |---|---|---|---|---|---|---|
 | S01 집에서 동선 짜기 | 집, medium | calm/phone | fade | daily 0.075 | 예비폰 키 | 함께 계획하되 주도권 선택 준비 |
 | S02 첫 갈림길 | 거리, wide | smile/standing | crossfade | daily 0.070 | 자동문 | 세 경로 전략의 실제 거리감 제시 |
-| S03 약국 | 거리 외관→봉투 medium | calm/standing | cut | daily 0.065 | 서류 수령 | 회복 루틴을 생활 행동으로 처리 |
-| S04 마트 | 거리 외관→장바구니 close | smile/standing | crossfade | dateShopping 0.070 | 가방 지퍼 | 장보기 전략 차이를 소품과 반응으로 표시 |
+| S03 약국 | 약국 내부 medium | calm/standing | cut | daily 0.065 | 서류 수령 | 회복 루틴을 생활 행동으로 처리 |
+| S04 마트 | 마트 내부 close-prop | smile/standing | crossfade | dateShopping 0.070 | 가방 지퍼 | 장보기 전략 차이를 소품과 반응으로 표시 |
 | S05 카페 | 카페, medium | smile/standing | crossfade | dateShopping 0.065 | 컵 내려놓기 | 과거 회상 대신 지금의 합의 형성 |
 | S06 업무 메시지 | 같은 카페, phone close | calm/phone | cut | daily 0.055 | 예비폰 키 | DAY 5 업무 경계를 현재 행동으로 콜백 |
 | S07 공원·데이트 계획 | 공원, wide | smile/standing | crossfade | dateShopping 0.075 | 없음 | 서로 다른 데이트 전략을 안전하게 합의 |
@@ -53,4 +56,4 @@
 - 원래 휴대폰이 돌아온 것처럼 보이는 연출은 금지한다. S01·S06의 phone 포즈는 임시 예비폰이다.
 - 공원 Scene은 첫 현재형 데이트 계획의 온도만 올리며 사고·결혼식 반전·잠금 프로필을 공개하지 않는다.
 
-결론: **PASS**. 기존 자산만으로 8개 Scene의 의미와 톤을 보존할 수 있으며, 전용 약국·마트 내부는 필수가 아닌 후속 개선 후보로 분리한다.
+결론: **PASS**. 실제 플레이에서 확인된 장소·화풍·복장 불일치를 전용 고해상도 자산으로 교체했고, 8개 Scene의 의미와 밝은 생활 톤을 유지한다.

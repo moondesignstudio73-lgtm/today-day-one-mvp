@@ -1,4 +1,5 @@
 import {DAY6_PRESENTATION_SCENES} from "./day6-presentation-data.mjs";
+import {STORY_OUTFIT_ASSETS} from "./story-outfit-assets.mjs?v=2";
 
 const ID="m30-day6-neighborhood";
 const n=(text,extra={})=>({type:"narration",text,...extra});
@@ -120,7 +121,7 @@ function addCollection(state,key,...ids){if(!state.scenario?.enabled||!Array.isA
 function remember(state,id){state.storyFlags??={};state.storyFlags[id]=true;}
 
 export function getLockedDay6Segment(state,stage=state.storyFlags?.day6RuntimeStage??0){if(stage===0)return segment0(state);if(stage===1)return segment1(state);if(stage===2)return segment2(state);return segment3(state);}
-export function getLockedDay6ResumePresentation(state){const stage=state.storyFlags?.day6RuntimeStage??0;if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",expressionId:"calm",poseId:"phone"};if(stage===1)return {backgroundId:"neighborhood-street-day",characterId:"girlfriend",expressionId:"smile",poseId:"standing"};if(stage===2)return {backgroundId:"neighborhood-cafe-day",characterId:"girlfriend",expressionId:"smile",poseId:"standing"};return {backgroundId:"neighborhood-park-day",characterId:"girlfriend",expressionId:"smile",poseId:"standing"};}
+export function getLockedDay6ResumePresentation(state){const stage=state.storyFlags?.day6RuntimeStage??0;const characterAssetUrl=STORY_OUTFIT_ASSETS.day6;if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",expressionId:"calm",poseId:"phone",characterAssetUrl};if(stage===1)return {backgroundId:"neighborhood-street-day",characterId:"girlfriend",expressionId:"smile",poseId:"standing",characterAssetUrl};if(stage===2)return {backgroundId:"neighborhood-cafe-day",characterId:"girlfriend",expressionId:"smile",poseId:"standing",characterAssetUrl};return {backgroundId:"neighborhood-park-day",characterId:"girlfriend",expressionId:"smile",poseId:"standing",characterAssetUrl};}
 
 export function applyLockedDay6ChoiceState(state,id){
   state.storyFlags??={};
