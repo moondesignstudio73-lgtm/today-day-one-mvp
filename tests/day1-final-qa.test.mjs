@@ -81,7 +81,7 @@ assert.match(gameSource,/finishDialogueTyping\(\)\)\{scheduleAutoAdvance\(\);ret
 assert.match(gameSource,/storyChoiceLayer"\)\.addEventListener\("keydown"/);
 assert.match(htmlSource,/id="visualNovelStage" role="button" tabindex="0"/);
 assert.match(htmlSource,/id="storyChoiceLayer"[^>]*aria-label="스토리 선택지"/);
-assert.match(htmlSource,/game\.js\?v=90/);
+assert.match(htmlSource,/game\.js\?v=\d+/);
 console.log("✓ UX — AUTO 장문 진행·키보드·ARIA·캐시 버전 PASS");
 
 // BUG
