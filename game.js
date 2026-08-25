@@ -30,7 +30,7 @@ import { SoundManager } from "./src/sound-manager.mjs?v=5";
 import { DAY1_BGM_CUES } from "./src/day1-audio-data.mjs";
 import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs";
 import { DAY2_BGM_CUES } from "./src/day2-audio-data.mjs";
-import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyChoice, getLockedDay2Segment } from "./src/day2-campaign-runtime.mjs";
+import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyChoice, getLockedDay2ResumePresentation, getLockedDay2Segment } from "./src/day2-campaign-runtime.mjs?v=2";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
@@ -371,7 +371,8 @@ function openStoryScene(scene) {
   SaveManager.save(state);
   if(!lockedDay1&&!lockedDay2)sound.playBgm(scene.bgm ?? "theme",state.day);
   const lockedSegment=state.storyFlags?.day1QuestionStrategy?2:state.storyFlags?.day1ContactStrategy?1:0;
-  const lockedPresentation=lockedDay1?{...presentation,backgroundId:"day1-hospital-ceiling",backgroundUrl:getBackgroundAsset("day1-hospital-ceiling"),expressionId:"resting-tired",poseId:"seated-dozing"}:lockedDay2?{...presentation,backgroundId:"day2-hospital-bedside",backgroundUrl:getBackgroundAsset("day2-hospital-bedside"),expressionId:"calm-attentive",poseId:"standing"}:presentation;
+  const day2Resume=lockedDay2?getLockedDay2ResumePresentation(state):null;
+  const lockedPresentation=lockedDay1?{...presentation,backgroundId:"day1-hospital-ceiling",backgroundUrl:getBackgroundAsset("day1-hospital-ceiling"),expressionId:"resting-tired",poseId:"seated-dozing"}:lockedDay2?{...presentation,...day2Resume,backgroundUrl:getBackgroundAsset(day2Resume.backgroundId),expressionId:"calm-attentive",poseId:"standing"}:presentation;
   startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
     if(lockedDay1){const stage=applyLockedDay1ChoiceState(state,choiceId);if(!stage)return null;if(stage.stage==="contact"){SaveManager.save(state);return getLockedDay1Segment(state,1);}const result=resolveStoryChoice(state,scene.id,stage.legacyChoiceId);if(!result)return null;SaveManager.save(state);return getLockedDay1Segment(state,2);}
     if(lockedDay2){const result=applyLockedDay2ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay2Segment(state,result.stage);}
@@ -389,7 +390,7 @@ function startImmersiveScene(session) {
   const runtimeStart=eventRuntime.start({...session,sceneId:session.sequence.find(step=>step.backgroundId)?.label??session.id,triggerReason:session.triggerReason??[]});
   if(!runtimeStart.started){persistEventRuntime(true);return;}
   if (sceneAdvanceTimer) clearTimeout(sceneAdvanceTimer);
-  immersiveScene={...session,index:0,currentStep:null};
+  immersiveScene={...session,index:0,currentStep:null,activeCharacterAssetUrl:session.presentation?.characterAssetUrl??null};
   document.body.classList.remove("ui-classic-mode");
   document.body.classList.add("ui-story-mode");
   $("#gameScreen").classList.remove("classic-mode");
@@ -397,6 +398,9 @@ function startImmersiveScene(session) {
   $("#visualNovelStage").classList.toggle("location-event-scene",Boolean(session.locationEvent));
   $("#skipButton").classList.remove("hidden");
   $("#storyChoiceLayer").classList.add("hidden");
+  $("#vnNpcRear").hidden=true;
+  $("#vnNpcFront").hidden=true;
+  $("#vnEventCg").hidden=true;
   $("#actionGrid").classList.add("hidden");
   $("#nextButton").classList.add("hidden");
   applyScenePresentation(session.presentation);
@@ -409,6 +413,7 @@ function updateImmersiveCharacter(expressionId="calm") {
   const character=$("#vnCharacter");
   const characterId=immersiveScene?.presentation?.characterId??"girlfriend";
   if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID){const allowed=new Set(["resting-tired","startled-relief","teary-relief","apologetic-worried","calm-attentive","warm-playful","soft-vulnerable","gentle-resolve"]);const id=allowed.has(expressionId)?expressionId:"calm-attentive";character.src=`assets/characters/day1/haeun/expressions/haeun-expression-${id}-2d.png`;character.dataset.expression=id;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
+  if(immersiveScene?.id===LOCKED_DAY2_SCENE_ID&&immersiveScene.activeCharacterAssetUrl){character.src=immersiveScene.activeCharacterAssetUrl;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   updateGiftVehicleLayer(characterId);
   const npcSprite=characterId!=="girlfriend"?getNpcSprite(characterId):"";
   if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
@@ -470,7 +475,7 @@ function renderImmersiveStep() {
     if(step.bgmId)sound.playBgm(step.bgmId,state.day);
   }
   if (step.type === "transition") { if(eventRuntime.state!=="TRANSITIONING")eventRuntime.transition("TRANSITIONING",{sceneId:step.label});eventRuntime.input.lock(immersiveScene.id,"StoryTransition");showSceneTransition(step); return; }
-  if (step.type === "characterEnter") { if(step.assetUrl){$("#vnCharacter").src=step.assetUrl;$("#vnCharacter").dataset.expression=step.expressionId??"calm-attentive";syncOutfitCharacterMedia(true);}else updateImmersiveCharacter(step.expressionId??immersiveScene.presentation.expressionId);$("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
+  if (step.type === "characterEnter") { if(step.assetUrl){immersiveScene.activeCharacterAssetUrl=step.assetUrl;$("#vnCharacter").src=step.assetUrl;$("#vnCharacter").dataset.expression=step.expressionId??"calm-attentive";syncOutfitCharacterMedia(true);}else updateImmersiveCharacter(step.expressionId??immersiveScene.presentation.expressionId);$("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
   if(step.type==="sfx"){if(step.stopCueId)sound.stopCue(step.stopCueId);else if(step.sfxId)sound.playCue(step.sfxId);queueSceneStep(40);return;}
   if(step.type==="animation"){queueSceneStep(40);return;}
   if(step.type==="itemShow"){const layer=step.layer==="npcRear"?$("#vnNpcRear"):$("#vnNpcFront");layer.hidden=!step.source;if(step.source)layer.src=step.source;queueSceneStep(120);return;}

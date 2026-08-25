@@ -1,11 +1,36 @@
 const ID="m30-day2-rehabilitation";
 const BG={bed:"day2-hospital-bedside",corridor:"day2-recovery-corridor",lobby:"day2-hospital-lobby",exit:"day2-hospital-exit",car:"day2-car-interior",outside:"day2-home-exterior",home:"day2-home-entry",room:"day2-bedroom"};
 const H="assets/characters/day2/haeun/poses/",P="assets/props/day2/pov/",CG="assets/events/day2/",NPC="assets/npcs/day1/";
+export const DAY2_RUNTIME_OVERLAYS=Object.freeze({
+  haeun:Object.freeze({
+    "support-offer-open-palm":`${H}haeun-day2-pose-support-offer-open-palm-2d-hq-v2.png`,
+    "forearm-support-2d-v3":`${H}haeun-day2-pose-forearm-support-2d-v3.png`,
+    "paced-walk-beside":`${H}haeun-day2-pose-paced-walk-beside-2d-hq-v2.png`,
+    "pack-and-present":`${H}haeun-day2-pose-pack-and-present-2d-hq-v2.png`,
+    "safe-driving-2d-v3":`${H}haeun-day2-pose-safe-driving-2d-v3.png`,
+    "key-handover-step-aside":`${H}haeun-day2-pose-key-handover-step-aside-2d-hq-v2.png`,
+    "photo-side-inspection":`${H}haeun-day2-pose-photo-side-inspection-2d-hq-v2.png`,
+    "doorframe-permission-wait":`${H}haeun-day2-pose-doorframe-permission-wait-2d-hq-v2.png`,
+    "departing-open-wave":`${H}haeun-day2-pose-departing-open-wave-2d-hq-v2.png`
+  }),
+  pov:Object.freeze({
+    "bed-edge-prep-2d-v3":`${P}pov-day2-gesture-bed-edge-prep-2d-v3.png`,
+    "rail-grip-release":`${P}pov-day2-gesture-rail-grip-release-2d-hq-v2.png`,
+    "document-receive":`${P}pov-day2-gesture-document-receive-2d-hq-v2.png`,
+    "key-inspect-unlock":`${P}pov-day2-gesture-key-inspect-unlock-2d-hq-v2.png`,
+    "family-photo-hold-2d-v2":`${P}pov-day2-gesture-family-photo-hold-2d-v2.png`,
+    "couple-photo-turn":`${P}pov-day2-gesture-couple-photo-turn-2d-hq-v2.png`,
+    "search-interactions":`${P}pov-day2-gesture-search-interactions-2d-hq-v2.png`,
+    "small-key-classify":`${P}pov-day2-gesture-small-key-classify-2d-hq-v2.png`,
+    "three-column-note":`${P}pov-day2-gesture-three-column-note-2d-hq-v2.png`,
+    "spare-phone-contact":`${P}pov-day2-gesture-spare-phone-contact-2d-hq-v2.png`
+  })
+});
 const n=(text,extra={})=>({type:"narration",text,...extra});
 const d=(speaker,text,expressionId="calm-attentive",extra={})=>({type:"dialogue",speaker,text,expressionId,...extra});
 const tr=(label,backgroundId,extra={})=>({type:"transition",style:"fade",label,backgroundId,...extra});
-const sprite=(name,expressionId="calm-attentive")=>({type:"characterEnter",characterId:"girlfriend",assetUrl:`${H}haeun-day2-pose-${name}${name.includes("-2d-v")?"":"-2d"}.png`,expressionId,animationId:"idle-breathe"});
-const pov=name=>({type:"itemShow",layer:"npcFront",source:`${P}pov-day2-gesture-${name}${name.includes("-2d-v")?"":"-2d"}.png`});
+const sprite=(name,expressionId="calm-attentive")=>({type:"characterEnter",characterId:"girlfriend",assetUrl:DAY2_RUNTIME_OVERLAYS.haeun[name],expressionId,animationId:"idle-breathe"});
+const pov=name=>({type:"itemShow",layer:"npcFront",source:DAY2_RUNTIME_OVERLAYS.pov[name]});
 const clearPov=()=>({type:"itemShow",layer:"npcFront",source:""});
 const sfx=id=>({type:"sfx",sfxId:id});
 const stop=id=>({type:"sfx",stopCueId:id});
@@ -108,6 +133,17 @@ function addMetric(state,key,amount){if(state.scenario?.enabled&&Number.isFinite
 function remember(state,id){state.storyFlags??={};state.storyFlags[id]=true;}
 
 export function getLockedDay2Segment(state,stage=state.storyFlags?.day2RuntimeStage??0){if(stage===0)return structuredClone(SEGMENT_0);if(stage===1)return segment1(state);if(stage===2)return segment2(state);if(stage===3)return segment3(state);if(stage==="key")return keySegment();if(stage===4)return segment4(state);if(stage===5)return segment5(state);return endingSegment(state);}
+
+export function getLockedDay2ResumePresentation(state){
+  const stage=state.storyFlags?.day2RuntimeStage??0;
+  if(stage===1)return {backgroundId:BG.bed,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["pack-and-present"]};
+  if(stage===2)return {backgroundId:BG.bed,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["pack-and-present"]};
+  if(stage===3)return {backgroundId:BG.car,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["safe-driving-2d-v3"]};
+  if(stage===4&&state.storyFlags?.day2PendingPhotoReaction)return {backgroundId:BG.home,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["photo-side-inspection"]};
+  if(stage===4||stage==="key"||stage===5)return {backgroundId:BG.room,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["doorframe-permission-wait"]};
+  if(stage>=6)return {backgroundId:BG.home,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["departing-open-wave"]};
+  return {backgroundId:BG.bed,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["pack-and-present"]};
+}
 
 export function applyLockedDay2ChoiceState(state,id){state.storyFlags??={};
   if(DAY2_MARRIAGE_CHOICES.some(c=>c.id===id)){state.storyFlags.day2MarriageStrategy=id;remember(state,id);state.storyFlags.day2RuntimeStage=1;addMetric(state,id==="relationship_verify"?"investigation":id==="present_impression"?"haeunAffection":"haeunTrust",id==="relationship_verify"?1:2);return {stage:1};}
