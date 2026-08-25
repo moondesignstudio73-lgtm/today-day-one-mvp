@@ -38,4 +38,9 @@ assert.equal(audios[2].volume,0.045);
 manager.toggle(false);
 assert.equal(audios[2].pauseCalls,1);
 
+const firstVisitManager=new SoundManager({storage:{getItem:()=>null,setItem(){}}});
+assert.equal(firstVisitManager.enabled,true,"첫 방문에서는 스토리 음악이 기본으로 켜져야 한다");
+const optedOutManager=new SoundManager({storage:{getItem:()=>"off",setItem(){}}});
+assert.equal(optedOutManager.enabled,false,"사용자가 저장한 음소거 선택은 유지해야 한다");
+
 console.log("✓ DAY 1 BGM·SFX 매핑, WAV 에셋, 볼륨·루프·정지 계약 검증 통과");

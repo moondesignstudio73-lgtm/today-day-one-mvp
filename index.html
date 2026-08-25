@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="styles.css?v=79">
+  <link rel="stylesheet" href="styles.css?v=80">
   <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
@@ -145,10 +145,13 @@
         <div class="timeline girlfriend-warehouse-panel panel">
           <div class="section-title warehouse-title"><h3>보관함</h3><span id="girlfriendWardrobeCount">보유 의상 1개</span></div>
           <div id="girlfriendWardrobe" class="girlfriend-wardrobe" aria-label="구매한 여자친구 의상" aria-live="polite"></div>
-          <div class="main-quick-actions" aria-label="기록과 인맥">
-            <button id="todayRecordButton" class="main-quick-button" type="button" aria-haspopup="dialog"><span aria-hidden="true">☷</span><b>오늘의 기록</b><small id="turnCount">첫 번째 선택</small></button>
-            <button id="relationshipDirectoryButton" class="main-quick-button" type="button" aria-haspopup="dialog"><span aria-hidden="true">👥</span><b>인맥 관계</b><small id="relationshipCount">친구·동료 확인</small></button>
-          </div>
+          <section id="purchasedItemStorage" class="purchased-item-storage" aria-label="쇼핑몰 구매 아이템">
+            <div class="purchased-storage-title"><h3>쇼핑 아이템</h3><span>각 3개 보관</span></div>
+            <div class="purchased-storage-grid">
+              <div class="purchased-owner-group"><header><span aria-hidden="true">♥</span><b id="girlfriendStorageLabel">여자친구</b></header><div id="girlfriendPurchasedItems" class="purchased-owner-items"></div></div>
+              <div class="purchased-owner-group"><header><span aria-hidden="true">♟</span><b id="playerStorageLabel">주인공</b></header><div id="playerPurchasedItems" class="purchased-owner-items"></div></div>
+            </div>
+          </section>
           <div id="eventLog" class="event-log hidden" aria-hidden="true"></div>
         </div>
       </section>
@@ -161,6 +164,10 @@
         <div class="section-title"><h3>나의 하루</h3><span id="lifeStatus">괜찮은 시작</span></div>
         <div class="money-card"><small>보유 자산</small><strong id="moneyValue">₩ 850,000</strong><span id="jobValue">주니어 기획자</span></div>
         <div id="statList" class="stat-list"></div>
+        <div class="life-quick-actions" aria-label="기록과 인맥">
+          <button id="todayRecordButton" class="life-quick-button" type="button" aria-haspopup="dialog"><span aria-hidden="true">☷</span><b>오늘의 기록</b><small id="turnCount">첫 번째 선택</small></button>
+          <button id="relationshipDirectoryButton" class="life-quick-button" type="button" aria-haspopup="dialog"><span aria-hidden="true">👥</span><b>인맥 관리</b><small id="relationshipCount">친구·동료 확인</small></button>
+        </div>
         <div class="mini-tip"><span>TIP</span><p id="tipText">모든 행동은 다른 선택의 가능성을 바꿉니다.</p></div>
       </aside>
 
@@ -176,7 +183,7 @@
           <button class="room-object room-wardrobe" type="button" data-room-action="wardrobe"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-shirt"></i></span><b>옷장</b><small>내일의 스타일</small></button>
           <button class="room-object room-report" type="button" data-room-action="report"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-clipboard-list"></i></span><b>DAY REPORT</b><small>오늘의 변화 확인</small></button>
           <button class="room-object room-bed" type="button" data-room-action="bed"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-bed"></i></span><b>침대</b><small>저장하고 다음 날로</small></button>
-          <button class="room-object room-exit" type="button" data-room-action="exit"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-door-open"></i></span><b>데이트/외출하기</b><small>지도로 이동</small></button>
+          <button class="room-object room-exit" type="button" data-room-action="exit"><span class="room-icon" aria-hidden="true"><i class="fa-solid fa-door-open"></i></span><b>데이트/외출</b><small>지도로 이동</small></button>
           <div class="room-window" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
           <div class="room-floor" aria-hidden="true"></div>
         </div>
@@ -245,6 +252,6 @@
     </article>
   </section>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=106"></script>
+  <script type="module" src="game.js?v=108"></script>
 </body>
 </html>
