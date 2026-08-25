@@ -398,6 +398,11 @@ function startImmersiveScene(session) {
   if(!runtimeStart.started){persistEventRuntime(true);return;}
   if (sceneAdvanceTimer) clearTimeout(sceneAdvanceTimer);
   immersiveScene={...session,index:0,currentStep:null,activeCharacterAssetUrl:session.presentation?.characterAssetUrl??null};
+  if(session.id===LOCKED_DAY2_SCENE_ID){
+    const resumeVisual=getLockedDay2ResumePresentation(state);
+    immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
+    immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl;
+  }
   document.body.classList.remove("ui-classic-mode");
   document.body.classList.add("ui-story-mode");
   $(".story-toolbar").classList.remove("hidden");
@@ -411,10 +416,10 @@ function startImmersiveScene(session) {
   $("#vnEventCg").hidden=true;
   $("#actionGrid").classList.add("hidden");
   $("#nextButton").classList.add("hidden");
-  applyScenePresentation(session.presentation);
+  applyScenePresentation(immersiveScene.presentation);
   preloadImmersiveAssets(session.sequence);
-  eventRuntime.markAssets(session.presentation?.backgroundUrl?"READY":"FALLBACK");eventRuntime.transition("TRANSITIONING");persistEventRuntime(true);
-  updateImmersiveCharacter(session.presentation.expressionId);
+  eventRuntime.markAssets(immersiveScene.presentation?.backgroundUrl?"READY":"FALLBACK");eventRuntime.transition("TRANSITIONING");persistEventRuntime(true);
+  updateImmersiveCharacter(immersiveScene.presentation.expressionId);
   if(session.id===LOCKED_DAY1_SCENE_ID){$("#vnCharacter").hidden=true;delete $("#vnCharacter").dataset.day1Pose;}
   renderImmersiveStep();
 }
