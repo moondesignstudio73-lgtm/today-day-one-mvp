@@ -72,7 +72,7 @@ export const WORLD_MAPS = Object.freeze({
       {id:"live-house",name:"라이브 하우스",icon:"🎸",category:"culture",x:5,y:1,description:"인디 밴드의 공연을 가까이서 즐기는 무대"},
       {id:"rooftop-pub",name:"문라이트 루프탑",icon:"🍸",category:"bar",x:9,y:2,description:"홍대 야경이 펼쳐지는 루프탑 바",adultOnly:true},
       {id:"street-fashion",name:"스트리트 편집숍",icon:"👟",category:"shopping",x:9,y:5,description:"개성 있는 패션과 액세서리를 고르는 편집숍"},
-      {id:"night-food",name:"심야 포차거리",icon:"🍢",category:"korean",x:3,y:5,description:"밤늦게까지 길거리 음식을 즐기는 골목"}
+      {id:"night-food",name:"심야 포차거리",icon:"🍢",category:"korean",x:3,y:5,description:"밤늦게까지 길거리 음식을 즐기는 골목",lateNightOpen:true}
     ])
   }),
   seongsu:Object.freeze({
@@ -146,6 +146,15 @@ export const TRANSPORT_OPTIONS = Object.freeze([
   Object.freeze({id:"taxi",name:"택시",icon:"🚕",cost:8000,minutes:3,steps:0,effects:{},fastTravel:"location",description:"장소 바로 이동 · 거리별 요금"}),
   Object.freeze({id:"car",name:"고급 자가용",icon:"🚘",cost:2500,minutes:4,steps:1,effects:{},requiresVehicle:true,description:"1칸 · 4분 · 주유·주차 ₩2,500"})
 ]);
+
+export const LATE_NIGHT_START_MINUTES = 22 * 60;
+const LATE_NIGHT_OPEN_CATEGORIES = new Set(["bar","club","home","girlfriend-home","transport","date","travel"]);
+
+export function isWorldLocationOpen(location, minutes, {hasSpecialEvent=false} = {}) {
+  if (!location) return false;
+  if (Number(minutes) < LATE_NIGHT_START_MINUTES) return true;
+  return Boolean(hasSpecialEvent || location.lateNightOpen || LATE_NIGHT_OPEN_CATEGORIES.has(location.category));
+}
 
 export function getRoadCells(mapOrId) {
   const map=typeof mapOrId==="string"?WORLD_MAPS[mapOrId]:mapOrId;

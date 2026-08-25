@@ -5,7 +5,7 @@ export const ACTION_RESULT_ASSETS = Object.freeze({
   "early-work": "assets/action-results/generated/early-work-01.png",
   "morning-idle": "assets/action-results/generated/idle-rest-01.png",
   "day-idle": "assets/action-results/generated/idle-rest-01.png",
-  "evening-idle": "assets/action-results/generated/idle-rest-01.png",
+  "evening-go-home": "assets/action-results/generated/idle-rest-01.png",
   "night-idle": "assets/action-results/generated/idle-rest-01.png",
   "focused-work": "assets/action-results/focus-work.png",
   "lunch-date": "assets/action-results/lunch-girlfriend.png",

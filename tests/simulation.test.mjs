@@ -46,7 +46,7 @@ import { MARRIAGE_30_STORY_SCENES, STORY_SCENES, validateStoryData } from "../sr
 import { getAvailableStoryChoices, getEligibleStoryScenes, getStoryScene, resolveStoryChoice, selectNextStoryScene, validateStoryState } from "../src/story-manager.mjs";
 import { HIDDEN_ROUTE_SCENES } from "../src/hidden-route-data.mjs";
 import { createHiddenRouteState, HIDDEN_ROUTE_CHANCE, STRENGTH_TRAITS, TROUBLE_TRAITS, validateHiddenRouteState } from "../src/hidden-route-manager.mjs";
-import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, spendNightTime } from "../src/night-manager.mjs";
+import { createDaySnapshot, EARLY_HOME_MINUTES, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, NIGHT_START_MINUTES, setNightStartTime, spendNightTime } from "../src/night-manager.mjs";
 import { getAssetRequirementList, getWeatherForDay, resolvePhasePresentation, resolveStoryPresentation, validateScenePresentation } from "../src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationSceneSequence, inferReactionExpression, validateSceneSequence } from "../src/story-scene-controller.mjs";
 import { analyzePlayerBehavior, analyzeRelationshipState, createStoryProposalContext, getDaySeed, getRecencyWeight, runDailyStoryDirector, validateStoryDirectorState, validateStoryProposal } from "../src/dynamic-story-director.mjs";
@@ -54,7 +54,7 @@ import { applyPlayerArchetype, createPlayerProfile, migratePlayerProfile, PLAYER
 import { ACTION_RESULT_ASSETS, getActionResultAsset, getVisibleActionEffects } from "../src/action-result-assets.mjs";
 import { ACTION_RESULT_VIDEOS, getActionResultVideo, isGirlfriendHappy, isGirlfriendSad } from "../src/action-result-videos.mjs";
 import { DEFAULT_GIRLFRIEND_VISUAL_ID, getGirlfriendVisual, getGirlfriendVisualAsset, selectGirlfriendVisual } from "../src/girlfriend-visual-data.mjs";
-import { createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
+import { createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, isWorldLocationOpen, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
 import { GAME_MODES, getGameModeConfig, isContentAvailableForMode, validateScenarioState } from "../src/scenario-state.mjs";
 
 const coreActionResultAssetIds=["coworker-lunch","dinner-date","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"];
@@ -268,7 +268,16 @@ nightStateTest.energy -= 9;
 assert.equal(getDailyReport(nightStateTest).find(row=>row.key==="money").delta,-12000);
 assert.equal(formatNightTime(1510),"01:10");
 ensureNightState(nightStateTest);
-assert.equal(spendNightTime(nightStateTest,20,"SNS").time,"23:30");
+assert.equal(NIGHT_START_MINUTES,22*60);
+assert.equal(spendNightTime(nightStateTest,20,"SNS").time,"22:20");
+setNightStartTime(nightStateTest,EARLY_HOME_MINUTES,"일찍 귀가");
+assert.equal(formatNightTime(nightStateTest.nightState.minutes),"19:00");
+assert.equal(ACTIONS.evening.some(action=>action.id==="evening-idle"),false);
+assert.equal(ACTIONS.evening.find(action=>action.id==="evening-go-home")?.nightArrivalMinutes,19*60);
+assert.equal(isWorldLocationOpen({category:"cafe"},22*60),false);
+assert.equal(isWorldLocationOpen({category:"bar"},22*60),true);
+assert.equal(isWorldLocationOpen({category:"korean",lateNightOpen:true},23*60),true);
+assert.equal(isWorldLocationOpen({category:"shopping"},23*60,{hasSpecialEvent:true}),true);
 assert.equal(getLateSleepEffects(25*60).fatigue,10);
 assert.equal(nightStart.money,nightStateTest.dayStartSnapshot.money);
 console.log("✓ NIGHT TIME 시계·일일 리포트·늦잠 페널티 검증 통과");

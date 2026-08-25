@@ -1,4 +1,5 @@
-export const NIGHT_START_MINUTES = 23 * 60 + 10;
+export const NIGHT_START_MINUTES = 22 * 60;
+export const EARLY_HOME_MINUTES = 19 * 60;
 export const NIGHT_END_MINUTES = 26 * 60;
 
 export const REPORT_KEYS = [
@@ -25,6 +26,13 @@ export function ensureNightState(state) {
   state.dayStartSnapshot ??= createDaySnapshot(state);
   if (!state.nightState || state.nightState.day !== state.day) state.nightState = createNightState(state);
   return state.nightState;
+}
+
+export function setNightStartTime(state, minutes = NIGHT_START_MINUTES, activity = "") {
+  const night = ensureNightState(state);
+  night.minutes = Math.max(18 * 60,Math.min(NIGHT_END_MINUTES,Math.round(Number(minutes) || NIGHT_START_MINUTES)));
+  if (activity) night.activities.push({label:String(activity),minutes:0});
+  return night;
 }
 
 export function formatNightTime(minutes = NIGHT_START_MINUTES) {
