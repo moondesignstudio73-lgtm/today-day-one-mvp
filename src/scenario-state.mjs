@@ -4,8 +4,8 @@ export const GAME_MODES = Object.freeze({
 });
 
 export const GAME_MODE_CONFIGS = Object.freeze({
-  [GAME_MODES.FREE_ROMANCE]: Object.freeze({id:GAME_MODES.FREE_ROMANCE,title:"자유 연애",description:"연인과 성향을 직접 정하고 30일의 일상을 자유롭게 만듭니다.",fixedPartnerId:null}),
-  [GAME_MODES.MARRIAGE_30]: Object.freeze({id:GAME_MODES.MARRIAGE_30,title:"결혼까지 30일!",description:"기억을 잃은 채 깨어난 뒤 하은과 결혼식까지 남은 30일을 따라갑니다.",fixedPartnerId:"haeun"})
+  [GAME_MODES.FREE_ROMANCE]: Object.freeze({id:GAME_MODES.FREE_ROMANCE,kind:"free",label:"FREE MODE",title:"나만의 30일",campaignId:null,description:"연인과 성향을 직접 정하고 30일의 일상을 자유롭게 만듭니다.",fixedPartnerId:null}),
+  [GAME_MODES.MARRIAGE_30]: Object.freeze({id:GAME_MODES.MARRIAGE_30,kind:"story",label:"STORY MODE",title:"결혼까지 30일!",campaignId:"marriage-in-30-days",description:"기억을 잃은 채 깨어난 뒤 하은과 결혼식까지 남은 30일을 따라갑니다.",fixedPartnerId:"haeun"})
 });
 
 const TRACKED_METRICS = [
