@@ -41,6 +41,9 @@ body.campaign-story-mode:not(.ui-night-mode) .top-actions>#careerButton,
 body.campaign-story-mode:not(.ui-night-mode) .top-actions>#peopleButton,
 body.campaign-story-mode:not(.ui-night-mode) .top-actions>#investmentButton{display:none!important}
 body.campaign-story-mode:not(.ui-night-mode) .game-tools-trigger{display:none!important}
+body.campaign-story-mode:not(.ui-night-mode) .top-actions{display:none}
+body.campaign-story-mode:not(.ui-night-mode) .day-pill{border-color:#ffffff38;background:#11121dc4;color:#f8f1f5;box-shadow:none}
+body.campaign-story-mode:not(.ui-night-mode) .game-mode-badge{color:#ffd0df;letter-spacing:.11em}
 body.campaign-free-mode .game-screen{isolation:isolate}
 @media(max-width:760px){body.campaign-story-mode:not(.ui-night-mode) .vn-stage{min-height:calc(100dvh - 62px)}body.campaign-story-mode:not(.ui-night-mode) .vn-dialogue{right:10px;bottom:10px;left:10px;padding:24px 72px 19px 20px}body.campaign-story-mode:not(.ui-night-mode) .vn-dialogue p{max-width:none;font-size:16px}}
 
