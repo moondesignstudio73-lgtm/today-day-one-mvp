@@ -1,6 +1,6 @@
 # DAY 1 출시 완성도 진행표
 
-현재 상태: `PHASE 16 기존 에셋 감사·후보 수급 완료 / 이미지 품질 검사 대기`
+현재 상태: `PHASE 17 이미지 품질 검사 진행 중 / 투명 스프라이트 NEEDS FIX`
 
 DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에는 DAY 2 이후의 신규 스토리·콘텐츠를 구현하지 않는다. 이미 존재하는 DAY 2~5 코드와 미커밋 DAY 3 변경은 삭제하거나 확장하지 않고 동결한다.
 
@@ -47,6 +47,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - `docs/day1/DAY1_CHARACTER_POSE_SPEC.md`
 - `docs/day1/DAY1_EVENT_CG_SPEC.md`
 - `docs/day1/DAY1_ASSET_AUDIT.md`
+- `docs/day1/DAY1_IMAGE_QUALITY_QA.md`
 
 ## 최근 검증
 
@@ -58,6 +59,8 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - `node --check game.js`: 통과.
 - `node --check src/story-data.mjs`: 통과.
 - `tests/simulation.test.mjs` 전체 회귀: 통과.
+- PHASE 17 QA 문서 필수 판정·교체 CG 2파일 존재·최소 크기 정적 검사: 통과.
+- PHASE 17 진행 기록 후 `node --check game.js`, `node --check src/story-data.mjs`, `tests/simulation.test.mjs` 전체 회귀: 통과.
 - PHASE 16에서 기존 배경·하은·의료진·CG·렌더러를 감사하고 재사용·제한 재사용·탈락을 구분했다.
 - 병실 배경 2종, 하은 표정·포즈 소스 2종, 의료진 소스 1종, 이벤트 CG 3종의 신규 후보 8파일을 프로젝트에 수급했다.
 - 신규 후보는 기존 자산을 덮어쓰지 않았으며 PHASE 17 품질 검사 전에는 런타임에 연결하지 않는다.
@@ -82,4 +85,4 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 
 ## 다음 작업
 
-PHASE 17에서 신규 후보 8파일의 얼굴·의상·병실 구조·손·알파·UI 안전 영역·금지 정보 노출을 검사하고, NEEDS FIX 항목을 수정한 뒤 최종 사용 자산만 승인한다.
+PHASE 17의 배경 2종·이벤트 CG 3종은 후보 합격했다. 하은 표정·포즈와 의료진 스프라이트의 실제 투명 알파 결함을 해결한 뒤 전수 재검사하고, NEEDS FIX가 0개일 때만 PHASE 17을 완료한다.
