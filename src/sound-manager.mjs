@@ -1,4 +1,5 @@
 import { getDay1AudioCue } from "./day1-audio-data.mjs";
+import { getDay2AudioCue } from "./day2-audio-data.mjs";
 
 export const SOUND_SETTING_KEY = "today-day-one.sound.v1";
 
@@ -142,7 +143,7 @@ export class SoundManager {
 
   playCue(cueId) {
     if (!this.enabled) return false;
-    const preset = getDay1AudioCue(cueId);
+    const preset = getDay1AudioCue(cueId) ?? getDay2AudioCue(cueId);
     if (!preset) return false;
     try {
       const existing = this.cueChannels.get(cueId);
