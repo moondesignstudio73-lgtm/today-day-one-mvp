@@ -20,8 +20,8 @@ const compatibleStateFor=event=>{
 };
 
 assert.equal(FREE_MODE_EVENT_CATALOG.length,63);
-assert.equal(SHARED_EVENT_CATALOG.length,67);
-assert.equal(new Set(SHARED_EVENT_CATALOG.map(event=>event.id)).size,67);
+assert.equal(SHARED_EVENT_CATALOG.length,68);
+assert.equal(new Set(SHARED_EVENT_CATALOG.map(event=>event.id)).size,68);
 for(const event of FREE_MODE_EVENT_CATALOG){
   const {state,context}=compatibleStateFor(event),result=evaluateEventCompatibility(state,event,context);
   assert.equal(typeof result.eligible,"boolean",event.id);

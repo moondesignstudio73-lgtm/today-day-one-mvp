@@ -29,11 +29,33 @@ const DAY2_HOME_CHECK_IN=Object.freeze({
   ],futureEventWeights:{romance:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY3_DISCHARGE_CHECK=Object.freeze({
+  id:"context-day3-discharge-safety-check",title:"마지막 퇴원 확인",category:"health",categoryLabel:"스토리 공용 이벤트",
+  hook:"복구한 휴대폰에 병원 안내 알림이 한 건 도착했다.",message:"퇴원 창구에서 복약·외래·비상 연락 확인을 완료해 달라는 안내가 왔다.",question:"병원을 나서기 전 무엇을 마지막 기준으로 남길까?",
+  allowedLocations:["hospital"],allowedPhases:["day"],dayRange:[3,3],heroineIds:["haeun"],
+  requiredFeatures:["smartphone-basic"],requiredStoryFlags:["day3RuntimeComplete"],cooldown:30,maxTriggerCount:1,probability:.35,priority:210,baseWeight:100,tensionLevel:"low",effects:{health:1},
+  storyFlag:"context-day3-discharge-safety-check:COMPLETED",forbiddenFlags:["context-day3-discharge-safety-check:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-hospital-lobby-day-v1.png",result:"assets/backgrounds/day2/day2-hospital-exit-day-v1.png",status:"ready"},
+  presentation:{backgroundId:"day2-hospital-lobby",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},
+  scenes:[{id:"context-day3-discharge-safety-check-scene",title:"마지막 퇴원 확인",backgroundId:"day2-hospital-lobby",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"daylight",timeOfDay:"day",weather:"sunny",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"병실을 나서기 직전, 복구한 휴대폰에 병원 안내 알림이 한 건 도착했다."},
+    {type:"dialogue",speaker:"하은",text:"과거 알림은 안 열어도 돼. 지금 온 퇴원 확인만 같이 볼까?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"약, 외래 일정, 이상 증상 연락 순서. 이 세 가지만 확인할게."},
+    {type:"dialogue",speaker:"하은",text:"좋아. 이동 중에는 네가 상태를 말하고, 나는 속도만 맞출게.",expressionId:"smile"},
+    {type:"narration",speaker:"내레이션",text:"휴대폰은 과거를 한꺼번에 여는 열쇠가 아니라, 오늘의 안전을 기록하는 도구가 되었다."}
+  ]}],
+  choices:[
+    {id:"save-hospital-first",label:"병원 번호를 첫 비상 연락처로 고정한다",preferenceTags:["PRACTICAL","BOUNDARY"],effects:{health:3,trust:4,stress:-2},response:"증상이 생기면 병원부터 연락한다는 순서를 둘이 다시 확인했다.",flag:"context-day3-discharge-safety-check:HOSPITAL_FIRST",memory:"DAY 3 퇴원 전 병원 우선 연락 원칙을 휴대폰에 남겼다.",futureEventWeights:{recovery:1.2}},
+    {id:"save-rest-threshold",label:"이동 중 멈출 증상 기준을 메모한다",preferenceTags:["PLANNED","LOGICAL"],effects:{confidence:4,health:2,trust:3},response:"어지럼과 새 통증이 생기면 즉시 멈춘다는 기준을 메모에 남겼다.",flag:"context-day3-discharge-safety-check:REST_THRESHOLD",memory:"DAY 3 귀가 중 멈춰야 할 증상 기준을 하은과 합의했다.",futureEventWeights:{recovery:1.15}}
+  ],futureEventWeights:{health:1.1},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
   Object.freeze({id:"context-hospital-corridor-memory",title:"익숙한 복도 소리",text:"복도에서 들린 카트 바퀴 소리가 잠깐 익숙하게 느껴졌다.",category:"memory",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{stress:1},scenarioEffects:{memoryRecovery:1},storyFlag:"day1_event_corridor_familiarity"}),
-  DAY2_HOME_CHECK_IN
+  DAY2_HOME_CHECK_IN,
+  DAY3_DISCHARGE_CHECK
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);
@@ -54,6 +76,7 @@ function featureAvailable(state,context,id){
   if(id==="finance")return context.financeUnlocked;
   if(id==="job")return context.jobUnlocked;
   if(id==="map")return context.mapUnlocked;
+  if(state.scenario?.unlockedActions?.includes(id)||state.scenario?.profileUnlocks?.includes(id))return true;
   return Boolean(state.scenario?.featureUnlocks?.[id]);
 }
 
@@ -63,6 +86,7 @@ function inferredLocations(event){
   if(event.locationCategories?.length)return event.locationCategories;
   const category=eventCategory(event);
   if(OFFICE_CATEGORIES.has(category))return ["office","office-district"];
+  if(category==="npc")return ["office","office-district","cafe"];
   if(category==="travel")return ["street","transport","landmark"];
   if(category==="friends")return ["home","cafe","street"];
   if(category==="romance"||category==="conflict"||category==="mystery")return ["home","cafe","street","restaurant"];
