@@ -1,6 +1,6 @@
 # DAY 2 출시 완성도 진행표
 
-현재 상태: `DAY 2 — SCENARIO LOCK / PHASE 20 실제 구현 완료 / PHASE 21 실제 플레이 QA 대기`
+현재 상태: `DAY 2 — SCENARIO LOCK / PHASE 21 실제 플레이 QA 완료 / PHASE 22 플레이타임 측정 대기`
 
 DAY 2의 사용자 기준 원본은 `C:\Users\user\Desktop\《결혼까지 30일!》 DAY 2 — 집으로 시나리오.md`, 제작 지침은 같은 위치의 `《결혼까지 30일!》 DAY 2 시나리오 제작 프롬프트.md`다. 원본 파일은 SCENE 08의 하은 대사 `"오늘 안 떠`에서 실제로 잘려 있으므로, DAY 1 잠금본과 제작 지침을 근거로 누락된 집 탐색·엔딩을 복원했다. DAY 2가 모든 관문을 통과하고 사용자 최종 승인을 받기 전에는 DAY 3 이후의 신규 콘텐츠·에셋·시스템 연결을 확장하지 않는다. 기존 DAY 3~5 코드와 미커밋 변경은 삭제·이동·재작성하지 않는다.
 
@@ -32,7 +32,7 @@ DAY 2의 사용자 기준 원본은 `C:\Users\user\Desktop\《결혼까지 30일
 
 ## 최종 검수 관문
 
-- [ ] PHASE 21 — 처음부터 끝까지 실제 플레이 QA
+- [x] PHASE 21 — 처음부터 끝까지 실제 플레이 QA
 - [ ] PHASE 22 — 일반 읽기 속도 플레이타임 측정
 - [ ] PHASE 23 — STORY/VISUAL/DIRECTION/AUDIO/GAMEPLAY/UX/BUG 전 항목 PASS
 - [ ] PHASE 24 — 사용자 최종 승인 후 `DAY 2 — COMPLETE`
@@ -51,6 +51,7 @@ DAY 2의 사용자 기준 원본은 `C:\Users\user\Desktop\《결혼까지 30일
 - `docs/day2/DAY2_DIRECTION_SPEC.md`
 - `docs/day2/DAY2_AUDIO_SPEC.md`
 - `docs/day2/DAY2_IMPLEMENTATION_REPORT.md`
+- `docs/day2/DAY2_PLAYTHROUGH_QA.md`
 
 ## 감사 결론
 
@@ -75,7 +76,7 @@ DAY 2의 사용자 기준 원본은 `C:\Users\user\Desktop\《결혼까지 30일
 
 ## 다음 관문
 
-PHASE 21 — 캠페인 DAY 1 완료 상태에서 DAY 2를 처음부터 끝까지 실제 플레이하고 3×3 콜백, 모든 선택·탐색·CG·오디오·중간 저장·스킵·키보드·모바일 경로를 전수 검수한다.
+PHASE 22 — 잠금본을 일반 읽기 속도로 재생해 선택·CG·전환을 포함한 실제 플레이타임을 측정한다.
 
 ## PHASE 10~12 완료 기록
 
@@ -153,3 +154,11 @@ PHASE 21 — 캠페인 DAY 1 완료 상태에서 DAY 2를 처음부터 끝까지
 - DAY 1 접촉·질문 3×3 콜백, 승인 배경·포즈·POV·CG, 공간별 오디오와 BGM 음량 큐를 실제 플레이 흐름에 연결했다.
 - 작은 열쇠를 미분류 물건으로 유지하고 원래 휴대폰·예비폰, D-DAY 보류, 잠금 프로필과 후반 반전의 조기 노출 금지선을 보존했다.
 - 집중 런타임·오디오·DAY 1 회귀·시나리오 전 경로·전체 시뮬레이션 검사가 통과했고 다음 관문은 실제 브라우저 플레이 QA다.
+
+## PHASE 21 완료 기록
+
+- DAY 1 `contact_boundary`·`accident_interest`를 거쳐 DAY 2 대표 경로를 실제 브라우저에서 처음부터 끝까지 진행했다.
+- 결혼·집·차량·사진·방 3회·작은 열쇠·연락처 선택과 조건부 기록 신청 선택지, 키보드·SKIP·사운드·390×844 입력 경로를 확인했다.
+- 첫 선택 직전 저장·불러오기와 연락처 선택 뒤 Scene 12 복원을 확인했으며 완료 뒤 브라우저 error/warn은 0건이었다.
+- 실제 플레이에서 발견한 DAY 2 미기동 결함과 불러오기 중복 큐 결함을 수정하고 집중 회귀 조건을 추가했다.
+- 상세 대표 경로와 결과는 `docs/day2/DAY2_PLAYTHROUGH_QA.md`에 기록했다.

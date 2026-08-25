@@ -1140,7 +1140,7 @@ function applyAction() {
   const actionMessage = [resultText(action), ...microEvents.map(micro=>micro.text)].join(" ");
   render();
   openActionResultModal(action, actionMessage, fx, () => {
-    const continueAfterSpecialEvent=()=>{if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { const temptation=eventsUnlocked&&npcResult&&getTemptationOpportunity(state); const story=eventsUnlocked?selectNextStoryScene(state):null; if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }};
+    const continueAfterSpecialEvent=()=>{if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { const temptation=eventsUnlocked&&npcResult&&getTemptationOpportunity(state); const nextStory=selectNextStoryScene(state);const story=eventsUnlocked||isCampaignPrologueStory(nextStory?.id)?nextStory:null; if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }};
     if(unlockedSpecialOutfit)showSpecialOutfitEventPopup(continueAfterSpecialEvent);else continueAfterSpecialEvent();
   });
 }
@@ -1412,7 +1412,7 @@ function showEnding(){ state.ended=true; const [title, desc] = determineEnding(s
 }
 function toast(message){ const t=$("#toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200); }
 
-function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);else if(state.day>30)showEnding();else if(state.pendingStoryId&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(state.pendingStoryId)))openStoryScene(getStoryScene(state.pendingStoryId));else toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
+function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } state = loaded; showGame(); if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);else if(state.day>30)showEnding();else if(state.pendingStoryId&&!state.eventRuntime?.activeEvent&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(state.pendingStoryId)))openStoryScene(getStoryScene(state.pendingStoryId));else if(!state.eventRuntime?.activeEvent)toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
 function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
 
 if (!SaveManager.hasSave()) $("#loadButton").classList.add("hidden");

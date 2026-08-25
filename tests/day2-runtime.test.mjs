@@ -30,4 +30,6 @@ const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 assert.match(game,/LOCKED_DAY2_SCENE_ID/);
 assert.match(game,/DAY1_BGM_CUES\[step\.bgmCue\]\?\?DAY2_BGM_CUES/);
 assert.match(game,/getLockedDay2Segment\(state/);
+assert.match(game,/eventsUnlocked\|\|isCampaignPrologueStory\(nextStory\?\.id\)\?nextStory:null/,"DAY 2 campaign story must remain reachable before the regular event unlock day");
+assert.match(game,/state\.pendingStoryId&&!state\.eventRuntime\?\.activeEvent/,"loading an active DAY 2 checkpoint must not queue a duplicate story session");
 console.log("✓ DAY 2 잠금 시나리오 12 Scene·선택·탐색·에셋·오디오 런타임 검증 통과");
