@@ -323,6 +323,16 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"date7_record_two_sentences",label:"각자 기억하고 싶은 한 문장을 써서 서로 바꿔 읽는다",response:"서로의 한 문장을 바꿔 읽으며 오늘의 기억을 과거와 분리해 남겼다.",memory:"첫 현재형 데이트를 서로 쓴 두 문장으로 남김"},
     {id:"date7_record_next_rule",label:"오늘 잘된 변경 규칙을 다음 데이트의 공동 규칙으로 저장한다",response:"계획은 함께 세우고 변경은 실패로 세지 않는다는 규칙을 저장했다.",memory:"첫 현재형 데이트의 변경 원칙을 다음 공동 규칙으로 남김"}
   ]
+},{
+  id:"m30-day8-independent-errand",arc:"혼자 할 것, 같이 할 것",window:[8,8],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day7-first-present-date"},
+  title:"혼자 할 것, 같이 할 것",speaker:"하은",message:"약 관련 확인은 함께 마친 뒤 우편함과 세제 구매는 혼자 처리한다. 출발 전에 정한 연락 계약은 두 사람 모두가 지킨다.",
+  chapterType:"daily-life/independence-hybrid",targetPlaytimeMinutes:[9,13],timeWindow:"morning-to-early-afternoon",participants:["protagonist","haeun","pharmacist","household-store-staff"],previousChoiceReferences:["m30-day7-first-present-date"],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
+  choices:[
+    {id:"errand8_sort_receipt_together",label:"영수증과 우편물을 함께 분류하며 처리 결과를 공유한다",response:"우편물과 영수증을 함께 분류하며 혼자 처리한 하루를 현재의 생활 기록으로 남겼다.",memory:"혼자 다녀온 생활 심부름의 결과를 함께 분류함"},
+    {id:"errand8_explain_decision_log",label:"관찰·가능성·확인·선택 순서로 판단 기록을 설명한다",response:"결과보다 판단 순서를 설명해 기억 공백 속에서도 사용할 수 있는 생활 기준을 공유했다.",memory:"혼자 처리한 심부름의 판단 과정을 현재 기록으로 남김"},
+    {id:"errand8_set_next_solo_boundary",label:"오늘의 예외를 정리하고 다음 혼자 외출의 경계를 합의한다",response:"혼자 처리할 일과 함께 확인할 일, 변경 시 연락할 조건을 다음 외출 규칙으로 저장했다.",memory:"다음 혼자 외출의 연락·공유 경계를 합의함"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [
