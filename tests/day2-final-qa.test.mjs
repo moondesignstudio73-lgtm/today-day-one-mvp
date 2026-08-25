@@ -7,6 +7,7 @@ import { buildDay2Route,createRepresentativeDay2Routes,measureAllDay2SearchOrder
 const gameSource=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 const htmlSource=readFileSync(new URL("../index.html",import.meta.url),"utf8");
 const cssSource=readFileSync(new URL("../styles.css",import.meta.url),"utf8");
+const storyDataSource=readFileSync(new URL("../src/story-data.mjs",import.meta.url),"utf8");
 const routes=createRepresentativeDay2Routes().map(buildDay2Route);
 const allText=routes.flat().filter(step=>step.text).map(step=>step.text).join("\n");
 
@@ -43,6 +44,8 @@ assert.equal(representative.filter(step=>step.type==="cgShow").length,4);
 assert.match(gameSource,/StoryCg/);
 assert.match(gameSource,/StoryAutoCue/);
 assert.match(cssSource,/prefers-reduced-motion:reduce/);
+assert.match(storyDataSource,/m30-day3-discharge-phone[\s\S]*?presentation:\{backgroundId:"day2-hospital-bedside"/);
+assert.match(storyDataSource,/m30-day4-arrive-home[\s\S]*?presentation:\{backgroundId:"day2-home-entry"/);
 console.log("✓ DIRECTION — 12 Scene 전환·CG·입력 잠금·감소 모션 PASS");
 
 // AUDIO

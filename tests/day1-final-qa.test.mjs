@@ -61,6 +61,7 @@ assert.equal(representative.filter(step=>step.type==="cgShow").length,3);
 assert.match(gameSource,/StoryCg/);
 assert.match(gameSource,/StoryAutoCue/);
 assert.match(cssSource,/prefers-reduced-motion:reduce/);
+assert.match(cssSource,/body\.campaign-story-mode \.vn-expression-layer\{display:none!important\}/);
 console.log("✓ DIRECTION — Scene 전환·CG·입력 잠금·감소 모션 PASS");
 
 // AUDIO
@@ -79,6 +80,9 @@ console.log("✓ GAMEPLAY — 9개 경로·2개 선택·엔딩 도달·플레이
 // UX
 assert.match(gameSource,/finishDialogueTyping\(\)\)\{scheduleAutoAdvance\(\);return;\}/);
 assert.match(gameSource,/replaceAll\("\[플레이어 이름\]",playerName\)/);
+assert.match(gameSource,/function advanceCampaignChapter\(completedSession\)/);
+assert.match(gameSource,/state\.scenario\?\.enabled!==true/);
+assert.match(gameSource,/else if\(nextCampaignScene\)setTimeout\(\(\)=>openStoryScene\(nextCampaignScene\),0\)/);
 assert.match(gameSource,/storyChoiceLayer"\)\.addEventListener\("keydown"/);
 assert.match(htmlSource,/id="visualNovelStage" role="button" tabindex="0"/);
 assert.match(htmlSource,/id="storyChoiceLayer"[^>]*aria-label="스토리 선택지"/);
