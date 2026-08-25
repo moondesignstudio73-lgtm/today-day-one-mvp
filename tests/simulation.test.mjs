@@ -56,6 +56,7 @@ import { ACTION_RESULT_VIDEOS, getActionResultVideo, isGirlfriendHappy, isGirlfr
 import { DEFAULT_GIRLFRIEND_VISUAL_ID, getGirlfriendVisual, getGirlfriendVisualAsset, selectGirlfriendVisual } from "../src/girlfriend-visual-data.mjs";
 import { createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, isWorldLocationOpen, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
 import { GAME_MODES, getGameModeConfig, isContentAvailableForMode, validateScenarioState } from "../src/scenario-state.mjs";
+import { getMapLocationAsset, MAP_LOCATION_ASSETS, validateMapLocationAssets } from "../src/map-location-assets.mjs";
 
 const coreActionResultAssetIds=["coworker-lunch","dinner-date","early-sleep","focused-work","lunch-date","manager-feedback","morning-contact","morning-gym","sleep-in","stock-check","temptation-secret"];
 assert.ok(coreActionResultAssetIds.every(actionId=>actionId in ACTION_RESULT_ASSETS));
@@ -1411,3 +1412,9 @@ assert.equal(yunaLoaded.partner.heroineId,"yuna");
 assert.equal(yunaLoaded.partner.studentSafe,true);
 assert.equal(yunaLoaded.storyFlags[yunaFirst.storyFlag],true);
 console.log("✓ 한유나 18세 고3 안전 루트·10개 연속 이벤트·10개 의상·12개 표정·14개 배경·메시지·선물·저장 연동 검증 통과");
+const mapLocations = Object.values(WORLD_MAPS).flatMap(map => map.locations);
+assert.equal(mapLocations.length,61);
+assert.equal(validateMapLocationAssets(mapLocations.map(location => location.id)),true);
+assert.equal(Object.keys(MAP_LOCATION_ASSETS).length,61);
+assert.ok(mapLocations.every(location => existsSync(getMapLocationAsset(location.id))));
+console.log("✓ 지도 61개 장소별 무인 배경 이미지 매핑과 파일 경로 검증 통과");
