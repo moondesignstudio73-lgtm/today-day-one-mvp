@@ -99,7 +99,7 @@ function buildEvent([id,title,category,startDay,endDay,hook,pressure,reveal,echo
     dialogueTurns:makeTurns(event,sceneIndex)
   }));
   return {
-    ...event,message:hook,question:`${title}에서 나는 어떻게 답하고 행동할까?`,eventType:category==="friends"?"FRIEND":category==="work"||category==="temptation"?"COWORKER":"GIRLFRIEND",image:{intro:`assets/events/${category}/${id}-01.png`,result:`assets/events/${category}/${id}-result-01.png`,status:"planned"},conditions:[{stat:"day",operator:">=",value:startDay}],probability:.025+(index%4)*.008,priority:52+(index%7),cooldown:7+(index%5),effects:config.baseEffects,
+    ...event,message:hook,question:`${title}에서 나는 어떻게 답하고 행동할까?`,eventType:category==="friends"?"FRIEND":category==="work"||category==="temptation"?"COWORKER":"GIRLFRIEND",image:{intro:`assets/events/${category}/${id}-01.png`,result:`assets/events/${category}/${id}-01.png`,status:"ready"},conditions:[{stat:"day",operator:">=",value:startDay}],probability:.025+(index%4)*.008,priority:52+(index%7),cooldown:7+(index%5),effects:config.baseEffects,
     baseWeight:45+(index%6)*5,dayRange:[startDay,endDay],timeOfDay:index%3===0?"evening":"day",location:event.scenes[0].backgroundId,tensionLevel:category==="conflict"||category==="mystery"?"high":category==="temptation"?"medium-high":"medium",
     relationshipStates:category==="conflict"?["SUSPICIOUS","CONFLICT","RECOVERING"]:category==="romance"?["HONEYMOON","STABLE","PASSIONATE"]:["DISTANT","STABLE","SUSPICIOUS"],
     npcRequirements:config.npcRole==="girlfriend"?[]:[config.npcRole],requiredMemories:[],requiredEvents:[],forbiddenFlags:[`${event.id}:COMPLETED`],repeatable:false,maxTriggerCount:1,eventState:"LOCKED",

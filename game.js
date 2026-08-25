@@ -68,7 +68,7 @@ document.documentElement.classList.toggle("touch-device",touchDevice);
 let state;
 let onboarding = null;
 let titleTransitioning = false;
-const DEFAULT_INTRO_VIDEO_PLAYLIST = ["assets/video/intro.mp4", "assets/video/intro2.mp4"];
+const DEFAULT_INTRO_VIDEO_PLAYLIST = ["assets/video/free-mode-prologue.mp4"];
 const STORY_INTRO_VIDEO_PLAYLIST = ["assets/video/story-prologue.mp4"];
 let activeIntroVideoPlaylist = DEFAULT_INTRO_VIDEO_PLAYLIST;
 let introVideoIndex = 0;
@@ -806,11 +806,15 @@ function openStoryIntro() {
   const video=$("#introVideo");
   activeIntroVideoPlaylist=onboarding?.previewState?.scenario?.enabled===true?STORY_INTRO_VIDEO_PLAYLIST:DEFAULT_INTRO_VIDEO_PLAYLIST;
   introVideoIndex=0;
+  $("#storyIntroComplete").classList.add("hidden");
+  $("#introLoading").classList.remove("hidden");
+  $("#introLoadingText").textContent="프롤로그 준비 중";
+  $("#introPlayButton").classList.add("hidden");
   video.src=activeIntroVideoPlaylist[introVideoIndex];
   video.load();
   $("#introGameStartButton").disabled=true;
-  $("#introPlaybackHint").textContent=activeIntroVideoPlaylist.length===1?"스토리 모드 프롤로그를 재생하고 있습니다.":`프롤로그 1 / ${activeIntroVideoPlaylist.length}를 재생하고 있습니다.`;
-  video.play().catch(()=>{$("#introPlaybackHint").textContent="재생 버튼을 눌러 프롤로그를 감상해 주세요.";});
+  $("#introPlaybackHint").textContent="영상을 끝까지 감상하면 게임을 시작할 수 있습니다.";
+  video.play().catch(()=>{ $("#introLoadingText").textContent="프롤로그를 재생할 준비가 됐습니다.";$("#introPlayButton").classList.remove("hidden"); });
 }
 
 function playNextIntroVideo() {
@@ -820,10 +824,10 @@ function playNextIntroVideo() {
   video.src=activeIntroVideoPlaylist[introVideoIndex];
   video.load();
   $("#introPlaybackHint").textContent=`프롤로그 ${introVideoIndex + 1} / ${activeIntroVideoPlaylist.length}를 재생하고 있습니다.`;
-  video.play().catch(()=>{$("#introPlaybackHint").textContent="다음 프롤로그의 재생 버튼을 눌러 주세요.";});
+  video.play().catch(()=>{ $("#introLoading").classList.remove("hidden");$("#introLoadingText").textContent="프롤로그를 재생할 준비가 됐습니다.";$("#introPlayButton").classList.remove("hidden"); });
 }
 
-function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
+function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introLoading").classList.add("hidden");$("#storyIntroComplete").classList.remove("hidden");$("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
 function startGame() { if(titleTransitioning)return;titleTransitioning=true;$("#startButton").disabled=true;beginOnboarding(); }
 function restoreCampaignChapterProgress() {
@@ -1872,6 +1876,11 @@ $("#fullscreenButton").addEventListener("click",toggleFullscreen);
 $("#storyFullscreenButton").addEventListener("click",toggleFullscreen);
 $("#startButton").addEventListener("click",startGame); $("#titleIntroductionButton")?.addEventListener("click",openTitleIntroduction); $("#titleContinueButton")?.addEventListener("click",openContinuePreview); $("#titleSettingsButton")?.addEventListener("click",()=>{$("#modalContent").innerHTML=`<span class="eyebrow">SETTINGS</span><h2>환경설정</h2><p>타이틀 화면에서는 사운드 설정을 변경할 수 있습니다.</p><button id="titleSoundToggle" class="primary-button" type="button">${sound.enabled?"사운드 끄기":"사운드 켜기"}</button>`;openModal();$("#titleSoundToggle").addEventListener("click",()=>{$("#soundButton").click();closeModal();});}); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#actionResultConfirm").addEventListener("click",confirmActionResult); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
 $("#introVideo").addEventListener("ended",playNextIntroVideo);
+$("#introVideo").addEventListener("loadstart",()=>{if($("#storyIntroComplete").classList.contains("hidden")){$("#introLoading").classList.remove("hidden");$("#introLoadingText").textContent="프롤로그 준비 중";$("#introPlayButton").classList.add("hidden");}});
+$("#introVideo").addEventListener("waiting",()=>{if($("#storyIntroComplete").classList.contains("hidden")){$("#introLoading").classList.remove("hidden");$("#introLoadingText").textContent="프롤로그 불러오는 중";}});
+$("#introVideo").addEventListener("playing",()=>$("#introLoading").classList.add("hidden"));
+$("#introVideo").addEventListener("error",()=>{if($("#storyIntroComplete").classList.contains("hidden")){$("#introLoading").classList.remove("hidden");$("#introLoadingText").textContent="영상을 불러오지 못했습니다. 잠시 후 다시 시도하거나 건너뛰어 주세요.";$("#introPlayButton").classList.remove("hidden");}});
+$("#introPlayButton").addEventListener("click",()=>{$("#introPlayButton").classList.add("hidden");$("#introLoadingText").textContent="프롤로그 준비 중";$("#introVideo").play().catch(()=>{$("#introLoadingText").textContent="재생하지 못했습니다. 다시 시도해 주세요.";$("#introPlayButton").classList.remove("hidden");});});
 $("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();introVideoIndex=activeIntroVideoPlaylist.length-1;unlockIntroStart("프롤로그 영상을 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
 $("#introGameStartButton").addEventListener("click",finishOnboarding);
 document.addEventListener("keydown", handleModalKeydown);

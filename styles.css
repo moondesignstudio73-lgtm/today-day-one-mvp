@@ -1087,3 +1087,15 @@ body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar>.top-actions{
 .setup-action-button:disabled{background:#ebd9df!important;color:#ad98a1!important;box-shadow:none!important}
 @keyframes setup-action-ready{0%,100%{box-shadow:0 12px 28px #df52743d}50%{box-shadow:0 17px 39px #df527463;transform:translateY(-2px)}}
 @media(prefers-reduced-motion:reduce){.setup-action-button:not(:disabled){animation:none}}
+/* Prologue playback uses a clean cinematic surface with custom loading UI. */
+.story-intro-screen video::-webkit-media-controls{display:none!important}
+.intro-loading{position:absolute;z-index:3;display:grid;place-items:center;align-content:center;gap:10px;inset:0;background:radial-gradient(circle at 50% 45%,#2b2434 0,#111019 42%,#080910 75%);color:#fff;text-align:center}
+.intro-loading.hidden,.story-intro-copy.hidden{display:none}
+.intro-loading-spinner{width:38px;height:38px;border:3px solid #ffffff26;border-top-color:#ef7298;border-radius:50%;animation:intro-loading-spin .8s linear infinite}
+.intro-loading strong{font-size:18px}.intro-loading small{color:#bdb4c2;font-size:11px}
+.intro-play-button{margin-top:8px;padding:10px 16px;border:1px solid #ffffff3d;border-radius:999px;background:#ffffff12;color:#fff;cursor:pointer}
+.intro-skip-button{position:absolute;z-index:5;top:18px;right:20px;padding:7px 11px;border:1px solid #ffffff38;border-radius:999px;background:#0d0e16a8;color:#eee7ec;font:700 9px Outfit;letter-spacing:.04em;cursor:pointer;backdrop-filter:blur(8px)}
+.intro-skip-button:hover,.intro-skip-button:focus-visible{border-color:#f29bb7;background:#2a202ce6;color:#fff}
+.story-intro-copy{z-index:4}
+@keyframes intro-loading-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.intro-loading-spinner{animation:none}}
