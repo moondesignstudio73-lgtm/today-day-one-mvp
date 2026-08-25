@@ -2,7 +2,7 @@ import { advanceTime, applyEffects, clamp, createInitialState, determineEnding }
 import { SaveManager } from "./src/save-manager.mjs?v=13";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, rollEvent } from "./src/event-manager.mjs?v=7";
-import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=6";
+import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=7";
 import { resolveSituationEventChoice, rollLocationSituationEvent } from "./src/situation-event-manager.mjs?v=5";
 import { EventRuntimeManager } from "./src/event-runtime-manager.mjs?v=4";
 import { getMicroEventDiagnostics, rollMicroEvents } from "./src/micro-event-manager.mjs?v=5";
@@ -188,7 +188,7 @@ function rememberActionMedia(action,imageAsset,videoAsset) {
   return changed;
 }
 
-function openActionResultModal(action, message, effects, continuation) {
+function openActionResultModal(action, message, effects, continuation, customAsset=null) {
   const modal = $("#actionResultModal");
   const image = $("#actionResultImage");
   const video = $("#actionResultVideo");
@@ -196,8 +196,8 @@ function openActionResultModal(action, message, effects, continuation) {
   state.seenOneTimeActionResults ??= [];
   state.seenActionResultVideos ??= [];
   const highTrustAsset = getHighTrustActionResultAsset(action.id,state,state.seenOneTimeActionResults);
-  const asset = highTrustAsset ?? getActionResultAsset(action.id);
-  const videoAsset = highTrustAsset ? null : getActionResultVideo(action.id,state,state.seenActionResultVideos);
+  const asset = customAsset ?? highTrustAsset ?? getActionResultAsset(action.id);
+  const videoAsset = customAsset||highTrustAsset ? null : getActionResultVideo(action.id,state,state.seenActionResultVideos);
   const albumChanged=rememberActionMedia(action,asset,videoAsset);
   if (highTrustAsset) {
     state.seenOneTimeActionResults.push(action.id);
@@ -669,7 +669,7 @@ function chooseImmersiveOption(choiceId) {
   const temptationNpc=immersiveScene.type==="temptation"?state.npcs.find(npc=>immersiveScene.id===`temptation-${npc.instanceId}`):null;
   const secretChoice=TEMPTATION_CHOICES.secret;
   const resultPopup=choiceResult?.resultPopup??(temptationNpc&&choiceId==="secret"?{action:{id:"temptation-secret",title:`${temptationNpc.name}와 비밀 만남`},message:`${temptationNpc.name}와 둘만의 술자리를 선택했다. 설렘은 커졌지만 ${state.partner.name}와의 신뢰에는 위험한 균열이 생겼다.`,effects:{npcInterest:secretChoice.npcInterest,npcTrust:secretChoice.npcTrust,trust:secretChoice.partnerTrust,conflict:secretChoice.conflict}}:null);
-  if(resultPopup){openActionResultModal(resultPopup.action,resultPopup.message,resultPopup.effects,renderImmersiveStep);return;}
+  if(resultPopup){openActionResultModal(resultPopup.action,resultPopup.message,resultPopup.effects,renderImmersiveStep,resultPopup.imageAsset??null);return;}
   renderImmersiveStep();
 }
 function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentStep?.type==="choice"||eventRuntime.input.snapshot().locked)return;if(eventRuntime.state==="WAITING_DIALOGUE")eventRuntime.transition("PLAYING");renderImmersiveStep(); }
@@ -1755,7 +1755,7 @@ function openEventScene(event,{debugPreview=false,previewOutfitImage=null,skipTo
   const presentation=resolveStoryPresentation({id:event.id,title:event.title,message:event.message,bgm:"theme"},state);
   const sequence=createEventSceneSequence(event).slice(Math.max(0,resumeSequenceIndex));
   const triggerReason=event.record?.triggerReason??[],locationEvent=event.trigger==="location-enter"||triggerReason.some(reason=>String(reason).startsWith("장소 입장:"));
-  startImmersiveScene({id:event.id,type:"event",presentation,sequence,previewOutfitImage,triggerReason,locationEvent,onChoice:event.scenes?.length?choiceId=>{const result=resolveSituationEventChoice(state,event,choiceId);if(!result)return null;state.logs.push({time:`DAY ${state.day} · EPISODE`,text:`${event.title} · ${result.choice.label}`});SaveManager.save(state);const lastScene=event.scenes?.at(-1),reactionSpeaker=lastScene?.dialogueTurns?.find(turn=>turn.type==="dialogue")?.speaker??event.npcName??state.partner.name,reactionText=result.choice.response??result.choice.memory??"선택의 의미가 앞으로의 관계에 남았다.",reactionExpression=choiceId==="risk"?"tense":"smile";return {sequence:[{type:"narration",text:`나는 “${result.choice.label}”라고 답하고 행동했다.`},{type:"expressionChange",expressionId:reactionExpression},{type:"dialogue",speaker:reactionSpeaker,text:reactionText,expressionId:reactionExpression},...(result.mbtiAdjustment?.label?[{type:"narration",text:`${result.mbtiAdjustment.label}에 맞는 반응이 관계 수치에 추가로 반영됐다.`}]:[]),{type:"narration",text:"이 선택의 결과가 관계 수치와 다음 사건의 가능성에 남았다."},{type:"sceneEnd"}],resultPopup:{action:{id:`${event.id}-choice`,title:event.title},message:`${result.choice.label} · ${reactionText}`,effects:result.effects}};}:null,debugPreview});
+  startImmersiveScene({id:event.id,type:"event",presentation,sequence,previewOutfitImage,triggerReason,locationEvent,onChoice:event.scenes?.length?choiceId=>{const result=resolveSituationEventChoice(state,event,choiceId);if(!result)return null;state.logs.push({time:`DAY ${state.day} · EPISODE`,text:`${event.title} · ${result.choice.label}`});SaveManager.save(state);const lastScene=event.scenes?.at(-1),reactionSpeaker=lastScene?.dialogueTurns?.find(turn=>turn.type==="dialogue")?.speaker??event.npcName??state.partner.name,reactionText=result.choice.response??result.choice.memory??"선택의 의미가 앞으로의 관계에 남았다.",reactionExpression=choiceId==="risk"?"tense":"smile";return {sequence:[{type:"narration",text:`나는 “${result.choice.label}”라고 답하고 행동했다.`},{type:"expressionChange",expressionId:reactionExpression},{type:"dialogue",speaker:reactionSpeaker,text:reactionText,expressionId:reactionExpression},...(result.mbtiAdjustment?.label?[{type:"narration",text:`${result.mbtiAdjustment.label}에 맞는 반응이 관계 수치에 추가로 반영됐다.`}]:[]),{type:"narration",text:"이 선택의 결과가 관계 수치와 다음 사건의 가능성에 남았다."},{type:"sceneEnd"}],resultPopup:{action:{id:`${event.id}-choice`,title:event.title},message:`${result.choice.label} · ${reactionText}`,effects:result.effects,imageAsset:event.image?.result??event.image?.intro??null}};}:null,debugPreview});
   if(skipToChoice)setTimeout(()=>skipImmersiveScene(new Event("click")),0);
 }
 
@@ -1809,7 +1809,18 @@ function resetActiveRuntimeForLoad() {
   $("#storyChoiceLayer")?.classList.add("hidden");
   $("#vnEventCg")?.setAttribute("hidden","");
 }
-function loadGame() { const loaded = SaveManager.load(); if (!loaded) { toast("불러올 수 있는 저장 데이터가 없어요."); return; } resetActiveRuntimeForLoad(); state = loaded; showGame(); const pendingStory=getStoryScene(state.pendingStoryId); if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);else if(state.day>30)showEnding();else if(pendingStory&&!state.eventRuntime?.activeEvent&&isContentAvailableForMode(state,pendingStory)&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(state.pendingStoryId)))openStoryScene(pendingStory);else if(!state.eventRuntime?.activeEvent)toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`); }
+function loadGame() {
+  const loaded=SaveManager.load();
+  if(!loaded){toast("불러올 수 있는 저장 데이터가 없어요.");return;}
+  resetActiveRuntimeForLoad(); state = loaded; showGame();
+  const pendingStory=getStoryScene(state.pendingStoryId);
+  if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);
+  else if(state.day>30)showEnding();
+  else if(state.pendingStoryId&&!state.eventRuntime?.activeEvent){
+    if(pendingStory&&!state.eventRuntime?.activeEvent&&isContentAvailableForMode(state,pendingStory)&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(state.pendingStoryId)))openStoryScene(pendingStory);
+    else toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`);
+  }else if(!state.eventRuntime?.activeEvent)toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`);
+}
 function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
 function openContinuePreview(){const loaded=SaveManager.load();if(!loaded){toast("이어할 저장 데이터가 없어요.");return;}const story=loaded.scenario?.enabled===true,mode=getGameModeConfig(loaded.gameMode),updated=loaded.updatedAt?new Intl.DateTimeFormat("ko-KR",{dateStyle:"medium",timeStyle:"short"}).format(new Date(loaded.updatedAt)):"저장 시각 없음";$("#modalContent").innerHTML=`<section class="continue-preview"><span>${story?"STORY MODE":"FREE MODE"}</span><h2>${story?"《결혼까지 30일!》":"나만의 30일"}</h2><div><strong>DAY ${loaded.day}</strong>${story?`<b>D-${Math.max(0,31-loaded.day)}</b>`:""}</div><p>${escapeHtml(mode.description)}</p><small>마지막 플레이 · ${escapeHtml(updated)}</small><button id="continueResumeButton" class="primary-button" type="button">이어하기 →</button></section>`;openModal();$("#continueResumeButton").addEventListener("click",()=>{closeModal();loadGame();});}
 
