@@ -479,7 +479,8 @@ function renderImmersiveStep() {
   if (step.type === "expressionChange") { updateImmersiveCharacter(step.expressionId); queueSceneStep(220); return; }
   if (step.type === "choice") { if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime(true);renderImmersiveChoices(step.options); return; }
   if (step.expressionId) updateImmersiveCharacter(step.expressionId);
-  $("#sceneTitle").textContent=step.type === "narration" ? "내레이션" : step.speaker;
+  $("#sceneTitle").textContent=step.type === "narration" ? "" : step.speaker;
+  $("#sceneTitle").classList.toggle("hidden",step.type === "narration");
   $("#visualNovelStage").classList.toggle("narration-mode",step.type === "narration");
   typeDialogue(step.text);
   if(eventRuntime.state!=="WAITING_DIALOGUE")eventRuntime.transition("WAITING_DIALOGUE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime();
@@ -499,7 +500,7 @@ function showSceneTransition(step) {
 }
 function renderImmersiveChoices(options=[]) {
   const layer=$("#storyChoiceLayer");
-  layer.innerHTML=options.map(option=>`<button type="button" data-immersive-choice="${escapeHtml(option.id)}">${escapeHtml(option.label)}</button>`).join("");
+  layer.innerHTML=`<p class="choice-prompt">어떻게 대답할까?</p>${options.map((option,index)=>`<button type="button" data-immersive-choice="${escapeHtml(option.id)}"><span>${String(index+1).padStart(2,"0")}</span><b>${escapeHtml(option.label)}</b></button>`).join("")}`;
   layer.classList.remove("hidden");
   layer.querySelector("button")?.focus();
 }
@@ -726,7 +727,7 @@ function render() {
   const sceneSoundKey = `${state.day}-${phase.key}`;
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
-  $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
+  $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title; $("#sceneTitle").classList.remove("hidden");
   const campaignProfileLocked=state.scenario?.enabled===true;
   typeDialogue(phase.text); $("#partnerName").textContent = campaignProfileLocked?`${p.name} · ${p.age}세`:p.name; $("#partnerMbti").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-mbti")?"🔒":p.mbti ?? "----"; $("#partnerJob").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-career")?"직업 · 🔒":p.career?.name ?? p.job; $("#partnerTrait").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-personality")?"성향 · 🔒":`성향 · ${p.archetype}`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));

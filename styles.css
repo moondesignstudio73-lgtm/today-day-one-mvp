@@ -45,6 +45,11 @@ body.campaign-story-mode:not(.ui-night-mode) .top-actions{display:none}
 body.campaign-story-mode:not(.ui-night-mode) .day-pill{border-color:#ffffff38;background:#11121dc4;color:#f8f1f5;box-shadow:none}
 body.campaign-story-mode:not(.ui-night-mode) .game-mode-badge{color:#ffd0df;letter-spacing:.11em}
 body.campaign-free-mode .game-screen{isolation:isolate}
+.immersive-choices .choice-prompt{margin:0 0 5px;color:#fff;font-size:13px;letter-spacing:.04em;text-shadow:0 2px 12px #090a12}
+.immersive-choices button{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:12px}
+.immersive-choices button span{color:#f0a8bf;font:700 10px Outfit;letter-spacing:.12em}
+.immersive-choices button b{font:inherit;font-weight:500}
+.vn-nameplate.hidden{display:none}
 @media(max-width:760px){body.campaign-story-mode:not(.ui-night-mode) .vn-stage{min-height:calc(100dvh - 62px)}body.campaign-story-mode:not(.ui-night-mode) .vn-dialogue{right:10px;bottom:10px;left:10px;padding:24px 72px 19px 20px}body.campaign-story-mode:not(.ui-night-mode) .vn-dialogue p{max-width:none;font-size:16px}}
 
 body[data-heroine="yuna"] .vn-nameplate,body[data-heroine="yuna"] .story-toolbar button[aria-pressed="true"]{background:var(--heroine-accent,#ffca58);color:#4d3b12}body[data-heroine="yuna"] .vn-dialogue{border-color:#ffdc86;box-shadow:0 20px 70px #ffca5828}body[data-heroine="yuna"] .immersive-choices button:hover,body[data-heroine="yuna"] .immersive-choices button:focus-visible{border-color:#ffe39a;background:#81652cf2}body[data-heroine="yuna"] .story-quick-hud span{color:#ffe39a}
