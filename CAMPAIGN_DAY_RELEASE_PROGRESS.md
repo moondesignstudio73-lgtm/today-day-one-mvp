@@ -55,3 +55,5 @@
 - 기존 `home-morning`, `office-day`, 하은·서진·민호·팀장 스프라이트와 기존 SFX 5종을 비파괴 재사용한다.
 - 검사: DAY 5 프레젠테이션 집중 테스트, `game.js` 문법 검사, 전체 `tests/simulation.test.mjs` PASS.
 - 신규 이미지·후처리·아트 방향 결정은 필요하지 않다.
+- 로컬 커밋: `369bd4b` (`Plan and map Day 5 workplace chapter`).
+- 원격 기능 브랜치가 `556c16c`까지 별도로 진행되어 fast-forward push는 불가능하다. 원격이 변경한 `game.js`·`tests/simulation.test.mjs`와 보호 중인 로컬 미커밋 변경이 겹치므로 자동 merge는 보류했다. 다음 실행은 push와 독립적인 DAY 5 런타임 구현을 계속한다.
