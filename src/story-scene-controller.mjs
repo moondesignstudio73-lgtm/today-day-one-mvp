@@ -88,6 +88,6 @@ export function createTemptationReactionSequence(npc, choiceId) {
 }
 
 export function validateSceneSequence(sequence) {
-  const allowed = new Set(["transition","narration","characterEnter","dialogue","expressionChange","animation","sfx","itemShow","choice","cgShow","sceneEnd"]);
+  const allowed = new Set(["transition","narration","characterEnter","dialogue","expressionChange","animation","sfx","itemShow","choice","cgShow","freeAction","sceneEnd"]);
   return Array.isArray(sequence) && sequence.length > 0 && sequence.every(step => step && allowed.has(step.type));
 }

@@ -28,7 +28,7 @@ import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKE
 import { analyzePlayHistory } from "./src/ending-manager.mjs";
 import { SoundManager } from "./src/sound-manager.mjs?v=6";
 import { DAY1_BGM_CUES } from "./src/day1-audio-data.mjs";
-import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs?v=4";
+import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs?v=5";
 import { DAY2_BGM_CUES } from "./src/day2-audio-data.mjs";
 import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyChoice, getLockedDay2ResumePresentation, getLockedDay2Segment } from "./src/day2-campaign-runtime.mjs?v=4";
 import { LOCKED_DAY4_SCENE_ID, applyLockedDay4ChoiceState, getLockedDay4LegacyChoice, getLockedDay4ResumePresentation, getLockedDay4Segment } from "./src/day4-campaign-runtime.mjs?v=2";
@@ -45,7 +45,7 @@ import { STORY_SCENES } from "./src/story-data.mjs";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, resetForNextDay, setNightStartTime, spendNightTime } from "./src/night-manager.mjs?v=2";
 import { completeLateNightInvitation, getPendingLateNightInvitation, LATE_NIGHT_INVITATION_CHANCE, LATE_NIGHT_INVITATION_MESSAGE, LATE_NIGHT_INVITATION_MIN_DAY, LATE_NIGHT_INVITATION_START_MINUTES, maybeTriggerLateNightInvitation } from "./src/late-night-invitation-manager.mjs?v=1";
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
-import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
+import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs?v=2";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
 import { HAEUN_SPECIAL_EVENT_OUTFIT, HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=17";
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
@@ -59,6 +59,7 @@ import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEf
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=2";
 import { getMapLocationAsset } from "./src/map-location-assets.mjs";
+import { DAY1_HOSPITAL_ACTIONS, STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActionWindow, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=1";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -398,7 +399,8 @@ function openStoryScene(scene) {
   const day6Resume=lockedDay6?getLockedDay6ResumePresentation(state):null;
   const day7Resume=lockedDay7?getLockedDay7ResumePresentation(state):null;
   const lockedPresentation=lockedDay1?{...presentation,backgroundId:"day1-hospital-ceiling",backgroundUrl:getBackgroundAsset("day1-hospital-ceiling"),expressionId:"resting-tired",poseId:"seated-dozing"}:lockedDay2?{...presentation,...day2Resume,backgroundUrl:getBackgroundAsset(day2Resume.backgroundId),expressionId:"calm-attentive",poseId:"standing"}:lockedDay4?{...presentation,...day4Resume,backgroundUrl:getBackgroundAsset(day4Resume.backgroundId),expressionId:"calm",poseId:"standing"}:lockedDay5?{...presentation,...day5Resume,backgroundUrl:getBackgroundAsset(day5Resume.backgroundId),expressionId:"calm",poseId:"standing"}:lockedDay6?{...presentation,...day6Resume,backgroundUrl:getBackgroundAsset(day6Resume.backgroundId)}:lockedDay7?{...presentation,...day7Resume,backgroundUrl:getBackgroundAsset(day7Resume.backgroundId)}:presentation;
-  startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):lockedDay4?getLockedDay4Segment(state):lockedDay5?getLockedDay5Segment(state):lockedDay6?getLockedDay6Segment(state):lockedDay7?getLockedDay7Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
+  const day1FreeResume=lockedDay1&&state.storyFreeAction?.day===1&&state.storyFreeAction.status!=="COMPLETE";
+  startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:day1FreeResume?[{type:"freeAction",id:state.storyFreeAction.windowId,phase:"evening",location:"hospital",maxActions:1},{type:"sceneEnd"}]:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):lockedDay4?getLockedDay4Segment(state):lockedDay5?getLockedDay5Segment(state):lockedDay6?getLockedDay6Segment(state):lockedDay7?getLockedDay7Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
     if(lockedDay1){const stage=applyLockedDay1ChoiceState(state,choiceId);if(!stage)return null;if(stage.stage==="contact"){SaveManager.save(state);return getLockedDay1Segment(state,1);}const result=resolveStoryChoice(state,scene.id,stage.legacyChoiceId);if(!result)return null;SaveManager.save(state);return getLockedDay1Segment(state,2);}
     if(lockedDay2){const result=applyLockedDay2ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay2Segment(state,result.stage);}
     if(lockedDay4){const result=applyLockedDay4ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay4Segment(state,result.stage);}
@@ -544,6 +546,35 @@ function updateGiftVehicleLayer(characterId="girlfriend") {
   if(show&&layer.getAttribute("src")!==asset)layer.src=asset;
 }
 
+function renderStoryFreeAction(step){
+  const definition=getStoryFreeActionWindow(state.day,step.id);
+  const progress=beginStoryFreeAction(state,step.id);
+  if(!definition||!progress){renderImmersiveStep();return;}
+  state.pendingStoryId=LOCKED_DAY1_SCENE_ID;
+  $("#skipButton").classList.add("hidden");
+  $("#storyChoiceLayer").classList.add("hidden");
+  $("#vnCharacter").hidden=true;$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;
+  $("#visualNovelStage").classList.add("story-free-action-active");
+  const layer=$("#storyFreeActionLayer");layer.classList.remove("hidden");
+  if(progress.status==="ACTIVE"){
+    const actionRows=DAY1_HOSPITAL_ACTIONS.map(action=>`<button type="button" class="story-free-action-card" data-story-free-action="${escapeHtml(action.id)}"><span aria-hidden="true">${action.icon}</span><b>${escapeHtml(action.title)}</b><small>${escapeHtml(action.description)}</small></button>`).join("");
+    const locks=STORY_FEATURES.map(feature=>{const availability=getStoryFeatureAvailability(state,feature.id);return `<div class="story-feature-lock" aria-label="${escapeHtml(feature.label)} 잠금"><b>🔒 ${escapeHtml(feature.label)}</b><small>${escapeHtml(availability.reason)}</small></div>`;}).join("");
+    layer.innerHTML=`<article class="story-free-action-shell"><header><span>DAY ${state.day} · FREE ACTION</span><h2>${escapeHtml(definition.title)}</h2><p>${escapeHtml(definition.description)}</p><div><b>현재 위치 · ${escapeHtml(definition.locationLabel)}</b><small>다음 일정 · ${escapeHtml(definition.nextSchedule)}</small></div></header><section class="story-free-status"><span>체력 <b>${Math.round(state.energy)}</b></span><span>건강 <b>${Math.round(state.health)}</b></span><span>피로 <b>${Math.round(state.fatigue)}</b></span><span>스트레스 <b>${Math.round(state.stress)}</b></span><span>관계 <b>${Math.round((state.affection+state.trust)/2)}</b></span></section><div class="story-free-action-grid">${actionRows}</div><aside class="story-feature-locks"><h3>생활 기능</h3>${locks}</aside></article>`;
+  }else{
+    const report=getStoryFreeActionReport(state).filter(row=>["energy","fatigue","stress","health","affection","trust"].includes(row.key));
+    const result=progress.result??{title:"자유행동",summary:"오늘의 선택을 마쳤다."};
+    const rows=report.map(row=>`<div><span>${escapeHtml(row.label)}</span><b>${row.before} → ${row.after}</b><em class="${row.delta>=0?"up":"down"}">${row.delta>=0?"+":""}${row.delta}</em></div>`).join("");
+    layer.innerHTML=`<article class="story-free-report"><span>DAY 1 REPORT</span><h2>${escapeHtml(result.title)}</h2><p>${escapeHtml(result.summary)}</p>${progress.event?`<blockquote>${escapeHtml(progress.event.text)}</blockquote>`:""}<section>${rows||"<div><span>오늘의 변화</span><b>차분히 하루를 정리했다.</b></div>"}</section><button id="completeStoryFreeAction" type="button">DAY 1 COMPLETE · 다음 날로</button></article>`;
+  }
+  eventRuntime.input.unlock(immersiveScene?.id);
+  persistEventRuntime(true);SaveManager.save(state);
+}
+
+function closeStoryFreeAction(){
+  $("#storyFreeActionLayer").classList.add("hidden");$("#storyFreeActionLayer").innerHTML="";
+  $("#visualNovelStage").classList.remove("story-free-action-active");
+}
+
 function renderImmersiveStep() {
   if (!immersiveScene) return;
   const step=immersiveScene.sequence[immersiveScene.index++];
@@ -579,6 +610,7 @@ function renderImmersiveStep() {
   }
   if (step.type === "expressionChange") { updateImmersiveCharacter(step.expressionId); queueSceneStep(220); return; }
   if (step.type === "choice") { if(eventRuntime.state!=="WAITING_CHOICE")eventRuntime.transition("WAITING_CHOICE");eventRuntime.input.unlock(immersiveScene.id);persistEventRuntime(true);renderImmersiveChoices(step.options); return; }
+  if (step.type === "freeAction") { renderStoryFreeAction(step); return; }
   if (step.expressionId&&immersiveScene?.id!==LOCKED_DAY1_SCENE_ID) updateImmersiveCharacter(step.expressionId);
   if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID)updateDay1Focus(step.focusCharacterId??(step.type==="narration"?"pov":"haeun"),step.effect??"");
   $("#sceneTitle").textContent=step.type === "narration" ? "" : step.speaker;
@@ -663,6 +695,8 @@ function advanceCampaignChapter(completedSession) {
   return selectNextStoryScene(state);
 }
 function finishImmersiveScene() {
+  closeStoryFreeAction();
+  if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID&&!state.storyFlags?.day1FreeActionComplete){const freeAction={type:"freeAction",id:"day1-hospital-evening",phase:"evening",location:"hospital",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;if(completedSession?.id===LOCKED_DAY1_SCENE_ID&&state.storyFlags?.day1QuestionStrategy)state.pendingStoryId=null;if(completedSession?.id===LOCKED_DAY2_SCENE_ID&&state.storyFlags?.day2ContactStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY2_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY2_SCENE_ID,getLockedDay2LegacyChoice(state));state.storyFlags.day2RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY4_SCENE_ID&&state.storyFlags?.day4SharingStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY4_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY4_SCENE_ID,getLockedDay4LegacyChoice(state));state.storyFlags.day4RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY5_SCENE_ID&&state.storyFlags?.day5ReturnStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY5_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY5_SCENE_ID,getLockedDay5LegacyChoice(state));state.storyFlags.day5RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY6_SCENE_ID&&state.storyFlags?.day6DatePlan&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY6_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY6_SCENE_ID,getLockedDay6LegacyChoice(state));state.storyFlags.day6RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY7_SCENE_ID&&state.storyFlags?.day7MemoryStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY7_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY7_SCENE_ID,getLockedDay7LegacyChoice(state));state.storyFlags.day7RuntimeComplete=true;state.pendingStoryId=null;}const nextCampaignScene=advanceCampaignChapter(completedSession);eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
   $("#visualNovelStage").classList.remove("narration-mode","location-event-scene");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
   SaveManager.save(state);render();$(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true);const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);else if(nextCampaignScene)setTimeout(()=>openStoryScene(nextCampaignScene),0);
@@ -836,6 +870,12 @@ function restoreCampaignChapterProgress() {
   for(let guard=0;guard<30;guard+=1){
     const completed=(state.storyHistory??[]).find(record=>record.sceneId.startsWith(`m30-day${state.day}-`));
     if(!completed)break;
+    if(state.day===1&&!state.storyFlags?.day1FreeActionComplete){
+      beginStoryFreeAction(state,"day1-hospital-evening");
+      state.pendingStoryId=LOCKED_DAY1_SCENE_ID;
+      changed=true;
+      break;
+    }
     state.day+=1;
     state.phase=0;
     state.selected=null;
@@ -1869,6 +1909,7 @@ $("#purchasedItemStorage").addEventListener("click",event=>{const button=event.t
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#storyChoiceLayer").addEventListener("click",event=>{event.stopPropagation();const button=event.target.closest("[data-immersive-choice]");if(button)chooseImmersiveOption(button.dataset.immersiveChoice);});
 $("#storyChoiceLayer").addEventListener("keydown",event=>{const button=event.target.closest("[data-immersive-choice]");if(!button||(event.key!=="Enter"&&event.key!==" "))return;event.preventDefault();event.stopPropagation();chooseImmersiveOption(button.dataset.immersiveChoice);});
+$("#storyFreeActionLayer").addEventListener("click",event=>{event.stopPropagation();const actionButton=event.target.closest("[data-story-free-action]");if(actionButton){const result=resolveStoryFreeAction(state,actionButton.dataset.storyFreeAction);if(!result)return;sound.play("confirm");SaveManager.save(state);renderStoryFreeAction({id:result.windowId});return;}if(event.target.closest("#completeStoryFreeAction")&&completeStoryFreeAction(state)){SaveManager.save(state);closeStoryFreeAction();renderImmersiveStep();}});
 $("#visualNovelStage").addEventListener("keydown",event=>{ if(event.target.closest?.("[data-immersive-choice]"))return;if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });
 $("#autoButton").addEventListener("click",toggleAutoMode);
 $("#skipButton").addEventListener("click",skipImmersiveScene);

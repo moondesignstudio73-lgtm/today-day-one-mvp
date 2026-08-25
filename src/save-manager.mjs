@@ -54,6 +54,7 @@ export class SaveManager {
       parsed.conversationHistory ??= [];
       parsed.storyHistory ??= [];
       parsed.storyFlags ??= {};
+      parsed.storyFreeAction ??= null;
       parsed.futureScore ??= 0;
       parsed.pendingStoryId ??= null;
       parsed.cgCollection ??= [];
