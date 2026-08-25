@@ -1,5 +1,6 @@
 import { HIDDEN_ROUTE_SCENES } from "./hidden-route-data.mjs";
 import { HEROINE_STORY_SCENES } from "./heroine-data.mjs";
+import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs";
 
 export const MARRIAGE_30_STORY_SCENES = [{
   id:"m30-day1-hospital-awakening",arc:"잃어버린 1년",window:[1,1],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],
@@ -179,7 +180,7 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {type:"dialogue",speaker:"간호사",text:"좋습니다. 수량과 기기 작동에 이상 없으면 여기 서명해 주세요.",expressionId:"calm"},
     {type:"narration",text:"인계 확인란에 이름을 적고 열쇠와 휴대폰을 탁자 위에 나란히 놓았다. 병실 밖에서는 퇴원 카트 바퀴 소리가 지나갔다. 다음 선택은 기기가 아니라, 돌아갈 생활을 어떤 순서로 열 것인지에 가까웠다."}
   ],
-  presentation:{backgroundId:"day2-hospital-bedside",characterId:"girlfriend",expressionId:"smile",poseId:"phone"},
+  presentation:{backgroundId:"day2-hospital-bedside",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day3,expressionId:"smile",poseId:"phone"},
   choices:[
     {id:"inspect-system-first",label:"계정·날짜·백업 상태부터 직접 확인하고 사적 기록은 닫아 둔다",effects:{confidence:7,trust:3},scenarioEffects:{investigation:8,memoryRecovery:3},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-system"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"잠금 화면의 날짜와 계정 이름부터 적었다. 사진과 메시지는 닫아 둔 채, 확인한 사실과 아직 보지 않은 영역을 구분했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["set-boundary"]}}],effects:{confidence:3},scenarioEffects:{investigation:3},response:"병원에서 받은 사고 날짜와 기기 백업 날짜를 나란히 적었다. 아직 결론은 없지만 확인 순서는 분명해졌다."},{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["review-the-plan"]}}],unlockedActions:["recovery-plan-phone-check"],response:"재활 계획표처럼 확인 항목과 중단 기준을 적었다. 하은은 ‘약 알람’ 아래에만 자기 이름을 쓰고 휴대폰을 내 쪽으로 돌려놓았다."}],memory:"돌아온 휴대폰의 시스템 정보부터 확인함"},
     {id:"set-up-together",label:"하은과 복약 알람·병원 번호·필수 연락처만 함께 설정한다",effects:{affection:8,trust:10},scenarioEffects:{haeunAffection:8,haeunTrust:10,memoryRecovery:2},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","call-haeun"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"하은은 자신의 번호를 ‘하은’이라고만 저장했다. 하트를 붙였다가 내 얼굴을 보고 지운 뒤, “이건 네가 기억나면 직접.”이라고 말했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["take-her-hand"]}}],effects:{affection:4},scenarioEffects:{haeunAffection:4},unlockedActions:["rehab-trust-phone-setup"],response:"알람 설정을 마친 하은이 손을 내밀었다. 어제처럼 이번에도 잡을지는 내 쪽에서 정할 수 있게, 손바닥만 펴 둔 채였다."}],memory:"하은과 휴대폰의 필수 기능만 다시 설정함"},

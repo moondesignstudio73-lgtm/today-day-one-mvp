@@ -1,4 +1,5 @@
 import { DAY5_PRESENTATION_SCENES } from "./day5-presentation-data.mjs";
+import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs";
 
 const ID="m30-day5-work-return";
 const n=(text,extra={})=>({type:"narration",text,...extra});
@@ -172,11 +173,11 @@ export function getLockedDay5Segment(state,stage=state.storyFlags?.day5RuntimeSt
 
 export function getLockedDay5ResumePresentation(state){
   const stage=state.storyFlags?.day5RuntimeStage??0;
-  if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend"};
-  if(stage===1)return {backgroundId:"office-day",characterId:"office-best-male"};
-  if(stage===2)return {backgroundId:"office-day",characterId:"female-coworker"};
-  if(stage===3)return {backgroundId:"office-day",characterId:"team-lead"};
-  return {backgroundId:"office-day",characterId:"office-best-male"};
+  if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
+  if(stage===1)return {backgroundId:"office-day",characterId:"office-best-male",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
+  if(stage===2)return {backgroundId:"office-day",characterId:"female-coworker",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
+  if(stage===3)return {backgroundId:"office-day",characterId:"team-lead",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
+  return {backgroundId:"office-day",characterId:"office-best-male",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
 }
 
 export function applyLockedDay5ChoiceState(state,id){

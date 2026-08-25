@@ -31,8 +31,8 @@ import { DAY1_BGM_CUES } from "./src/day1-audio-data.mjs";
 import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs?v=4";
 import { DAY2_BGM_CUES } from "./src/day2-audio-data.mjs";
 import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyChoice, getLockedDay2ResumePresentation, getLockedDay2Segment } from "./src/day2-campaign-runtime.mjs?v=4";
-import { LOCKED_DAY4_SCENE_ID, applyLockedDay4ChoiceState, getLockedDay4LegacyChoice, getLockedDay4ResumePresentation, getLockedDay4Segment } from "./src/day4-campaign-runtime.mjs?v=1";
-import { LOCKED_DAY5_SCENE_ID, applyLockedDay5ChoiceState, getLockedDay5LegacyChoice, getLockedDay5ResumePresentation, getLockedDay5Segment } from "./src/day5-campaign-runtime.mjs?v=1";
+import { LOCKED_DAY4_SCENE_ID, applyLockedDay4ChoiceState, getLockedDay4LegacyChoice, getLockedDay4ResumePresentation, getLockedDay4Segment } from "./src/day4-campaign-runtime.mjs?v=2";
+import { LOCKED_DAY5_SCENE_ID, applyLockedDay5ChoiceState, getLockedDay5LegacyChoice, getLockedDay5ResumePresentation, getLockedDay5Segment } from "./src/day5-campaign-runtime.mjs?v=2";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
@@ -420,10 +420,12 @@ function startImmersiveScene(session) {
   if(session.id===LOCKED_DAY4_SCENE_ID){
     const resumeVisual=getLockedDay4ResumePresentation(state);
     immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
+    immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl;
   }
   if(session.id===LOCKED_DAY5_SCENE_ID){
     const resumeVisual=getLockedDay5ResumePresentation(state);
     immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
+    immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl;
   }
   document.body.classList.remove("ui-classic-mode");
   document.body.classList.add("ui-story-mode");
@@ -439,7 +441,7 @@ function startImmersiveScene(session) {
   $("#actionGrid").classList.add("hidden");
   $("#nextButton").classList.add("hidden");
   applyScenePresentation(immersiveScene.presentation);
-  preloadImmersiveAssets(session.sequence);
+  preloadImmersiveAssets([{assetUrl:immersiveScene.activeCharacterAssetUrl},...session.sequence]);
   eventRuntime.markAssets(immersiveScene.presentation?.backgroundUrl?"READY":"FALLBACK");eventRuntime.transition("TRANSITIONING");persistEventRuntime(true);
   updateImmersiveCharacter(immersiveScene.presentation.expressionId);
   if(session.id===LOCKED_DAY1_SCENE_ID){$("#vnCharacter").hidden=true;delete $("#vnCharacter").dataset.day1Pose;}
@@ -481,6 +483,7 @@ function updateImmersiveCharacter(expressionId="calm") {
   const npcSprite=characterId!=="girlfriend"?getNpcSprite(characterId):"";
   const yuriEventVideo=characterId==="player-ex"&&["event","temptation"].includes(immersiveScene?.type)?"assets/heroines/yuri/yuri-ex-girlfriend-2d-01.webm?v=1":"";
   if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(!yuriEventVideo,yuriEventVideo);return;}
+  if(characterId==="girlfriend"&&immersiveScene?.activeCharacterAssetUrl){character.src=immersiveScene.activeCharacterAssetUrl;character.hidden=false;character.dataset.expression=expressionId;applyCharacterStage(character,{},"haeun");$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   if(characterId==="girlfriend"&&immersiveScene?.previewOutfitImage){character.src=immersiveScene.previewOutfitImage;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   state.currentExpression=expressionId;
   const poseId=immersiveScene?.presentation?.poseId,outfitId=immersiveScene?.presentation?.outfitId;
