@@ -38,7 +38,7 @@ function characterForStory(scene) {
   if (scene?.characterId) return scene.characterId;
   const speaker = String(scene?.speaker ?? "");
   const storyText = `${scene?.id ?? ""} ${scene?.arc ?? ""} ${scene?.title ?? ""}`;
-  if (/전.?여자친구|전.?연인|가은|ex-message/.test(`${speaker} ${storyText}`)) return "player-ex";
+  if (/전.?여자친구|전.?연인|유리|ex-message/.test(`${speaker} ${storyText}`)) return "player-ex";
   if (/채린|신입사원/.test(speaker)) return "office-rookie";
   if (/여성 동료|여직원|유진/.test(speaker)) return "female-coworker";
   if (/팀장|상사/.test(speaker)) return "team-lead";

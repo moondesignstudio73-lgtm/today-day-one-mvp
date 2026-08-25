@@ -3,7 +3,7 @@ import { recordMemory } from "./memory-manager.mjs";
 
 const randomInt = (random, min, max) => min + Math.floor(random() * (max - min + 1));
 const ACTIVE_QUOTAS = { office:5, friend:3, rival:2, life:4 };
-const CORE_IDS = new Set(["female-coworker","team-lead","best-friend","male-rival"]);
+const CORE_IDS = new Set(["female-coworker","team-lead","best-friend","male-rival","player-ex"]);
 
 function selectActiveIds(random) {
   const selected=new Set(CORE_IDS);
@@ -37,7 +37,25 @@ export function migrateNpcRoster(npcs, random = Math.random) {
   return generated.map(character=>{
     const previous=byId.get(character.id);
     if (!previous) return character;
-    return { ...character,...previous,instanceId:previous.instanceId || character.instanceId,active:typeof previous.active === "boolean" ? previous.active : true,storyState:previous.storyState ?? "available" };
+    return {
+      ...character,
+      ...previous,
+      id:character.id,
+      name:character.name,
+      age:character.age,
+      gender:character.gender,
+      job:character.job,
+      role:character.role,
+      category:character.category,
+      relationshipType:character.relationshipType,
+      interestTarget:character.interestTarget,
+      personality:character.personality,
+      storyTags:[...character.storyTags],
+      links:[...character.links],
+      instanceId:previous.instanceId || character.instanceId,
+      active:character.id==="player-ex" ? true : typeof previous.active === "boolean" ? previous.active : true,
+      storyState:previous.storyState ?? "available"
+    };
   });
 }
 

@@ -23,7 +23,8 @@ export const CHARACTER_ASSETS = {
 export const NPC_ASSETS = {
   "female-coworker":"assets/npcs/female-coworker-clean.png",
   "office-rookie":"assets/npcs/office-rookie-clean.png",
-  "male-rival":"assets/npcs/male-rival-clean.png"
+  "male-rival":"assets/npcs/male-rival-clean.png",
+  "player-ex":"assets/heroines/yuri/outfits/02.webp"
 };
 
 export const GIFT_VISUAL_ASSETS = Object.freeze({
