@@ -2,7 +2,7 @@
 
 운영 원칙: 한 DAY의 시나리오 작성·내러티브 QA·런타임 적용·저장 복원·전체 회귀·커밋·푸시·배포 확인이 모두 끝난 뒤에만 다음 DAY를 시작한다.
 
-현재 대상: `DAY 8`
+현재 대상: `DAY 9`
 
 ## DAY 5
 
@@ -21,7 +21,7 @@
 
 - [x] DAY 6
 - [x] DAY 7
-- [ ] DAY 8
+- [x] DAY 8
 - [ ] DAY 9
 - [ ] DAY 10
 - [ ] DAY 11
@@ -84,15 +84,33 @@
 - [x] 필요한 신규 자산 제작·이미지 QA
 - [x] 다단계 런타임·선택 상태·저장 복원 구현
 - [x] 집중 테스트·전체 회귀
-- [ ] 실제 브라우저 연속 플레이 QA
-- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+- [x] 실제 브라우저 연속 플레이 QA
+- [x] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 시나리오: `docs/day8/DAY8_SCENARIO_DRAFT_V1.md`
 자체 QA: `docs/day8/DAY8_SCENARIO_QA_V1.md`
+실제 플레이 QA: `docs/day8/DAY8_PLAYTHROUGH_QA.md`
 
 ## 다음 작업
 
-DAY 7 완료 저장에서 DAY 8 진입, 세 선택, SKIP, 중간 저장 재개, 솔로 화면과 DAY 9 전환을 실제 브라우저로 연속 검수한다.
+DAY 9의 앞 DAY 잠금본·선택·후속 훅과 현재 코드를 조사하고 챕터 계약·Voice Profile·지식 장부를 작성한다.
+
+### 2026-08-26 DAY 8 출시·공개 배포 완료
+
+- 브라우저 QA 증적 커밋을 원격의 DAY 2·3 자유행동 변경과 파일 겹침 없이 일반 merge했고, 병합 뒤 DAY 1~3 자유행동 집중 검사·DAY 8 전 검사·전체 시뮬레이션 회귀가 PASS했다.
+- 검증 SHA `b32af97`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
+- 같은 SHA의 `pages build and deployment`와 `Deploy GitHub Pages`가 모두 SUCCESS로 완료됐다.
+- 캐시 우회 공개 게임 화면이 정상 로드됐고 `docs/day8/DAY8_PLAYTHROUGH_QA.md`는 HTTP 200과 `PLAYTHROUGH QA PASS` 마커를 반환했다.
+- DAY 8 모든 관문 완료. 사전 승인에 따라 DAY 8을 자동 COMPLETE 처리하고 다음 대상은 DAY 9 챕터 계약·시나리오 관문으로 전환한다.
+
+### 2026-08-26 DAY 8 실제 브라우저 연속 플레이 QA 기록
+
+- DAY 7 완료 저장에서 DAY 8로 진입해 연락·현재 구매·귀가 공유의 세 전략 선택과 전용 반응 대사를 실제 선택 UI로 검수했다.
+- 첫 번째와 두 번째 선택 직후 새로고침·이어하기를 수행해 선택 기억과 런타임 단계가 같은 세그먼트에서 복원됨을 확인했다.
+- 집에서는 하은 스프라이트가 정상 표시되고 단독 생활용품점에서는 인물 이미지·영상 잔상이 사라지며, 신규 배경이 확대 깨짐·문자·상표·워터마크 없이 표시됐다.
+- 마지막 선택 뒤 DAY 9 날짜·캠페인 상태로 전환되고 자유 연애 전용 `ex-message`는 노출되지 않았다. 콘솔 경고·오류는 0건이다.
+- 상세 결과: `docs/day8/DAY8_PLAYTHROUGH_QA.md` — `PLAYTHROUGH QA PASS`, NEEDS FIX 0.
+- 다음 관문: 브라우저 QA 증적을 검증·커밋하고 origin과 동일 SHA의 gh-pages 공개 배포를 확인한다.
 
 ### 2026-08-26 DAY 8 집중 테스트·전체 회귀 관문 기록
 
