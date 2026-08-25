@@ -62,7 +62,7 @@ export function validateSceneSoundPresets(presets = SCENE_SOUND_PRESETS) {
 }
 
 export class SoundManager {
-  constructor({ storage = globalThis.localStorage, contextFactory, audioFactory } = {}) {
+  constructor({ storage = globalThis.localStorage, contextFactory, audioFactory, defaultEnabled = true } = {}) {
     this.storage = storage;
     this.contextFactory = contextFactory ?? (() => {
       const AudioContextClass = globalThis.AudioContext ?? globalThis.webkitAudioContext;
@@ -73,7 +73,10 @@ export class SoundManager {
     this.bgm = null;
     this.bgmSource = "";
     this.cueChannels = new Map();
-    this.enabled = this.storage?.getItem(SOUND_SETTING_KEY) === "on";
+    const savedSetting = this.storage?.getItem(SOUND_SETTING_KEY);
+    this.enabled = savedSetting === null || savedSetting === undefined
+      ? Boolean(defaultEnabled)
+      : savedSetting === "on";
   }
 
   toggle(force) {
