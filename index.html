@@ -10,13 +10,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="styles.css?v=52">
+  <link rel="stylesheet" href="styles.css?v=66">
   <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-standing-smile-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-standing-tense-2d.png">
-  <link rel="preload" as="image" href="assets/characters/girlfriend-standing-worried-2d.png">
   <link rel="preload" as="image" href="assets/npcs/female-coworker-2d.png">
   <link rel="preload" as="image" href="assets/npcs/male-rival-2d.png">
 </head>
@@ -67,7 +66,7 @@
       <div class="intro-art" aria-hidden="true">
         <div class="character-stage-intro">
           <div class="intro-scene-glow"></div>
-          <img class="intro-standing" src="assets/characters/girlfriend-standing-2d.png" alt="">
+          <img class="intro-standing" src="assets/characters/girlfriend-standing-2d.png?v=9" alt="">
           <div class="intro-dialogue-preview"><span>새로운 인연</span><strong>“오늘부터, 우리 이야기 시작할래?”</strong></div>
         </div>
         <div class="floating-card card-love"><small>호감도</small><strong>+24 ♥</strong></div>
@@ -101,7 +100,7 @@
     <section id="gameScreen" class="game-screen hidden">
       <aside class="profile-panel panel">
         <div class="partner-head">
-          <div class="avatar partner-avatar"><img id="partnerAvatar" src="assets/characters/girlfriend-standing-2d.png?v=6" alt="여자친구 프로필 사진"></div>
+          <div class="avatar partner-avatar"><img id="partnerAvatar" src="assets/characters/girlfriend-standing-2d.png?v=9" alt="여자친구 프로필 사진"></div>
           <div class="partner-details"><span id="relationshipState" class="online">● 연애 중</span><div class="partner-name-row"><h2 id="partnerName">서연</h2><small id="partnerMbti" class="partner-mbti">ISFJ</small></div><p id="partnerJob">회사원</p><p id="partnerTrait">성향 · 차분한 인상</p></div>
         </div>
         <div class="relationship">
@@ -119,7 +118,7 @@
         <div class="vn-stage panel" id="visualNovelStage" role="button" tabindex="0" aria-label="대화 전체 표시">
           <div class="vn-backdrop" id="vnBackdrop" aria-hidden="true"></div>
           <img class="vn-gift-vehicle" id="vnGiftVehicleLayer" alt="" aria-hidden="true" hidden>
-          <img class="vn-character" id="vnCharacter" src="assets/characters/girlfriend-standing-2d.png" alt="" aria-hidden="true">
+          <img class="vn-character" id="vnCharacter" src="assets/characters/girlfriend-standing-2d.png?v=9" alt="" aria-hidden="true">
           <video class="vn-character vn-character-video" id="vnCharacterVideo" muted playsinline loop preload="metadata" aria-hidden="true" hidden></video>
           <img class="vn-character-accessory" id="vnAccessoryLayer" alt="" aria-hidden="true" hidden>
           <div id="vnExpressionLayer" class="vn-expression-layer" aria-live="polite"></div>
@@ -137,9 +136,11 @@
             <span class="vn-next-cue" aria-hidden="true">▼</span>
           </div>
         </div>
-        <div class="timeline panel">
-          <div class="section-title"><h3>오늘의 기록</h3><span id="turnCount">첫 번째 선택</span></div>
-          <div id="eventLog" class="event-log"></div>
+        <div class="timeline girlfriend-warehouse-panel panel">
+          <div class="section-title warehouse-title"><h3>보관함</h3><span id="girlfriendWardrobeCount">보유 의상 1개</span></div>
+          <div id="girlfriendWardrobe" class="girlfriend-wardrobe" aria-label="구매한 여자친구 의상" aria-live="polite"></div>
+          <button id="todayRecordButton" class="compact-daily-record" type="button" aria-haspopup="dialog"><b>오늘의 기록</b><span id="turnCount">첫 번째 선택</span></button>
+          <div id="eventLog" class="event-log hidden" aria-hidden="true"></div>
         </div>
       </section>
 
@@ -235,6 +236,6 @@
     </article>
   </section>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=74"></script>
+  <script type="module" src="game.js?v=87"></script>
 </body>
 </html>

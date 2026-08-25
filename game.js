@@ -8,14 +8,14 @@ import { EventRuntimeManager } from "./src/event-runtime-manager.mjs?v=4";
 import { getMicroEventDiagnostics, rollMicroEvents } from "./src/micro-event-manager.mjs?v=5";
 import { auditEventSystems } from "./src/event-audit.mjs?v=4";
 import { EVENT_DEFINITIONS } from "./src/events-data.mjs?v=5";
-import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=6";
+import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=7";
 import { getActionAvailability, getWeekdayName, isActionVisible, isWeekend } from "./src/action-manager.mjs?v=5";
 import { calculateActionEffects } from "./src/consequence-manager.mjs";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
 import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, getPaycheckRange, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=6";
 import { acquireActionItem, addItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, purchaseItem } from "./src/inventory-manager.mjs?v=8";
-import { getItem, ITEMS } from "./src/items-data.mjs?v=5";
+import { getItem, ITEMS } from "./src/items-data.mjs?v=6";
 import { giveGift } from "./src/gift-manager.mjs?v=7";
 import { applyNpcActionEffects, getNpcRelationshipStatus } from "./src/npc-manager.mjs";
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs";
@@ -30,7 +30,7 @@ import { SoundManager } from "./src/sound-manager.mjs?v=5";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
-import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=8";
+import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=10";
 import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=9";
 import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=6";
 import { STORY_SCENES } from "./src/story-data.mjs";
@@ -38,7 +38,7 @@ import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, g
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
 import { createEventSceneSequence, createStoryReactionSequence, createStorySceneSequence, createTemptationReactionSequence, createTemptationSceneSequence } from "./src/story-scene-controller.mjs";
 import { runDailyStoryDirector } from "./src/dynamic-story-director.mjs";
-import { HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=13";
+import { HAEUN_SPECIAL_EVENT_OUTFIT, HEROINE_OUTFITS, HEROINE_PROFILES, getEquippedHeroineOutfit, isOutfitUnlocked } from "./src/heroine-data.mjs?v=16";
 import { NPC_SOCIAL_GRAPH } from "./src/npcs-data.mjs";
 import { GIRLFRIEND_JOBS } from "./src/girlfriend-jobs-data.mjs";
 import { generateJob, JOBS } from "./src/jobs-data.mjs?v=6";
@@ -52,6 +52,8 @@ import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
+const touchDevice = navigator.maxTouchPoints > 0 || "ontouchstart" in window;
+document.documentElement.classList.toggle("touch-device",touchDevice);
 
 let state;
 let onboarding = null;
@@ -89,6 +91,10 @@ function persistEventRuntime(save=false){if(!state)return;state.eventRuntime=eve
 function renderFullscreenButtons(){const active=Boolean(document.fullscreenElement)||document.body.classList.contains("theater-mode");for(const button of [$("#fullscreenButton"),$("#storyFullscreenButton")])if(button){button.setAttribute("aria-pressed",String(active));button.textContent=button.id==="storyFullscreenButton"?(active?"WINDOW":"FULLSCREEN"):(active?"▣ 창모드":"⛶ 전체화면");}}
 function setTheaterMode(enabled){document.body.classList.toggle("theater-mode",enabled);if(state){state.settings??={};state.settings.theaterMode=enabled;localStorage.setItem(THEATER_SETTING_KEY,String(enabled));SaveManager.save(state);}renderFullscreenButtons();}
 async function toggleFullscreen(event){event?.stopPropagation();if(document.fullscreenElement){await document.exitFullscreen();setTheaterMode(false);return;}if(document.body.classList.contains("theater-mode")){setTheaterMode(false);return;}try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else setTheaterMode(true);}catch{setTheaterMode(true);}renderFullscreenButtons();}
+function requestInitialFullscreen(){
+  if(document.fullscreenElement||!document.documentElement.requestFullscreen)return;
+  document.documentElement.requestFullscreen().catch(()=>{});
+}
 
 function openModal() {
   if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
@@ -105,6 +111,7 @@ function closeModal() {
   modal.classList.remove("phone-menu-active");
   modal.classList.remove("world-event-active");
   modal.classList.remove("transport-modal-active");
+  modal.classList.remove("today-record-active");
   if (modalReturnFocus?.isConnected) modalReturnFocus.focus();
   modalReturnFocus = null;
   if (state && !state.ended && !state.breakup) { if(state.phase===3)renderNightHome();else sound.playScene(phases[state.phase].key,state.day); }
@@ -392,21 +399,34 @@ function updateImmersiveCharacter(expressionId="calm") {
   if(npcSprite){character.src=npcSprite;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   if(characterId==="girlfriend"&&immersiveScene?.previewOutfitImage){character.src=immersiveScene.previewOutfitImage;character.dataset.expression=expressionId;$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   state.currentExpression=expressionId;
-  renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId:immersiveScene?.presentation?.poseId,outfitId:immersiveScene?.presentation?.outfitId});
-  syncOutfitCharacterMedia(false);
+  const poseId=immersiveScene?.presentation?.poseId,outfitId=immersiveScene?.presentation?.outfitId;
+  renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId,outfitId});
+  updatePartnerPortrait(expressionId,poseId,outfitId);
+  const girlfriendEventVideo=characterId==="girlfriend"&&["event","temptation"].includes(immersiveScene?.type)?"assets/characters/girlfriend-standing-2d_transparent.webm?v=2":"";
+  syncOutfitCharacterMedia(false,girlfriendEventVideo);
 }
 
-function syncOutfitCharacterMedia(forceImage=false) {
+function syncOutfitCharacterMedia(forceImage=false,forcedVideo="") {
   const image=$("#vnCharacter"),video=$("#vnCharacterVideo"),outfit=state?getEquippedHeroineOutfit(state):null;
-  const showVideo=Boolean(!forceImage&&outfit?.characterWearingVideo&&state.day%2===0);
+  const showVideo=Boolean(!forceImage&&(forcedVideo||outfit?.characterWearingVideo));
   if(!video||!image)return;
-  video.pause();video.hidden=true;image.hidden=false;
-  if(!showVideo){video.removeAttribute("src");video.load();return;}
-  if(video.getAttribute("src")!==outfit.characterWearingVideo){video.src=outfit.characterWearingVideo;video.load();}
   const showFallback=()=>{video.hidden=true;image.hidden=false;};
+  if(!showVideo){video.pause();showFallback();delete video.dataset.outfitSource;video.removeAttribute("src");video.removeAttribute("poster");video.load();return;}
+  const source=forcedVideo||outfit.characterWearingVideo;
+  const revealVideo=()=>{
+    if(video.dataset.outfitSource!==source||video.readyState<2)return;
+    video.hidden=false;image.hidden=true;
+    video.play().catch(showFallback);
+  };
   video.onerror=showFallback;
-  image.hidden=true;video.hidden=false;video.currentTime=0;
-  video.play().catch(showFallback);
+  video.onloadeddata=revealVideo;
+  video.oncanplay=revealVideo;
+  video.poster=image.currentSrc||image.src;
+  if(video.dataset.outfitSource!==source){
+    video.pause();showFallback();video.dataset.outfitSource=source;video.src=source;video.load();return;
+  }
+  if(video.readyState>=2){revealVideo();return;}
+  showFallback();
 }
 
 function updateGiftVehicleLayer(characterId="girlfriend") {
@@ -617,9 +637,40 @@ function playNextIntroVideo() {
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
 function startGame() { beginOnboarding(); }
-function showGame() { state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
+function showGame() { requestInitialFullscreen(); state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.remove("hidden"); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
+function outfitImageUrl(item) { return item?.heroineId==="haeun"&&item?.productImage?`${item.productImage}?v=8`:item?.productImage??""; }
 function withParticle(word, consonantParticle, vowelParticle) { const last=String(word).charCodeAt(String(word).length-1); return `${word}${last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28?consonantParticle:vowelParticle}`; }
+
+const HAEUN_PROFILE_PORTRAITS=Object.freeze({
+  calm:"assets/characters/girlfriend-standing-2d.png",
+  smile:"assets/characters/girlfriend-standing-smile-2d.png",
+  tense:"assets/characters/girlfriend-standing-tense-2d.png",
+  worried:"assets/characters/girlfriend-standing-tense-2d.png",
+  phone:"assets/characters/girlfriend-phone-calm-2d.png",
+  date:"assets/characters/girlfriend-date-outfit-calm-2d.png"
+});
+
+function updatePartnerPortrait(expressionId="calm",poseId=state?.currentPose,outfitId=state?.currentOutfit) {
+  const avatar=$("#partnerAvatar"),partner=state?.partner;
+  if(!avatar||!partner)return;
+  let image=partner.referenceImage??getGirlfriendVisual(partner.visualId).previewImage;
+  if(partner.heroineId==="haeun"){
+    const tone=HAEUN_PROFILE_PORTRAITS[expressionId]?expressionId:"calm";
+    image=["smile","tense","worried"].includes(tone)
+      ? HAEUN_PROFILE_PORTRAITS[tone]
+      : poseId==="phone"
+        ? HAEUN_PROFILE_PORTRAITS.phone
+        : outfitId==="date"
+          ? HAEUN_PROFILE_PORTRAITS.date
+          : HAEUN_PROFILE_PORTRAITS.calm;
+  }
+  const nextSource=`${image}?v=8`;
+  if(avatar.getAttribute("src")!==nextSource)avatar.src=nextSource;
+  avatar.alt=`${partner.name} ${expressionId==="smile"?"미소 짓는":expressionId==="tense"||expressionId==="worried"?"긴장한":poseId==="phone"?"통화 중인":"평온한"} 상반신 사진`;
+  avatar.dataset.expression=expressionId;
+  avatar.dataset.pose=poseId??"standing";
+}
 
 function getLogDay(entry){const match=String(entry?.time??"").match(/^DAY\s+(\d+)(?:\s|$)/);return match?Number(match[1]):null;}
 function getTodayLogs(){return (state?.logs??[]).filter(entry=>getLogDay(entry)===state.day);}
@@ -646,9 +697,8 @@ function render() {
   $("#clockLabel").textContent = phase.time; $("#sceneTitle").textContent = state.day === 1 && state.phase === 0 ? "첫날의 아침" : phase.title;
   const campaignProfileLocked=state.scenario?.enabled===true;
   typeDialogue(phase.text); $("#partnerName").textContent = campaignProfileLocked?`${p.name} · ${p.age}세`:p.name; $("#partnerMbti").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-mbti")?"🔒":p.mbti ?? "----"; $("#partnerJob").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-career")?"직업 · 🔒":p.career?.name ?? p.job; $("#partnerTrait").textContent = campaignProfileLocked&&!state.scenario.profileUnlocks.includes("haeun-personality")?"성향 · 🔒":`성향 · ${p.archetype}`;
-  $("#partnerAvatar").src = `${p.referenceImage ?? getGirlfriendVisual(p.visualId).previewImage}?v=7`;
-  $("#partnerAvatar").alt = `${p.name} 프로필 사진`;
   const expression = renderCharacter($("#vnCharacter"),state,$("#vnAccessoryLayer"));
+  updatePartnerPortrait(expression.tone,state.currentPose,state.currentOutfit);
   syncOutfitCharacterMedia(false);
   updateGiftVehicleLayer("girlfriend");
   $("#vnExpressionLayer").className=`vn-expression-layer ${expression.tone}`;
@@ -669,6 +719,12 @@ function render() {
   $("#actionGrid").innerHTML = actions[phase.key].map((a,i)=>({a,i})).filter(({a})=>isActionVisible(state,a)).map(({a,i})=>{ const availability=getActionAvailability(state,a); return `<button class="action-card ${state.selected===i?'selected':''} ${availability.available?'':'locked'}" data-index="${i}" ${availability.available?'':'disabled'}><span class="action-icon">${a.icon}</span><span class="cost">${availability.available?escapeHtml(a.tag):'🔒 '+escapeHtml(availability.reason)}</span><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.desc)}</p></button>`; }).join("");
   const todayLogs=getTodayLogs();
   $("#eventLog").innerHTML = todayLogs.length ? todayLogs.slice(-4).reverse().map(l=>`<div class="log-item"><b>${escapeHtml(l.time)}</b><span>${escapeHtml(l.text)}</span></div>`).join("") : `<div class="log-item"><b>DAY ${state.day}</b><span>오늘의 첫 선택을 기다리고 있습니다.</span></div>`;
+  const girlfriendOutfits=(state.inventory??[]).map(instance=>({instance,item:getItem(instance.itemId)})).filter(({instance,item})=>instance.owner==="girlfriend"&&item?.category==="heroine-outfit"&&item.heroineId===state.partner.heroineId);
+  const hasEquippedOutfit=girlfriendOutfits.some(({instance})=>instance.equipped);
+  const defaultOutfitImage=state.partner.heroineId==="haeun"?HAEUN_PROFILE_PORTRAITS.calm:state.partner.referenceImage;
+  const defaultOutfitCard=`<button type="button" class="girlfriend-wardrobe-item ${hasEquippedOutfit?"":"equipped"}" data-warehouse-default="true" aria-pressed="${!hasEquippedOutfit}"><img src="${defaultOutfitImage}?v=8" alt="${escapeHtml(state.partner.name)} 기본 복장" loading="lazy"><span><b>기본 복장</b><small>${hasEquippedOutfit?"클릭해서 갈아입기":"현재 착용 중"}</small></span></button>`;
+  $("#girlfriendWardrobeCount").textContent=`보유 의상 ${girlfriendOutfits.length+1}개`;
+  $("#girlfriendWardrobe").innerHTML=defaultOutfitCard+girlfriendOutfits.map(({instance,item})=>`<button type="button" class="girlfriend-wardrobe-item ${instance.equipped?"equipped":""}" data-warehouse-outfit="${instance.instanceId}" aria-pressed="${instance.equipped}"><img src="${outfitImageUrl(item)}" alt="${escapeHtml(item.name)}" loading="lazy"><span><b>${escapeHtml(item.name.replace(`${state.partner.name} · `,""))}</b><small>${instance.equipped?"현재 착용 중":"클릭해서 갈아입기"}</small></span></button>`).join("");
   $("#turnCount").textContent = `${state.phase+1}번째 선택`; $("#nextButton").disabled = state.selected === null;
   $("#nextButton").textContent = state.selected === null ? "행동을 선택해 주세요" : (state.phase === 3 ? "하루 마무리하기 →" : "이 행동으로 결정 →");
   const nextPhase=phases[Math.min(state.phase+1,phases.length-1)];
@@ -910,7 +966,9 @@ function openDailyReport() {
 
 function openTodayLog() {
   const rows=getTodayLogs().map(entry=>`<div class="history-entry"><small>${escapeHtml(entry.time)}</small><p>${escapeHtml(entry.text)}</p></div>`).join("")||"<p>오늘 기록이 아직 없어요.</p>";
-  $("#modalContent").innerHTML=`<span class="eyebrow">TODAY'S RECORD</span><h2>DAY ${state.day} · ${getWeekdayName(state.day)} 오늘의 기록</h2><div class="dialogue-history">${rows}</div>`;openModal();
+  $("#modal").classList.add("today-record-active");
+  $("#modalContent").innerHTML=`<article class="today-record-popup"><header><span class="eyebrow">TODAY'S RECORD</span><h2>DAY ${state.day} · ${getWeekdayName(state.day)} 오늘의 기록</h2><p>오늘 있었던 선택과 사건을 시간순으로 확인할 수 있습니다.</p></header><div class="dialogue-history">${rows}</div><button id="todayRecordClose" class="primary-button" type="button">닫기</button></article>`;openModal();
+  $("#todayRecordClose").addEventListener("click",closeModal);
 }
 
 function openSns() {
@@ -967,6 +1025,42 @@ function handleActionGridClick(event) {
   if (!button || button.disabled) return;
   selectAction(Number(button.dataset.index));
 }
+function handleGirlfriendWardrobeClick(event) {
+  const defaultButton=event.target.closest("[data-warehouse-default]");
+  if(defaultButton&&state){
+    for(const entry of state.inventory??[])if(entry.owner==="girlfriend"&&getItem(entry.itemId)?.category==="heroine-outfit")entry.equipped=false;
+    if(state.girlfriendEquipment)delete state.girlfriendEquipment["heroine-outfit"];
+    state.currentOutfit="default";
+    state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${state.partner.name} 의상 변경 · 기본 복장`});
+    SaveManager.save(state);render();toast(`${state.partner.name} 기본 복장 착용`);return;
+  }
+  const button=event.target.closest("[data-warehouse-outfit]");
+  if(!button||!state)return;
+  const result=equipGirlfriendOutfit(state,button.dataset.warehouseOutfit);
+  if(!result){toast("이 의상으로 갈아입을 수 없습니다.");return;}
+  state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${state.partner.name} 의상 변경 · ${result.item.name}`});
+  SaveManager.save(state);render();toast(`${result.item.name} 착용 · 크로마키 영상 재생`);
+}
+
+function unlockSpecialOutfitEventIfEligible() {
+  state.specialEvents??={};
+  if(state.specialEvents.haeunSailorOutfitUnlocked||state.partner.heroineId!=="haeun")return false;
+  const elegantDateCount=(state.actionHistory??[]).filter(entry=>entry.actionId==="dinner-date").length;
+  if(elegantDateCount<10)return false;
+  let instance=(state.inventory??[]).find(entry=>entry.itemId===HAEUN_SPECIAL_EVENT_OUTFIT.id&&entry.owner==="girlfriend");
+  instance??=addItem(state,HAEUN_SPECIAL_EVENT_OUTFIT.id,"girlfriend","special-date-event");
+  if(instance)equipGirlfriendOutfit(state,instance.instanceId);
+  state.specialEvents.haeunSailorOutfitUnlocked=true;
+  state.specialEvents.haeunSailorOutfitUnlockedDay=state.day;
+  state.logs.push({time:`DAY ${state.day} · SPECIAL EVENT`,text:`${state.partner.name}가 나를 위해 특별한 이벤트 의상을 준비했다.`});
+  return true;
+}
+
+function showSpecialOutfitEventPopup(continuation) {
+  $("#modalContent").innerHTML=`<article class="special-outfit-event"><video src="assets/characters/girlfriend-special-event-sailor-2d_transparent.webm" autoplay loop muted playsinline aria-label="${escapeHtml(state.partner.name)} 특별 이벤트 의상 영상"></video><span class="eyebrow">SPECIAL DATE EVENT · 10 TIMES</span><h2>${escapeHtml(state.partner.name)}의 특별한 준비</h2><p>“오늘은 내가 준비했어. 너를 위해 특별한 이벤트를 준비했어.”</p><strong>이벤트 의상이 보관함에 추가되었습니다.</strong><button id="specialOutfitEventConfirm" class="primary-button" type="button">확인</button></article>`;
+  openModal();
+  $("#specialOutfitEventConfirm").addEventListener("click",()=>{closeModal();render();continuation?.();});
+}
 function applyAction() {
   if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
   if (state.selected === null) return;
@@ -990,6 +1084,7 @@ function applyAction() {
   const rivalResult = eventsUnlocked ? applyRivalPressure(state, action) : null;
   if (rivalResult?.record.delta > 0) state.logs.push({time:`DAY ${state.day} · RIVAL`,text:`${rivalResult.rival.name}의 접근 위험이 높아졌다.`});
   state.choices.push(action.tag); state.actionHistory.push({ day:state.day, phase:state.phase, actionId:action.id, tag:action.tag }); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
+  const unlockedSpecialOutfit=unlockSpecialOutfitEventIfEligible();
   if (["데이트","유혹","쇼핑"].includes(action.tag)) recordMemory(state,{type:"action",summary:action.title,importance:action.tag==="유혹"?4:2,tags:[action.tag]});
   const clue = observePersonality(state, action.tag);
   if (clue?.revealed) toast(`${state.partner.name}의 성향을 하나 알아냈어요.`);
@@ -1016,7 +1111,8 @@ function applyAction() {
   const actionMessage = [resultText(action), ...microEvents.map(micro=>micro.text)].join(" ");
   render();
   openActionResultModal(action, actionMessage, fx, () => {
-    if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { const temptation=eventsUnlocked&&npcResult&&getTemptationOpportunity(state); const story=eventsUnlocked?selectNextStoryScene(state):null; if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }
+    const continueAfterSpecialEvent=()=>{if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { const temptation=eventsUnlocked&&npcResult&&getTemptationOpportunity(state); const story=eventsUnlocked?selectNextStoryScene(state):null; if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }};
+    if(unlockedSpecialOutfit)showSpecialOutfitEventPopup(continueAfterSpecialEvent);else continueAfterSpecialEvent();
   });
 }
 
@@ -1031,8 +1127,9 @@ function openChat(mode="message") {
 }
 function renderConversationSession(){
   if(!activeConversation)return;const session=activeConversation,context=buildConversationContext(state),suggestions=getSuggestedConversationReplies(context,session.turn);
-  const messages=session.messages.map(item=>`<div class="message ${item.speaker}">${escapeHtml(item.text)}</div>`).join("");
-  $("#modalContent").innerHTML=`<section class="conversation-session ${session.mode==='call'?'phone-conversation':''}"><span class="eyebrow">${session.mode==='call'?'PHONE CALL':'MESSAGES'} · ${escapeHtml(state.partner.name)}</span><div class="conversation-heading"><div class="conversation-avatar"><img src="${state.partner.referenceImage}" alt=""><i>${session.mode==='call'?'☎':'●'}</i></div><div><h2>${session.mode==='call'?`${state.partner.name}와 통화 중`:`${state.partner.name}에게 메시지`}</h2><p>${session.mode==='call'?'목소리를 들으며 천천히 이야기해 보세요.':'서로를 존중하는 말로 마음을 이어 가세요.'}</p></div></div><div id="chatMessages" class="chat-window" aria-live="polite">${messages}</div><div id="chatSafetyNotice" class="chat-safety-notice" hidden></div><div class="chat-suggestions">${suggestions.map(text=>`<button type="button" data-chat-suggestion="${escapeHtml(text)}">${escapeHtml(text)}</button>`).join("")}</div><form id="chatForm" class="chat-compose"><input id="chatInput" maxlength="180" autocomplete="off" placeholder="직접 입력하거나 추천 답변을 선택하세요" required><button type="submit">보내기</button></form><button id="finishConversation" class="conversation-finish" type="button">${session.mode==='call'?'통화 종료':'대화 마치기'}</button></section>`;
+  const waiting=session.replyPending?`<div class="message her reply-waiting" aria-label="${escapeHtml(state.partner.name)} 답장 작성 중"><i></i><i></i><i></i><small>${session.mode==='call'?'잠시 생각 중':'답장 작성 중'}</small></div>`:"";
+  const messages=session.messages.map(item=>`<div class="message ${item.speaker}">${escapeHtml(item.text)}</div>`).join("")+waiting;
+  $("#modalContent").innerHTML=`<section class="conversation-session ${session.mode==='call'?'phone-conversation':''}"><span class="eyebrow">${session.mode==='call'?'PHONE CALL':'MESSAGES'} · ${escapeHtml(state.partner.name)}</span><div class="conversation-heading"><div class="conversation-avatar"><img src="${state.partner.referenceImage}" alt=""><i>${session.mode==='call'?'☎':'●'}</i></div><div><h2>${session.mode==='call'?`${state.partner.name}와 통화 중`:`${state.partner.name}에게 메시지`}</h2><p>${session.mode==='call'?'목소리를 들으며 천천히 이야기해 보세요.':'서로를 존중하는 말로 마음을 이어 가세요.'}</p></div></div><div id="chatMessages" class="chat-window" aria-live="polite">${messages}</div><div id="chatSafetyNotice" class="chat-safety-notice" hidden></div><div class="chat-suggestions">${suggestions.map(text=>`<button type="button" data-chat-suggestion="${escapeHtml(text)}" ${session.replyPending?'disabled':''}>${escapeHtml(text)}</button>`).join("")}</div><form id="chatForm" class="chat-compose"><input id="chatInput" maxlength="180" autocomplete="off" placeholder="${session.replyPending?'답장을 기다리고 있어요…':'직접 입력하거나 추천 답변을 선택하세요'}" required ${session.replyPending?'disabled':''}><button type="submit" ${session.replyPending?'disabled':''}>보내기</button></form><button id="finishConversation" class="conversation-finish" type="button" ${session.replyPending?'disabled':''}>${session.mode==='call'?'통화 종료':'대화 마치기'}</button></section>`;
   $("#chatForm").addEventListener("submit",event=>{event.preventDefault();chatReply($("#chatInput").value);});
   document.querySelectorAll("[data-chat-suggestion]").forEach(button=>button.addEventListener("click",()=>chatReply(button.dataset.chatSuggestion)));
   $("#finishConversation").addEventListener("click",finishConversation);requestAnimationFrame(()=>{$("#chatMessages").scrollTop=$("#chatMessages").scrollHeight;});
@@ -1040,22 +1137,26 @@ function renderConversationSession(){
 async function chatReply(message){
   if(!activeConversation)return;const analysis=analyzeConversationInput(message),notice=$("#chatSafetyNotice");
   if(!analysis.allowed){notice.hidden=false;notice.textContent=analysis.message;$("#chatInput").focus();return;}
-  document.querySelectorAll("#chatForm button,[data-chat-suggestion]").forEach(button=>button.disabled=true);
+  const session=activeConversation;
+  session.messages.push({speaker:"me",text:message});session.replyPending=true;renderConversationSession();
+  const replyDelay=new Promise(resolve=>setTimeout(resolve,session.mode==="call"?900+Math.random()*900:1500+Math.random()*1600));
   let response;
   if(analysis.level==="hostile"){
-    response={...getHostileConversationResponse(state),source:"safety"};state.conversationSafety??={hostileCount:0,lastHostileDay:null};state.conversationSafety.hostileCount=response.count;state.conversationSafety.lastHostileDay=state.day;activeConversation.hostile=true;
+    response={...getHostileConversationResponse(state),source:"safety"};await replyDelay;state.conversationSafety??={hostileCount:0,lastHostileDay:null};state.conversationSafety.hostileCount=response.count;state.conversationSafety.lastHostileDay=state.day;session.hostile=true;
   }else{
-    const endpoint=document.querySelector('meta[name="today-day-one-ai-endpoint"]')?.content;response=await requestGirlfriendReply({endpoint,context:{...buildConversationContext(state),sessionTurn:activeConversation.turn,mode:activeConversation.mode,sessionState:{topic:activeConversation.topic,lastQuestionId:activeConversation.lastQuestionId,lastUserMessage:activeConversation.lastUserMessage,recentReplyIds:[...activeConversation.recentReplyIds],turn:activeConversation.turn,variantSeed:activeConversation.variantSeed}},message});
+    const endpoint=document.querySelector('meta[name="today-day-one-ai-endpoint"]')?.content;[response]=await Promise.all([requestGirlfriendReply({endpoint,context:{...buildConversationContext(state),sessionTurn:session.turn,mode:session.mode,sessionState:{topic:session.topic,lastQuestionId:session.lastQuestionId,lastUserMessage:session.lastUserMessage,recentReplyIds:[...session.recentReplyIds],turn:session.turn,variantSeed:session.variantSeed}},message}),replyDelay]);
   }
+  if(activeConversation!==session)return;
+  session.replyPending=false;
   if(!response){renderConversationSession();return;}
-  const scale=activeConversation.turn>=7?0:activeConversation.turn>=4?.5:1,effects=Object.fromEntries(Object.entries(response.effects??{}).map(([key,value])=>[key,Math.round(value*(analysis.level==="hostile"?1:scale))]));
-  for(const [key,value] of Object.entries(effects))activeConversation.effects[key]=(activeConversation.effects[key]??0)+value;
-  activeConversation.messages.push({speaker:"me",text:message},{speaker:"her",text:response.text});activeConversation.turn+=1;
-  activeConversation.lastUserMessage=message;activeConversation.topic=response.topic??activeConversation.topic;activeConversation.lastQuestionId=inferConversationQuestion(response.text);const replyId=response.replyId??response.id;if(replyId){activeConversation.recentReplyIds.push(replyId);activeConversation.recentReplyIds=activeConversation.recentReplyIds.slice(-12);}
-  recordConversationTurn(state,message,response.text,{mode:activeConversation.mode,tone:analysis.level});
-  state.logs.push({time:`DAY ${state.day} · ${activeConversation.mode==='call'?'CALL':'MESSAGE'}`,text:analysis.level==='hostile'?`${state.partner.name}에게 공격적인 말을 해 관계가 크게 나빠졌다.`:`${state.partner.name}와 대화 · ${message.slice(0,32)}`});
+  const scale=session.turn>=7?0:session.turn>=4?.5:1,effects=Object.fromEntries(Object.entries(response.effects??{}).map(([key,value])=>[key,Math.round(value*(analysis.level==="hostile"?1:scale))]));
+  for(const [key,value] of Object.entries(effects))session.effects[key]=(session.effects[key]??0)+value;
+  session.messages.push({speaker:"her",text:response.text});session.turn+=1;
+  session.lastUserMessage=message;session.topic=response.topic??session.topic;session.lastQuestionId=inferConversationQuestion(response.text);const replyId=response.replyId??response.id;if(replyId){session.recentReplyIds.push(replyId);session.recentReplyIds=session.recentReplyIds.slice(-12);}
+  recordConversationTurn(state,message,response.text,{mode:session.mode,tone:analysis.level});
+  state.logs.push({time:`DAY ${state.day} · ${session.mode==='call'?'CALL':'MESSAGE'}`,text:analysis.level==='hostile'?`${state.partner.name}에게 공격적인 말을 해 관계가 크게 나빠졌다.`:`${state.partner.name}와 대화 · ${message.slice(0,32)}`});
   SaveManager.save(state);
-  if(response.forceEnd||activeConversation.turn>=10){finishConversation(response.forceEnd?"상대가 상처를 받아 대화를 종료했습니다.":"오늘 나눌 이야기를 충분히 나누었습니다.");return;}renderConversationSession();
+  if(response.forceEnd||session.turn>=10){finishConversation(response.forceEnd?"상대가 상처를 받아 대화를 종료했습니다.":"오늘 나눌 이야기를 충분히 나누었습니다.");return;}renderConversationSession();
 }
 function finishConversation(reason=""){
   if(!activeConversation)return;const session=activeConversation;session.effects=Object.fromEntries(Object.entries(session.effects).map(([key,value])=>[key,Math.max(-3,Math.min(3,Math.round(value)))]));applyEffects(state,session.effects);const effect=key=>session.effects[key]??0,positive=effect("affection")+effect("trust"),summary=session.hostile?"상처와 실망이 남은 대화":positive>=4?"서로의 마음이 가까워진 대화":positive>0?"잔잔하게 마음을 나눈 대화":"조심스러운 대화";
@@ -1076,7 +1177,7 @@ function renderGameTools() {
   const content=$("#gameToolsContent");
   if(gameToolsTab==="outfits"){
     const equipped=getEquippedHeroineOutfit(state),outfits=HEROINE_OUTFITS.filter(item=>item.heroineId===state.partner.heroineId);
-    content.innerHTML=`<div class="game-tools-intro"><b>${escapeHtml(state.partner.name)} 전체 의상</b><span>잠금·보유 조건과 관계없이 미리 보고 바로 선택할 수 있습니다.</span></div><div class="tools-outfit-grid">${outfits.map((outfit,index)=>`<button type="button" data-tools-outfit="${outfit.id}" class="tools-outfit-card ${equipped?.id===outfit.id?"selected":""}"><img src="${outfit.productImage}" alt="${escapeHtml(outfit.name)}" loading="lazy"><span>${String(index+1).padStart(2,"0")}</span><b>${escapeHtml(outfit.name.replace(`${state.partner.name} · `,""))}</b><small>${equipped?.id===outfit.id?"현재 착용 중":"이 의상 선택"}</small></button>`).join("")}</div>`;
+    content.innerHTML=`<div class="game-tools-intro"><b>${escapeHtml(state.partner.name)} 전체 의상</b><span>잠금·보유 조건과 관계없이 미리 보고 바로 선택할 수 있습니다.</span></div><div class="tools-outfit-grid">${outfits.map((outfit,index)=>`<button type="button" data-tools-outfit="${outfit.id}" class="tools-outfit-card ${equipped?.id===outfit.id?"selected":""}"><img src="${outfitImageUrl(outfit)}" alt="${escapeHtml(outfit.name)}" loading="lazy"><span>${outfit.eventOnly?"이벤트 의상":String(index+1).padStart(2,"0")}</span><b>${escapeHtml(outfit.name.replace(`${state.partner.name} · `,""))}</b><small>${outfit.eventOnly?"근사한 데이트 10회 보상":money(outfit.price)} · ${equipped?.id===outfit.id?"현재 착용 중":"이 의상 선택"}</small></button>`).join("")}</div>`;
   }else if(gameToolsTab==="events"){
     const groups=SITUATION_EVENTS.reduce((result,event)=>{(result[event.categoryLabel]??=[]).push(event);return result;},{});
     content.innerHTML=`<div class="game-tools-intro"><b>전체 이벤트</b><span>DAY·조건을 무시하고 선택한 이벤트의 장면과 선택지를 실행합니다.</span></div>${Object.entries(groups).map(([label,events])=>`<section class="tools-event-group"><h3>${escapeHtml(label)} <span>${events.length}</span></h3>${events.map(event=>`<button type="button" class="tools-list-row" data-tools-event="${event.id}"><span><b>${escapeHtml(event.title)}</b><small>${escapeHtml(event.id)} · DAY ${event.dayRange?.[0]??"-"}–${event.dayRange?.[1]??"-"}</small></span><em>실행</em></button>`).join("")}</section>`).join("")}`;
@@ -1160,7 +1261,7 @@ function openCharacterManager() {
 function openInventory() {
   const bonuses = getEquipmentBonuses(state);
   const ownerLabel = { player:"내 아이템", gift:"선물 대기", girlfriend:`${state.partner.name} 소유` };
-  const cards = state.inventory.length ? state.inventory.map(instance=>{ const item=getItem(instance.itemId); const girlfriendOutfit=instance.owner==='girlfriend'&&item.category==='heroine-outfit'; const control=instance.owner==='player'?`<button class="equip-button" data-instance="${instance.instanceId}" ${instance.equipped?'disabled':''}>${instance.equipped?'장착 중':'장착'}</button>`:instance.owner==='gift'?`<button class="gift-button" data-gift="${instance.instanceId}">${state.partner.name}에게 선물</button>`:girlfriendOutfit?`<button class="equip-button girlfriend-outfit-button" data-girlfriend-outfit="${instance.instanceId}" ${instance.equipped?'disabled':''}>${instance.equipped?'사용 중':'갈아입기'}</button>`:`<em>${instance.equipped?'사용 중':'보관 중'}</em>`; const visual=item.productImage?`<img class="inventory-product-image" src="${item.productImage}" alt="" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`; return `<div class="inventory-item">${visual}<div><small>${item.brand} · ${item.category}</small><b>${item.name}</b><span>${ownerLabel[instance.owner]} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span></div>${control}</div>`; }).join("") : `<p class="empty-inventory">아직 보유한 아이템이 없습니다.</p>`;
+  const cards = state.inventory.length ? state.inventory.map(instance=>{ const item=getItem(instance.itemId); const girlfriendOutfit=instance.owner==='girlfriend'&&item.category==='heroine-outfit'; const control=instance.owner==='player'?`<button class="equip-button" data-instance="${instance.instanceId}" ${instance.equipped?'disabled':''}>${instance.equipped?'장착 중':'장착'}</button>`:instance.owner==='gift'?`<button class="gift-button" data-gift="${instance.instanceId}">${state.partner.name}에게 선물</button>`:girlfriendOutfit?`<button class="equip-button girlfriend-outfit-button" data-girlfriend-outfit="${instance.instanceId}" ${instance.equipped?'disabled':''}>${instance.equipped?'사용 중':'갈아입기'}</button>`:`<em>${instance.equipped?'사용 중':'보관 중'}</em>`; const visual=item.productImage?`<img class="inventory-product-image" src="${outfitImageUrl(item)}" alt="" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`; return `<div class="inventory-item">${visual}<div><small>${item.brand} · ${item.category}</small><b>${item.name}</b><span>${ownerLabel[instance.owner]} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span></div>${control}</div>`; }).join("") : `<p class="empty-inventory">아직 보유한 아이템이 없습니다.</p>`;
   $("#modalContent").innerHTML=`<span class="eyebrow">INVENTORY</span><h2>나의 가방</h2><p>장착 보너스 · 매력 +${bonuses.attractiveness} · 패션 +${bonuses.fashion}</p><div class="inventory-list">${cards}</div>`;
   openModal();
   document.querySelectorAll("[data-instance]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{ equipItem(state,button.dataset.instance); SaveManager.save(state); openInventory(); }));
@@ -1170,8 +1271,8 @@ function openInventory() {
 
 function openShop() {
   sound.playBgm("dateShopping",state.day);
-  const visibleItems=ITEMS.filter(item=>item.category!=="heroine-outfit" || item.heroineId===state.partner.heroineId);
-  const cards = visibleItems.map(item=>{const heroineOutfit=item.category==="heroine-outfit",unlocked=!heroineOutfit||isOutfitUnlocked(state,item),purchased=(state.inventory??[]).some(entry=>entry.itemId===item.id);const visual=item.productImage?`<img class="shop-product-image" src="${item.productImage}" alt="${escapeHtml(item.name)}" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`;const actions=purchased?`<button class="purchased-button" disabled>구매 완료</button>`:heroineOutfit?`<button data-buy="${item.id}" data-owner="gift" ${unlocked?'':'disabled'}>${unlocked?`${state.partner.name} 선물용`:`DAY ${item.unlockConditions.day} 잠금`}</button>`:`<button data-buy="${item.id}" data-owner="player">내 것</button><button data-buy="${item.id}" data-owner="gift">선물용</button>`;return `<div class="shop-item ${heroineOutfit?'heroine-outfit-card':''} ${purchased?'purchased':''}">${visual}<div><small>${item.brand} · ${item.rarity??`LUX ${item.luxuryLevel}`}</small><b>${escapeHtml(item.name)}</b><span>${escapeHtml((item.styleTags??item.preferenceTags).join(" · "))} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span><strong>${money(item.price)}</strong></div><div class="shop-actions">${actions}</div></div>`;}).join("");
+  const visibleItems=ITEMS.filter(item=>(item.category!=="heroine-outfit" || item.heroineId===state.partner.heroineId)&&!item.eventOnly);
+  const cards = visibleItems.map(item=>{const heroineOutfit=item.category==="heroine-outfit",unlocked=!heroineOutfit||isOutfitUnlocked(state,item),purchased=(state.inventory??[]).some(entry=>entry.itemId===item.id);const visual=item.productImage?`<img class="shop-product-image" src="${outfitImageUrl(item)}" alt="${escapeHtml(item.name)}" loading="lazy">`:`<div class="item-icon" aria-hidden="true">${item.icon}</div>`;const actions=purchased?`<button class="purchased-button" disabled>구매 완료</button>`:heroineOutfit?`<button data-buy="${item.id}" data-owner="gift" ${unlocked?'':'disabled'}>${unlocked?`${state.partner.name} 선물용`:`DAY ${item.unlockConditions.day} 잠금`}</button>`:`<button data-buy="${item.id}" data-owner="player">내 것</button><button data-buy="${item.id}" data-owner="gift">선물용</button>`;return `<div class="shop-item ${heroineOutfit?'heroine-outfit-card':''} ${purchased?'purchased':''}">${visual}<div><small>${item.brand} · ${item.rarity??`LUX ${item.luxuryLevel}`}</small><b>${escapeHtml(item.name)}</b><span>${escapeHtml((item.styleTags??item.preferenceTags).join(" · "))} · 매력 +${item.attractivenessBonus} · 패션 +${item.fashionBonus}</span><strong>${money(item.price)}</strong></div><div class="shop-actions">${actions}</div></div>`;}).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">LIFESTYLE SHOP</span><h2>오늘의 상점</h2><p>보유 자산 ${money(state.money)} · ${state.partner.name} 전용 의상 10종이 관계 진행에 따라 해금됩니다.</p><div class="shop-list">${cards}</div>`;
   openModal();
   if (state.job?.id === "used-car-dealer") $("#modalContent").insertAdjacentHTML("afterbegin", `<p class="career-tip"><b>딜러 네트워크 적용:</b> ${escapeHtml(state.partner.name)}에게 선물할 차량은 결제 시 12% 자동 할인됩니다.</p>`);
@@ -1182,7 +1283,7 @@ function openPurchaseConfirmation(itemId, owner) {
   const item=getItem(itemId),quote=getPurchaseQuote(state,item,owner);
   if(!item||!quote){toast("구매 정보를 확인할 수 없습니다.");return;}
   const target=owner==="gift"?`${state.partner.name} 선물용`:"내 것";
-  const visual=item.productImage?`<img class="purchase-confirm-image" src="${item.productImage}" alt="${escapeHtml(item.name)}">`:`<div class="purchase-confirm-icon" aria-hidden="true">${item.icon}</div>`;
+  const visual=item.productImage?`<img class="purchase-confirm-image" src="${outfitImageUrl(item)}" alt="${escapeHtml(item.name)}">`:`<div class="purchase-confirm-icon" aria-hidden="true">${item.icon}</div>`;
   $("#modalContent").innerHTML=`<span class="eyebrow">PURCHASE CONFIRM</span><h2>구매 확인</h2><div class="purchase-confirm-item">${visual}<div><small>${escapeHtml(item.brand)} · ${escapeHtml(target)}</small><b>${escapeHtml(item.name)}</b><strong>${money(quote.price)}</strong></div></div><p class="venue-visit-question">구매하시겠습니까?</p><div class="venue-confirm-actions"><button id="purchaseCancel" type="button">아니오</button><button id="purchaseConfirm" class="primary-button" type="button">예</button></div>`;
   openModal();
   $("#purchaseCancel").addEventListener("click",openShop);
@@ -1312,6 +1413,8 @@ $("#worldMapCanvas").addEventListener("keydown",handleWorldMapKeydown);
 $("#worldMapCanvas").addEventListener("pointerup",handleWorldMapPointer);
 $(".world-dpad").addEventListener("click",handleWorldMoveClick);
 $("#actionGrid").addEventListener("click",handleActionGridClick);
+$("#girlfriendWardrobe").addEventListener("click",handleGirlfriendWardrobeClick);
+$("#todayRecordButton").addEventListener("click",openTodayLog);
 $("#visualNovelStage").addEventListener("click",handleDialogueAdvance);
 $("#storyChoiceLayer").addEventListener("click",event=>{event.stopPropagation();const button=event.target.closest("[data-immersive-choice]");if(button)chooseImmersiveOption(button.dataset.immersiveChoice);});
 $("#visualNovelStage").addEventListener("keydown",event=>{ if(event.key==="Enter"||event.key===" "){event.preventDefault();handleDialogueAdvance();} });

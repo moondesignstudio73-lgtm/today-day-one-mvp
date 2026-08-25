@@ -8,6 +8,19 @@ const outfitKinds = [
   ["party","스페셜 파티룩",15,310000,"파티"], ["travel","트래블 룩",10,145000,"여행"]
 ];
 
+const haeunOutfitKinds = [
+  ["soft-minimal","아이보리 소프트 미니멀 룩",1,79000,"미니멀"],
+  ["navy-office","네이비 시그니처 오피스 수트",1,229000,"오피스"],
+  ["ivory-wrap","아이보리 로맨틱 랩 드레스",3,148000,"데이트"],
+  ["weekend-casual","베이지 위크엔드 캐주얼",1,89000,"캐주얼"],
+  ["sage-active","세이지 밸런스 액티브 셋업",4,198000,"스포티"],
+  ["camel-coat","카멜 클래식 롱 코트",8,198000,"겨울"],
+  ["summer-white","화이트 브리즈 서머 셋업",6,198000,"여름"],
+  ["black-evening","블랙 이브닝 랩 드레스",12,998000,"엘레강트"],
+  ["teal-dress","딥 틸 우아한 미디 드레스",15,1490000,"파티"],
+  ["black-mini","블랙 리브드 미니 원피스",10,2200000,"데이트"]
+];
+
 export const HEROINE_PROFILES = [
   {
     id:"haeun", name:"하은", age:29, job:"재무기획자", height:166, bodyType:"슬림 밸런스", archetype:"안정형 직장인", bio:"재무기획자 · 차분하고 현실적인 인상",
@@ -48,12 +61,25 @@ const styleByHeroine = {
 };
 
 const HAEUN_OUTFIT_VIDEOS = Object.freeze({
+  1:"assets/heroines/haeun/videos/01_transparent.webm",
+  2:"assets/heroines/haeun/videos/02_transparent.webm",
   3:"assets/heroines/haeun/videos/03_transparent.webm",
-  5:"https://raw.githubusercontent.com/superstarman35/game/gh-pages/assets/heroines/haeun/videos/05_transparent.webm",
-  8:"https://raw.githubusercontent.com/superstarman35/game/gh-pages/assets/heroines/haeun/videos/08_transparent.webm"
+  4:"assets/heroines/haeun/videos/04_transparent.webm",
+  5:"assets/heroines/haeun/videos/05_transparent.webm",
+  6:"assets/heroines/haeun/videos/06_transparent.webm",
+  7:"assets/heroines/haeun/videos/07_transparent.webm",
+  8:"assets/heroines/haeun/videos/08_transparent.webm",
+  9:"assets/heroines/haeun/videos/09_transparent.webm",
+  10:"assets/heroines/haeun/videos/10_transparent.webm"
 });
 
-export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=="yuna").flatMap(profile => outfitKinds.map(([kind,label,day,price,tag],index) => ({
+export const HAEUN_SPECIAL_EVENT_OUTFIT = Object.freeze({
+  id:"outfit-haeun-special-sailor",outfitId:"OUTFIT_HAEUN_SPECIAL_SAILOR_EVENT_001",icon:"✨",name:"하은 · 서머 세일러 이벤트 룩",brand:"Haeun's Surprise",category:"heroine-outfit",heroineId:"haeun",
+  price:0,luxuryLevel:3,attractivenessBonus:8,fashionBonus:10,preferenceTags:["이벤트","데이트","세일러"],styleTags:["이벤트","데이트","세일러"],rarity:"special",eventOnly:true,
+  unlockConditions:{day:1,affection:0,trust:0},productImage:"assets/characters/girlfriend-special-event-sailor-2d.png",characterWearingImage:"assets/characters/girlfriend-special-event-sailor-2d.png",characterWearingVideo:"assets/characters/girlfriend-special-event-sailor-2d_transparent.webm"
+});
+
+export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=="yuna").flatMap(profile => (profile.id === "haeun" ? haeunOutfitKinds : outfitKinds).map(([kind,label,day,price,tag],index) => ({
   id:`outfit-${profile.id}-${String(index + 1).padStart(2,"0")}`, outfitId:`OUTFIT_${profile.id.toUpperCase()}_${kind.toUpperCase()}_${String(index + 1).padStart(3,"0")}`,
   icon:"👗", name:`${profile.name} · ${label}`, brand:"Atelier One Day", category:"heroine-outfit", heroineId:profile.id,
   price, luxuryLevel:Math.max(1,Math.ceil(price / 70000)), attractivenessBonus:2 + Math.ceil(index / 2), fashionBonus:4 + index,
@@ -62,7 +88,7 @@ export const HEROINE_OUTFITS = [...HEROINE_PROFILES.filter(profile=>profile.id!=
   productImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`,
   characterWearingImage:`assets/heroines/${profile.id}/outfits/${String(index + 1).padStart(2,"0")}.${profile.id === "haeun" ? "png" : "webp"}`,
   characterWearingVideo:profile.id === "haeun" ? HAEUN_OUTFIT_VIDEOS[index + 1] ?? null : null
-}))),...YUNA_OUTFITS];
+}))),HAEUN_SPECIAL_EVENT_OUTFIT,...YUNA_OUTFITS];
 
 const mainBeats = ["첫 번째 약속","일과 사랑의 경계","예상 밖의 데이트","친구에게 소개하는 날","처음 드러난 약점","서로의 돈 이야기","라이벌의 등장","크게 부딪힌 밤","다시 손을 잡는 방법","우리의 다음 계절"];
 const subBeats = ["우산 하나","점심의 메시지","취향을 고르는 시간","사진 한 장","늦은 퇴근길","작은 선물","친구의 조언","서툰 요리","잠들기 전 통화","비밀 하나"];
