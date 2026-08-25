@@ -55,4 +55,5 @@ assert.match(game,/LOCKED_DAY5_SCENE_ID/);
 assert.match(game,/applyLockedDay5ChoiceState\(state,choiceId\)/);
 assert.match(game,/getLockedDay5LegacyChoice\(state\)/);
 assert.match(game,/day5Prompts/);
+assert.match(game,/applySkippedScenePresentation\(choiceIndex\)/,"SKIP must apply the last scene presentation before a choice");
 console.log("✓ DAY 5 잠금 시나리오 8 Scene·4단계 선택·양축 분리·저장 복원 검증 통과");
