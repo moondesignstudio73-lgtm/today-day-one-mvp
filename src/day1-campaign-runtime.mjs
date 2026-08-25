@@ -1,7 +1,7 @@
 const BG_CEILING="day1-hospital-ceiling";
 const BG_BEDSIDE="day1-hospital-bedside";
 const HAEUN="assets/characters/day1/haeun/";
-const NPC="assets/npcs/day1/";
+const NPC="assets/npcs/day1/hq/";
 const CG="assets/events/day1/";
 
 const n=(text,extra={})=>({type:"narration",text,...extra});

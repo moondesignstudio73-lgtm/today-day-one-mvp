@@ -1,6 +1,6 @@
 const ID="m30-day2-rehabilitation";
 const BG={bed:"day2-hospital-bedside",corridor:"day2-recovery-corridor",lobby:"day2-hospital-lobby",exit:"day2-hospital-exit",car:"day2-car-interior",outside:"day2-home-exterior",home:"day2-home-entry",room:"day2-bedroom"};
-const H="assets/characters/day2/haeun/poses/",P="assets/props/day2/pov/",CG="assets/events/day2/",NPC="assets/npcs/day1/";
+const H="assets/characters/day2/haeun/poses/",P="assets/props/day2/pov/",CG="assets/events/day2/",NPC="assets/npcs/day1/hq/";
 export const DAY2_RUNTIME_OVERLAYS=Object.freeze({
   haeun:Object.freeze({
     "support-offer-open-palm":`${H}haeun-day2-pose-support-offer-open-palm-2d-hq-v2.png`,
