@@ -302,6 +302,16 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"rebuild-social-context",label:"업무 전에 서진과 팀원들에게 내가 놓친 관계와 최근 변화를 직접 묻는다",effects:{social:7,confidence:3,energy:-3},scenarioEffects:{coworkerRelation:8,seojinAffection:10,seojinStatusInterest:2},unlockedActions:["coworker-lunch","ask-team-history"],profileUnlocks:["seojin-basic"],followUpHooks:["day6-life-restart"],response:"서진은 조직도 대신 사람 이름 옆에 ‘요즘 맡은 일’을 적었다. “관계를 업무 부록으로 안 보는 건 의외네요.” 말은 가벼웠지만, 점심 가능한 시간을 먼저 알려 준 사람은 서진이었다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day4-arrive-home",choiceIds:["restore-routine-together"]}}],scenarioEffects:{seojinAffection:3},unlockedActions:["seojin-lunch-invitation"],response:"복약 시간 때문에 점심 종료 시각을 먼저 말하자 서진이 바로 달력에 반영했다. “생활 계획을 숨기지 않는 쪽이 훨씬 같이 일하기 편해요. 점심은 짧게, 대신 다음에 제대로.”"}],memory:"업무보다 먼저 현재 동료 관계와 팀 변화를 다시 배움"},
     {id:"set-return-boundary",label:"기억 공백과 의료 제한을 공개하고 다음 방문의 업무 범위를 문서로 합의한다",effects:{confidence:9,health:3,stress:-3,work:3},scenarioEffects:{coworkerRelation:5,seojinAffection:5,seojinStatusInterest:7},clues:["work-return-plan"],unlockedActions:["planned-work-return","review-current-work"],profileUnlocks:["seojin-basic"],followUpHooks:["day6-life-restart"],response:"팀장은 업무 시간과 중단 기준을 문서에 적었다. 서진은 마지막 줄에 ‘모르면 확인, 기억나는 척 금지’를 추가했다. “책임지는 사람이 무리까지 책임질 필요는 없으니까요.”",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day4-arrive-home",choiceIds:["map-home-basics"]}}],scenarioEffects:{seojinStatusInterest:3},unlockedActions:["structured-work-review"],response:"집에서 정한 생활 구역표 옆에 회사의 업무 범위를 같은 형식으로 적었다. 서진은 잠시 보더니 중단 조건까지 숫자로 바꿨다. “경계를 정할 줄 아는 사람은 일정도 덜 망쳐요.”"}],memory:"기억 공백과 회복 한계를 공개하고 단계적 직장 복귀 범위를 합의함"}
   ]
+},{
+  id:"m30-day6-neighborhood",arc:"우리가 사는 동네",window:[6,6],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day5-work-return"},
+  title:"우리가 사는 동네",speaker:"하은",message:"약 목록과 임시 예비폰, 빈 동네 지도를 식탁 위에 펼쳤다. 오늘은 익숙한 길을 외우는 대신 돌아올 기준을 만들기로 했다.",
+  chapterType:"daily-life/relationship-hybrid",targetPlaytimeMinutes:[10,14],timeWindow:"late-morning-to-afternoon",participants:["protagonist","haeun","pharmacist","cafe-staff"],previousChoiceReferences:["m30-day5-work-return"],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"calm",poseId:"phone"},
+  choices:[
+    {id:"date_new_place",label:"둘 다 처음인 곳에서 같은 출발선으로 시작한다",response:"둘 다 처음인 작은 전시관을 첫 현재형 데이트 장소로 정했다.",memory:"둘 다 처음인 장소에서 현재형 데이트를 시작하기로 함"},
+    {id:"date_revisit_with_opt_out",label:"과거 장소를 다시 가되 불편하면 즉시 바꾼다",response:"기억을 시험하지 않고 언제든 장소를 바꿀 수 있는 재방문을 약속했다.",memory:"과거 장소를 기억 시험 없이 다시 가기로 함"},
+    {id:"date_alternate_choices",label:"이동·식사·활동을 번갈아 고른다",response:"서로 정답을 맞히지 않고 한 번씩 직접 고르는 데이트를 약속했다.",memory:"데이트의 선택권을 번갈아 갖기로 함"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [
