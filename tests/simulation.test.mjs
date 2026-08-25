@@ -143,6 +143,7 @@ assert.equal(createPlayerProfile("handsome","민준").mapImage,"assets/character
 assert.equal(createPlayerProfile("wealthy","민준").mapImage,"assets/characters/map/PLAYER_WEALTHY.png");
 assert.equal(existsSync("assets/video/intro.mp4"),true);
 assert.equal(existsSync("assets/video/intro2.mp4"),true);
+assert.equal(existsSync("assets/video/story-prologue.mp4"),true);
 const selectedPartner=createGirlfriendFromProfile("haeun",()=>0.5);
 assert.equal(selectedPartner.heroineId,"haeun");
 rerollGirlfriendPersonality(selectedPartner,()=>0.8);

@@ -62,6 +62,8 @@ assert.match(gameSource,/StoryCg/);
 assert.match(gameSource,/StoryAutoCue/);
 assert.match(cssSource,/prefers-reduced-motion:reduce/);
 assert.match(cssSource,/body\.campaign-story-mode \.vn-expression-layer\{display:none!important\}/);
+assert.match(gameSource,/const STORY_INTRO_VIDEO_PLAYLIST = \["assets\/video\/story-prologue\.mp4"\];/);
+assert.match(gameSource,/activeIntroVideoPlaylist=onboarding\?\.previewState\?\.scenario\?\.enabled===true\?STORY_INTRO_VIDEO_PLAYLIST:DEFAULT_INTRO_VIDEO_PLAYLIST;/);
 assert.match(cssSource,/:fullscreen \.topbar,[\s\S]*?background:linear-gradient\(90deg,#090a12f7,#211c29f2 58%,#3a303bf2\);/);
 assert.match(cssSource,/:fullscreen \.topbar :is\(\.brand,\.brand strong,\.brand small\)[\s\S]*?color:#fff!important;/);
 assert.match(cssSource,/:fullscreen \.topbar \.game-mode-badge,[\s\S]*?background:#f06f98;[\s\S]*?color:#fff;/);
