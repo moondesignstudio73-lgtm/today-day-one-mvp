@@ -75,6 +75,7 @@ export function resolveStoryPresentation(scene, state) {
   return {
     backgroundId,
     characterId:scene?.presentation?.characterId ?? characterForStory(scene),
+    characterAssetUrl:scene?.presentation?.characterAssetUrl ?? "",
     outfitId:RIVER_PATTERN.test(text) ? "date" : "default",
     expressionId,
     poseId,
@@ -101,7 +102,7 @@ export function getAssetRequirementList(storyScenes = [], events = []) {
 }
 
 export function preloadSceneAssets(presentations = []) {
-  const urls = [...new Set(presentations.map(item => item?.backgroundUrl).filter(Boolean))];
+  const urls = [...new Set(presentations.flatMap(item => [item?.backgroundUrl,item?.characterAssetUrl]).filter(Boolean))];
   if (typeof Image !== "undefined") urls.forEach(url => { const image = new Image(); image.decoding = "async"; image.src = url; });
   return urls;
 }

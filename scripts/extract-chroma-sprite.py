@@ -4,10 +4,47 @@
 from __future__ import annotations
 
 import argparse
+from collections import deque
 from pathlib import Path
 from statistics import median
 
 from PIL import Image
+
+
+def keep_largest_silhouette(alpha: Image.Image, threshold: int = 24) -> Image.Image:
+    """Remove detached chroma-screen speckles while preserving the sprite edge."""
+
+    width, height = alpha.size
+    values = alpha.tobytes()
+    candidates = bytearray(value >= threshold for value in values)
+    visited = bytearray(width * height)
+    largest: list[int] = []
+
+    for start in range(width * height):
+        if not candidates[start] or visited[start]:
+            continue
+        visited[start] = 1
+        component: list[int] = []
+        queue = deque([start])
+        while queue:
+            index = queue.popleft()
+            component.append(index)
+            x = index % width
+            y = index // width
+            for ny in range(max(0, y - 1), min(height, y + 2)):
+                row = ny * width
+                for nx in range(max(0, x - 1), min(width, x + 2)):
+                    neighbor = row + nx
+                    if candidates[neighbor] and not visited[neighbor]:
+                        visited[neighbor] = 1
+                        queue.append(neighbor)
+        if len(component) > len(largest):
+            largest = component
+
+    keep = bytearray(width * height)
+    for index in largest:
+        keep[index] = values[index]
+    return Image.frombytes("L", alpha.size, bytes(keep))
 
 
 def extract(input_path: Path, output_path: Path) -> None:
@@ -65,8 +102,11 @@ def extract(input_path: Path, output_path: Path) -> None:
                     )
                 )
                 pixels[x, y] = foreground
+    alpha = keep_largest_silhouette(alpha)
     rgba = source.convert("RGBA")
     rgba.putalpha(alpha)
+    transparent = Image.new("RGBA", rgba.size, (0, 0, 0, 0))
+    rgba = Image.composite(rgba, transparent, alpha)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     rgba.save(output_path, optimize=True)
 

@@ -1,3 +1,5 @@
+import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs";
+
 const ID="m30-day4-arrive-home";
 const BG={entry:"day2-home-entry",room:"day2-bedroom",day:"home-morning",cafe:"cafe-rain-evening",night:"home-night"};
 
@@ -185,7 +187,7 @@ export function getLockedDay4Segment(state,stage=state.storyFlags?.day4RuntimeSt
   return endingSegment(state);
 }
 
-export function getLockedDay4ResumePresentation(state){const stage=state.storyFlags?.day4RuntimeStage??0;if(stage===2||stage===3||stage===4)return {backgroundId:BG.cafe,characterId:"best-friend"};if(stage>=5)return {backgroundId:BG.night,characterId:"girlfriend"};return {backgroundId:stage===0?BG.entry:BG.day,characterId:"girlfriend"};}
+export function getLockedDay4ResumePresentation(state){const stage=state.storyFlags?.day4RuntimeStage??0;if(stage===2||stage===3||stage===4)return {backgroundId:BG.cafe,characterId:"best-friend",characterAssetUrl:STORY_OUTFIT_ASSETS.day4};if(stage>=5)return {backgroundId:BG.night,characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day4};return {backgroundId:stage===0?BG.entry:BG.day,characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day4};}
 
 export function applyLockedDay4ChoiceState(state,id){state.storyFlags??={};
   if(getAvailableDay4HomeChoices(state).some(item=>item.id===id)){state.storyFlags.day4HomeStrategy=id;remember(state,id);state.storyFlags.day4RuntimeStage=1;return {stage:1};}
