@@ -2,7 +2,7 @@
 
 운영 원칙: 한 DAY의 시나리오 작성·내러티브 QA·런타임 적용·저장 복원·전체 회귀·커밋·푸시·배포 확인이 모두 끝난 뒤에만 다음 DAY를 시작한다.
 
-현재 대상: `DAY 8`
+현재 대상: `DAY 9`
 
 ## DAY 5
 
@@ -21,7 +21,7 @@
 
 - [x] DAY 6
 - [x] DAY 7
-- [ ] DAY 8
+- [x] DAY 8
 - [ ] DAY 9
 - [ ] DAY 10
 - [ ] DAY 11
@@ -85,7 +85,7 @@
 - [x] 다단계 런타임·선택 상태·저장 복원 구현
 - [x] 집중 테스트·전체 회귀
 - [x] 실제 브라우저 연속 플레이 QA
-- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+- [x] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 시나리오: `docs/day8/DAY8_SCENARIO_DRAFT_V1.md`
 자체 QA: `docs/day8/DAY8_SCENARIO_QA_V1.md`
@@ -93,7 +93,15 @@
 
 ## 다음 작업
 
-DAY 8 브라우저 QA 증적을 커밋하고 origin·gh-pages의 동일 SHA 공개 배포와 캐시 우회 페이지를 확인한다.
+DAY 9의 앞 DAY 잠금본·선택·후속 훅과 현재 코드를 조사하고 챕터 계약·Voice Profile·지식 장부를 작성한다.
+
+### 2026-08-26 DAY 8 출시·공개 배포 완료
+
+- 브라우저 QA 증적 커밋을 원격의 DAY 2·3 자유행동 변경과 파일 겹침 없이 일반 merge했고, 병합 뒤 DAY 1~3 자유행동 집중 검사·DAY 8 전 검사·전체 시뮬레이션 회귀가 PASS했다.
+- 검증 SHA `b32af97`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
+- 같은 SHA의 `pages build and deployment`와 `Deploy GitHub Pages`가 모두 SUCCESS로 완료됐다.
+- 캐시 우회 공개 게임 화면이 정상 로드됐고 `docs/day8/DAY8_PLAYTHROUGH_QA.md`는 HTTP 200과 `PLAYTHROUGH QA PASS` 마커를 반환했다.
+- DAY 8 모든 관문 완료. 사전 승인에 따라 DAY 8을 자동 COMPLETE 처리하고 다음 대상은 DAY 9 챕터 계약·시나리오 관문으로 전환한다.
 
 ### 2026-08-26 DAY 8 실제 브라우저 연속 플레이 QA 기록
 

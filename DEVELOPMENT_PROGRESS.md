@@ -518,3 +518,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 마지막 선택 뒤 DAY 9 캠페인 상태로 전환되고 자유 연애 전용 장면이 섞이지 않았으며 콘솔 경고·오류는 0건이었다.
 - `docs/day8/DAY8_PLAYTHROUGH_QA.md`의 STORY/VISUAL/DIRECTION/AUDIO/GAMEPLAY/UX/BUG 전 항목이 PASS했고 NEEDS FIX는 0개다.
 - 다음 관문: DAY 8 브라우저 QA 증적 커밋, origin push, 동일 SHA gh-pages 배포와 공개 페이지 확인.
+
+## DAY 8 출시·공개 배포 완료 (2026-08-26)
+
+- 브라우저 QA 증적을 원격 DAY 2·3 자유행동 변경과 충돌 없는 일반 merge로 통합하고 관련 집중 검사와 전체 회귀를 다시 통과했다.
+- 검증 SHA `b32af97`을 기능 브랜치와 `gh-pages`에 일반 push했으며 동일 SHA의 두 GitHub Pages 작업이 SUCCESS로 완료됐다.
+- 캐시 우회 공개 게임 화면과 DAY 8 QA 증적의 HTTP 200·PASS 마커를 확인했다.
+- DAY 8 전 관문을 자동 승인·COMPLETE 처리했다. 다음 대상은 DAY 9 챕터 계약·Voice Profile·지식 장부와 완전한 플레이 시나리오 작성이다.
