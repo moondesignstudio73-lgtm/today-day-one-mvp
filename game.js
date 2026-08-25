@@ -40,7 +40,7 @@ import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.m
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=10";
 import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=14";
-import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=6";
+import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=7";
 import { STORY_SCENES } from "./src/story-data.mjs";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, resetForNextDay, setNightStartTime, spendNightTime } from "./src/night-manager.mjs?v=2";
 import { completeLateNightInvitation, getPendingLateNightInvitation, LATE_NIGHT_INVITATION_CHANCE, LATE_NIGHT_INVITATION_MESSAGE, LATE_NIGHT_INVITATION_MIN_DAY, LATE_NIGHT_INVITATION_START_MINUTES, maybeTriggerLateNightInvitation } from "./src/late-night-invitation-manager.mjs?v=1";
