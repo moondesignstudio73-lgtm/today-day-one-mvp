@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="styles.css?v=85">
+  <link rel="stylesheet" href="styles.css?v=86">
   <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
@@ -94,13 +94,19 @@
     </section>
 
     <section id="storyIntroScreen" class="story-intro-screen hidden" aria-label="인트로 스토리 영상">
-      <video id="introVideo" src="assets/video/intro.mp4" controls playsinline preload="metadata"></video>
-      <div class="story-intro-copy">
+      <video id="introVideo" src="assets/video/free-mode-prologue.mp4" playsinline preload="metadata" disablepictureinpicture controlslist="nodownload noplaybackrate nofullscreen"></video>
+      <div id="introLoading" class="intro-loading" role="status" aria-live="polite">
+        <span class="intro-loading-spinner" aria-hidden="true"></span>
+        <strong id="introLoadingText">프롤로그 준비 중</strong>
+        <small>영상을 불러오고 있습니다.</small>
+        <button id="introPlayButton" class="intro-play-button hidden" type="button">프롤로그 재생</button>
+      </div>
+      <button id="skipIntroButton" class="intro-skip-button" type="button">건너뛰기</button>
+      <div id="storyIntroComplete" class="story-intro-copy hidden">
         <span>PROLOGUE</span>
         <h2>오늘부터, 우리의 1일</h2>
         <p id="introPlaybackHint">영상을 끝까지 감상하면 게임을 시작할 수 있습니다.</p>
         <div>
-          <button id="skipIntroButton" class="secondary-button" type="button">전체 영상 건너뛰기</button>
           <button id="introGameStartButton" class="primary-button" type="button" disabled>게임 시작</button>
         </div>
       </div>
@@ -257,6 +263,6 @@
     </article>
   </section>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=115"></script>
+  <script type="module" src="game.js?v=116"></script>
 </body>
 </html>
