@@ -92,6 +92,27 @@ const DAY5_OFFICE_HANDOFF=Object.freeze({
   ],futureEventWeights:{work:1.15},requiredMemories:[],requiredEvents:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY6_HOME_PAYMENT_BOUNDARY=Object.freeze({
+  id:"context-day6-home-payment-boundary",title:"영수증의 주인",category:"daily",categoryLabel:"스토리 공용 이벤트",
+  hook:"장바구니에서 임시 결제 영수증이 미끄러져 나왔다.",message:"하은의 예비 계정으로 결제한 생활비를 지금 어떤 상태로 기록할지 정해야 했다.",question:"아직 복구되지 않은 돈의 경계를 어떻게 남길까?",
+  allowedLocations:["home"],allowedPhases:["evening"],dayRange:[6,6],heroineIds:["haeun"],requiredFeatures:["current-life-map"],requiredStoryFlags:["day6RuntimeComplete","day6CurrentLifeRadiusSaved"],
+  cooldown:30,maxTriggerCount:1,probability:.35,priority:240,baseWeight:100,tensionLevel:"low",effects:{confidence:1},
+  storyFlag:"context-day6-home-payment-boundary:COMPLETED",forbiddenFlags:["context-day6-home-payment-boundary:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",result:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",status:"ready"},
+  presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},
+  scenes:[{id:"context-day6-home-payment-boundary-scene",title:"영수증의 주인",backgroundId:"day2-home-entry",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"evening",timeOfDay:"evening",weather:"clear",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"장바구니를 정리하자 하은의 예비 계정으로 결제한 영수증이 식탁 아래로 미끄러졌다."},
+    {type:"dialogue",speaker:"하은",text:"지금 바로 갚을 돈으로 적으면 네 계좌도 모르는데 부담만 생길 것 같아.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"소유권 미확인 임시 결제로 남기자. 복구 뒤 정산 여부를 다시 정하고."},
+    {type:"dialogue",speaker:"하은",text:"좋아. 오늘 장본 걸 우리 관계의 빚으로 만들지는 말자.",expressionId:"smile"},
+    {type:"narration",speaker:"내레이션",text:"영수증에는 결론 대신 날짜와 결제 계정, 다시 확인할 조건만 남았다."}
+  ]}],
+  choices:[
+    {id:"record-without-debt",label:"임시 결제로 기록하고 빚으로 확정하지 않는다",preferenceTags:["BOUNDARY","PRACTICAL"],effects:{trust:5,confidence:4,stress:-3},response:"금액은 기록하되 관계의 빚이나 공동 자산으로 단정하지 않았다.",flag:"context-day6-home-payment-boundary:UNCONFIRMED",memory:"DAY 6 임시 생활비를 소유권 미확인 결제로 기록했다.",futureEventWeights:{money:1.15}},
+    {id:"separate-receipts",label:"각자 고른 물건과 공동 생활품 영수증을 분리한다",preferenceTags:["LOGICAL","PLANNED"],effects:{trust:4,confidence:5,stress:-2},response:"개인 선택과 공동 생활품을 나눠 훗날 확인할 기준을 만들었다.",flag:"context-day6-home-payment-boundary:SEPARATED",memory:"DAY 6 장보기 영수증을 개인 선택과 공동 생활품으로 분리했다.",futureEventWeights:{money:1.2}}
+  ],futureEventWeights:{money:1.1,romance:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
@@ -99,7 +120,8 @@ export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   DAY2_HOME_CHECK_IN,
   DAY3_DISCHARGE_CHECK,
   DAY4_HOME_LEDGER_REVIEW,
-  DAY5_OFFICE_HANDOFF
+  DAY5_OFFICE_HANDOFF,
+  DAY6_HOME_PAYMENT_BOUNDARY
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);
