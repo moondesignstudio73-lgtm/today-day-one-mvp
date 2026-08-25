@@ -408,7 +408,7 @@ function updateImmersiveCharacter(expressionId="calm") {
   const poseId=immersiveScene?.presentation?.poseId,outfitId=immersiveScene?.presentation?.outfitId;
   renderCharacter(character,state,$("#vnAccessoryLayer"),{expressionId,poseId,outfitId});
   updatePartnerPortrait(expressionId,poseId,outfitId);
-  const girlfriendEventVideo=characterId==="girlfriend"&&["event","temptation"].includes(immersiveScene?.type)?"assets/characters/girlfriend-standing-2d_transparent.webm?v=4":"";
+  const girlfriendEventVideo=characterId==="girlfriend"&&["event","temptation"].includes(immersiveScene?.type)?"assets/characters/girlfriend-standing-2d_transparent.webm?v=5":"";
   syncOutfitCharacterMedia(false,girlfriendEventVideo);
 }
 
