@@ -1,6 +1,6 @@
 # DAY 1 출시 완성도 진행표
 
-현재 상태: `PHASE 21 실제 플레이 QA 완료 / PHASE 22 대기`
+현재 상태: `PHASE 22 플레이타임 측정 완료 / PHASE 23 대기`
 
 DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에는 DAY 2 이후의 신규 스토리·콘텐츠를 구현하지 않는다. 이미 존재하는 DAY 2~5 코드와 미커밋 DAY 3 변경은 삭제하거나 확장하지 않고 동결한다.
 
@@ -33,7 +33,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 ## 최종 검수 관문
 
 - [x] PHASE 21 — 처음부터 끝까지 실제 플레이 QA
-- [ ] PHASE 22 — 일반 읽기 속도 플레이타임 측정
+- [x] PHASE 22 — 일반 읽기 속도 플레이타임 측정
 - [ ] PHASE 23 — STORY/VISUAL/DIRECTION/AUDIO/GAMEPLAY/UX/BUG 전 항목 PASS
 - [ ] PHASE 24 — 사용자 최종 승인 후 `DAY 1 — COMPLETE`
 
@@ -52,6 +52,7 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - `docs/day1/DAY1_AUDIO_SPEC.md`
 - `docs/day1/DAY1_IMPLEMENTATION_REPORT.md`
 - `docs/day1/DAY1_PLAYTHROUGH_QA.md`
+- `docs/day1/DAY1_PLAYTIME_REPORT.md`
 
 ## 최근 검증
 
@@ -81,6 +82,9 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 - 첫 선택 직후 저장·페이지 재진입·불러오기 뒤 선택 반응 시작점과 두 번째 선택 화면이 복구됨을 확인했다.
 - 390×844 모바일 화면, 키보드 Enter 선택, SKIP, 사운드 토글과 대표 경로 콘솔 오류 0건을 확인했다.
 - CG·자동 큐 중 중복 입력과 선택 버튼 Enter 충돌을 수정하고 집중 QA 테스트를 추가했다.
+- PHASE 22에서 실제 런타임의 9개 선택 경로를 읽기 시간·Scene 전환·CG·자동 큐·선택 숙고 시간으로 계측했다.
+- 보통 340자/분에서 9.25~9.60분, 빠른 400자/분에서 8.08~8.39분으로 전 경로가 목표 7~10분을 통과했다.
+- 최단·최장 경로 차이는 0.35분이며 반복 대사나 인위적 Pause 추가 없이 현재 잠금본의 플레이 밀도를 유지했다.
 - `scripts/process-day1-sprites.py` 재실행 재현성·문법 검사, `node --check game.js`, `node --check src/story-data.mjs`, `tests/simulation.test.mjs` 전체 회귀: 통과.
 - PHASE 16에서 기존 배경·하은·의료진·CG·렌더러를 감사하고 재사용·제한 재사용·탈락을 구분했다.
 - 병실 배경 2종, 하은 표정·포즈 소스 2종, 의료진 소스 1종, 이벤트 CG 3종의 신규 후보 8파일을 프로젝트에 수급했다.
@@ -106,4 +110,4 @@ DAY 1이 모든 관문을 통과하고 사용자 최종 승인을 받기 전에�
 
 ## 다음 작업
 
-PHASE 22에서 일반 읽기 속도로 대표 3개 경로의 실제 플레이타임을 측정하고 7~10분 목표를 판정한다.
+PHASE 23에서 STORY/VISUAL/DIRECTION/AUDIO/GAMEPLAY/UX/BUG 7개 영역을 최종 검사하고 NEEDS FIX가 하나라도 있으면 완료 처리하지 않는다.
