@@ -71,6 +71,8 @@ console.log("✓ GAMEPLAY — 대표 관계 경로·탐색 96경로·엔딩·플
 assert.match(gameSource,/finishDialogueTyping\(\)\)\{scheduleAutoAdvance\(\);return;\}/);
 assert.match(gameSource,/storyChoiceLayer"\)\.addEventListener\("keydown"/);
 assert.match(gameSource,/state\.pendingStoryId&&!state\.eventRuntime\?\.activeEvent/);
+assert.match(gameSource,/function restoreCampaignChapterProgress\(\)/);
+assert.match(gameSource,/record\.sceneId\.startsWith\(`m30-day\$\{state\.day\}-`\)/);
 assert.match(htmlSource,/id="visualNovelStage" role="button" tabindex="0"/);
 assert.match(htmlSource,/id="storyChoiceLayer"[^>]*aria-label="스토리 선택지"/);
 assert.match(htmlSource,/game\.js\?v=\d+/);
