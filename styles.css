@@ -783,6 +783,38 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
   z-index:182;
   transform:translateX(-50%);
 }
+/* Native fullscreen sits directly over scene artwork. Give every header label
+   a stable contrast surface instead of inheriting colors from the page/theme. */
+:fullscreen .topbar,
+:-webkit-full-screen .topbar{
+  border-bottom:1px solid #ffffff24;
+  background:linear-gradient(90deg,#090a12f7,#211c29f2 58%,#3a303bf2);
+  color:#fff;
+  box-shadow:0 10px 30px #08091052;
+  backdrop-filter:blur(18px);
+}
+:fullscreen .topbar :is(.brand,.brand strong,.brand small),
+:-webkit-full-screen .topbar :is(.brand,.brand strong,.brand small){
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  text-shadow:0 1px 5px #000;
+}
+:fullscreen .topbar>.day-pill,
+:-webkit-full-screen .topbar>.day-pill{
+  border-color:#ffffff48;
+  background:#11121de8;
+  color:#fff;
+}
+:fullscreen .topbar>.day-pill :is(span,strong,i),
+:-webkit-full-screen .topbar>.day-pill :is(span,strong,i){color:#fff}
+:fullscreen .topbar .game-mode-badge,
+:-webkit-full-screen .topbar .game-mode-badge{
+  background:#f06f98;
+  color:#fff;
+  -webkit-text-fill-color:#fff;
+}
+:fullscreen .topbar>.story-toolbar button,
+:-webkit-full-screen .topbar>.story-toolbar button{color:#fff}
 .ui-classic-mode .action-selection-panel{top:76px}
 .game-tools-trigger{bottom:96px}
 
