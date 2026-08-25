@@ -67,7 +67,9 @@ document.documentElement.classList.toggle("touch-device",touchDevice);
 let state;
 let onboarding = null;
 let titleTransitioning = false;
-const INTRO_VIDEO_PLAYLIST = ["assets/video/intro.mp4", "assets/video/intro2.mp4"];
+const DEFAULT_INTRO_VIDEO_PLAYLIST = ["assets/video/intro.mp4", "assets/video/intro2.mp4"];
+const STORY_INTRO_VIDEO_PLAYLIST = ["assets/video/story-prologue.mp4"];
+let activeIntroVideoPlaylist = DEFAULT_INTRO_VIDEO_PLAYLIST;
 let introVideoIndex = 0;
 const sound = new SoundManager();
 let modalReturnFocus = null;
@@ -709,7 +711,7 @@ function renderModeSetup() {
     onboarding.mode=button.dataset.gameMode;
     const config=getGameModeConfig(onboarding.mode);
     if(config.fixedPartnerId){onboarding.partner=createGirlfriendFromProfile(config.fixedPartnerId);onboarding.partner.age=23;onboarding.girlfriendTraitsReady=true;onboarding.girlfriendJobReady=true;onboarding.playerArchetype="balanced";renderPlayerSetup();}
-    else{onboarding.partner=null;onboarding.girlfriendTraitsReady=false;onboarding.girlfriendJobReady=false;renderGirlfriendSetup();}
+    else{onboarding.partner=createGirlfriendFromProfile("haeun");onboarding.girlfriendTraitsReady=false;onboarding.girlfriendJobReady=false;renderGirlfriendSetup();}
   }));
 }
 
@@ -719,12 +721,12 @@ function renderGirlfriendSetup() {
   const candidates = ["haeun","nari","yuri"].map(id=>HEROINE_PROFILES.find(profile=>profile.id===id)).filter(Boolean);
   $("#onboardingContent").innerHTML = `
     <header class="setup-heading"><span>GIRLFRIEND SELECT</span><h1>여자친구 캐릭터 선택</h1><p>보라색 머리 캐릭터를 선택한 뒤 MBTI와 직업을 확인하세요. 이름은 그대로 유지됩니다.</p></header>
-    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>{const image=profile.id==="yuri"?"assets/heroines/yuri/yuri-ex-girlfriend-2d.png?v=2":`${profile.referenceImage}?v=7`;return `<button class="setup-character-card ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${image}" alt="${escapeHtml(profile.name)}"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`;}).join("")}</div>
+    <div class="setup-card-grid heroine-select-grid">${candidates.map((profile,index)=>{const image=profile.id==="haeun"?"assets/characters/girlfriend-standing-smile-2d.png?v=3":profile.id==="yuri"?"assets/heroines/yuri/yuri-ex-girlfriend-2d.png?v=3":`${profile.referenceImage}?v=7`;return `<button class="setup-character-card heroine-card-${profile.id} ${onboarding.partner?.heroineId===profile.id?"selected":""}" data-heroine="${profile.id}" type="button" ${index?"disabled":""}><img src="${image}" alt="${escapeHtml(profile.name)} 상반신"><strong>${escapeHtml(profile.name)}</strong><span>${index?"준비 중 · 선택 불가":"선택 가능"}</span></button>`;}).join("")}</div>
     <div class="roll-panel ${onboarding.partner?"":"locked"}">
       <div class="roll-row"><div><small>MBTI</small><b id="girlfriendTraitRoll">${onboarding.girlfriendTraitsReady?escapeHtml(onboarding.partner.mbti):"버튼을 눌러 MBTI 선택"}</b></div><button id="rollGirlfriendTraits" type="button" ${onboarding.partner?"":"disabled"}>MBTI 랜덤 선택</button></div>
       <div class="roll-row"><div><small>CAREER</small><b id="girlfriendJobRoll">${onboarding.girlfriendJobReady?escapeHtml(onboarding.partner.career.name):"여자친구의 직업"}</b></div><button id="rollGirlfriendJob" type="button" ${onboarding.partner?"":"disabled"}>직업 랜덤 선택</button></div>
     </div>
-    <button id="girlfriendSetupNext" class="primary-button setup-next" type="button" ${onboarding.girlfriendTraitsReady&&onboarding.girlfriendJobReady?"":"disabled"}>나의 캐릭터 선택으로</button>`;
+    <button id="girlfriendSetupNext" class="primary-button setup-next setup-action-button" type="button" ${onboarding.girlfriendTraitsReady&&onboarding.girlfriendJobReady?"":"disabled"}>나의 캐릭터 선택으로 <span aria-hidden="true">→</span></button>`;
   document.querySelectorAll("[data-heroine]").forEach((button)=>button.addEventListener("click",()=>{
     onboarding.partner=createGirlfriendFromProfile(button.dataset.heroine);
     onboarding.girlfriendTraitsReady=onboarding.girlfriendJobReady=false;
@@ -753,12 +755,13 @@ function renderPlayerSetup() {
   document.body.classList.remove("mode-select-stage");
   onboarding.step=3; setOnboardingProgress(3);
   const storyMode=getGameModeConfig(onboarding.mode).kind==="story";
+  onboarding.playerArchetype ??= "balanced";
   if(storyMode)onboarding.playerArchetype="balanced";
   $("#onboardingContent").innerHTML=`
     <header class="setup-heading"><span>PLAYER SETUP</span><h1>${storyMode?"이름과 직업 설정":"나의 외모 선택"}</h1><p>${storyMode?"STORY MODE의 주인공 외형은 고정됩니다. 이름과 직업만 선택해 주세요.":"외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다."}</p></header>
     <div class="setup-card-grid player-select-grid ${storyMode?"story-player-locked":""}">${PLAYER_ARCHETYPES.map((entry)=>{const fixed=storyMode&&entry.id==="balanced",locked=storyMode&&!fixed;return `<button class="setup-character-card ${onboarding.playerArchetype===entry.id?"selected":""} ${locked?"story-locked":""}" data-player="${entry.id}" type="button" ${storyMode?'disabled aria-disabled="true"':""}><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.premium?" · PREMIUM":""}</strong><span>${fixed?"STORY MODE 고정":locked?"🔒 STORY MODE 잠금":`능력 ${entry.abilityRating} · 외모 ${entry.appearanceRating}`}</span><small>${locked?"FREE MODE에서 선택할 수 있습니다.":entry.description}</small></button>`;}).join("")}</div>
     <div class="player-input-panel"><label for="playerNameInput">남자친구 이름 <small>최대 3글자 · 한글 또는 영문</small></label><div class="player-name-roll"><input id="playerNameInput" value="${escapeHtml(onboarding.playerName)}" placeholder="이름을 직접 입력하세요" autocomplete="off" spellcheck="false" inputmode="text" aria-describedby="playerNameNotice"><button id="rollPlayerName" type="button">내 이름 랜덤 선택</button></div><small id="playerNameNotice" class="player-name-notice" aria-live="polite"></small><div class="roll-row"><div><small>MY CAREER</small><b id="playerJobRoll">${onboarding.playerJob?escapeHtml(onboarding.playerJob.name):"버튼을 눌러 직업 선택"}</b></div><button id="rollPlayerJob" type="button">내 직업 랜덤 선택</button></div></div>
-    <button id="playerSetupNext" class="primary-button setup-next" type="button" ${onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob?"":"disabled"}>최종 결과 확인</button>`;
+    <button id="playerSetupNext" class="primary-button setup-next setup-action-button" type="button" ${onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob?"":"disabled"}>최종 결과 확인 <span aria-hidden="true">→</span></button>`;
   if(!storyMode)document.querySelectorAll("[data-player]").forEach((button)=>button.addEventListener("click",()=>{const archetype=PLAYER_ARCHETYPES.find((entry)=>entry.id===button.dataset.player);if(archetype.premium)showPremiumConfirmation(archetype);else selectPlayerArchetype(archetype.id);}));
   const nameInput=$("#playerNameInput");
   let composingName=false;
@@ -788,21 +791,22 @@ function openStoryIntro() {
   $("#storyIntroScreen").classList.remove("hidden");
   markScreenArrival($("#storyIntroScreen"));
   const video=$("#introVideo");
+  activeIntroVideoPlaylist=onboarding?.previewState?.scenario?.enabled===true?STORY_INTRO_VIDEO_PLAYLIST:DEFAULT_INTRO_VIDEO_PLAYLIST;
   introVideoIndex=0;
-  video.src=INTRO_VIDEO_PLAYLIST[introVideoIndex];
+  video.src=activeIntroVideoPlaylist[introVideoIndex];
   video.load();
   $("#introGameStartButton").disabled=true;
-  $("#introPlaybackHint").textContent="프롤로그 1 / 2를 재생하고 있습니다.";
+  $("#introPlaybackHint").textContent=activeIntroVideoPlaylist.length===1?"스토리 모드 프롤로그를 재생하고 있습니다.":`프롤로그 1 / ${activeIntroVideoPlaylist.length}를 재생하고 있습니다.`;
   video.play().catch(()=>{$("#introPlaybackHint").textContent="재생 버튼을 눌러 프롤로그를 감상해 주세요.";});
 }
 
 function playNextIntroVideo() {
   const video=$("#introVideo");
-  if (introVideoIndex >= INTRO_VIDEO_PLAYLIST.length - 1) { unlockIntroStart(); return; }
+  if (introVideoIndex >= activeIntroVideoPlaylist.length - 1) { unlockIntroStart(); return; }
   introVideoIndex += 1;
-  video.src=INTRO_VIDEO_PLAYLIST[introVideoIndex];
+  video.src=activeIntroVideoPlaylist[introVideoIndex];
   video.load();
-  $("#introPlaybackHint").textContent=`프롤로그 ${introVideoIndex + 1} / ${INTRO_VIDEO_PLAYLIST.length}를 재생하고 있습니다.`;
+  $("#introPlaybackHint").textContent=`프롤로그 ${introVideoIndex + 1} / ${activeIntroVideoPlaylist.length}를 재생하고 있습니다.`;
   video.play().catch(()=>{$("#introPlaybackHint").textContent="다음 프롤로그의 재생 버튼을 눌러 주세요.";});
 }
 
@@ -824,7 +828,7 @@ function restoreCampaignChapterProgress() {
   if(changed)SaveManager.save(state);
   return changed;
 }
-function showGame() { requestInitialFullscreen(); state.actionHistory ??= [];restoreCampaignChapterProgress(); $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); markScreenArrival($("#gameScreen")); const storyMode=state.scenario?.enabled===true;$("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.toggle("hidden",storyMode); $(".story-toolbar").classList.toggle("hidden",!storyMode); $("#storyMenuButton").classList.toggle("hidden",storyMode); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
+function showGame() { requestInitialFullscreen(); state.actionHistory ??= [];restoreCampaignChapterProgress(); $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); markScreenArrival($("#gameScreen")); const storyMode=state.scenario?.enabled===true;$("#menuButton").classList.toggle("hidden",storyMode);$("#fullscreenButton").classList.toggle("hidden",storyMode);$(".story-toolbar").classList.toggle("hidden",!storyMode); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function outfitImageUrl(item) { return item?.heroineId==="haeun"&&item?.productImage?`${item.productImage}?v=8`:item?.productImage??""; }
 function getStoredItemDescription(item){const tags=(item.styleTags??item.preferenceTags??[]).join(" · ");return `${tags||item.category} 아이템 · 매력 +${item.attractivenessBonus??0} · 패션 +${item.fashionBonus??0}`;}
@@ -1801,6 +1805,7 @@ function openTitleIntroduction(){
   </article>`;
   $("#modal").classList.add("intro-guide-active");
   openModal();
+  $("#closeModal").onclick=closeModal;
   $("#introductionStartButton").addEventListener("click",()=>{closeModal();startGame();});
 }
 
@@ -1854,7 +1859,7 @@ $("#fullscreenButton").addEventListener("click",toggleFullscreen);
 $("#storyFullscreenButton").addEventListener("click",toggleFullscreen);
 $("#startButton").addEventListener("click",startGame); $("#titleIntroductionButton")?.addEventListener("click",openTitleIntroduction); $("#titleContinueButton")?.addEventListener("click",openContinuePreview); $("#titleSettingsButton")?.addEventListener("click",()=>{$("#modalContent").innerHTML=`<span class="eyebrow">SETTINGS</span><h2>환경설정</h2><p>타이틀 화면에서는 사운드 설정을 변경할 수 있습니다.</p><button id="titleSoundToggle" class="primary-button" type="button">${sound.enabled?"사운드 끄기":"사운드 켜기"}</button>`;openModal();$("#titleSoundToggle").addEventListener("click",()=>{$("#soundButton").click();closeModal();});}); $("#nextButton").addEventListener("click",applyAction); $("#chatButton").addEventListener("click",openChat); $("#saveButton").addEventListener("click",saveGame); $("#loadButton").addEventListener("click",loadGame); $("#closeModal").addEventListener("click",closeModal); $("#actionResultConfirm").addEventListener("click",confirmActionResult); $("#resetButton").addEventListener("click",()=>{ if(confirm("새 게임을 시작할까요? 현재 진행은 사라집니다.")) { SaveManager.clear(); location.reload(); } });
 $("#introVideo").addEventListener("ended",playNextIntroVideo);
-$("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();introVideoIndex=INTRO_VIDEO_PLAYLIST.length-1;unlockIntroStart("프롤로그 영상을 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
+$("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();introVideoIndex=activeIntroVideoPlaylist.length-1;unlockIntroStart("프롤로그 영상을 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
 $("#introGameStartButton").addEventListener("click",finishOnboarding);
 document.addEventListener("keydown", handleModalKeydown);
 document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("#gameToolsLayer").classList.contains("hidden"))closeGameTools();});

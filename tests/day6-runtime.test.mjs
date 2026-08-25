@@ -87,5 +87,5 @@ for(const required of ["임시 예비폰","현재값 확인","DAY 6 카페","경
 for(const forbidden of ["가짜 하은","D-29","트럭 충돌","하은이 사고에 동승","의미심장한 미소"])assert.ok(!allText.includes(forbidden),forbidden);
 
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
-for(const pattern of [/LOCKED_DAY6_SCENE_ID/,/applyLockedDay6ChoiceState\(state,choiceId\)/,/getLockedDay6LegacyChoice\(state\)/,/day6Prompts/,/getLockedDay6ResumePresentation/,/function resetActiveRuntimeForLoad\(\)/,/resetActiveRuntimeForLoad\(\); state = loaded/,/storyMenuButton"\)\.classList\.toggle\("hidden",storyMode\)/])assert.match(game,pattern);
+for(const pattern of [/LOCKED_DAY6_SCENE_ID/,/applyLockedDay6ChoiceState\(state,choiceId\)/,/getLockedDay6LegacyChoice\(state\)/,/day6Prompts/,/getLockedDay6ResumePresentation/,/function resetActiveRuntimeForLoad\(\)/,/resetActiveRuntimeForLoad\(\); state = loaded/,/menuButton"\)\.classList\.toggle\("hidden",storyMode\)/])assert.match(game,pattern);
 console.log("✓ DAY 6 잠금 시나리오 8 Scene·27경로·3종 콜백·양축 보존·JSON 저장 복원 검증 통과");
