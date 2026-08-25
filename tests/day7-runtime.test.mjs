@@ -5,7 +5,7 @@ import {
   applyLockedDay7ChoiceState,getLockedDay7LegacyChoice,getLockedDay7ResumePresentation,getLockedDay7Segment,validateLockedDay7Runtime
 } from "../src/day7-campaign-runtime.mjs";
 import {createScenarioState,validateScenarioState} from "../src/scenario-state.mjs";
-import {getStoryScene} from "../src/story-manager.mjs";
+import {getStoryScene,selectNextStoryScene} from "../src/story-manager.mjs";
 
 function stateFor(day6DatePlan="date_alternate_choices"){
   const scenario=createScenarioState("marriage-in-30-days");
@@ -71,6 +71,10 @@ const allText=JSON.stringify([0,1,2,3].flatMap(stage=>getLockedDay7Segment(state
 for(const required of ["더 안 풀리게 묶었어","기억 말고 취향","변경은 실패로 세지 않기로","오늘 이유가 있으면 충분해","계획은 함께 세우고, 변경은 실패로 세지 않는다"])assert.ok(allText.includes(required),required);
 for(const forbidden of ["가짜 하은","D-29","트럭 충돌","하은이 사고에 동승","의미심장한 미소","아무것도 아니야"])assert.ok(!allText.includes(forbidden),forbidden);
 
+const day8Campaign={...stateFor("date_revisit_with_opt_out"),day:8,partner:{heroineId:"haeun"}};
+day8Campaign.storyHistory.push({day:7,sceneId:"m30-day7-first-present-date",choiceId:"date7_record_next_rule",response:"완료"});
+assert.notEqual(selectNextStoryScene(day8Campaign)?.id,"ex-message","free-romance legacy stories must not leak into the campaign after DAY 7");
+
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
-for(const pattern of [/LOCKED_DAY7_SCENE_ID/,/applyLockedDay7ChoiceState\(state,choiceId\)/,/getLockedDay7LegacyChoice\(state\)/,/day7Prompts/,/getLockedDay7ResumePresentation/])assert.match(game,pattern);
+for(const pattern of [/LOCKED_DAY7_SCENE_ID/,/applyLockedDay7ChoiceState\(state,choiceId\)/,/getLockedDay7LegacyChoice\(state\)/,/day7Prompts/,/getLockedDay7ResumePresentation/,/story&&isContentAvailableForMode\(state,story\)/,/pendingStory&&!state\.eventRuntime\?\.activeEvent&&isContentAvailableForMode\(state,pendingStory\)/])assert.match(game,pattern);
 console.log("✓ DAY 7 잠금 시나리오 8 Scene·81경로·DAY 6 콜백·양축 보존·JSON 저장 복원 검증 통과");

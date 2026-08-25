@@ -500,7 +500,12 @@ const STANDARD_STORY_SCENES = [
   }
 ];
 
-export const STORY_SCENES = [...MARRIAGE_30_STORY_SCENES,...STANDARD_STORY_SCENES,...HIDDEN_ROUTE_SCENES,...HEROINE_STORY_SCENES];
+export const STORY_SCENES = [
+  ...MARRIAGE_30_STORY_SCENES,
+  ...STANDARD_STORY_SCENES.map(scene=>({...scene,modes:["free-romance"]})),
+  ...HIDDEN_ROUTE_SCENES,
+  ...HEROINE_STORY_SCENES
+];
 
 const FRIEND_SCENE_IDS=new Set(["friend-warning","hidden-friend-question"]);
 const COWORKER_SCENE_IDS=new Set(["coworker-introduction","project-opportunity","promise-clash","hidden-cracks"]);
