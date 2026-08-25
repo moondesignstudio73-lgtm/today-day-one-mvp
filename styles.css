@@ -393,7 +393,7 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 .vn-day1-npc{position:absolute;z-index:4;bottom:17%;max-height:68%;max-width:38%;object-fit:contain;filter:drop-shadow(0 14px 18px #17203338);pointer-events:none}.vn-day1-npc-rear{left:4%}.vn-day1-npc-front{left:22%}.vn-day1-event-cg{position:absolute;z-index:12;inset:0;width:100%;height:100%;object-fit:cover;background:#111;pointer-events:none;animation:day1-cg-in .18s ease both}@keyframes day1-cg-in{from{opacity:0}to{opacity:1}}@media(prefers-reduced-motion:reduce){.vn-day1-event-cg{animation:none}.vn-day1-npc{transition:none}}
 
 /* DAY 1 shared character staging: one floor line, depth presets and restrained speaker focus. */
-.ui-story-mode .vn-stage[data-focus-character] :is(.vn-character,.vn-day1-npc){bottom:18%;width:auto;max-width:34%;object-fit:contain;transform-origin:50% 100%;transition:left .38s cubic-bezier(.22,1,.36,1),right .38s cubic-bezier(.22,1,.36,1),height .38s cubic-bezier(.22,1,.36,1),opacity .3s ease,filter .3s ease,scale .3s ease}
+.ui-story-mode .vn-stage[data-focus-character] :is(.vn-character,.vn-day1-npc){bottom:4%;width:auto;max-width:34%;object-fit:contain;transform-origin:50% 100%;transition:left .38s cubic-bezier(.22,1,.36,1),right .38s cubic-bezier(.22,1,.36,1),height .38s cubic-bezier(.22,1,.36,1),opacity .3s ease,filter .3s ease,scale .3s ease}
 .ui-story-mode .vn-stage[data-focus-character] .vn-character{z-index:3;height:72%;right:6%}
 .ui-story-mode .vn-stage[data-focus-character] [data-position="left"]{right:auto;left:5%}
 .ui-story-mode .vn-stage[data-focus-character] [data-position="center"]{right:auto;left:50%;translate:-50% 0}
@@ -408,7 +408,7 @@ body.ui-classic-mode{overflow:auto;background:var(--bg)}
 .ui-story-mode .vn-stage[data-focus-character="pov"] :is(.vn-character,.vn-day1-npc){opacity:.9;filter:drop-shadow(0 12px 16px #17203330);scale:.985}
 .ui-story-mode .vn-stage[data-scene-effect="exam-light"]::before{content:"";position:absolute;z-index:6;inset:0;pointer-events:none;background:radial-gradient(circle at 51% 42%,#fff9d7aa 0 1%,transparent 7%);animation:day1-exam-light .7s ease both}
 @keyframes day1-exam-light{0%,100%{opacity:0}35%,65%{opacity:1}}
-@media(max-width:760px){.ui-story-mode .vn-stage[data-focus-character] :is(.vn-character,.vn-day1-npc){bottom:20%;max-width:46%}.ui-story-mode .vn-stage[data-focus-character] [data-depth="foreground"]{height:76%;max-width:58%}.ui-story-mode .vn-stage[data-focus-character] [data-depth="normal"]{height:62%}.ui-story-mode .vn-stage[data-focus-character] [data-depth="background"]{height:53%}}
+@media(max-width:760px){.ui-story-mode .vn-stage[data-focus-character] :is(.vn-character,.vn-day1-npc){bottom:10%;max-width:46%}.ui-story-mode .vn-stage[data-focus-character] [data-depth="foreground"]{height:76%;max-width:58%}.ui-story-mode .vn-stage[data-focus-character] [data-depth="normal"]{height:62%}.ui-story-mode .vn-stage[data-focus-character] [data-depth="background"]{height:53%}}
 @media(prefers-reduced-motion:reduce){.ui-story-mode .vn-stage[data-focus-character] :is(.vn-character,.vn-day1-npc){transition:opacity .01ms}.ui-story-mode .vn-stage[data-scene-effect="exam-light"]::before{animation:none;opacity:.35}}
 .ui-story-mode .story-mode .vn-dialogue{height:clamp(138px,18dvh,280px);min-height:138px}
 @media(max-width:760px){.ui-story-mode .story-mode .vn-dialogue{height:clamp(128px,18dvh,180px);min-height:128px}}
@@ -1108,3 +1108,20 @@ body.campaign-story-mode.theater-mode:not(.ui-night-mode) .topbar>.top-actions{
 .story-feature-locks{grid-area:locks;display:grid;align-content:start;gap:7px;padding:15px;border:1px solid #ffffff18;border-radius:18px;background:#10111bcf}.story-feature-locks h3{margin:0 0 3px;font-size:12px}.story-feature-lock{display:grid;gap:3px;padding:9px 10px;border-radius:10px;background:#ffffff08}.story-feature-lock b{font-size:10px}.story-feature-lock small{color:#918a97;font-size:8px;line-height:1.45}
 .story-free-report{width:min(620px,94%);padding:30px;border:1px solid #ffffff24;border-radius:24px;background:#13141fe8;box-shadow:0 28px 80px #0008;backdrop-filter:blur(15px)}.story-free-report>p{color:#ddd5df;line-height:1.7}.story-free-report blockquote{margin:15px 0;padding:13px 15px;border-left:3px solid #ef7895;background:#ffffff09;color:#d7ced9}.story-free-report>section{display:grid;gap:6px;margin:18px 0}.story-free-report>section div{display:grid;grid-template-columns:1fr auto 52px;gap:12px;padding:10px 12px;border-radius:10px;background:#ffffff09}.story-free-report em{text-align:right;font-style:normal}.story-free-report em.up{color:#70d5a1}.story-free-report em.down{color:#f28a9d}.story-free-report>button{width:100%;padding:14px;border:0;border-radius:13px;background:linear-gradient(135deg,#ed668c,#b84f78);color:#fff;font-weight:800;cursor:pointer}
 @media(max-width:760px){.story-free-action-layer{padding:70px 10px 12px}.story-free-action-shell{grid-template-columns:1fr;grid-template-areas:"head" "status" "actions" "locks"}.story-free-action-grid{grid-template-columns:1fr}.story-free-status{grid-template-columns:repeat(3,1fr)}.story-feature-locks{display:none}.story-free-action-shell>header{padding:17px}.story-free-report{padding:22px 17px}}
+
+/* Preserve DAY 1's authored 16:9 framing instead of stretching the VN stage
+   to a tall viewport. Dialogue intentionally masks sprite feet at floor level. */
+body.campaign-story-mode.theater-mode .shell{width:min(1760px,calc(100% - 32px))}
+body.campaign-story-mode.theater-mode .story-mode .vn-stage{
+  width:min(100%,calc((100dvh - 96px) * 16 / 9));
+  height:auto;
+  min-height:0;
+  max-height:calc(100dvh - 96px);
+  aspect-ratio:16/9;
+  margin-inline:auto;
+}
+body.campaign-story-mode .vn-day1-event-cg{object-fit:contain;background:#090a12}
+@media(max-width:760px){
+  body.campaign-story-mode.theater-mode .shell{width:100%}
+  body.campaign-story-mode.theater-mode .story-mode .vn-stage{width:100%;height:calc(100dvh - 74px);min-height:500px;max-height:none;aspect-ratio:auto}
+}
