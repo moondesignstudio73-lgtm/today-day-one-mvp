@@ -78,6 +78,7 @@ console.log("✓ GAMEPLAY — 9개 경로·2개 선택·엔딩 도달·플레이
 
 // UX
 assert.match(gameSource,/finishDialogueTyping\(\)\)\{scheduleAutoAdvance\(\);return;\}/);
+assert.match(gameSource,/replaceAll\("\[플레이어 이름\]",playerName\)/);
 assert.match(gameSource,/storyChoiceLayer"\)\.addEventListener\("keydown"/);
 assert.match(htmlSource,/id="visualNovelStage" role="button" tabindex="0"/);
 assert.match(htmlSource,/id="storyChoiceLayer"[^>]*aria-label="스토리 선택지"/);

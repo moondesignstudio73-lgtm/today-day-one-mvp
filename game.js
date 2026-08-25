@@ -284,7 +284,13 @@ function finishDialogueTyping() {
   return true;
 }
 
+function resolveDialogueVariables(text) {
+  const playerName=state?.player?.name?.trim()||"플레이어";
+  return String(text??"").replaceAll("[플레이어 이름]",playerName);
+}
+
 function typeDialogue(text) {
+  text=resolveDialogueVariables(text);
   if (text === dialogueText && $("#sceneText").textContent) return;
   finishDialogueTyping();
   dialogueText = text;
