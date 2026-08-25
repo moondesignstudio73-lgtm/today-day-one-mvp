@@ -34,6 +34,7 @@ import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyCh
 import { LOCKED_DAY4_SCENE_ID, applyLockedDay4ChoiceState, getLockedDay4LegacyChoice, getLockedDay4ResumePresentation, getLockedDay4Segment } from "./src/day4-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY5_SCENE_ID, applyLockedDay5ChoiceState, getLockedDay5LegacyChoice, getLockedDay5ResumePresentation, getLockedDay5Segment } from "./src/day5-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY6_SCENE_ID, applyLockedDay6ChoiceState, getLockedDay6LegacyChoice, getLockedDay6ResumePresentation, getLockedDay6Segment } from "./src/day6-campaign-runtime.mjs?v=1";
+import { LOCKED_DAY7_SCENE_ID, applyLockedDay7ChoiceState, getLockedDay7LegacyChoice, getLockedDay7ResumePresentation, getLockedDay7Segment } from "./src/day7-campaign-runtime.mjs?v=1";
 import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
@@ -384,6 +385,7 @@ function openStoryScene(scene) {
   const lockedDay4=scene.id===LOCKED_DAY4_SCENE_ID;
   const lockedDay5=scene.id===LOCKED_DAY5_SCENE_ID;
   const lockedDay6=scene.id===LOCKED_DAY6_SCENE_ID;
+  const lockedDay7=scene.id===LOCKED_DAY7_SCENE_ID;
   const presentation=resolveStoryPresentation(scene,state);
   if(!(lockedDay1&&state.storyFlags?.day1QuestionStrategy))state.pendingStoryId = scene.id;
   if(presentation.eventCgId&&!state.cgCollection.some(entry=>entry.id===presentation.eventCgId))state.cgCollection.push({id:presentation.eventCgId,title:scene.title,image:presentation.backgroundUrl,day:state.day});
@@ -394,13 +396,15 @@ function openStoryScene(scene) {
   const day4Resume=lockedDay4?getLockedDay4ResumePresentation(state):null;
   const day5Resume=lockedDay5?getLockedDay5ResumePresentation(state):null;
   const day6Resume=lockedDay6?getLockedDay6ResumePresentation(state):null;
-  const lockedPresentation=lockedDay1?{...presentation,backgroundId:"day1-hospital-ceiling",backgroundUrl:getBackgroundAsset("day1-hospital-ceiling"),expressionId:"resting-tired",poseId:"seated-dozing"}:lockedDay2?{...presentation,...day2Resume,backgroundUrl:getBackgroundAsset(day2Resume.backgroundId),expressionId:"calm-attentive",poseId:"standing"}:lockedDay4?{...presentation,...day4Resume,backgroundUrl:getBackgroundAsset(day4Resume.backgroundId),expressionId:"calm",poseId:"standing"}:lockedDay5?{...presentation,...day5Resume,backgroundUrl:getBackgroundAsset(day5Resume.backgroundId),expressionId:"calm",poseId:"standing"}:lockedDay6?{...presentation,...day6Resume,backgroundUrl:getBackgroundAsset(day6Resume.backgroundId)}:presentation;
-  startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):lockedDay4?getLockedDay4Segment(state):lockedDay5?getLockedDay5Segment(state):lockedDay6?getLockedDay6Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
+  const day7Resume=lockedDay7?getLockedDay7ResumePresentation(state):null;
+  const lockedPresentation=lockedDay1?{...presentation,backgroundId:"day1-hospital-ceiling",backgroundUrl:getBackgroundAsset("day1-hospital-ceiling"),expressionId:"resting-tired",poseId:"seated-dozing"}:lockedDay2?{...presentation,...day2Resume,backgroundUrl:getBackgroundAsset(day2Resume.backgroundId),expressionId:"calm-attentive",poseId:"standing"}:lockedDay4?{...presentation,...day4Resume,backgroundUrl:getBackgroundAsset(day4Resume.backgroundId),expressionId:"calm",poseId:"standing"}:lockedDay5?{...presentation,...day5Resume,backgroundUrl:getBackgroundAsset(day5Resume.backgroundId),expressionId:"calm",poseId:"standing"}:lockedDay6?{...presentation,...day6Resume,backgroundUrl:getBackgroundAsset(day6Resume.backgroundId)}:lockedDay7?{...presentation,...day7Resume,backgroundUrl:getBackgroundAsset(day7Resume.backgroundId)}:presentation;
+  startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):lockedDay4?getLockedDay4Segment(state):lockedDay5?getLockedDay5Segment(state):lockedDay6?getLockedDay6Segment(state):lockedDay7?getLockedDay7Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
     if(lockedDay1){const stage=applyLockedDay1ChoiceState(state,choiceId);if(!stage)return null;if(stage.stage==="contact"){SaveManager.save(state);return getLockedDay1Segment(state,1);}const result=resolveStoryChoice(state,scene.id,stage.legacyChoiceId);if(!result)return null;SaveManager.save(state);return getLockedDay1Segment(state,2);}
     if(lockedDay2){const result=applyLockedDay2ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay2Segment(state,result.stage);}
     if(lockedDay4){const result=applyLockedDay4ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay4Segment(state,result.stage);}
     if(lockedDay5){const result=applyLockedDay5ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay5Segment(state,result.stage);}
     if(lockedDay6){const result=applyLockedDay6ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay6Segment(state,result.stage);}
+    if(lockedDay7){const result=applyLockedDay7ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay7Segment(state,result.stage);}
     const result=resolveStoryChoice(state,scene.id,choiceId);
     if(!result)return null;
     state.logs.push({time:`DAY ${state.day} · STORY`,text:`${scene.title} — ${result.choice.label}`});
@@ -433,6 +437,10 @@ function startImmersiveScene(session) {
   }
   if(session.id===LOCKED_DAY6_SCENE_ID){
     const resumeVisual=getLockedDay6ResumePresentation(state);
+    immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
+  }
+  if(session.id===LOCKED_DAY7_SCENE_ID){
+    const resumeVisual=getLockedDay7ResumePresentation(state);
     immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
   }
   document.body.classList.remove("ui-classic-mode");
@@ -601,8 +609,10 @@ function renderImmersiveChoices(options=[]) {
   const day5Prompts={0:"회사 문턱에서 무엇을 먼저 확인할까?",1:"윤서진과의 관계를 어떤 방식으로 확인할까?",2:"첫 업무 자료를 어떤 방식으로 검토할까?",3:"다음 복귀의 우선순위를 어디에 둘까?"};
   const day6Stage=state.storyFlags?.day6RuntimeStage??0;
   const day6Prompts={0:"오늘의 생활 반경을 어떤 방식으로 확인할까?",1:"공동 장보기를 어떤 방식으로 운영할까?",2:"첫 현재형 데이트를 어떻게 만들까?"};
+  const day7Stage=state.storyFlags?.day7RuntimeStage??0;
+  const day7Prompts={0:"데이트의 첫 선택권을 어떻게 실행할까?",1:"체력 변수에 어떻게 대응할까?",2:"오늘을 어떤 방식으로 기억할까?"};
   layer.classList.toggle("exploration-hotspots",exploration);
-  const prompt=immersiveScene?.id===LOCKED_DAY4_SCENE_ID?(exploration?"집 안에서 무엇을 먼저 확인할까?":day4Prompts[day4Stage]??"어떤 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY5_SCENE_ID?(day5Prompts[day5Stage]??"어떤 복귀 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY6_SCENE_ID?(day6Prompts[day6Stage]??"어떤 생활 전략을 선택할까?"):"어떻게 대답할까?";
+  const prompt=immersiveScene?.id===LOCKED_DAY4_SCENE_ID?(exploration?"집 안에서 무엇을 먼저 확인할까?":day4Prompts[day4Stage]??"어떤 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY5_SCENE_ID?(day5Prompts[day5Stage]??"어떤 복귀 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY6_SCENE_ID?(day6Prompts[day6Stage]??"어떤 생활 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY7_SCENE_ID?(day7Prompts[day7Stage]??"어떤 데이트 전략을 선택할까?"):"어떻게 대답할까?";
   layer.innerHTML=`<p class="choice-prompt">${prompt}</p>${options.map((option,index)=>`<button type="button" data-immersive-choice="${escapeHtml(option.id)}"><span>${exploration?"◇":String(index+1).padStart(2,"0")}</span><b>${escapeHtml(option.label)}</b></button>`).join("")}`;
   layer.classList.remove("hidden");
   layer.querySelector("button")?.focus();
@@ -653,7 +663,7 @@ function advanceCampaignChapter(completedSession) {
   return selectNextStoryScene(state);
 }
 function finishImmersiveScene() {
-  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;if(completedSession?.id===LOCKED_DAY1_SCENE_ID&&state.storyFlags?.day1QuestionStrategy)state.pendingStoryId=null;if(completedSession?.id===LOCKED_DAY2_SCENE_ID&&state.storyFlags?.day2ContactStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY2_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY2_SCENE_ID,getLockedDay2LegacyChoice(state));state.storyFlags.day2RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY4_SCENE_ID&&state.storyFlags?.day4SharingStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY4_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY4_SCENE_ID,getLockedDay4LegacyChoice(state));state.storyFlags.day4RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY5_SCENE_ID&&state.storyFlags?.day5ReturnStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY5_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY5_SCENE_ID,getLockedDay5LegacyChoice(state));state.storyFlags.day5RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY6_SCENE_ID&&state.storyFlags?.day6DatePlan&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY6_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY6_SCENE_ID,getLockedDay6LegacyChoice(state));state.storyFlags.day6RuntimeComplete=true;state.pendingStoryId=null;}const nextCampaignScene=advanceCampaignChapter(completedSession);eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
+  if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;const completedSession=immersiveScene;if(completedSession?.id===LOCKED_DAY1_SCENE_ID&&state.storyFlags?.day1QuestionStrategy)state.pendingStoryId=null;if(completedSession?.id===LOCKED_DAY2_SCENE_ID&&state.storyFlags?.day2ContactStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY2_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY2_SCENE_ID,getLockedDay2LegacyChoice(state));state.storyFlags.day2RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY4_SCENE_ID&&state.storyFlags?.day4SharingStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY4_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY4_SCENE_ID,getLockedDay4LegacyChoice(state));state.storyFlags.day4RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY5_SCENE_ID&&state.storyFlags?.day5ReturnStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY5_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY5_SCENE_ID,getLockedDay5LegacyChoice(state));state.storyFlags.day5RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY6_SCENE_ID&&state.storyFlags?.day6DatePlan&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY6_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY6_SCENE_ID,getLockedDay6LegacyChoice(state));state.storyFlags.day6RuntimeComplete=true;state.pendingStoryId=null;}if(completedSession?.id===LOCKED_DAY7_SCENE_ID&&state.storyFlags?.day7MemoryStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY7_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY7_SCENE_ID,getLockedDay7LegacyChoice(state));state.storyFlags.day7RuntimeComplete=true;state.pendingStoryId=null;}const nextCampaignScene=advanceCampaignChapter(completedSession);eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
   $("#visualNovelStage").classList.remove("narration-mode","location-event-scene");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
   SaveManager.save(state);render();$(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true);const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);else if(nextCampaignScene)setTimeout(()=>openStoryScene(nextCampaignScene),0);
 }

@@ -313,6 +313,16 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"date_revisit_with_opt_out",label:"과거 장소를 다시 가되 불편하면 즉시 바꾼다",response:"기억을 시험하지 않고 언제든 장소를 바꿀 수 있는 재방문을 약속했다.",memory:"과거 장소를 기억 시험 없이 다시 가기로 함"},
     {id:"date_alternate_choices",label:"이동·식사·활동을 번갈아 고른다",response:"서로 정답을 맞히지 않고 한 번씩 직접 고르는 데이트를 약속했다.",memory:"데이트의 선택권을 번갈아 갖기로 함"}
   ]
+},{
+  id:"m30-day7-first-present-date",arc:"오늘부터 우리의 데이트",window:[7,7],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day6-neighborhood"},
+  title:"오늘부터 우리의 데이트",speaker:"하은",message:"DAY 6에 정한 방식으로 첫 현재형 데이트를 시작한다. 계획을 지키는 것보다 함께 바꾸는 규칙을 지키기로 했다.",
+  chapterType:"relationship/daily-life-hybrid",targetPlaytimeMinutes:[9,13],timeWindow:"late-morning-to-late-afternoon",participants:["protagonist","haeun","bookshop-owner","gallery-staff"],previousChoiceReferences:["m30-day6-neighborhood"],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
+  choices:[
+    {id:"date7_record_shared_photo",label:"고른 물건과 손만 나오게 사진을 남기고 함께 제목을 붙인다",response:"오늘 함께 고른 물건과 손만 담은 사진에 둘만의 제목을 붙였다.",memory:"첫 현재형 데이트를 함께 고른 물건의 사진으로 남김"},
+    {id:"date7_record_two_sentences",label:"각자 기억하고 싶은 한 문장을 써서 서로 바꿔 읽는다",response:"서로의 한 문장을 바꿔 읽으며 오늘의 기억을 과거와 분리해 남겼다.",memory:"첫 현재형 데이트를 서로 쓴 두 문장으로 남김"},
+    {id:"date7_record_next_rule",label:"오늘 잘된 변경 규칙을 다음 데이트의 공동 규칙으로 저장한다",response:"계획은 함께 세우고 변경은 실패로 세지 않는다는 규칙을 저장했다.",memory:"첫 현재형 데이트의 변경 원칙을 다음 공동 규칙으로 남김"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [
