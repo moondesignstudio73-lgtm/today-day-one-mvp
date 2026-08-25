@@ -333,6 +333,16 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"errand8_explain_decision_log",label:"관찰·가능성·확인·선택 순서로 판단 기록을 설명한다",response:"결과보다 판단 순서를 설명해 기억 공백 속에서도 사용할 수 있는 생활 기준을 공유했다.",memory:"혼자 처리한 심부름의 판단 과정을 현재 기록으로 남김"},
     {id:"errand8_set_next_solo_boundary",label:"오늘의 예외를 정리하고 다음 혼자 외출의 경계를 합의한다",response:"혼자 처리할 일과 함께 확인할 일, 변경 시 연락할 조건을 다음 외출 규칙으로 저장했다.",memory:"다음 혼자 외출의 연락·공유 경계를 합의함"}
   ]
+},{
+  id:"m30-day9-second-office-adaptation",arc:"지금의 자리에서",window:[9,9],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day8-independent-errand"},
+  title:"지금의 자리에서",speaker:"윤서진",message:"90분의 현재 업무 범위 안에서 자료 주인·책임자·중단 기준을 확인하고 다음 방문에도 반복 가능한 복귀 절차를 만든다.",
+  chapterType:"daily-life/work-return-hybrid",targetPlaytimeMinutes:[9,13],timeWindow:"morning",participants:["protagonist","haeun","minho","seojin","team-lead","junior"],previousChoiceReferences:["m30-day5-work-return","m30-day8-independent-errand"],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing"},
+  choices:[
+    {id:"office9_debrief_name_limits",label:"막힌 지점과 불편했던 순간을 먼저 공개해 다음 제한을 조정한다",response:"불편과 한계를 숨기지 않고 다음 방문의 화면·요청 단위를 줄였다.",memory:"두 번째 직장 적응에서 현재 한계를 공개하고 다음 제한을 조정함"},
+    {id:"office9_debrief_write_protocol",label:"책임 분리 절차와 다음 3시간 블록의 평가 기준을 문서화한다",response:"자료 주인·되돌릴 수 있는 기여·책임자 승인의 순서를 다음 업무 기준으로 남겼다.",memory:"두 번째 직장 적응의 책임 분리 절차를 문서화함"},
+    {id:"office9_debrief_targeted_feedback",label:"서진에게 업무 판단 하나, 민호에게 팀 상호작용 하나만 묻는다",response:"업무 판단과 팀 상호작용의 평가자를 나눠 구체적인 피드백만 받았다.",memory:"서진과 민호에게 서로 다른 현재형 피드백을 요청함"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [
