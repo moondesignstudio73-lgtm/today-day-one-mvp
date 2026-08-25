@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="styles.css?v=71">
+  <link rel="stylesheet" href="styles.css?v=72">
   <link rel="preload" as="image" href="assets/accessories/lavender-ribbon-star-pin.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-date-outfit-calm-2d.png">
   <link rel="preload" as="image" href="assets/characters/girlfriend-phone-calm-2d.png">
@@ -57,20 +57,22 @@
 
     <section id="introScreen" class="intro-screen">
       <div class="intro-copy">
-        <span class="eyebrow">30 DAYS · 1 LIFE · YOUR CHOICE</span>
-        <h1>사랑도, 돈도,<br><em>내가 선택하는 삶.</em></h1>
-        <p>정답 없는 연애가 오늘 시작된다. 30일 동안 일하고, 사랑하고, 흔들리며 당신만의 이야기를 만들어 보세요.</p>
-        <button id="startButton" class="primary-button" type="button">우리의 첫날 시작하기 <span>→</span></button>
-        <div class="intro-notes"><span>◇ 매번 달라지는 연인</span><span>◇ 19가지 엔딩</span><span>◇ 선택 기반 시뮬레이션</span></div>
+        <span class="eyebrow">A 30-DAY ROMANCE &amp; LIFE SIMULATION</span>
+        <h1><span>오늘부터</span><em>1일</em></h1>
+        <p class="intro-question">오늘, 어떤 이야기를 시작할까요?</p>
+        <div class="title-menu" aria-label="타이틀 메뉴">
+          <button id="startButton" class="primary-button" type="button">게임 시작 <span>→</span></button>
+          <button id="titleContinueButton" class="title-link" type="button">CONTINUE</button>
+          <button id="titleSettingsButton" class="title-link" type="button">SETTINGS</button>
+        </div>
+        <p class="title-footnote">THIRTY DAYS · ONE LIFE · YOUR CHOICE</p>
       </div>
       <div class="intro-art" aria-hidden="true">
         <div class="character-stage-intro">
           <div class="intro-scene-glow"></div>
           <img class="intro-standing" src="assets/characters/girlfriend-standing-2d.png?v=9" alt="">
-          <div class="intro-dialogue-preview"><span>새로운 인연</span><strong>“오늘부터, 우리 이야기 시작할래?”</strong></div>
+          <div class="intro-dialogue-preview"><span>DAY 01</span><strong>“우리의 첫날을 기억해 줘.”</strong></div>
         </div>
-        <div class="floating-card card-love"><small>호감도</small><strong>+24 ♥</strong></div>
-        <div class="floating-card card-money"><small>이번 달 자산</small><strong>₩ 1,200,000</strong></div>
       </div>
     </section>
 
