@@ -62,6 +62,7 @@ document.documentElement.classList.toggle("touch-device",touchDevice);
 
 let state;
 let onboarding = null;
+let titleTransitioning = false;
 const INTRO_VIDEO_PLAYLIST = ["assets/video/intro.mp4", "assets/video/intro2.mp4"];
 let introVideoIndex = 0;
 const sound = new SoundManager();
@@ -604,6 +605,8 @@ function markScreenArrival(element){if(!element)return;element.classList.remove(
 
 function beginOnboarding() {
   onboarding = { step:1, mode:null, partner:null, girlfriendTraitsReady:false, girlfriendJobReady:false, playerArchetype:null, playerName:"", playerJob:null, previewState:null };
+  document.body.classList.remove("title-ui");
+  document.body.classList.add("onboarding-ui","mode-select-stage");
   $("#introScreen").classList.add("hidden");
   $("#onboardingScreen").classList.remove("hidden");
   renderModeSetup();
@@ -611,9 +614,10 @@ function beginOnboarding() {
 }
 
 function renderModeSetup() {
+  document.body.classList.add("mode-select-stage");
   setOnboardingProgress(1);
   const modes=[GAME_MODES.FREE_ROMANCE,GAME_MODES.MARRIAGE_30].map(getGameModeConfig);
-  $("#onboardingContent").innerHTML=`<header class="setup-heading mode-heading"><span>MODE SELECT</span><h1>어떤 이야기를 시작할까요?</h1><p>같은 30일, 전혀 다른 방식으로 살아갑니다.</p></header><div class="mode-select-grid">${modes.map(mode=>{const story=mode.kind==="story";return `<button class="mode-select-card ${story?"story-mode-card":"free-mode-card"}" data-game-mode="${mode.id}" type="button"><span class="mode-card-image" style="--mode-image:url('${story?"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png":"assets/maps/gangnam-25d.jpg"}')"><img src="${story?"assets/characters/day1/haeun/poses/haeun-pose-standing-bedside-restraint-2d.png":"assets/characters/girlfriend-standing-smile-2d.png"}" alt=""></span><span class="mode-card-copy"><small>${escapeHtml(mode.label)}</small><strong>${story?`《${escapeHtml(mode.title)}》`:escapeHtml(mode.title)}</strong><span>${story?"기억을 잃은 나와 30일 뒤 결혼한다는 여자친구. 감춰진 기억을 따라가는 로맨스 미스터리.":"직업도, 사랑도, 돈도, 인간관계도. 원하는 삶과 관계를 직접 만들어 보세요."}</span><em>${story?"기억상실 · 로맨스 · 미스터리 · 선택형 스토리":"연애 · 직장 · 자산 · 쇼핑 · 인맥 · 자유 선택"}</em><b>${story?"이야기 시작":"자유롭게 시작"} →</b></span></button>`;}).join("")}</div>`;
+  $("#onboardingContent").innerHTML=`<header class="setup-heading mode-heading"><span>MODE SELECT</span><h1>모드 선택</h1><p>플레이할 모드를 선택해주세요.</p></header><div class="mode-select-grid">${modes.map(mode=>{const story=mode.kind==="story";const tags=story?["기억상실","로맨스","미스터리","선택형 스토리"]:["연애","직장","자산","쇼핑","인맥","자유"];return `<button class="mode-select-card ${story?"story-mode-card":"free-mode-card"}" data-game-mode="${mode.id}" type="button"><span class="mode-card-image" style="--mode-image:url('${story?"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png":"assets/maps/gangnam-25d.jpg"}')"><img src="${story?"assets/characters/day1/haeun/poses/haeun-pose-standing-bedside-restraint-2d.png":"assets/characters/girlfriend-standing-smile-2d.png"}" alt=""></span><span class="mode-card-copy"><small>${escapeHtml(mode.label)}</small><strong>《${escapeHtml(mode.title)}》</strong><span>${story?"기억을 잃은 나와 30일 뒤 결혼한다는 여자친구.<br>감춰진 기억을 따라가는 로맨스 미스터리.":"직업도, 사랑도, 돈도, 인간관계도.<br>원하는 삶과 관계를 직접 만들어 보세요."}</span><em>${tags.map(tag=>`<i>${tag}</i>`).join("")}</em><b>${story?"스토리 시작하기":"자유롭게 시작하기"} <span>→</span></b></span></button>`;}).join("")}</div>`;
   document.querySelectorAll("[data-game-mode]").forEach(button=>button.addEventListener("click",()=>{
     onboarding.mode=button.dataset.gameMode;
     const config=getGameModeConfig(onboarding.mode);
@@ -623,6 +627,7 @@ function renderModeSetup() {
 }
 
 function renderGirlfriendSetup() {
+  document.body.classList.remove("mode-select-stage");
   onboarding.step=2; setOnboardingProgress(2);
   const candidates = HEROINE_PROFILES.slice(0,3);
   $("#onboardingContent").innerHTML = `
@@ -658,6 +663,7 @@ function showPremiumConfirmation(archetype) {
 }
 
 function renderPlayerSetup() {
+  document.body.classList.remove("mode-select-stage");
   onboarding.step=3; setOnboardingProgress(3);
   $("#onboardingContent").innerHTML=`
     <header class="setup-heading"><span>PLAYER SETUP</span><h1>나의 외모 선택</h1><p>외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다.</p></header>
@@ -672,6 +678,7 @@ function renderPlayerSetup() {
 }
 
 function renderSetupSummary() {
+  document.body.classList.remove("mode-select-stage");
   onboarding.step=4; setOnboardingProgress(4);
   const player=createPlayerProfile(onboarding.playerArchetype,onboarding.playerName);
   onboarding.previewState=createInitialState(onboarding.partner,Math.random,{mode:onboarding.mode,player,job:onboarding.playerJob});
@@ -706,7 +713,7 @@ function playNextIntroVideo() {
 
 function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
 function finishOnboarding() { state=onboarding.previewState; SaveManager.save(state); showGame(); }
-function startGame() { beginOnboarding(); }
+function startGame() { if(titleTransitioning)return;titleTransitioning=true;$("#startButton").disabled=true;beginOnboarding(); }
 function showGame() { requestInitialFullscreen(); state.actionHistory ??= []; $("#introScreen").classList.add("hidden"); $("#onboardingScreen").classList.add("hidden"); $("#storyIntroScreen").classList.add("hidden"); $("#gameScreen").classList.remove("hidden"); markScreenArrival($("#gameScreen")); $("#menuButton").classList.remove("hidden"); $("#fullscreenButton").classList.remove("hidden"); $(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true); $("#tipToolsButton").classList.remove("hidden"); $("#loadButton").classList.add("hidden"); state.settings??={};state.settings.theaterMode=true;localStorage.setItem(THEATER_SETTING_KEY,"true");document.body.classList.add("theater-mode");renderAutoButton();renderFullscreenButtons();render();setTimeout(()=>{restoreEventCheckpoint();if(!state.eventRuntime?.activeEvent){const story=selectNextStoryScene(state);if(isCampaignPrologueStory(story?.id))openStoryScene(story);}},0); }
 function money(value) { return `₩ ${Math.round(value).toLocaleString("ko-KR")}`; }
 function outfitImageUrl(item) { return item?.heroineId==="haeun"&&item?.productImage?`${item.productImage}?v=8`:item?.productImage??""; }
