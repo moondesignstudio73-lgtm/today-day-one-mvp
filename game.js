@@ -703,6 +703,12 @@ function getTodayLogs(){return (state?.logs??[]).filter(entry=>getLogDay(entry)=
 
 function render() {
   const p = state.partner, phase = phases[state.phase];
+  const storyCampaign=state.scenario?.enabled===true;
+  document.body.classList.toggle("campaign-story-mode",storyCampaign);
+  document.body.classList.toggle("campaign-free-mode",!storyCampaign);
+  $("#gameScreen").classList.toggle("campaign-story-mode",storyCampaign);
+  $("#gameScreen").classList.toggle("campaign-free-mode",!storyCampaign);
+  document.body.dataset.gameMode=storyCampaign?"story":"free";
   document.body.dataset.heroine=p.heroineId;document.documentElement.style.setProperty("--heroine-accent",p.uiAccent??"#ff91b5");
   $("#dayLabel").textContent = `${state.day} · ${getWeekdayName(state.day)}`; $("#phaseIcon").textContent = phase.icon;
   const mode=getGameModeConfig(state.gameMode),modeBadge=$("#gameModeBadge");modeBadge.textContent=mode.title;modeBadge.classList.remove("hidden");modeBadge.dataset.mode=mode.id;

@@ -25,6 +25,25 @@
 @media(max-width:900px){.intro-screen{grid-template-columns:1fr;padding-top:28px}.intro-copy{padding:20px}.intro-art{min-height:500px}.mode-select-card{grid-template-columns:1fr}.mode-card-image{min-height:300px}.mode-card-image:after{background:linear-gradient(180deg,transparent 55%,#191721)}.free-mode-card .mode-card-image:after{background:linear-gradient(180deg,transparent 55%,#f8f3f0)}}
 @media(max-width:560px){.intro-copy h1{font-size:58px}.title-menu{align-items:flex-start;flex-direction:column}.title-menu .primary-button{width:min(260px,90%)}.intro-art{min-height:440px}.character-stage-intro{min-height:420px;box-shadow:14px 14px 0 #eee2e8}.mode-select-card{min-height:0}.mode-card-image{min-height:240px}.mode-card-copy{padding:28px 24px}}
 
+/* Campaign identity: STORY keeps the scene dominant; FREE retains the life dashboard. */
+body.campaign-story-mode:not(.ui-night-mode) .game-screen{grid-template-columns:1fr;width:100%;max-width:none;padding:0}
+body.campaign-story-mode:not(.ui-night-mode) .profile-panel,
+body.campaign-story-mode:not(.ui-night-mode) .life-panel,
+body.campaign-story-mode:not(.ui-night-mode) .girlfriend-warehouse-panel{display:none}
+body.campaign-story-mode:not(.ui-night-mode) .play-panel{grid-column:1;width:100%}
+body.campaign-story-mode:not(.ui-night-mode) .vn-stage{min-height:calc(100dvh - 92px);border-radius:0}
+body.campaign-story-mode:not(.ui-night-mode) .vn-dialogue{right:4%;bottom:4%;left:4%;min-height:138px;padding:30px 120px 24px 30px}
+body.campaign-story-mode:not(.ui-night-mode) .vn-dialogue p{max-width:82%;font-size:19px;line-height:1.75}
+body.campaign-story-mode:not(.ui-night-mode) .top-actions>#inventoryButton,
+body.campaign-story-mode:not(.ui-night-mode) .top-actions>#shopButton,
+body.campaign-story-mode:not(.ui-night-mode) .top-actions>#financeButton,
+body.campaign-story-mode:not(.ui-night-mode) .top-actions>#careerButton,
+body.campaign-story-mode:not(.ui-night-mode) .top-actions>#peopleButton,
+body.campaign-story-mode:not(.ui-night-mode) .top-actions>#investmentButton{display:none!important}
+body.campaign-story-mode:not(.ui-night-mode) .game-tools-trigger{display:none!important}
+body.campaign-free-mode .game-screen{isolation:isolate}
+@media(max-width:760px){body.campaign-story-mode:not(.ui-night-mode) .vn-stage{min-height:calc(100dvh - 62px)}body.campaign-story-mode:not(.ui-night-mode) .vn-dialogue{right:10px;bottom:10px;left:10px;padding:24px 72px 19px 20px}body.campaign-story-mode:not(.ui-night-mode) .vn-dialogue p{max-width:none;font-size:16px}}
+
 body[data-heroine="yuna"] .vn-nameplate,body[data-heroine="yuna"] .story-toolbar button[aria-pressed="true"]{background:var(--heroine-accent,#ffca58);color:#4d3b12}body[data-heroine="yuna"] .vn-dialogue{border-color:#ffdc86;box-shadow:0 20px 70px #ffca5828}body[data-heroine="yuna"] .immersive-choices button:hover,body[data-heroine="yuna"] .immersive-choices button:focus-visible{border-color:#ffe39a;background:#81652cf2}body[data-heroine="yuna"] .story-quick-hud span{color:#ffe39a}
 * { box-sizing: border-box; }
 body { margin: 0; min-height: 100vh; color: var(--ink); background: #f7f2f2; font-family: "Gowun Dodum", sans-serif; overflow-x: hidden; }
