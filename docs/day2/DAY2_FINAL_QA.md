@@ -52,6 +52,6 @@
 - `tests/simulation.test.mjs`: 전체 회귀 PASS.
 - `node --check game.js`, `node --check src/day2-campaign-runtime.mjs`: PASS.
 
-## 최종 승인 대기
+## 사용자 최종 승인
 
-PHASE 23의 NEEDS FIX는 0개다. 사용자 최종 승인 전에는 PHASE 24 또는 `DAY 2 — COMPLETE`로 표시하지 않으며 DAY 3을 시작하지 않는다.
+2026-08-25 사용자가 최종 승인을 지시했다. PHASE 24와 `DAY 2 — COMPLETE`를 확정한다. DAY 3은 사용자가 명시적으로 시작할 때까지 진행하지 않는다.
