@@ -808,7 +808,7 @@ assert.equal(validateBgmTracks(),true);
 assert.equal(getBgmTrack("daily",0),BGM_TRACKS.daily[0]);
 assert.equal(getBgmTrack("daily",3),BGM_TRACKS.daily[1]);
 assert.equal(getBgmTrack("missing",0),"");
-const soundValues = new Map();
+const soundValues = new Map([[SOUND_SETTING_KEY,"off"]]);
 const soundStorage = { getItem:key => soundValues.get(key) ?? null, setItem:(key,value) => soundValues.set(key,value) };
 let soundStopped = 0;
 const fakeAudioContext = { currentTime:0, state:"running", destination:{}, createOscillator:()=>({type:"",frequency:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){},start(){},stop(){soundStopped+=1;}}), createGain:()=>({gain:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){}}) };

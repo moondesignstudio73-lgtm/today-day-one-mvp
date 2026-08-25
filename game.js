@@ -26,7 +26,7 @@ import { requestGirlfriendReply } from "./src/ai-chat-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs?v=2";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs?v=2";
 import { analyzePlayHistory } from "./src/ending-manager.mjs";
-import { SoundManager } from "./src/sound-manager.mjs?v=5";
+import { SoundManager } from "./src/sound-manager.mjs?v=6";
 import { DAY1_BGM_CUES } from "./src/day1-audio-data.mjs";
 import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs";
 import { DAY2_BGM_CUES } from "./src/day2-audio-data.mjs";
@@ -649,7 +649,7 @@ function renderModeSetup() {
   document.querySelectorAll("[data-game-mode]").forEach(button=>button.addEventListener("click",()=>{
     onboarding.mode=button.dataset.gameMode;
     const config=getGameModeConfig(onboarding.mode);
-    if(config.fixedPartnerId){onboarding.partner=createGirlfriendFromProfile(config.fixedPartnerId);onboarding.partner.age=23;onboarding.girlfriendTraitsReady=true;onboarding.girlfriendJobReady=true;renderPlayerSetup();}
+    if(config.fixedPartnerId){onboarding.partner=createGirlfriendFromProfile(config.fixedPartnerId);onboarding.partner.age=23;onboarding.girlfriendTraitsReady=true;onboarding.girlfriendJobReady=true;onboarding.playerArchetype="balanced";renderPlayerSetup();}
     else{onboarding.partner=null;onboarding.girlfriendTraitsReady=false;onboarding.girlfriendJobReady=false;renderGirlfriendSetup();}
   }));
 }
@@ -693,13 +693,20 @@ function showPremiumConfirmation(archetype) {
 function renderPlayerSetup() {
   document.body.classList.remove("mode-select-stage");
   onboarding.step=3; setOnboardingProgress(3);
+  const storyMode=getGameModeConfig(onboarding.mode).kind==="story";
+  if(storyMode)onboarding.playerArchetype="balanced";
   $("#onboardingContent").innerHTML=`
-    <header class="setup-heading"><span>PLAYER SETUP</span><h1>나의 외모 선택</h1><p>외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다.</p></header>
-    <div class="setup-card-grid player-select-grid">${PLAYER_ARCHETYPES.map((entry)=>`<button class="setup-character-card ${onboarding.playerArchetype===entry.id?"selected":""}" data-player="${entry.id}" type="button"><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.premium?" · PREMIUM":""}</strong><span>능력 ${entry.abilityRating} · 외모 ${entry.appearanceRating}</span><small>${entry.description}</small></button>`).join("")}</div>
-    <div class="player-input-panel"><label for="playerNameInput">내 이름 <small>최대 3글자 · 한글 또는 영문</small></label><div class="player-name-roll"><input id="playerNameInput" maxlength="3" value="${escapeHtml(onboarding.playerName)}" placeholder="이름" autocomplete="off" aria-describedby="playerNameNotice"><button id="rollPlayerName" type="button">내 이름 랜덤 선택</button></div><small id="playerNameNotice" class="player-name-notice" aria-live="polite"></small><div class="roll-row"><div><small>MY CAREER</small><b id="playerJobRoll">${onboarding.playerJob?escapeHtml(onboarding.playerJob.name):"버튼을 눌러 직업 선택"}</b></div><button id="rollPlayerJob" type="button">내 직업 랜덤 선택</button></div></div>
+    <header class="setup-heading"><span>PLAYER SETUP</span><h1>${storyMode?"이름과 직업 설정":"나의 외모 선택"}</h1><p>${storyMode?"STORY MODE의 주인공 외형은 고정됩니다. 이름과 직업만 선택해 주세요.":"외형과 이름, 직업은 게임의 능력치와 대사에 그대로 적용됩니다."}</p></header>
+    <div class="setup-card-grid player-select-grid ${storyMode?"story-player-locked":""}">${PLAYER_ARCHETYPES.map((entry)=>{const fixed=storyMode&&entry.id==="balanced",locked=storyMode&&!fixed;return `<button class="setup-character-card ${onboarding.playerArchetype===entry.id?"selected":""} ${locked?"story-locked":""}" data-player="${entry.id}" type="button" ${storyMode?'disabled aria-disabled="true"':""}><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.premium?" · PREMIUM":""}</strong><span>${fixed?"STORY MODE 고정":locked?"🔒 STORY MODE 잠금":`능력 ${entry.abilityRating} · 외모 ${entry.appearanceRating}`}</span><small>${locked?"FREE MODE에서 선택할 수 있습니다.":entry.description}</small></button>`;}).join("")}</div>
+    <div class="player-input-panel"><label for="playerNameInput">내 이름 <small>최대 3글자 · 한글 또는 영문</small></label><div class="player-name-roll"><input id="playerNameInput" value="${escapeHtml(onboarding.playerName)}" placeholder="이름" autocomplete="off" spellcheck="false" inputmode="text" aria-describedby="playerNameNotice"><button id="rollPlayerName" type="button">내 이름 랜덤 선택</button></div><small id="playerNameNotice" class="player-name-notice" aria-live="polite"></small><div class="roll-row"><div><small>MY CAREER</small><b id="playerJobRoll">${onboarding.playerJob?escapeHtml(onboarding.playerJob.name):"버튼을 눌러 직업 선택"}</b></div><button id="rollPlayerJob" type="button">내 직업 랜덤 선택</button></div></div>
     <button id="playerSetupNext" class="primary-button setup-next" type="button" ${onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob?"":"disabled"}>최종 결과 확인</button>`;
-  document.querySelectorAll("[data-player]").forEach((button)=>button.addEventListener("click",()=>{const archetype=PLAYER_ARCHETYPES.find((entry)=>entry.id===button.dataset.player);if(archetype.premium)showPremiumConfirmation(archetype);else selectPlayerArchetype(archetype.id);}));
-  $("#playerNameInput").addEventListener("input",(event)=>{const result=sanitizePlayerNameInput(event.target.value);onboarding.playerName=result.value;event.target.value=result.value;$("#playerNameNotice").textContent=result.reason;$("#playerNameNotice").classList.toggle("warning",Boolean(result.reason));$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);});
+  if(!storyMode)document.querySelectorAll("[data-player]").forEach((button)=>button.addEventListener("click",()=>{const archetype=PLAYER_ARCHETYPES.find((entry)=>entry.id===button.dataset.player);if(archetype.premium)showPremiumConfirmation(archetype);else selectPlayerArchetype(archetype.id);}));
+  const nameInput=$("#playerNameInput");
+  let composingName=false;
+  const commitPlayerName=()=>{const result=sanitizePlayerNameInput(nameInput.value);onboarding.playerName=result.value;nameInput.value=result.value;$("#playerNameNotice").textContent=result.reason;$("#playerNameNotice").classList.toggle("warning",Boolean(result.reason));$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);};
+  nameInput.addEventListener("compositionstart",()=>{composingName=true;});
+  nameInput.addEventListener("compositionend",()=>{composingName=false;commitPlayerName();});
+  nameInput.addEventListener("input",()=>{if(!composingName)commitPlayerName();});
   $("#rollPlayerName").addEventListener("click",()=>{onboarding.playerName=getRandomPlayerName(onboarding.playerName);$("#playerNameInput").value=onboarding.playerName;$("#playerNameNotice").textContent="200개 이름 중 하나를 선택했어요.";$("#playerNameNotice").classList.remove("warning");$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName&&onboarding.playerJob);});
   $("#rollPlayerJob").addEventListener("click",(event)=>runRoll(event.currentTarget,$("#playerJobRoll"),JOBS.map((job)=>job.name),()=>{onboarding.playerJob=generateJob();$("#playerSetupNext").disabled=!(onboarding.playerArchetype&&onboarding.playerName);return onboarding.playerJob.name;}));
   $("#playerSetupNext").addEventListener("click",renderSetupSummary);
