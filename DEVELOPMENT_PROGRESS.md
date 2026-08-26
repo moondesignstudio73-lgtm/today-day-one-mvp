@@ -705,3 +705,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 수정 뒤 DAY 13 잠금 장면 첫 내레이션, 선명한 배경·하은 스프라이트, console warning/error 0건을 재확인했다.
 - Node 문법, DAY 12 자유행동·시나리오·프레젠테이션·런타임·회귀, DAY 11/13 인접 런타임, DAY 2~30 자유행동 감사, 엔트리 모듈과 전체 시뮬레이션 회귀가 PASS했다.
 - 산출물: `docs/day12/DAY12_PLAYTHROUGH_QA.md`. 남은 관문은 커밋·origin push·동일 SHA gh-pages 배포와 공개 확인이다.
+
+# 2026-08-26 DAY 12 출시·공개 배포 완료
+
+- 검증 SHA `5d1e8e80589fa9bacea571d7590d88177f600ab8`을 기능 브랜치와 `gh-pages`에서 동일하게 확인했다.
+- GitHub Pages 두 Actions가 모두 `completed/success`이며 공개 게임의 `game.js?v=161`과 DAY 12 QA 문서의 `PLAYTHROUGH QA PASS`·`NEEDS FIX: 0`을 확인했다.
+- 사용자 미추적 원본 에셋 2종은 변경·추적하지 않았다.
+- DAY 12 전 출시 관문을 COMPLETE 처리했다. 다음 대상은 DAY 13 챕터 계약·Voice Profile·지식 장부와 완전 시나리오·내러티브 QA다.

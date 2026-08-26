@@ -2,7 +2,7 @@
 
 운영 원칙: 한 DAY의 시나리오 작성·내러티브 QA·런타임 적용·저장 복원·전체 회귀·커밋·푸시·배포 확인이 모두 끝난 뒤에만 다음 DAY를 시작한다.
 
-현재 대상: `DAY 12`
+현재 대상: `DAY 13`
 
 ## DAY 5
 
@@ -25,7 +25,7 @@
 - [x] DAY 9
 - [x] DAY 10
 - [x] DAY 11
-- [ ] DAY 12
+- [x] DAY 12
 - [ ] DAY 13
 - [ ] DAY 14
 - [ ] DAY 15
@@ -148,15 +148,35 @@
 - [x] 다단계 런타임·선택 상태·저장 복원 구현 감사
 - [x] 집중 테스트·전체 회귀
 - [x] 실제 브라우저 연속 플레이 QA
-- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+- [x] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 시나리오: `docs/day12/DAY12_SCENARIO_DRAFT_V1.md`
 자체 QA: `docs/day12/DAY12_SCENARIO_QA_V1.md`
 실제 플레이 QA: `docs/day12/DAY12_PLAYTHROUGH_QA.md`
 
+### DAY 13 세부 관문
+
+- [ ] 챕터 계약·Voice Profile·지식 장부
+- [ ] 완전한 플레이 가능 시나리오 초안
+- [ ] 자체 내러티브 QA·정적 계약 검사
+- [ ] 기존 에셋 감사·연출/오디오 매핑
+- [ ] 필요한 신규 자산 제작·이미지 QA
+- [ ] 다단계 런타임·선택 상태·저장 복원 구현 감사
+- [ ] 집중 테스트·전체 회귀
+- [ ] 실제 브라우저 연속 플레이 QA
+- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+
 ## 다음 작업
 
-DAY 12 브라우저 QA 수정·증적을 커밋하고 origin과 동일 SHA `gh-pages`에 배포한 뒤 공개 페이지를 확인한다.
+DAY 13의 기존 선반영 런타임과 DAY 12 최종 선택·후속 훅을 조사하고 챕터 계약·Voice Profile·지식 장부부터 시나리오·내러티브 QA 관문을 작성한다.
+
+### 2026-08-26 DAY 12 출시·공개 배포 완료
+
+- 검증 SHA `5d1e8e80589fa9bacea571d7590d88177f600ab8`이 기능 브랜치와 `gh-pages`에 동일하게 반영됐다.
+- `Deploy GitHub Pages`와 `pages build and deployment` 두 Actions가 모두 `completed/success`로 완료됐다.
+- 공개 게임은 `game.js?v=161`, 공개 `docs/day12/DAY12_PLAYTHROUGH_QA.md`는 `PLAYTHROUGH QA PASS`와 `NEEDS FIX: 0`을 반환했다.
+- DAY 12의 시나리오·에셋·이미지·런타임·저장·회귀·실제 브라우저·공개 배포 전 관문을 COMPLETE 처리했다.
+- 사전 승인에 따라 현재 대상을 DAY 13 챕터 계약·시나리오·내러티브 QA 관문으로 전환한다.
 
 ### 2026-08-26 DAY 12 실제 브라우저 연속 플레이 QA 기록
 
