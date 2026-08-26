@@ -606,3 +606,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 하은은 23세의 밝고 생활적인 톤을 유지하며 확신·회피·악역 코딩 없이 검증 규칙을 함께 적용한다. 잠금 프로필, 정체 반전, 사고 정보와 윤서진 양축은 변경하지 않는다.
 - 산출물: `docs/day11/DAY11_SCENARIO_DRAFT_V1.md`, `docs/day11/DAY11_SCENARIO_QA_V1.md`, `tests/day11-scenario.test.mjs`.
 - 다음 관문: DAY 11 기존 에셋 감사와 8개 Scene 연출·오디오 매핑.
+
+# 2026-08-26 DAY 11 기존 에셋·연출·오디오 관문
+
+- 기존 `home-morning`, `day2-home-entry`, `neighborhood-street-day`, `neighborhood-cafe-day`, `neighborhood-park-day` 배경과 하은 DAY 8 세이지 외출복을 원본 육안·기술 감사했다.
+- 5개 배경은 1672×941·16:9·RGB, 하은은 887×1774·RGBA이며 장면 시간대·생활 동선·UI 여백과 밝은 인상을 충족한다.
+- `src/day11-presentation-data.mjs`와 `tests/day11-presentation.test.mjs`에 8개 Scene 카메라·전환, `daily` BGM, 기존 생활 SFX, 공포·위기 음향 차단 계약을 추가했다.
+- 날짜 차이는 메모 근접 후 하은 중경으로만 보여 주고 공포 줌·비네트·글리치·경직 표정을 쓰지 않는다. 신규 아트 필요는 0종이다.
+- 산출물: `docs/day11/DAY11_ASSET_DIRECTION_AUDIO_AUDIT.md`. 다음 관문은 기존 자산 이미지 QA와 `assetStatus=ready` 전환이다.
