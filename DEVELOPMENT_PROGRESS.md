@@ -712,3 +712,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - GitHub Pages 두 Actions가 모두 `completed/success`이며 공개 게임의 `game.js?v=161`과 DAY 12 QA 문서의 `PLAYTHROUGH QA PASS`·`NEEDS FIX: 0`을 확인했다.
 - 사용자 미추적 원본 에셋 2종은 변경·추적하지 않았다.
 - DAY 12 전 출시 관문을 COMPLETE 처리했다. 다음 대상은 DAY 13 챕터 계약·Voice Profile·지식 장부와 완전 시나리오·내러티브 QA다.
+
+# 2026-08-26 DAY 13 챕터 계약·Voice Profile·지식 장부
+
+- `$marriage-30-narrative-director`와 `$marriage-30-chapter-story-writer`의 필수 참고자료를 적용해 DAY 13 계약 문서를 작성했다.
+- 선반영 `m30-day13-current-household-budget`의 3단계 선택·DAY 14 훅을 보존하면서 DAY 12 9개 선택의 고유 콜백, 정보 공개 예산, 8 Beat와 저장 복원 계약을 추가했다.
+- 하은은 23세의 밝고 생활적인 동거 파트너이며 과거 분담 기억을 현재 증거로 쓰지 않는다. 주인공은 예산 합의와 돈 이동 권한을 분리한다.
+- 신규 미스터리 단서는 0, 기존 `day11ScheduleNoteMismatch=unverified`, 윤서진 `AFFECTION`/`STATUS_INTEREST`, 투자 잠금은 불변이다.
+- 산출물: `docs/day13/DAY13_CHAPTER_CONTRACT_V1.md`, `tests/day13-contract.test.mjs`. 다음 관문은 8 Beat 완전 대본 초안이다.
