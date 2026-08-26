@@ -247,6 +247,10 @@ const DAY13_HOME_FULL_LINK_PROMPT=Object.freeze({
     {id:"receipt-by-consent",label:"각 공동 영수증을 새 동의가 있을 때만 첨부한다",preferenceTags:["EMPATHY","PLANNED"],effects:{trust:6,confidence:3,stress:-2},response:"공동 영수증도 항목별 새 동의 뒤에만 장부에 첨부했다.",flag:"context-day13-home-full-link-prompt:CONSENT",memory:"DAY 13 공동 장부에 영수증을 항목별 동의 후 첨부하기로 했다.",futureEventWeights:{romance:1.1,money:1.1}}
   ],futureEventWeights:{money:1.15,romance:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
 });
+const DAY14_HOME_SAVED_CARD_PROMPT=Object.freeze({
+  id:"context-day14-home-saved-card-prompt",title:"한 번에 결제하기",category:"shopping",categoryLabel:"스토리 공용 이벤트",hook:"쇼핑 앱이 다음 구매부터 확인 단계를 건너뛰도록 결제 수단 저장을 권했다.",message:"일반 쇼핑은 열렸지만 자동결제와 반복 구매 권한은 아직 합의하지 않았다.",question:"저장 결제 제안을 어떻게 처리할까?",allowedLocations:["home"],allowedPhases:["evening"],dayRange:[14,14],heroineIds:["haeun"],requiredFeatures:["finance","shop","basic-online-shopping","controlled-shopping-checkout"],requiredStoryFlags:["day14RuntimeComplete","day14CurrentChoiceSpendingCompleted"],cooldown:30,maxTriggerCount:1,probability:.35,priority:320,baseWeight:100,tensionLevel:"low",effects:{confidence:1},storyFlag:"context-day14-home-saved-card-prompt:COMPLETED",forbiddenFlags:["context-day14-home-saved-card-prompt:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",result:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",status:"ready"},presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},scenes:[{id:"context-day14-home-saved-card-prompt-scene",title:"한 번에 결제하기",backgroundId:"day2-home-entry",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"evening",timeOfDay:"evening",weather:"clear",dialogueTurns:[{type:"narration",speaker:"내레이션",text:"앱은 결제 수단을 저장하면 다음부터 한 번의 터치로 구매할 수 있다고 안내했다."},{type:"dialogue",speaker:"하은",text:"편해지는 대신 오늘 만든 소유권과 한도 확인 단계가 사라지겠네.",expressionId:"calm"},{type:"dialogue",speaker:"나",text:"매번 품목과 예산 칸을 확인해야 하니까 저장하지 않을게."},{type:"dialogue",speaker:"하은",text:"쇼핑이 가능하다는 것과 빠르게 결제해야 한다는 건 다르니까.",expressionId:"smile"},{type:"narration",speaker:"내레이션",text:"결제 단계는 불편함이 아니라 소비의 소유권과 동의를 다시 확인하는 안전장치로 남았다."}]}],choices:[{id:"decline-saved-card",label:"결제 수단 저장을 거절하고 매번 소유권을 확인한다",preferenceTags:["BOUNDARY","PRACTICAL"],effects:{confidence:5,stress:-3},response:"결제 수단을 저장하지 않고 구매마다 예산과 소유권을 확인하기로 했다.",flag:"context-day14-home-saved-card-prompt:DECLINED",memory:"DAY 14 쇼핑 앱의 저장 결제를 거절했다.",futureEventWeights:{shopping:1.15}},{id:"save-address-only",label:"배송 주소만 확인하고 결제 정보는 저장하지 않는다",preferenceTags:["LOGICAL","PLANNED"],effects:{confidence:4,trust:2,stress:-2},response:"현재 배송 주소만 저장하고 결제 정보와 자동 구매 권한은 닫아 뒀다.",flag:"context-day14-home-saved-card-prompt:ADDRESS_ONLY",memory:"DAY 14 배송 주소만 확인하고 결제 정보는 저장하지 않았다.",futureEventWeights:{shopping:1.1}}],futureEventWeights:{shopping:1.15},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
+});
 
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
@@ -263,7 +267,8 @@ export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   DAY10_HOME_THREE_SCORE_REPORT,
   DAY11_HOME_PROTECTED_BUFFER,
   DAY12_HOME_INVESTMENT_PROMPT_BOUNDARY,
-  DAY13_HOME_FULL_LINK_PROMPT
+  DAY13_HOME_FULL_LINK_PROMPT,
+  DAY14_HOME_SAVED_CARD_PROMPT
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);

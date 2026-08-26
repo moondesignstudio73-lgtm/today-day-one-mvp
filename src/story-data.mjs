@@ -381,6 +381,9 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"budget13_review_receipt_consent",label:"영수증은 해당 항목을 함께 확인할 때만 연다",response:"공동 항목의 증빙 확인이 개인 소비 전체를 볼 권한이 되지 않게 했다.",memory:"공동 영수증은 항목별 동의가 있을 때만 열기로 함"},
     {id:"budget13_review_weekly_changes",label:"주 1회 변경된 항목만 함께 검토한다",response:"가계 예산을 상시 감시가 아닌 정해진 주기의 변경 기록으로 만들었다.",memory:"가계 예산의 변경 항목을 주 1회만 함께 검토하기로 함"}
   ]
+},{
+  id:"m30-day14-current-choice-spending",arc:"지금 고르는 것",window:[14,14],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day13-current-household-budget"},title:"지금 고르는 것",speaker:"하은",message:"현재 예산 안에서 개인·공동·선물 소비의 소유권과 동의를 분리하고 안전한 일반 쇼핑 범위를 연다.",chapterType:"daily-life/finance/relationship-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day13-current-household-budget"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
+  choices:[{id:"spend14_consent_ask_first",label:"선물은 품목·가격 범위를 먼저 물은 뒤에만 산다",response:"선물을 비밀 지출이 아니라 동의와 선택이 함께 있는 소비로 정했다.",memory:"선물의 품목과 가격 범위를 먼저 확인하기로 함"},{id:"spend14_consent_wishlist",label:"서로의 현재 위시리스트를 각자 수정할 수 있게 만든다",response:"선물 후보를 변할 수 있고 의무가 아닌 현재 취향 기록으로 만들었다.",memory:"각자 수정 가능한 현재 위시리스트를 만듦"},{id:"spend14_consent_no_surprise",label:"오늘은 선물을 사지 않고 필요한 것만 기록한다",response:"사지 않는 선택을 애정 부족으로 세지 않는 선물 경계를 만들었다.",memory:"선물을 사지 않고 필요한 항목만 기록함"}]
 }];
 
 const STANDARD_STORY_SCENES = [

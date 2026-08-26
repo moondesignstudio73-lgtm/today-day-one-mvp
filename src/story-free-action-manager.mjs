@@ -1,6 +1,6 @@
 import { applyEffects } from "./game-core.mjs?v=9";
 import { createDaySnapshot, getDailyReport } from "./night-manager.mjs?v=2";
-import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=13";
+import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=14";
 
 export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   1:Object.freeze([Object.freeze({
@@ -66,6 +66,9 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   13:Object.freeze([Object.freeze({
     id:"day13-home-evening",storySceneId:"m30-day13-current-household-budget",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,
     title:"EVENING · 나의 집",description:"현재 가계 예산의 소유권·부담·검토 범위를 합의했다. 공동 장부나 다음 소비 준비 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 14, 현재의 선택 소비로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
+  })]),
+  14:Object.freeze([Object.freeze({
+    id:"day14-home-evening",storySceneId:"m30-day14-current-choice-spending",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,title:"EVENING · 나의 집",description:"소액 선택 소비와 선물 동의 규칙을 확인했다. 구매 기록이나 다음 여가 계획 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 15, 현재의 여가 데이트로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
   })])
 });
 
@@ -172,6 +175,13 @@ export const DAY13_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"prepare-current-choice-spending",icon:"▧",title:"DAY 14 선택 소비 범위를 준비한다",description:"예산 안에서 각자 선택할 수 있는 소액 한도와 확인 기준만 적는다.",effects:{confidence:4,energy:-2},scenarioEffects:{investigation:2},flag:"day13_free_prepare_spending",requiresFlag:"day14CurrentChoiceSpendingPending",summary:"다음 날의 선택 소비 한도와 소유권 기준만 준비했다."}),
   Object.freeze({id:"rest-after-budget-agreement",icon:"☾",title:"장부를 닫고 쉰다",description:"예산을 만들었다는 이유로 결제나 추가 계정 연결을 하지 않는다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day13_recovery_rest",summary:"가계 예산 합의 뒤 돈을 움직이지 않고 충분히 쉬었다."})
 ]);
+export const DAY14_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"file-current-choice-purchase",icon:"▧",title:"오늘의 선택 소비를 기록한다",description:"품목·현재 선택 이유·소유자·반품 기한을 한 건만 저장한다.",effects:{confidence:5,energy:-2,stress:-2},scenarioEffects:{investigation:2},flag:"day14_free_file_purchase",requiresAction:"current-choice-spending",summary:"오늘 직접 고른 한 품목의 현재 선택 근거를 기록했다."}),
+  Object.freeze({id:"save-controlled-checkout",icon:"✓",title:"안전 결제 규칙을 저장한다",description:"한 품목·예산 칸 지정·자동결제 금지 조건을 쇼핑 설정에 적용한다.",effects:{confidence:5,energy:-2},scenarioEffects:{},flag:"day14_free_checkout_rule",requiresAction:"controlled-shopping-checkout",summary:"한도와 소유권을 확인하는 안전 결제 규칙을 저장했다."}),
+  Object.freeze({id:"record-gift-consent-boundary",icon:"♥",title:"선물 동의 범위를 기록한다",description:"품목·가격 범위·거절권과 변경 가능한 위시리스트 규칙을 남긴다.",effects:{trust:6,affection:3,energy:-2,stress:-2},scenarioEffects:{haeunTrust:2,haeunAffection:1},flag:"day14_free_gift_boundary",requiresAction:"gift-consent-boundary",summary:"선물이 애정의 의무가 되지 않도록 동의 범위를 기록했다."}),
+  Object.freeze({id:"prepare-current-leisure-date",icon:"◇",title:"DAY 15 여가 데이트 범위를 준비한다",description:"예산·이동·회복 시간 안에서 각자 고를 활동 후보만 적는다.",effects:{affection:2,confidence:4,energy:-2},scenarioEffects:{haeunAffection:1},flag:"day14_free_prepare_date",requiresFlag:"day15CurrentLeisureDatePending",summary:"다음 여가 데이트의 선택권·예산·중단 기준을 준비했다."}),
+  Object.freeze({id:"rest-after-choice-spending",icon:"☾",title:"쇼핑 앱을 닫고 쉰다",description:"한도를 남은 구매 허가로 해석하지 않고 추가 소비 없이 쉰다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day14_recovery_rest",summary:"오늘의 한 품목에서 멈추고 추가 쇼핑 없이 충분히 쉬었다."})
+]);
 
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
@@ -182,7 +192,7 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"job",label:"직장",reason:"단계적 복귀 범위가 아직 합의되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -251,5 +261,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS,...DAY5_OFFICE_ACTIONS,...DAY6_HOME_ACTIONS,...DAY7_HOME_ACTIONS,...DAY8_HOME_ACTIONS,...DAY9_HOME_ACTIONS,...DAY10_HOME_ACTIONS,...DAY11_HOME_ACTIONS,...DAY12_HOME_ACTIONS,...DAY13_HOME_ACTIONS];return [1,2,3,4,5,6,7,8,9,10,11,12,13].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS,...DAY5_OFFICE_ACTIONS,...DAY6_HOME_ACTIONS,...DAY7_HOME_ACTIONS,...DAY8_HOME_ACTIONS,...DAY9_HOME_ACTIONS,...DAY10_HOME_ACTIONS,...DAY11_HOME_ACTIONS,...DAY12_HOME_ACTIONS,...DAY13_HOME_ACTIONS,...DAY14_HOME_ACTIONS];return [1,2,3,4,5,6,7,8,9,10,11,12,13,14].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }
