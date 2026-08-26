@@ -1,4 +1,4 @@
-import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs?v=2";
+import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs?v=3";
 import { DAY12_PRESENTATION_SCENES } from "./day12-presentation-data.mjs";
 
 const ID="m30-day12-current-account-review";
@@ -67,12 +67,12 @@ const segment3=state=>[
   ...accessReaction(state.storyFlags?.day12AccessStrategy),...scene("S08_CURRENT_OWNER","SCENE 08 · 현재 생활비 장부"),enter("girlfriend","smile"),n("현재 잔액과 공식 명세, 확인된 고정 생활비가 읽기 전용 장부에 저장됐다. 송금·투자·공동 자산 메뉴는 계속 잠겨 있었다."),
   d("하은","돈을 찾은 날이 아니라 돈을 확인하는 규칙을 만든 날이네.","smile"),d("나","다음 판단도 소유권과 출처를 확인한 뒤에만 열 거야."),
   n("기본 금융 확인은 현재 생활을 운영하는 도구로 복구됐지만, 위험을 감수하거나 관계의 자산을 정하는 권한까지 자동으로 따라오지는 않았다."),
-  {type:"transition",style:"fade",label:"DAY 12 END",backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing",bgmId:"daily"},{type:"sceneEnd"}
+  {type:"transition",style:"fade",label:"DAY 12 END",backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day12,expressionId:"smile",poseId:"standing",bgmId:"daily"},{type:"sceneEnd"}
 ];
 
 function addCollection(state,key,...ids){if(!state.scenario?.enabled||!Array.isArray(state.scenario[key]))return;state.scenario[key]=[...new Set([...state.scenario[key],...ids])];}
 export function getLockedDay12Segment(state,stage=state.storyFlags?.day12RuntimeStage??0){if(stage===0)return segment0(state);if(stage===1)return segment1(state);if(stage===2)return segment2(state);return segment3(state);}
-export function getLockedDay12ResumePresentation(state){const stage=state.storyFlags?.day12RuntimeStage??0;if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"};if(stage===1)return {backgroundId:"day2-home-entry",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"phone"};if(stage===2)return {backgroundId:"neighborhood-cafe-day",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"};return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"};}
+export function getLockedDay12ResumePresentation(state){const stage=state.storyFlags?.day12RuntimeStage??0;if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day12,expressionId:"calm",poseId:"standing"};if(stage===1)return {backgroundId:"day2-home-entry",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day12,expressionId:"calm",poseId:"phone"};if(stage===2)return {backgroundId:"neighborhood-cafe-day",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day12,expressionId:"calm",poseId:"standing"};return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day12,expressionId:"smile",poseId:"standing"};}
 export function applyLockedDay12ChoiceState(state,id){state.storyFlags??={};
   if(DAY12_VERIFY_CHOICES.some(item=>item.id===id)){state.storyFlags.day12VerifyStrategy=id;state.storyFlags.day12RuntimeStage=1;state.storyFlags[id]=true;addCollection(state,"unlockedActions","verified-current-account");return {stage:1};}
   if(DAY12_EXPENSE_CHOICES.some(item=>item.id===id)){state.storyFlags.day12ExpenseStrategy=id;state.storyFlags.day12RuntimeStage=2;state.storyFlags[id]=true;addCollection(state,"unlockedActions","verified-living-expenses");return {stage:2};}

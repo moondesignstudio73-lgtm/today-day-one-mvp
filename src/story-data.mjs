@@ -1,6 +1,6 @@
 import { HIDDEN_ROUTE_SCENES } from "./hidden-route-data.mjs";
 import { HEROINE_STORY_SCENES } from "./heroine-data.mjs";
-import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs?v=2";
+import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs?v=3";
 
 export const MARRIAGE_30_STORY_SCENES = [{
   id:"m30-day1-hospital-awakening",arc:"잃어버린 1년",window:[1,1],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],
@@ -367,7 +367,7 @@ export const MARRIAGE_30_STORY_SCENES = [{
   id:"m30-day12-current-account-review",arc:"현재 계정의 주인",window:[12,12],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day11-current-life-plan"},
   title:"현재 계정의 주인",speaker:"하은",message:"공식 명의·현재 명세·생활비 소유권만 확인하고 기본 금융 확인과 투자 판단의 권한을 분리한다.",
   chapterType:"daily-life/finance/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day11-current-life-plan"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day12,expressionId:"calm",poseId:"standing"},
   choices:[
     {id:"account12_access_read_only",label:"잔액·명세·고정 생활비만 읽기 전용으로 연다",response:"기본 금융 확인만 복구하고 송금과 투자 기능은 계속 잠갔다.",memory:"현재 계정을 읽기 전용 범위로 복구함"},
     {id:"account12_access_monthly_review",label:"월 1회 현재 생활비 검토만 일정에 저장한다",response:"계정 확인을 불안에 따른 감시가 아니라 목적과 주기가 있는 생활 관리로 정했다.",memory:"현재 생활비를 월 1회만 검토하기로 함"},

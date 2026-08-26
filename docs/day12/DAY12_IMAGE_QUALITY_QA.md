@@ -11,12 +11,12 @@
 | `assets/backgrounds/morning-studio-2d.png` | 1672×941, RGB PNG | 아침 채광·식탁·우측 인물/UI 여백, 확대 선명도 정상 | PASS |
 | `assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png` | 1672×941, RGB PNG | 현관/거실 동선·중앙 인물 배치·하단 대화 UI 여백 정상 | PASS |
 | `assets/backgrounds/day6/day6-neighborhood-cafe-day-v1.png` | 1672×941, RGB PNG | 무인 낮 카페·전경 테이블·두 잔·인물 안전 영역 정상 | PASS |
-| `assets/characters/story-outfits/haeun-day8-errand-sage-2d-v1.png` | 887×1774, RGBA PNG | 머리·손·발 외곽 손실 없음, 투명 배경·부드러운 미소·생활복 선명도 정상 | PASS |
+| `assets/characters/story-outfits/haeun-day12-oatmeal-cardigan-2d-v1.png` | 887×1774, RGBA PNG | 머리·손·발 외곽 손실 없음, 실제 투명 배경·부드러운 미소·니트와 롱스커트 선명도 정상 | PASS |
 
 ## 기술 검사
 
 - 배경 3종: 동일 1672×941, 16:9 오차 0.01 미만, PNG color type 2(RGB).
-- 하은 스프라이트: 887×1774, PNG color type 6(RGBA), SHA-256 `7526406e31919c4a5f625f31e5577d6f0a6d9a6ccead4a5f17a54cd0e30496ae`.
+- 하은 스프라이트: 887×1774, PNG color type 6(RGBA), 네 모서리 alpha 0, SHA-256 `6cc4baa8aea4572107bac09017bee07bd53e3d65c200d141de642982574a08f0`.
 - 파일 누락·0바이트·잘못된 확장자·크롭 손실: 0건.
 - 기존 자산 수정·덮어쓰기·후처리: 0건.
 
@@ -30,7 +30,7 @@
 
 ## 결론
 
-- 신규 자산 필요: 0종.
+- 신규 자산 필요: 1종(DAY 12 전용 하은 생활복).
 - 후처리 필요: 0종.
 - 8개 Scene `assetStatus=ready` 전환: PASS.
 - NEEDS FIX: 0
