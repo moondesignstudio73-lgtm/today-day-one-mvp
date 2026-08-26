@@ -1,6 +1,6 @@
 # DAY 9 기존 에셋·연출·오디오 감사
 
-판정: `CONTRACT PASS / NEW ART NOT REQUIRED / IMAGE QA NOT APPLICABLE`
+판정: `CONTRACT PASS / REQUIRED ART 1 / IMAGE QA PASS`
 
 ## 감사 기준
 
@@ -15,7 +15,8 @@
 |---|---|---|
 | `home-morning` | 1672×941 RGB, 밝은 실내 | 하은과 출근 준비·귀가 대화 재사용 PASS |
 | `neighborhood-street-day` | 1672×941 RGB, 낮 거리와 벤치 | 단독 출근·회사 앞 물병 대화 재사용 PASS. 지하철 내부로 설명하지 않는다. |
-| `office-day` | 1599×900 RGB WebP, 열린 데스크·유리 회의실·휴게 구역 | 로비 방향 확인, 팀 자리, 작은 회의실을 프레이밍으로 분리해 재사용 PASS |
+| `office-day` | 1599×900 RGB WebP, 열린 데스크·유리 회의실·휴게 구역 | 로비 방향 확인과 팀 자리 재사용 PASS |
+| `day9-office-project-room-day` | 1672×941 RGB PNG, 소규모 프로젝트 검토실 | 범위 선택·권한 압박·책임 분리 3개 Scene 전용 배경 PASS |
 | 하은 기본 `smile` | 기존 캐릭터 매니페스트 | 밝은 아침·귀가 장면 PASS |
 | 민호 `office-best-male` | 1024×1536 RGBA | 출입증·좌석표 안내 PASS |
 | 윤서진 `female-coworker` | 1024×1536 RGBA | 자료·피드백 장면 PASS |
@@ -31,9 +32,9 @@
 | S01 출근 준비 | `home-morning`, 하은 `smile` | 종이 메모 medium-prop, fade | `daily`, 메모·가방 |
 | S02 혼자 출근 | `neighborhood-street-day`, 인물 없음 | wide→안내판, crossfade | `daily`, 예비폰·자동문 |
 | S03 로비·현재 역할 | `office-day`, 민호 중심 / 팀장·서진 교대 | medium→좌석표, crossfade | `daily`, 자동문·문서 |
-| S04 적응 범위 | `office-day`, 서진 중심 / 민호 교대 | 파일 close, cut | `daily`, 문서·메모 |
-| S05 권한 압박 | `office-day`, 주니어 중심 / 민호·서진 교대 | 태블릿 close→medium, cut | `daily` 0.05, 문 열림 |
-| S06 책임 분리 | `office-day`, 팀장 중심 / 주니어·서진 교대 | 기록 close→medium, crossfade | `daily`, 메모·문서 전달 |
+| S04 적응 범위 | `day9-office-project-room-day`, 서진 중심 / 민호 교대 | 파일 close, cut | `daily`, 문서·메모 |
+| S05 권한 압박 | `day9-office-project-room-day`, 주니어 중심 / 민호·서진 교대 | 태블릿 close→medium, cut | `daily` 0.05, 문 열림 |
+| S06 책임 분리 | `day9-office-project-room-day`, 팀장 중심 / 주니어·서진 교대 | 기록 close→medium, crossfade | `daily`, 메모·문서 전달 |
 | S07 피드백 계약 | `neighborhood-street-day`, 서진 | 물병 two-shot, crossfade | `daily`, 물병 내려놓기 |
 | S08 종료·귀가 | `office-day`→`home-morning`, 민호→팀장→하은 | 시계 close→집 medium, fade | `daily`, 휴대폰 종료·현관 열쇠 |
 
@@ -51,4 +52,4 @@
 - S07 `SFX_CUP_SET_DOWN`은 물병을 벤치에 놓는 한 번의 소품음으로 사용한다. 관계 위기 효과로 반복하지 않는다.
 - S08은 회사 종료와 귀가를 `SFX_PHONE_SCREEN_OFF`→`SFX_HOME_KEY_UNLOCK` 순서로 구분한다.
 
-최종 판정: 기존 배경 3종과 캐릭터 5종만으로 8개 Scene의 장소·역할·감정 온도를 정확히 표현할 수 있다. 신규 최종 아트 제작과 별도 이미지 QA는 필요하지 않으며, 연출·오디오 데이터 계약은 PASS다.
+최종 판정: 기존 배경 3종과 캐릭터 5종을 재사용하고, 회사 연속성을 유지하는 프로젝트룸 전용 배경 1종을 추가했다. 신규 PNG는 1672×941·16:9·인물/문자/로고 없음·UI 안전 여백을 통과했으며, 연출·오디오 데이터 계약과 이미지 QA는 PASS다.

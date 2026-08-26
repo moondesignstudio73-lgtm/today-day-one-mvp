@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { getLockedDay4ResumePresentation } from "../src/day4-campaign-runtime.mjs";
 import { getLockedDay5ResumePresentation } from "../src/day5-campaign-runtime.mjs";
 import { getLockedDay6ResumePresentation } from "../src/day6-campaign-runtime.mjs";
+import { getLockedDay7ResumePresentation } from "../src/day7-campaign-runtime.mjs";
+import { getLockedDay8ResumePresentation } from "../src/day8-campaign-runtime.mjs";
 import { resolveStoryPresentation } from "../src/scene-presentation.mjs";
 import { STORY_SCENES } from "../src/story-data.mjs";
 import { STORY_OUTFIT_ASSETS } from "../src/story-outfit-assets.mjs";
@@ -34,9 +36,14 @@ for(const stage of [0,1,2,3,4]){
 for(const stage of [0,1,2,3]){
   assert.equal(getLockedDay6ResumePresentation({storyFlags:{day6RuntimeStage:stage}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day6);
 }
+for(const stage of [0,1,2,3]){
+  assert.equal(getLockedDay7ResumePresentation({storyFlags:{day7RuntimeStage:stage}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day7);
+}
+assert.equal(getLockedDay8ResumePresentation({storyFlags:{day8RuntimeStage:0}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day8);
+assert.equal(getLockedDay8ResumePresentation({storyFlags:{day8RuntimeStage:3}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day8);
 
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 assert.match(game,/characterId==="girlfriend"&&immersiveScene\?\.activeCharacterAssetUrl/);
 assert.match(game,/preloadImmersiveAssets\(\[\{assetUrl:immersiveScene\.activeCharacterAssetUrl\},\.\.\.session\.sequence\]\)/);
 
-console.log("✓ DAY 3~6 일차별 고해상도 의상·복원 계약 PASS");
+console.log("✓ DAY 3~8 일차별 고해상도 의상·복원 계약 PASS");

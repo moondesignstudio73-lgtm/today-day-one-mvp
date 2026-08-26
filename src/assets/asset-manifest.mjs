@@ -104,6 +104,7 @@ export const BACKGROUND_ASSETS = {
   "neighborhood-cafe-day":"assets/backgrounds/day6/day6-neighborhood-cafe-day-v1.png",
   "neighborhood-park-day":"assets/backgrounds/map-locations/035_running-park.png",
   "day7-gallery-day":"assets/backgrounds/map-locations/016_gallery.png",
+  "day9-office-project-room-day":"assets/backgrounds/day9/day9-office-project-room-day-v1.png",
   "day7-bookshop-day":"assets/backgrounds/day7/day7-small-bookshop-day-v1.png",
   "day7-river-promenade-day":"assets/backgrounds/day7/day7-river-promenade-day-v1.png",
   "day8-household-store-day":"assets/backgrounds/day8/day8-household-store-day-v1.png",
