@@ -652,3 +652,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 검증 SHA `a440599`를 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
 - GitHub Pages Actions SUCCESS와 공개 DAY 11 플레이 QA 문서의 HTTP 200·`PLAYTHROUGH QA PASS`를 확인했다.
 - DAY 11 모든 출시 관문을 COMPLETE 처리했다. 다음 작업은 DAY 12 현재 계정·생활비 확인 챕터의 계약·Voice Profile·지식 장부와 완전 시나리오 감사다.
+
+# 2026-08-26 DAY 12 시나리오·내러티브 QA 관문
+
+- `$marriage-30-narrative-director`와 `$marriage-30-chapter-story-writer`의 캐논·화자·챕터 밀도 규칙을 적용해 8 Scene 완전 시나리오와 자체 QA를 작성했다.
+- DAY 11 기준·충돌·공유 9개 전략을 확인 시간, 일정 겹침 처리, 금융 공유 범위에 각각 회수하도록 후속 계약을 고정했다.
+- 공식 명의·현재 잔액이라는 사실과 비용 책임·열람·송금·투자·공동 소유 권한을 분리했다. 잠금 프로필·후반 정보·사고 원인을 공개하지 않는다.
+- 3단계 선택, 기본 금융만 해금, 단계별 저장 복원, DAY 13 현재 가계 예산 훅을 문서·정적 테스트로 고정했다.
+- 산출물: `docs/day12/DAY12_SCENARIO_DRAFT_V1.md`, `docs/day12/DAY12_SCENARIO_QA_V1.md`, `tests/day12-scenario.test.mjs`.
+- 다음 관문: DAY 12 기존 에셋 감사·8 Scene 연출/오디오 매핑.
