@@ -679,3 +679,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 신규 자산·후처리·기존 에셋 변경은 0건이며 8개 Scene을 `ready`로 전환했다.
 - 산출물: `docs/day12/DAY12_IMAGE_QUALITY_QA.md`, `src/day12-presentation-data.mjs`, `tests/day12-presentation.test.mjs`.
 - 다음 관문: DAY 12 런타임·DAY 11 9콜백·선택 상태·저장 복원 구현 감사.
+
+# 2026-08-26 DAY 12 다단계 런타임·저장 복원 관문
+
+- `src/day12-campaign-runtime.mjs`가 8개 `ready` 프레젠테이션 장면의 카메라·전환·BGM·16개 SFX를 직접 사용한다.
+- DAY 11의 9개 전략을 확인 시간·충돌 처리·공유 범위 대사로 각각 회수하고 DAY 12의 3단계 선택과 분리했다.
+- `tests/day12-runtime.test.mjs`를 실제 `SaveManager` 왕복과 27개 전체 선택 경로 검사로 확장했다.
+- 기본 금융 해금, 투자 잠금, DAY 13 훅, 컬렉션 중복 방지, 하은 관계·윤서진 두 축·DAY 11 선택 불변을 모두 PASS했다.
+- `game.js?v=159`와 DAY 12 런타임 모듈 `v=2`로 공개 캐시 계약을 갱신했다.
+- 문법·DAY 12 시나리오/프레젠테이션/런타임/자유행동·DAY 11/13 인접 런타임·전체 시뮬레이션 회귀 PASS. 다음 관문은 DAY 12 집중 테스트·전체 회귀 고정이다.
