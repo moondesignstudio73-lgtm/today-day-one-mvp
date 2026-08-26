@@ -28,11 +28,12 @@ export function deriveStoryUiState({runtimeState="IDLE",stepType=null,exploratio
   return STORY_UI_STATES.IDLE;
 }
 
-export function getStoryUiInvariantViolations({storyMode=false,storyState=STORY_UI_STATES.IDLE,actionGridVisible=false,nextButtonVisible=false,storyChoiceVisible=false,storyFreeActionVisible=false}={}){
+export function getStoryUiInvariantViolations({storyMode=false,storyState=STORY_UI_STATES.IDLE,sharedEventChoiceActive=false,actionGridVisible=false,nextButtonVisible=false,storyChoiceVisible=false,storyFreeActionVisible=false}={}){
   const violations=[];
   if(storyMode&&(actionGridVisible||nextButtonVisible))violations.push("FREE_ACTION_GRID_VISIBLE_IN_STORY_MODE");
   if(storyMode&&storyChoiceVisible&&![STORY_UI_STATES.CHOICE,STORY_UI_STATES.EXPLORATION].includes(storyState))violations.push("STORY_CHOICE_VISIBLE_OUTSIDE_CHOICE");
   if(storyMode&&storyFreeActionVisible&&storyState!==STORY_UI_STATES.FREE_ACTION)violations.push("STORY_FREE_ACTION_VISIBLE_OUTSIDE_WINDOW");
-  if(!storyMode&&(storyChoiceVisible||storyFreeActionVisible))violations.push("STORY_LAYER_VISIBLE_IN_FREE_MODE");
+  if(!storyMode&&storyChoiceVisible&&!sharedEventChoiceActive)violations.push("STORY_CHOICE_VISIBLE_WITHOUT_FREE_EVENT");
+  if(!storyMode&&storyFreeActionVisible)violations.push("STORY_FREE_ACTION_VISIBLE_IN_FREE_MODE");
   return violations;
 }

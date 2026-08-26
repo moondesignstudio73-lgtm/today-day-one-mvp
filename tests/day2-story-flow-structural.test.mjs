@@ -35,7 +35,8 @@ runtime.transition("PLAYING",{},106);runtime.input.lock("day2-rapid-choice","orp
 assert.equal(deriveStoryUiState({runtimeState:"WAITING_CHOICE",stepType:"choice",exploration:true}),STORY_UI_STATES.EXPLORATION);
 assert.equal(deriveStoryUiState({runtimeState:"PLAYING",stepType:"freeAction",freeActionStatus:"ACTIVE"}),STORY_UI_STATES.FREE_ACTION);
 assert.deepEqual(getStoryUiInvariantViolations({storyMode:true,storyState:STORY_UI_STATES.DIALOGUE,actionGridVisible:true,nextButtonVisible:true}),["FREE_ACTION_GRID_VISIBLE_IN_STORY_MODE"]);
-assert.deepEqual(getStoryUiInvariantViolations({storyMode:false,storyChoiceVisible:true}),["STORY_LAYER_VISIBLE_IN_FREE_MODE"]);
+assert.deepEqual(getStoryUiInvariantViolations({storyMode:false,storyChoiceVisible:true}),["STORY_CHOICE_VISIBLE_WITHOUT_FREE_EVENT"]);
+assert.deepEqual(getStoryUiInvariantViolations({storyMode:false,storyChoiceVisible:true,sharedEventChoiceActive:true}),[]);
 
 const modeStore=storage(),story=createStoryState(),free=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.FREE_ROMANCE});SaveManager.save(story,modeStore);SaveManager.save(free,modeStore);assert.equal(SaveManager.load(modeStore,GAME_MODES.MARRIAGE_30).scenario.enabled,true);assert.equal(SaveManager.load(modeStore,GAME_MODES.FREE_ROMANCE).scenario.enabled,false);
 
@@ -45,6 +46,8 @@ assert.match(source,/classList\.toggle\("hidden",state\.scenario\?\.enabled===tr
 assert.match(source,/조사 \$\{day2SearchCount\} \/ 3/,"DAY 2 exploration must explain its completion rule");
 assert.match(source,/eventRuntime\.waitForInput\("choice"/,"choice entry must use the recoverable runtime transition");
 assert.match(source,/state\?\.storyFreeAction&&immersiveScene&&/,"initial story render must not read a missing free-action status");
+assert.match(source,/sharedEventChoiceActive=!storyMode&&immersiveScene\?\.type!=="story"/,"free-mode event choices must remain visible");
+assert.match(source,/\$\("#actionGrid"\)\.classList\.remove\("hidden"\);\$\("#nextButton"\)\.classList\.remove\("hidden"\)/,"free-mode action controls must be restored after onboarding and events");
 assert.equal((source.match(/\$\("#storyChoiceLayer"\)\.addEventListener\("click"/g)??[]).length,1,"choice click delegation listener must be singleton");
 assert.equal((source.match(/\$\("#storyChoiceLayer"\)\.addEventListener\("keydown"/g)??[]).length,1,"choice keyboard delegation listener must be singleton");
 console.log("day2-story-flow-structural.test: 10 routes, save/load, rapid input, watchdog, mode/UI invariants PASS");

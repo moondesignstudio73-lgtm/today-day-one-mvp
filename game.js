@@ -96,9 +96,10 @@ function getCurrentStoryUiState(){const freeActionStatus=state?.storyFreeAction&
 function enforceModeExclusiveUi(context="runtime"){
   const storyMode=state?.scenario?.enabled===true,actionGrid=$("#actionGrid"),nextButton=$("#nextButton"),storyChoice=$("#storyChoiceLayer"),storyFreeAction=$("#storyFreeActionLayer");
   const storyState=getCurrentStoryUiState();
-  if(storyMode){actionGrid?.classList.add("hidden");nextButton?.classList.add("hidden");if(![STORY_UI_STATES.CHOICE,STORY_UI_STATES.EXPLORATION].includes(storyState))storyChoice?.classList.add("hidden");if(storyState!==STORY_UI_STATES.FREE_ACTION)storyFreeAction?.classList.add("hidden");}else{storyChoice?.classList.add("hidden");storyFreeAction?.classList.add("hidden");}
+  const sharedEventChoiceActive=!storyMode&&immersiveScene?.type!=="story"&&immersiveScene?.currentStep?.type==="choice";
+  if(storyMode){actionGrid?.classList.add("hidden");nextButton?.classList.add("hidden");if(![STORY_UI_STATES.CHOICE,STORY_UI_STATES.EXPLORATION].includes(storyState))storyChoice?.classList.add("hidden");if(storyState!==STORY_UI_STATES.FREE_ACTION)storyFreeAction?.classList.add("hidden");}else{if(!sharedEventChoiceActive)storyChoice?.classList.add("hidden");storyFreeAction?.classList.add("hidden");}
   document.body.dataset.storyState=storyMode?storyState:"FREE_MODE";
-  const violations=getStoryUiInvariantViolations({storyMode,storyState,actionGridVisible:Boolean(actionGrid&&!actionGrid.classList.contains("hidden")),nextButtonVisible:Boolean(nextButton&&!nextButton.classList.contains("hidden")),storyChoiceVisible:Boolean(storyChoice&&!storyChoice.classList.contains("hidden")),storyFreeActionVisible:Boolean(storyFreeAction&&!storyFreeAction.classList.contains("hidden"))});
+  const violations=getStoryUiInvariantViolations({storyMode,storyState,sharedEventChoiceActive,actionGridVisible:Boolean(actionGrid&&!actionGrid.classList.contains("hidden")),nextButtonVisible:Boolean(nextButton&&!nextButton.classList.contains("hidden")),storyChoiceVisible:Boolean(storyChoice&&!storyChoice.classList.contains("hidden")),storyFreeActionVisible:Boolean(storyFreeAction&&!storyFreeAction.classList.contains("hidden"))});
   if(violations.length&&state){state.logs??=[];const signature=`${context}:${violations.join(",")}`;if(state.storyFlags?.lastStoryUiInvariant!==signature){state.storyFlags??={};state.storyFlags.lastStoryUiInvariant=signature;state.logs.push({time:`DAY ${state.day} · STORY GUARD`,text:signature});}}
   return violations;
 }
@@ -1262,6 +1263,7 @@ function render() {
   $("#dayLabel").textContent = `${state.day} · ${getWeekdayName(state.day)}`; $("#phaseIcon").textContent = phase.icon;
   const mode=getGameModeConfig(state.gameMode),modeBadge=$("#gameModeBadge");modeBadge.textContent=storyCampaign?`STORY · D-${Math.max(0,31-state.day)}`:"FREE MODE";modeBadge.classList.remove("hidden");modeBadge.dataset.mode=mode.id;modeBadge.setAttribute("aria-label",storyCampaign?`${mode.title}, 결혼식까지 ${Math.max(0,31-state.day)}일`:mode.title);
   if(storyCampaign){if(state.phase===3&&isDay1HospitalNight())renderDay1HospitalNight();else renderStoryCampaignStandby();return;}
+  $("#actionGrid").classList.remove("hidden");$("#nextButton").classList.remove("hidden");
   if (state.phase === 3) { if(isDay1HospitalNight())renderDay1HospitalNight();else if(state.world?.mode==="district")renderWorldMap();else renderNightHome(); return; }
   document.body.classList.add("ui-classic-mode");
   document.body.classList.remove("ui-story-mode");
