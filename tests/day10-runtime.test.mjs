@@ -59,6 +59,7 @@ for(const rhythm of DAY10_RHYTHM_CHOICES)for(const lunch of DAY10_LUNCH_CHOICES)
 
   const stage3=getLockedDay10Segment(restored,3);allSteps.push(...stage3);
   assert.equal(stage3.at(-1).type,"sceneEnd");
+  assert.ok(stage3.some(step=>step.speaker==="하은"&&step.characterId==="girlfriend"&&step.characterAssetUrl),"귀가 전 선택 반응부터 하은 스프라이트로 전환되어야 한다");
   assert.equal(getLockedDay10ResumePresentation(restored).characterId,"girlfriend");
   for(const backgroundId of expectedSceneBackgrounds)assert.ok(allSteps.some(step=>step.type==="transition"&&step.backgroundId===backgroundId),`필수 배경 ${backgroundId} 전환 누락`);
   const usedSfx=new Set(allSteps.filter(step=>step.type==="sfx").map(step=>step.sfxId));
