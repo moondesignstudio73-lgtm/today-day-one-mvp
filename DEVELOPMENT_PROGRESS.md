@@ -570,3 +570,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 수정 사항: DAY 9의 9개 선택을 DAY 10 자료·행동·제한에 각각 회수했다. 점심·stage 2 복원 배경을 `cafe-rain-evening`에서 `neighborhood-cafe-day`로 교체해 낮 시간대와 맞췄다.
 - 남은 NEEDS FIX: 현재 관문 0. 출시 전체 기준으로 에셋·연출/오디오 감사, 27경로 저장 회귀, 실제 브라우저 QA, 공개 배포가 남았다.
 - 다음 관문: DAY 10 기존 에셋 감사와 8개 Scene 연출·오디오 매핑.
+# 2026-08-26 DAY 10 기존 에셋·연출·오디오 관문
+
+- 완료 관문: 기존 에셋 감사·Scene별 연출/오디오 매핑·신규 자산 필요성 판정.
+- 산출물: `docs/day10/DAY10_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day10-presentation-data.mjs`, `tests/day10-presentation.test.mjs`.
+- 변경 파일: 위 3개 파일과 두 진행 문서.
+- 검증: 4개 배경 실파일·PNG 16:9, 4개 인물 RGBA, 8개 Scene·낮 카페·화자 교대·daily BGM·기존 SFX 계약, DAY 10 시나리오·런타임, 전체 `tests/simulation.test.mjs` PASS.
+- 자산 판정: 신규 아트 0종. 기존 자산을 덮어쓰거나 사용자 미추적 파일을 변경하지 않았다.
+- 남은 NEEDS FIX: 현재 관문 0. 선반영 런타임은 프레젠테이션 데이터와 발화자 교대·SFX를 아직 실제 연결하지 않아 다음 구현 감사에서 처리한다.
+- 다음 관문: DAY 10 다단계 런타임·선택 상태·저장 복원 구현 감사.
