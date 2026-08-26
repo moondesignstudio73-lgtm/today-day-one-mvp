@@ -622,3 +622,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 신규 아트는 0종이며 기존 사용자 에셋을 변경하지 않았다. `docs/day11/DAY11_IMAGE_QUALITY_QA.md`의 NEEDS FIX는 0건이다.
 - `src/day11-presentation-data.mjs`의 8개 Scene을 `assetStatus: ready`로 전환하고 집중 테스트에서 상태와 QA 문서 존재를 고정했다.
 - 다음 관문: DAY 11 다단계 런타임·세 전략 선택·DAY 10 콜백·단계별 저장 복원 구현 감사.
+
+# 2026-08-26 DAY 11 런타임·선택·저장 복원 관문
+
+- `src/day11-presentation-data.mjs`의 8개 `ready` Scene을 실제 런타임 전환·카메라·`daily` BGM·생활 SFX에 연결했다.
+- DAY 10 리듬·점심·귀가 기록 9개 선택이 DAY 11 생활표의 시간 틀·점심 보호·최종 검토에 각각 고유하게 회수된다.
+- 목요일 재활 메모와 금요일 외래 안내의 차이를 직접 확인한 뒤 `day11ScheduleNoteMismatch=unverified`와 `day11-schedule-note-mismatch` 단서로 저장하되 범죄·거짓말·정체 추론을 만들지 않는다.
+- 3×3×3 27개 선택 경로를 단계별 실제 `SaveManager` 저장·복원으로 검사해 하은 관계, 윤서진 `AFFECTION`/`STATUS_INTEREST`, DAY 10 선택의 불변을 확인했다.
+- `game.js?v=157`·DAY 11 런타임 모듈 `v=2`로 공개 캐시 계약을 갱신했다. 다음 관문은 DAY 11 집중 테스트·전체 회귀 고정이다.

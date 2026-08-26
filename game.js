@@ -39,7 +39,7 @@ import { LOCKED_DAY7_SCENE_ID, applyLockedDay7ChoiceState, getLockedDay7LegacyCh
 import { LOCKED_DAY8_SCENE_ID, applyLockedDay8ChoiceState, getLockedDay8LegacyChoice, getLockedDay8ResumePresentation, getLockedDay8Segment } from "./src/day8-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY9_SCENE_ID, applyLockedDay9ChoiceState, getLockedDay9LegacyChoice, getLockedDay9ResumePresentation, getLockedDay9Segment } from "./src/day9-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY10_SCENE_ID, applyLockedDay10ChoiceState, getLockedDay10LegacyChoice, getLockedDay10ResumePresentation, getLockedDay10Segment } from "./src/day10-campaign-runtime.mjs?v=2";
-import { LOCKED_DAY11_SCENE_ID, applyLockedDay11ChoiceState, getLockedDay11LegacyChoice, getLockedDay11ResumePresentation, getLockedDay11Segment } from "./src/day11-campaign-runtime.mjs?v=1";
+import { LOCKED_DAY11_SCENE_ID, applyLockedDay11ChoiceState, getLockedDay11LegacyChoice, getLockedDay11ResumePresentation, getLockedDay11Segment } from "./src/day11-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY12_SCENE_ID, applyLockedDay12ChoiceState, getLockedDay12LegacyChoice, getLockedDay12ResumePresentation, getLockedDay12Segment } from "./src/day12-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY13_SCENE_ID, applyLockedDay13ChoiceState, getLockedDay13LegacyChoice, getLockedDay13ResumePresentation, getLockedDay13Segment } from "./src/day13-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY14_SCENE_ID, applyLockedDay14ChoiceState, getLockedDay14LegacyChoice, getLockedDay14ResumePresentation, getLockedDay14Segment } from "./src/day14-campaign-runtime.mjs?v=1";
