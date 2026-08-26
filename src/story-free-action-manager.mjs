@@ -69,6 +69,9 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   })]),
   14:Object.freeze([Object.freeze({
     id:"day14-home-evening",storySceneId:"m30-day14-current-choice-spending",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,title:"EVENING · 나의 집",description:"소액 선택 소비와 선물 동의 규칙을 확인했다. 구매 기록이나 다음 여가 계획 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 15, 현재의 여가 데이트로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
+  })]),
+  15:Object.freeze([Object.freeze({
+    id:"day15-cafe-evening",storySceneId:"m30-day15-current-leisure-date",phase:"evening",phaseIndex:2,location:"cafe",locationLabel:"동네 카페",maxActions:1,title:"EVENING · 동네 카페",description:"현재형 여가 데이트를 마쳤다. 오늘의 선택·변경·공개 경계 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 16, 현재의 관계망 확인으로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
   })])
 });
 
@@ -182,6 +185,13 @@ export const DAY14_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"prepare-current-leisure-date",icon:"◇",title:"DAY 15 여가 데이트 범위를 준비한다",description:"예산·이동·회복 시간 안에서 각자 고를 활동 후보만 적는다.",effects:{affection:2,confidence:4,energy:-2},scenarioEffects:{haeunAffection:1},flag:"day14_free_prepare_date",requiresFlag:"day15CurrentLeisureDatePending",summary:"다음 여가 데이트의 선택권·예산·중단 기준을 준비했다."}),
   Object.freeze({id:"rest-after-choice-spending",icon:"☾",title:"쇼핑 앱을 닫고 쉰다",description:"한도를 남은 구매 허가로 해석하지 않고 추가 소비 없이 쉰다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day14_recovery_rest",summary:"오늘의 한 품목에서 멈추고 추가 쇼핑 없이 충분히 쉬었다."})
 ]);
+export const DAY15_CAFE_ACTIONS=Object.freeze([
+  Object.freeze({id:"file-current-leisure-choice",icon:"◇",title:"오늘의 여가 선택을 기록한다",description:"각자 고른 활동과 선택 순서만 현재 기록으로 남긴다.",effects:{affection:3,confidence:5,energy:-2,stress:-2},scenarioEffects:{haeunAffection:1},flag:"day15_free_file_choice",requiresAction:"current-leisure-date",summary:"오늘 두 사람이 직접 고른 여가 활동과 선택권을 기록했다."}),
+  Object.freeze({id:"save-date-change-boundary",icon:"⇄",title:"데이트 변경 규칙을 저장한다",description:"쉬기·축소·교체·종료를 실패나 빚으로 세지 않는 규칙을 남긴다.",effects:{trust:5,health:2,confidence:3,energy:-2,stress:-3},scenarioEffects:{haeunTrust:2},flag:"day15_free_change_rule",requiresAction:"date-change-boundary",summary:"데이트 계획을 현재 상태에 맞게 바꿀 권리를 저장했다."}),
+  Object.freeze({id:"lock-private-date-record",icon:"□",title:"데이트 기록 공개 범위를 잠근다",description:"사진·위치·동행 태그는 항목별 새 동의 전까지 비공개로 둔다.",effects:{trust:6,confidence:3,energy:-2,stress:-2},scenarioEffects:{haeunTrust:2},flag:"day15_free_private_record",requiresAction:"private-date-record",summary:"데이트 사진과 위치 정보의 공개 범위를 비공개로 잠갔다."}),
+  Object.freeze({id:"prepare-current-social-circle",icon:"▧",title:"DAY 16 관계망 확인 범위를 준비한다",description:"현재 연락 가능한 사람과 소개자·확인 목적만 적고 과거 친밀도는 추정하지 않는다.",effects:{social:2,confidence:4,energy:-2},scenarioEffects:{investigation:2},flag:"day15_free_prepare_social",requiresFlag:"day16CurrentSocialCirclePending",summary:"다음 날 현재 관계망을 확인할 최소 범위만 준비했다."}),
+  Object.freeze({id:"rest-after-leisure-date",icon:"☾",title:"기록을 닫고 카페에서 쉰다",description:"남은 시간을 추가 활동으로 채우지 않고 천천히 귀가 준비를 한다.",effects:{energy:15,fatigue:-12,stress:-9,health:4},scenarioEffects:{},flag:"day15_recovery_rest",summary:"데이트의 남은 시간을 보상 일정으로 채우지 않고 충분히 쉬었다."})
+]);
 
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
@@ -192,7 +202,7 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"job",label:"직장",reason:"단계적 복귀 범위가 아직 합의되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS,15:DAY15_CAFE_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -261,5 +271,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS,...DAY5_OFFICE_ACTIONS,...DAY6_HOME_ACTIONS,...DAY7_HOME_ACTIONS,...DAY8_HOME_ACTIONS,...DAY9_HOME_ACTIONS,...DAY10_HOME_ACTIONS,...DAY11_HOME_ACTIONS,...DAY12_HOME_ACTIONS,...DAY13_HOME_ACTIONS,...DAY14_HOME_ACTIONS];return [1,2,3,4,5,6,7,8,9,10,11,12,13,14].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS],actions=groups.flat();return [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }
