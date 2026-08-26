@@ -1,6 +1,6 @@
 # 《결혼까지 30일!》 DAY 13 — 합의된 만큼만 공동
 
-상태: `FULL PLAYABLE SCENARIO DRAFT V1`
+상태: `FULL PLAYABLE SCENARIO · SCENARIO LOCK V1`
 
 기준 Scene ID: `m30-day13-current-household-budget`
 
@@ -501,4 +501,4 @@
 - 30~90초마다 카드 배치, 출처 확인, 기준 선택, 가격 검증, 부담 선택, 실행 권한 분리, 공개 범위 선택, DAY 14 목표 중 하나가 변한다.
 - 중요한 비용 합의는 요약하지 않고 목록 작성 → 실제 가격 대조 → 부담 협상 → 공개 범위 설정 → 저장의 순서로 플레이한다.
 - 반복 대사·추상적 불안 독백·인위적 Pause로 분량을 채우지 않는다.
-- 내러티브 QA와 시나리오 잠금 판정은 다음 관문에서 수행한다.
+- 내러티브 QA와 시나리오 잠금 판정은 완료됐다. 판정 근거는 `docs/day13/DAY13_SCENARIO_QA_V1.md`에 고정한다.

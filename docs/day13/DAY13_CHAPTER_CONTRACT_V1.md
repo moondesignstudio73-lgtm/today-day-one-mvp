@@ -1,6 +1,6 @@
 # 《결혼까지 30일!》 DAY 13 — 합의된 만큼만 공동 · 챕터 계약 V1
 
-상태: `CHAPTER CONTRACT LOCK CANDIDATE`
+상태: `CHAPTER CONTRACT LOCK V1`
 
 ## 기본 계약
 
@@ -157,5 +157,6 @@
 
 - 챕터 계약·Voice Profile·지식 장부: PASS
 - 8 Beat·3전략·3×3 콜백·정보 예산·저장 계약: PASS
-- 완전 플레이 대본: 다음 관문
+- 완전 플레이 대본: PASS
+- 자체 내러티브 QA·정적 계약 검사: PASS
 - NEEDS FIX: 0
