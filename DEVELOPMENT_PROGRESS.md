@@ -646,3 +646,9 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 집·낮 카페·공원·집 배경과 하은 스프라이트가 선명하게 표시됐으며 화자 잔상·깨진 이미지·위기 연출 오용은 없었다.
 - 브라우저 console warning/error 0건, 7영역 QA 전부 PASS, NEEDS FIX 0건이다. 상세 증적은 `docs/day11/DAY11_PLAYTHROUGH_QA.md`에 기록했다.
 - 공개본의 `game.js?v=157`, DAY 11 미확인 단서, 8개 `ready` Scene을 HTTP 200으로 대조했다. 다음 관문은 QA 증적 커밋과 origin·gh-pages 공개 배포 확인이다.
+
+# 2026-08-26 DAY 11 출시·공개 배포 완료
+
+- 검증 SHA `a440599`를 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
+- GitHub Pages Actions SUCCESS와 공개 DAY 11 플레이 QA 문서의 HTTP 200·`PLAYTHROUGH QA PASS`를 확인했다.
+- DAY 11 모든 출시 관문을 COMPLETE 처리했다. 다음 작업은 DAY 12 현재 계정·생활비 확인 챕터의 계약·Voice Profile·지식 장부와 완전 시나리오 감사다.

@@ -2,7 +2,7 @@
 
 운영 원칙: 한 DAY의 시나리오 작성·내러티브 QA·런타임 적용·저장 복원·전체 회귀·커밋·푸시·배포 확인이 모두 끝난 뒤에만 다음 DAY를 시작한다.
 
-현재 대상: `DAY 11`
+현재 대상: `DAY 12`
 
 ## DAY 5
 
@@ -24,7 +24,7 @@
 - [x] DAY 8
 - [x] DAY 9
 - [x] DAY 10
-- [ ] DAY 11
+- [x] DAY 11
 - [ ] DAY 12
 - [ ] DAY 13
 - [ ] DAY 14
@@ -133,14 +133,21 @@
 - [x] 다단계 런타임·선택 상태·저장 복원 구현 감사
 - [x] 집중 테스트·전체 회귀
 - [x] 실제 브라우저 연속 플레이 QA
-- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+- [x] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 시나리오: `docs/day11/DAY11_SCENARIO_DRAFT_V1.md`  
 자체 QA: `docs/day11/DAY11_SCENARIO_QA_V1.md`
 
 ## 다음 작업
 
-DAY 11 브라우저 QA 증적을 커밋하고 origin·동일 SHA gh-pages 공개 배포와 Actions·공개 문서를 확인한다.
+DAY 12의 현재 계정·생활비 확인 챕터 계약, Voice Profile·지식 장부와 완전한 플레이 시나리오를 감사한다.
+
+### 2026-08-26 DAY 11 출시·공개 배포 완료
+
+- 브라우저 QA 증적 커밋 `a440599`를 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
+- 공식 GitHub Pages Actions가 SUCCESS로 완료됐고 공개 `docs/day11/DAY11_PLAYTHROUGH_QA.md`는 HTTP 200과 `PLAYTHROUGH QA PASS`를 반환했다.
+- DAY 11의 시나리오·에셋·이미지·런타임·저장·회귀·실제 브라우저·공개 배포 전 관문을 COMPLETE 처리했다.
+- 사전 승인에 따라 현재 대상을 DAY 12 시나리오·내러티브 QA 관문으로 전환한다.
 
 ### 2026-08-26 DAY 11 실제 브라우저 연속 플레이 QA 기록
 
