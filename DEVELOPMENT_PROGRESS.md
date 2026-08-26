@@ -771,3 +771,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 집·낮 마트·낮 카페·현관/거실 배경과 하은 DAY 6 생활복이 선명하게 로드됐으며 UI 가림·깨진 알파·화자 잔상이 없었다.
 - 하은의 생활 톤, 주인공의 합리적 판단, DAY 12 콜백과 금융·사생활 경계를 실제 화면에서 확인했다.
 - console warning/error 0건, 7영역 PASS, NEEDS FIX 0건이다. 산출물: `docs/day13/DAY13_PLAYTHROUGH_QA.md`. 다음 관문은 커밋·origin push·동일 SHA gh-pages 공개 배포다.
+
+# 2026-08-26 DAY 13 출시·공개 배포 완료
+
+- DAY 13의 시나리오·내러티브·에셋·이미지·연출/오디오·런타임·저장 복원·집중/전체 회귀·실제 브라우저 QA가 모두 PASS했다.
+- Node 문법, DAY 13 집중 검사, DAY 12/14 인접 도달성, DAY 2~30 자유행동 감사, 90개 브라우저 엔트리와 전체 시뮬레이션을 최종 재검증했다.
+- 브라우저 console warning/error 0건, 7영역 PASS, `NEEDS FIX: 0`인 검증 커밋을 origin과 동일 SHA `gh-pages`에 공개한다.
+- 사용자 원본 에셋 2종은 보존했다. DAY 13을 COMPLETE 처리하고 자동화 `30-day-5-30`을 PAUSED로 전환하며 DAY 14는 시작하지 않는다.
