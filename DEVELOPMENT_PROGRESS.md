@@ -670,3 +670,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 계정 화면은 개인정보 비가독 근접으로 처리하며 잔액 공개를 공포·충격으로 연출하지 않는다.
 - 산출물: `docs/day12/DAY12_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day12-presentation-data.mjs`, `tests/day12-presentation.test.mjs`.
 - 다음 관문: DAY 12 기존 자산 이미지 품질 QA와 `assetStatus=ready` 전환.
+
+# 2026-08-26 DAY 12 이미지 품질 QA 관문
+
+- 기존 집 아침·현관/거실·낮 카페 배경은 1672×941 RGB PNG, 하은 DAY 8 스프라이트는 887×1774 RGBA PNG로 확인했다.
+- 원본 확대 육안 검사에서 흐림·크롭 손실·왜곡·깨진 알파·UI 안전 여백 문제는 없었다.
+- 하은의 밝고 생활적인 인상, 개인정보 비가독 연출, 위기 색보정 금지 기준을 유지했다.
+- 신규 자산·후처리·기존 에셋 변경은 0건이며 8개 Scene을 `ready`로 전환했다.
+- 산출물: `docs/day12/DAY12_IMAGE_QUALITY_QA.md`, `src/day12-presentation-data.mjs`, `tests/day12-presentation.test.mjs`.
+- 다음 관문: DAY 12 런타임·DAY 11 9콜백·선택 상태·저장 복원 구현 감사.
