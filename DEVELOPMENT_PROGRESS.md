@@ -16,6 +16,10 @@
 
 ## 현재 작업
 
+2026-08-26 DAY 10 집중 테스트·전체 회귀: 27개 선택 경로를 선택 단계마다 실제 `SaveManager` 왕복으로 복원해 단계·재개 화자·DAY 11 훅을 확인했다. DAY 9 전략 9종의 개별 콜백, DAY 6~10 스포일러 차단, 자유 연애 격리, 하은 관계 수치 및 윤서진 양축 불변을 검증했다. DAY 10 관련 전 검사, DAY 9 런타임, 문법 검사와 전체 시뮬레이션 회귀가 PASS했으며 다음 관문은 DAY 10 실제 브라우저 연속 플레이 QA다.
+
+2026-08-26 DAY 10 런타임·선택·저장 복원 감사: `src/day10-presentation-data.mjs`의 8개 Scene 전환·BGM·SFX를 실제 런타임에 연결하고, 점심의 민호↔윤서진 및 마지막 블록의 윤서진↔팀장 화자 컷을 대사 단계에서 정확히 전환하도록 수정했다. 리듬·점심 선택별 단계 재개 프레젠테이션과 3×3×3 27개 선택 경로의 JSON 저장 복원, DAY 9 콜백, DAY 11 훅, 서진 `AFFECTION`/`STATUS_INTEREST` 불변을 검증했다. 관련 문법·집중 검사와 전체 시뮬레이션 회귀가 PASS했으며 다음 관문은 DAY 10 집중 테스트·전체 회귀 결과 고정이다.
+
 개발 방식을 DAY 단위 출시 완성형 파이프라인으로 전환했다. 현재는 DAY 1만 작업하며, `DAY1_RELEASE_PROGRESS.md`의 모든 관문과 사용자 최종 승인을 통과하기 전까지 DAY 2 이후 신규 스토리·콘텐츠 구현을 동결한다.
 
 2026-08-25 PHASE 21: 잠금된 DAY 1의 3×3 선택 경로, 중간 저장 복원, SKIP, 키보드, 모바일, CG 입력 잠금, 오디오를 실제 플레이와 집중 테스트로 검수했다. CG·자동 큐 중 중복 입력과 선택 버튼 Enter 충돌을 수정했으며 다음 목표는 PHASE 22 일반 읽기 속도 플레이타임 측정이다.
@@ -533,3 +537,162 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - DAY 5 복귀·서진 전략과 DAY 8 연락·구매·공유 선택을 실제 행동·자료 제시·대사로 콜백한다.
 - 서진 AFFECTION/STATUS_INTEREST의 관계별 말투와 선택 효과를 분리하고 하은 잠금 프로필·초반 생활 확장 공개 예산을 유지했다.
 - DAY 9 시나리오 집중 검사가 PASS했다. 다음 작업은 기존 에셋 감사와 Scene별 연출·오디오 매핑이다.
+
+## DAY 9 기존 에셋·연출·오디오 감사 완료 (2026-08-26)
+
+- 기존 집·낮 거리·사무실 배경과 하은·민호·윤서진·팀장·주니어 스프라이트를 육안 및 원본 규격으로 감사해 재사용 PASS 판정했다.
+- `office-day`는 로비·팀 자리에 재사용하고, 제한 검토 장면은 같은 회사 톤의 전용 프로젝트룸 배경으로 분리한다.
+- 출근길은 주인공 단독, 회사 장면은 현재 발화자 교대, 귀가는 민호·팀장→하은 순서로 구성해 잔상과 과밀 단체 컷을 방지한다.
+- 전 Scene을 생활형 `daily` BGM과 기존 문서·메모·문·휴대폰·물병 SFX로 매핑하고 위기·미스터리 연출을 금지했다.
+- 프로젝트룸 낮 배경 1종은 1672×941·16:9·인물/문자/로고 없음·UI 안전 여백을 통과해 `IMAGE QA PASS`; 다음 작업은 DAY 9 다단계 런타임·저장 복원 구현이다.
+
+## DAY 9 다단계 런타임·저장 복원 완료 (2026-08-26)
+
+- DAY 9 시나리오 셸과 8개 Scene, 3단계 전략 선택을 실제 캠페인 선택 UI·즉시 반응·완료 처리에 연결했다.
+- DAY 5/8 선택 콜백, 현재 업무 범위·책임 분리·피드백 계약, 4단계 재개 화면을 구조화 상태로 저장한다.
+- 서진 호감과 지위 관심은 사람·업무 전략에 따라 독립 변화하며, 둘 다 오르는 선택도 이유와 효과를 각각 명시했다.
+- 완료 시 현재형 업무 기록·해금·DAY 10 후속 훅을 중복 없이 저장하고 하은 잠금 프로필과 초반 미스터리 공개 예산을 보존했다.
+- 다음 작업: DAY 9 27개 경로 효과·저장 불변식과 전체 회귀 집중 검증.
+
+## DAY 9 병합 후 회귀·브라우저 QA 완료 (2026-08-26)
+
+- 로컬의 더 엄격한 27경로·DAY 5/8 콜백·서진 양축 분리 런타임을 보존하면서 원격 프로젝트룸 이미지와 DAY 10~28 후속 연결을 일반 병합했다.
+- DAY 9 집중 검사, DAY 8 회귀, DAY 10~28 런타임, DAY 6~28 자유행동, 전체 `tests/simulation.test.mjs`가 PASS했다.
+- STORY MODE 실제 브라우저 진입과 모듈 로드를 확인했고 콘솔 warning/error는 0건이다. 남은 작업은 검증 SHA의 origin·gh-pages 배포와 공개 확인이다.
+
+## DAY 9 출시·공개 배포 완료 (2026-08-26)
+
+- 검증 SHA `cf1ae28`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
+- 같은 SHA의 GitHub Pages 작업 2개가 SUCCESS로 완료됐고, 공개 게임·DAY 9 QA·프로젝트룸 이미지·DAY 30 런타임은 모두 HTTP 200과 최신 마커를 반환했다.
+- DAY 9을 COMPLETE 처리했다. 다음 작업은 원격에 선반영된 DAY 10 구현을 시나리오·에셋·저장·브라우저 출시 관문 기준으로 재감사하는 것이다.
+# 2026-08-26 DAY 10 시나리오·내러티브 QA 관문
+
+- 완료 관문: 챕터 계약·Voice Profile·지식 장부, 8개 Scene 완전 시나리오, 자체 내러티브 QA·정적 계약 검사.
+- 산출물: `docs/day10/DAY10_SCENARIO_DRAFT_V1.md`, `docs/day10/DAY10_SCENARIO_QA_V1.md`, `tests/day10-scenario.test.mjs`.
+- 변경 파일: 위 문서·테스트, `src/day10-campaign-runtime.mjs`, `tests/day10-runtime.test.mjs`, 두 진행 문서.
+- 검증: DAY 10 시나리오·런타임, DAY 9 런타임, DAY 10 자유행동, Node 문법, `tests/simulation.test.mjs` 전체 회귀 PASS.
+- 수정 사항: DAY 9의 9개 선택을 DAY 10 자료·행동·제한에 각각 회수했다. 점심·stage 2 복원 배경을 `cafe-rain-evening`에서 `neighborhood-cafe-day`로 교체해 낮 시간대와 맞췄다.
+- 남은 NEEDS FIX: 현재 관문 0. 출시 전체 기준으로 에셋·연출/오디오 감사, 27경로 저장 회귀, 실제 브라우저 QA, 공개 배포가 남았다.
+- 다음 관문: DAY 10 기존 에셋 감사와 8개 Scene 연출·오디오 매핑.
+# 2026-08-26 DAY 10 기존 에셋·연출·오디오 관문
+
+- 완료 관문: 기존 에셋 감사·Scene별 연출/오디오 매핑·신규 자산 필요성 판정.
+- 산출물: `docs/day10/DAY10_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day10-presentation-data.mjs`, `tests/day10-presentation.test.mjs`.
+- 변경 파일: 위 3개 파일과 두 진행 문서.
+- 검증: 4개 배경 실파일·PNG 16:9, 4개 인물 RGBA, 8개 Scene·낮 카페·화자 교대·daily BGM·기존 SFX 계약, DAY 10 시나리오·런타임, 전체 `tests/simulation.test.mjs` PASS.
+- 자산 판정: 신규 아트 0종. 기존 자산을 덮어쓰거나 사용자 미추적 파일을 변경하지 않았다.
+- 남은 NEEDS FIX: 현재 관문 0. 선반영 런타임은 프레젠테이션 데이터와 발화자 교대·SFX를 아직 실제 연결하지 않아 다음 구현 감사에서 처리한다.
+- 다음 관문: DAY 10 다단계 런타임·선택 상태·저장 복원 구현 감사.
+
+# 2026-08-26 DAY 10 실제 브라우저 연속 플레이 QA
+
+- 격리 저장으로 DAY 10 세 선택 단계, 첫 선택 뒤 실제 이어하기 복원, 자유행동·공용 이벤트와 DAY 11 전환을 검수했다.
+- 점심의 민호→윤서진 화자 전환과 낮 카페 배경, 귀가 하은 스프라이트의 실제 로드를 확인했다.
+- 마지막 선택 반응의 하은 대사에서 민호 스프라이트가 잔류한 문제를 발견해 세 반응 모두 `speakerLine(..., "girlfriend", ...)`으로 수정하고 27경로 테스트에 하은 컷 계약을 추가했다.
+- 수정 후 실제 브라우저 하은 이미지 `887×1774`, Node 문법, DAY 10 27경로, 전체 시뮬레이션 회귀, console warning/error 0건이 PASS했다.
+- 산출물: `docs/day10/DAY10_PLAYTHROUGH_QA.md`. 남은 관문은 커밋·origin push·동일 SHA gh-pages 공개 배포 확인이다.
+
+# 2026-08-26 DAY 10 출시·공개 배포 완료
+
+- 검증 SHA `6f20543`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했고 같은 SHA의 GitHub Pages 작업 2개가 SUCCESS로 완료됐다.
+- 캐시 우회 공개 게임과 DAY 10 모듈은 HTTP 200을 반환했으며 하은 귀가 반응 수정 마커가 공개본에 포함됐다.
+- DAY 10 출시 관문 전체를 COMPLETE 처리했다. 다음 작업은 DAY 11 챕터 계약·시나리오·내러티브 QA 감사다.
+
+# 2026-08-26 DAY 11 시나리오·내러티브 QA 관문
+
+- `$marriage-30-narrative-director`와 `$marriage-30-chapter-story-writer`의 필수 캐논·화자·구성 자료를 적용해 챕터 계약, Voice Profile, 지식 장부, 정보 예산과 8 Scene 완전 시나리오를 작성했다.
+- DAY 10의 리듬·점심·귀가 기록 9개 선택을 시간 틀·보호 점심·검토 열에 회수하고, 3개 기준·3개 충돌·3개 공유 전략을 저장하는 계약을 고정했다.
+- DAY 11~15 불편함 구간의 첫 단서는 오래된 `목요일 재활` 메모와 현재 `금요일 외래` 안내의 차이다. 주인공은 즉시 발견하되 일정 변경·작성 오류·다른 주 메모 가능성을 남기고 `미확인`으로 분류한다.
+- 하은은 23세의 밝고 생활적인 톤을 유지하며 확신·회피·악역 코딩 없이 검증 규칙을 함께 적용한다. 잠금 프로필, 정체 반전, 사고 정보와 윤서진 양축은 변경하지 않는다.
+- 산출물: `docs/day11/DAY11_SCENARIO_DRAFT_V1.md`, `docs/day11/DAY11_SCENARIO_QA_V1.md`, `tests/day11-scenario.test.mjs`.
+- 다음 관문: DAY 11 기존 에셋 감사와 8개 Scene 연출·오디오 매핑.
+
+# 2026-08-26 DAY 11 기존 에셋·연출·오디오 관문
+
+- 기존 `home-morning`, `day2-home-entry`, `neighborhood-street-day`, `neighborhood-cafe-day`, `neighborhood-park-day` 배경과 하은 DAY 8 세이지 외출복을 원본 육안·기술 감사했다.
+- 5개 배경은 1672×941·16:9·RGB, 하은은 887×1774·RGBA이며 장면 시간대·생활 동선·UI 여백과 밝은 인상을 충족한다.
+- `src/day11-presentation-data.mjs`와 `tests/day11-presentation.test.mjs`에 8개 Scene 카메라·전환, `daily` BGM, 기존 생활 SFX, 공포·위기 음향 차단 계약을 추가했다.
+- 날짜 차이는 메모 근접 후 하은 중경으로만 보여 주고 공포 줌·비네트·글리치·경직 표정을 쓰지 않는다. 신규 아트 필요는 0종이다.
+- 산출물: `docs/day11/DAY11_ASSET_DIRECTION_AUDIO_AUDIT.md`. 다음 관문은 기존 자산 이미지 QA와 `assetStatus=ready` 전환이다.
+
+# 2026-08-26 DAY 11 이미지 품질 QA 관문
+
+- 기존 배경 5종과 하은 DAY 8 세이지 외출복을 원본으로 재검사해 PNG 규격·16:9·투명 채널·선명도·UI 여백·생활 동선 적합성을 PASS 판정했다.
+- 하은의 밝고 생활적인 인상과 S02의 비위협적 `calm` 연출을 보존하며 공포 줌·글리치·비네트·위기 색보정을 금지했다.
+- 신규 아트는 0종이며 기존 사용자 에셋을 변경하지 않았다. `docs/day11/DAY11_IMAGE_QUALITY_QA.md`의 NEEDS FIX는 0건이다.
+- `src/day11-presentation-data.mjs`의 8개 Scene을 `assetStatus: ready`로 전환하고 집중 테스트에서 상태와 QA 문서 존재를 고정했다.
+- 다음 관문: DAY 11 다단계 런타임·세 전략 선택·DAY 10 콜백·단계별 저장 복원 구현 감사.
+
+# 2026-08-26 DAY 11 런타임·선택·저장 복원 관문
+
+- `src/day11-presentation-data.mjs`의 8개 `ready` Scene을 실제 런타임 전환·카메라·`daily` BGM·생활 SFX에 연결했다.
+- DAY 10 리듬·점심·귀가 기록 9개 선택이 DAY 11 생활표의 시간 틀·점심 보호·최종 검토에 각각 고유하게 회수된다.
+- 목요일 재활 메모와 금요일 외래 안내의 차이를 직접 확인한 뒤 `day11ScheduleNoteMismatch=unverified`와 `day11-schedule-note-mismatch` 단서로 저장하되 범죄·거짓말·정체 추론을 만들지 않는다.
+- 3×3×3 27개 선택 경로를 단계별 실제 `SaveManager` 저장·복원으로 검사해 하은 관계, 윤서진 `AFFECTION`/`STATUS_INTEREST`, DAY 10 선택의 불변을 확인했다.
+- `game.js?v=157`·DAY 11 런타임 모듈 `v=2`로 공개 캐시 계약을 갱신했다. 다음 관문은 DAY 11 집중 테스트·전체 회귀 고정이다.
+
+# 2026-08-26 DAY 11 집중 테스트·전체 회귀 관문
+
+- `tests/day11-regression.test.mjs`에서 잘못된 선택 무효화, 동일 선택 재적용 안전성, 레거시 stage 0 기본값, 세 단계 SaveManager 저장 복원과 선택 기억을 검사했다.
+- 미확인 일정 단서는 `unverified`로 유지되며 하은 호감·신뢰와 윤서진 `AFFECTION`/`STATUS_INTEREST`를 암묵적으로 바꾸지 않는다.
+- DAY 11 완료 상태의 DAY 12 도달, 자유 연애 모드 격리, 조기 스포일러 차단과 상태 컬렉션 중복 방지가 PASS했다.
+- DAY 11 시나리오·프레젠테이션·27경로 런타임·자유행동, DAY 10/12 인접 런타임과 전체 `tests/simulation.test.mjs`가 PASS했다.
+- 남은 NEEDS FIX: 현재 관문 0. 다음 관문은 DAY 11 실제 브라우저 연속 플레이 QA다.
+
+# 2026-08-26 DAY 11 실제 브라우저 연속 플레이 QA
+
+- 동일 SHA의 로컬 정적 빌드를 격리 저장으로 실행해 DAY 11 첫 기준·충돌 규칙·공유 범위의 세 선택을 실제 UI에서 진행했다.
+- 첫 선택 직후 새로고침과 `이어하기`로 stage 1 반응이 복원됐고, 마지막 선택 뒤 DAY 11 자유행동과 `SAVE · DAY 12` 전환이 정상 작동했다.
+- 집·낮 카페·공원·집 배경과 하은 스프라이트가 선명하게 표시됐으며 화자 잔상·깨진 이미지·위기 연출 오용은 없었다.
+- 브라우저 console warning/error 0건, 7영역 QA 전부 PASS, NEEDS FIX 0건이다. 상세 증적은 `docs/day11/DAY11_PLAYTHROUGH_QA.md`에 기록했다.
+- 공개본의 `game.js?v=157`, DAY 11 미확인 단서, 8개 `ready` Scene을 HTTP 200으로 대조했다. 다음 관문은 QA 증적 커밋과 origin·gh-pages 공개 배포 확인이다.
+
+# 2026-08-26 DAY 11 출시·공개 배포 완료
+
+- 검증 SHA `a440599`를 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
+- GitHub Pages Actions SUCCESS와 공개 DAY 11 플레이 QA 문서의 HTTP 200·`PLAYTHROUGH QA PASS`를 확인했다.
+- DAY 11 모든 출시 관문을 COMPLETE 처리했다. 다음 작업은 DAY 12 현재 계정·생활비 확인 챕터의 계약·Voice Profile·지식 장부와 완전 시나리오 감사다.
+
+# 2026-08-26 DAY 12 시나리오·내러티브 QA 관문
+
+- `$marriage-30-narrative-director`와 `$marriage-30-chapter-story-writer`의 캐논·화자·챕터 밀도 규칙을 적용해 8 Scene 완전 시나리오와 자체 QA를 작성했다.
+- DAY 11 기준·충돌·공유 9개 전략을 확인 시간, 일정 겹침 처리, 금융 공유 범위에 각각 회수하도록 후속 계약을 고정했다.
+- 공식 명의·현재 잔액이라는 사실과 비용 책임·열람·송금·투자·공동 소유 권한을 분리했다. 잠금 프로필·후반 정보·사고 원인을 공개하지 않는다.
+- 3단계 선택, 기본 금융만 해금, 단계별 저장 복원, DAY 13 현재 가계 예산 훅을 문서·정적 테스트로 고정했다.
+- 산출물: `docs/day12/DAY12_SCENARIO_DRAFT_V1.md`, `docs/day12/DAY12_SCENARIO_QA_V1.md`, `tests/day12-scenario.test.mjs`.
+- 다음 관문: DAY 12 기존 에셋 감사·8 Scene 연출/오디오 매핑.
+
+# 2026-08-26 DAY 12 기존 에셋·연출·오디오 관문
+
+- 기존 집 아침·현관/거실·낮 카페 3배경과 하은 DAY 8 세이지 외출복을 육안 감사해 8개 Scene에 비파괴 재사용하도록 확정했다.
+- 신규 최종 아트 필요는 0종이며 사용자 에셋을 변경하지 않았다.
+- `src/day12-presentation-data.mjs`와 집중 테스트에 8개 Scene 카메라·전환, `daily` BGM, 기존 생활 SFX와 위기 연출 차단 계약을 추가했다.
+- 계정 화면은 개인정보 비가독 근접으로 처리하며 잔액 공개를 공포·충격으로 연출하지 않는다.
+- 산출물: `docs/day12/DAY12_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day12-presentation-data.mjs`, `tests/day12-presentation.test.mjs`.
+- 다음 관문: DAY 12 기존 자산 이미지 품질 QA와 `assetStatus=ready` 전환.
+
+# 2026-08-26 DAY 12 이미지 품질 QA 관문
+
+- 기존 집 아침·현관/거실·낮 카페 배경은 1672×941 RGB PNG, 하은 DAY 8 스프라이트는 887×1774 RGBA PNG로 확인했다.
+- 원본 확대 육안 검사에서 흐림·크롭 손실·왜곡·깨진 알파·UI 안전 여백 문제는 없었다.
+- 하은의 밝고 생활적인 인상, 개인정보 비가독 연출, 위기 색보정 금지 기준을 유지했다.
+- 신규 자산·후처리·기존 에셋 변경은 0건이며 8개 Scene을 `ready`로 전환했다.
+- 산출물: `docs/day12/DAY12_IMAGE_QUALITY_QA.md`, `src/day12-presentation-data.mjs`, `tests/day12-presentation.test.mjs`.
+- 다음 관문: DAY 12 런타임·DAY 11 9콜백·선택 상태·저장 복원 구현 감사.
+
+# 2026-08-26 DAY 12 다단계 런타임·저장 복원 관문
+
+- `src/day12-campaign-runtime.mjs`가 8개 `ready` 프레젠테이션 장면의 카메라·전환·BGM·16개 SFX를 직접 사용한다.
+- DAY 11의 9개 전략을 확인 시간·충돌 처리·공유 범위 대사로 각각 회수하고 DAY 12의 3단계 선택과 분리했다.
+- `tests/day12-runtime.test.mjs`를 실제 `SaveManager` 왕복과 27개 전체 선택 경로 검사로 확장했다.
+- 기본 금융 해금, 투자 잠금, DAY 13 훅, 컬렉션 중복 방지, 하은 관계·윤서진 두 축·DAY 11 선택 불변을 모두 PASS했다.
+- `game.js?v=159`와 DAY 12 런타임 모듈 `v=2`로 공개 캐시 계약을 갱신했다.
+- 문법·DAY 12 시나리오/프레젠테이션/런타임/자유행동·DAY 11/13 인접 런타임·전체 시뮬레이션 회귀 PASS. 다음 관문은 DAY 12 집중 테스트·전체 회귀 고정이다.
+
+# 2026-08-26 DAY 12 집중 테스트·전체 회귀 관문
+
+- `tests/day12-regression.test.mjs`에 무효 선택 불변, 중복 적용 안전성, 레거시 저장, 단계별 `SaveManager` 복원, 선택 기억과 상태 중복 방지를 추가했다.
+- DAY 12 완료 상태의 DAY 13 도달과 자유 연애 모드 격리, 기본 금융/투자 잠금 경계를 확인했다.
+- 하은 관계 수치·윤서진 두 축·DAY 11 세 전략·미확인 일정 단서의 불변과 조기 스포일러 차단을 PASS했다.
+- 원격 자유 모드 지도·야간 외출 변경을 충돌 없이 fast-forward 통합한 뒤 DAY 12 전체 집중 검사, DAY 11/13 인접 회귀, DAY 2~30 자유행동 감사, 브라우저 엔트리 88개 모듈과 전체 30일 시뮬레이션 회귀가 PASS했다.
+- 남은 NEEDS FIX: 현재 관문 0. 다음 관문은 DAY 12 실제 브라우저 연속 플레이 QA다.

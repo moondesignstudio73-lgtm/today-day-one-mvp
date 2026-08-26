@@ -38,7 +38,7 @@ assert.equal(presentation({day2RuntimeStage:6}).backgroundId, "day2-home-entry")
 
 const game = readFileSync(new URL("../game.js", import.meta.url), "utf8");
 assert.match(game, /getLockedDay2ResumePresentation\(state\)/);
-assert.match(game, /activeCharacterAssetUrl:session\.presentation\?\.characterAssetUrl/);
+assert.match(game, /activeCharacterAssetUrl:initialPresentation\.characterAssetUrl/);
 assert.match(game, /resumeVisual=getLockedDay2ResumePresentation\(state\)/);
 assert.match(game, /applyScenePresentation\(immersiveScene\.presentation\)/);
 assert.match(game, /immersiveScene\.activeCharacterAssetUrl=step\.assetUrl/);

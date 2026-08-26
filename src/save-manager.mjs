@@ -65,7 +65,18 @@ export class SaveManager {
       parsed.futureEventWeights ??= {};
       parsed.microEventHistory ??= [];
       parsed.eventRuntime ??= {activeEvent:null,scene:null,dialogueIndex:0,state:"IDLE",inputLock:{locked:false,owner:null,reason:null,lockedFor:0},eventQueue:[],microQueue:[],pendingEvent:null,triggerReason:[],assetStatus:"IDLE",checkpoint:null,lastError:null,logs:[]};
-      parsed.settings ??= {theaterMode:true};
+      const savedGuideCompleted=parsed.settings?.guideCompleted;
+      parsed.settings={
+        theaterMode:parsed.settings?.theaterMode!==false,
+        guideEnabled:parsed.settings?.guideEnabled!==false,
+        guideCompleted:{
+          main:Boolean(savedGuideCompleted?.main),
+          atlas:Boolean(savedGuideCompleted?.atlas),
+          district:Boolean(savedGuideCompleted?.district),
+          room:Boolean(savedGuideCompleted?.room),
+          map:Boolean(savedGuideCompleted?.map)
+        }
+      };
       parsed.hiddenRoute ??= createHiddenRouteState(Math.random,false);
       parsed.investment = migrateInvestmentState(parsed.investment);
       parsed.lottery ??= createLotteryState();
