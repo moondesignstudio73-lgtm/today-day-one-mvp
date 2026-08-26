@@ -172,6 +172,25 @@ const DAY9_HOME_SEPARATE_FEEDBACK=Object.freeze({
   ],futureEventWeights:{work:1.15,social:1.05},requiredMemories:[],requiredEvents:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY10_HOME_THREE_SCORE_REPORT=Object.freeze({
+  id:"context-day10-home-three-score-report",title:"한 줄로 합쳐지지 않는 하루",category:"work",categoryLabel:"스토리 공용 이벤트",
+  hook:"팀장이 보낸 세 시간 방문 요약에는 업무·회복·협업이 서로 다른 칸으로 나뉘어 있었다.",message:"좋았던 업무 결과가 피로를 지우거나, 피로가 동료 관계를 나빴다고 대신 말하지 않게 확인할 차례였다.",question:"오늘의 세 칸 기록을 어떻게 확정할까?",
+  allowedLocations:["home"],allowedPhases:["evening"],dayRange:[10,10],heroineIds:["haeun"],requiredFeatures:["three-hour-work-rhythm","separate-work-recovery-social"],requiredStoryFlags:["day10RuntimeComplete","day10ThreeHourWorkRhythmCompleted"],npcRequirements:["team-lead"],
+  cooldown:30,maxTriggerCount:1,probability:.35,priority:280,baseWeight:100,tensionLevel:"low",effects:{confidence:1},storyFlag:"context-day10-home-three-score-report:COMPLETED",forbiddenFlags:["context-day10-home-three-score-report:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",result:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",status:"ready"},presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},
+  scenes:[{id:"context-day10-home-three-score-report-scene",title:"한 줄로 합쳐지지 않는 하루",backgroundId:"day2-home-entry",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"evening",timeOfDay:"evening",weather:"clear",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"팀장의 방문 요약에는 업무 결과 ‘범위 내 완료’, 회복 상태 ‘두 번째 블록 피로’, 협업 ‘현재 역할 확인’이 각각 적혀 있었다."},
+    {type:"dialogue",speaker:"하은",text:"업무가 완료됐다는 말로 피곤했던 걸 지우지는 않았네. 반대도 아니고.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"동료와 잘 지냈다는 것도 일을 더 맡아도 된다는 뜻으로 쓰지 않을 거야."},
+    {type:"dialogue",speaker:"하은",text:"좋아. 같은 하루여도 세 사실은 각자 다음 기준이 되게 두자.",expressionId:"smile"},
+    {type:"narration",speaker:"내레이션",text:"오늘은 성공이나 실패 한 줄로 압축되지 않고, 다음에 다시 확인할 세 개의 현재 기록으로 남았다."}
+  ]}],
+  choices:[
+    {id:"confirm-three-separate-records",label:"업무·회복·협업을 독립 기록으로 확정한다",preferenceTags:["LOGICAL","BOUNDARY"],effects:{work:3,health:2,confidence:4,stress:-2},response:"세 칸을 서로 독립된 다음 판단 기준으로 확정했다.",flag:"context-day10-home-three-score-report:SEPARATE",memory:"DAY 10 세 시간 방문을 업무·회복·협업의 독립 기록으로 확정했다.",futureEventWeights:{work:1.2,recovery:1.1}},
+    {id:"add-one-next-check-each",label:"각 칸에 다음 확인 항목 하나씩만 덧붙인다",preferenceTags:["PLANNED","PRACTICAL"],effects:{work:2,health:2,social:2,confidence:3},response:"각 기록에 다음 확인 항목 하나만 남겨 범위가 자동 확대되지 않게 했다.",flag:"context-day10-home-three-score-report:NEXT_CHECK",memory:"DAY 10 세 칸 기록마다 다음 확인 항목 하나씩만 저장했다.",futureEventWeights:{work:1.15}}
+  ],futureEventWeights:{work:1.15,recovery:1.05},requiredMemories:[],requiredEvents:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
@@ -183,7 +202,8 @@ export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   DAY6_HOME_PAYMENT_BOUNDARY,
   DAY7_HOME_DATE_MEMORY,
   DAY8_HOME_MAIL_DEADLINE,
-  DAY9_HOME_SEPARATE_FEEDBACK
+  DAY9_HOME_SEPARATE_FEEDBACK,
+  DAY10_HOME_THREE_SCORE_REPORT
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);

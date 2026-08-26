@@ -343,6 +343,16 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"office9_debrief_write_protocol",label:"책임 분리 절차와 다음 3시간 블록의 평가 기준을 문서화한다",response:"현재의 책임 분리 절차를 재현 가능한 다음 방문 기준으로 저장했다.",memory:"다음 3시간 직장 리듬의 업무 절차를 문서화함"},
     {id:"office9_debrief_targeted_feedback",label:"서진에게 업무 판단 하나, 민호에게 상호작용 하나만 묻는다",response:"업무와 관계의 평가자를 분리해 과잉 일반화하지 않는 피드백을 받았다.",memory:"업무 판단과 팀 상호작용 피드백을 분리해 받음"}
   ]
+},{
+  id:"m30-day10-three-hour-work-rhythm",arc:"세 시간이라는 현재",window:[10,10],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day9-second-office-adaptation"},
+  title:"세 시간이라는 현재",speaker:"하은",message:"DAY 9의 90분 업무 경계를 세 시간 리듬으로 확장하되 휴식·승인 금지·현재 동료 점심을 각각 독립된 기준으로 검증한다.",
+  chapterType:"work/recovery/social-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun","minho","team-lead","seojin"],previousChoiceReferences:["m30-day9-second-office-adaptation"],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
+  choices:[
+    {id:"work10_debrief_keep_rhythm",label:"오늘의 세 시간 리듬을 다음 방문에도 그대로 유지한다",response:"작동한 리듬을 성급히 확대하지 않고 반복 가능한 현재 기준으로 남겼다.",memory:"DAY 10의 세 시간 업무 리듬을 다음 방문에도 유지하기로 함"},
+    {id:"work10_debrief_adjust_one_block",label:"피로가 높았던 한 블록만 줄이고 나머지는 유지한다",response:"하루 전체를 실패로 보지 않고 피로가 높았던 한 구간만 조정했다.",memory:"세 시간 근무 중 피로가 높았던 한 블록만 조정함"},
+    {id:"work10_debrief_separate_scores",label:"업무 결과·회복 상태·동료 관계를 서로 다른 점수로 남긴다",response:"같은 하루의 업무·몸·사람을 서로 덮지 않는 세 기록으로 저장했다.",memory:"DAY 10의 업무 결과, 회복 상태, 동료 관계를 분리해 기록함"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [
