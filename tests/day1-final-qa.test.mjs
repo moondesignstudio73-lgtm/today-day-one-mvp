@@ -66,7 +66,7 @@ assert.match(gameSource,/const STORY_INTRO_VIDEO_PLAYLIST = \["assets\/video\/st
 assert.match(gameSource,/const DEFAULT_INTRO_VIDEO_PLAYLIST = \["assets\/video\/free-mode-prologue\.mp4"\];/);
 assert.doesNotMatch(htmlSource,/<video id="introVideo"[^>]*\scontrols(?:\s|>)/);
 assert.match(htmlSource,/id="introLoading" class="intro-loading"/);
-assert.match(htmlSource,/id="skipIntroButton" class="intro-skip-button"/);
+assert.match(htmlSource,/id="skipIntroButton" class="secondary-button story-intro-skip"/);
 assert.match(gameSource,/activeIntroVideoPlaylist=onboarding\?\.previewState\?\.scenario\?\.enabled===true\?STORY_INTRO_VIDEO_PLAYLIST:DEFAULT_INTRO_VIDEO_PLAYLIST;/);
 assert.match(gameSource,/const storyMode=state\.scenario\?\.enabled===true;\$\("#menuButton"\)\.classList\.toggle\("hidden",storyMode\);\$\("#fullscreenButton"\)\.classList\.toggle\("hidden",storyMode\);/);
 assert.match(cssSource,/body\.campaign-story-mode\.theater-mode:not\(\.ui-night-mode\) \.topbar>\.top-actions\{\s*display:none!important;/);

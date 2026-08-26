@@ -8,9 +8,9 @@ import { EventRuntimeManager } from "./src/event-runtime-manager.mjs?v=5";
 import { getMicroEventDiagnostics, rollMicroEvents } from "./src/micro-event-manager.mjs?v=5";
 import { auditEventSystems } from "./src/event-audit.mjs?v=4";
 import { EVENT_DEFINITIONS } from "./src/events-data.mjs?v=5";
-import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=9";
+import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=12";
 import { getActionAvailability, getWeekdayName, isActionVisible, isWeekend } from "./src/action-manager.mjs?v=5";
-import { calculateActionEffects } from "./src/consequence-manager.mjs";
+import { calculateActionEffects } from "./src/consequence-manager.mjs?v=2";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
 import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, getPaycheckRange, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=6";
@@ -65,8 +65,8 @@ import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.m
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { getHeroineEventVideo, renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=11";
 import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=17";
-import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=30";
-import { STORY_SCENES } from "./src/story-data.mjs?v=24";
+import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=31";
+import { STORY_SCENES } from "./src/story-data.mjs?v=25";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, NIGHT_END_MINUTES, resetForNextDay, setNightStartTime, spendNightTime } from "./src/night-manager.mjs?v=3";
 import { completeLateNightInvitation, getPendingLateNightInvitation, LATE_NIGHT_INVITATION_CHANCE, LATE_NIGHT_INVITATION_MESSAGE, LATE_NIGHT_INVITATION_MIN_DAY, LATE_NIGHT_INVITATION_START_MINUTES, maybeTriggerLateNightInvitation } from "./src/late-night-invitation-manager.mjs?v=1";
 import { preloadSceneAssets, resolvePhasePresentation, resolveStoryPresentation } from "./src/scene-presentation.mjs";
@@ -82,12 +82,12 @@ import { getRandomPlayerName } from "./src/player-names-data.mjs?v=1";
 import { GAME_MODES, getGameModeConfig, isContentAvailableForMode } from "./src/scenario-state.mjs?v=3";
 import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=11";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
-import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=2";
+import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=3";
 import { getMapLocationAsset } from "./src/map-location-assets.mjs";
 import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=31";
 import { getSharedEventById } from "./src/event-compatibility.mjs?v=30";
 import { STORY_UI_STATES, deriveStoryUiState, getStoryUiInvariantViolations, isStoryFreeActionResume, prepareCampaignDayAdvance, reconcileCompletedStoryFreeAction, shouldClaimStoryPending } from "./src/story-flow-guard.mjs?v=2";
-import { getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=1";
+import { getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=2";
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -119,11 +119,13 @@ let titleTransitioning = false;
 const DEFAULT_INTRO_VIDEO_PLAYLIST = ["assets/video/free-mode-prologue.mp4"];
 const STORY_INTRO_VIDEO_PLAYLIST = ["assets/video/story-prologue.mp4"];
 let activeIntroVideoPlaylist = DEFAULT_INTRO_VIDEO_PLAYLIST;
+const INTRO_START_LEAD_SECONDS = 5;
 let introVideoIndex = 0;
 const sound = new SoundManager();
 let modalReturnFocus = null;
 let actionResultReturnFocus = null;
 let actionResultContinuation = null;
+let deferredGuideType = null;
 let activeConversation = null;
 let dialogueTimer = null;
 let dialogueText = "";
@@ -226,6 +228,7 @@ function closeModal() {
   if (modalReturnFocus?.isConnected) modalReturnFocus.focus();
   modalReturnFocus = null;
   if (state && !state.ended && !state.breakup) { if(state.phase===3){if(state.world?.mode==="district")renderWorldMap();else renderNightHome();}else sound.playScene(phases[state.phase].key,state.day); }
+  setTimeout(resumeDeferredGuide,0);
 }
 
 function formatActionEffectValue(effect) {
@@ -351,6 +354,7 @@ function confirmActionResult() {
   if (actionResultReturnFocus?.isConnected) actionResultReturnFocus.focus();
   actionResultReturnFocus = null;
   continuation?.();
+  setTimeout(resumeDeferredGuide,0);
 }
 
 function handleModalKeydown(event) {
@@ -1173,6 +1177,8 @@ function openStoryIntro() {
   $("#introPlayButton").classList.add("hidden");
   video.src=activeIntroVideoPlaylist[introVideoIndex];
   video.load();
+  setIntroStartLayerVisible(false);
+  $("#skipIntroButton").disabled=false;
   $("#introGameStartButton").disabled=true;
   $("#introPlaybackHint").textContent="영상을 끝까지 감상하면 게임을 시작할 수 있습니다.";
   video.play().catch(()=>{ $("#introLoadingText").textContent="프롤로그를 재생할 준비가 됐습니다.";$("#introPlayButton").classList.remove("hidden"); });
@@ -1184,12 +1190,33 @@ function playNextIntroVideo() {
   introVideoIndex += 1;
   video.src=activeIntroVideoPlaylist[introVideoIndex];
   video.load();
+  setIntroStartLayerVisible(false);
+  $("#introGameStartButton").disabled=true;
   $("#introPlaybackHint").textContent=`프롤로그 ${introVideoIndex + 1} / ${activeIntroVideoPlaylist.length}를 재생하고 있습니다.`;
   video.play().catch(()=>{ $("#introLoading").classList.remove("hidden");$("#introLoadingText").textContent="프롤로그를 재생할 준비가 됐습니다.";$("#introPlayButton").classList.remove("hidden"); });
 }
 
-function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introLoading").classList.add("hidden");$("#storyIntroComplete").classList.remove("hidden");$("#introPlaybackHint").textContent=message; $("#introGameStartButton").disabled=false; }
-function finishOnboarding() { requestInitialFullscreen();state=onboarding.previewState; SaveManager.save(state); showGame(); }
+function setIntroStartLayerVisible(visible) {
+  const screen=$("#storyIntroScreen"),layer=$("#storyIntroComplete");
+  screen.classList.toggle("intro-start-ready",visible);
+  layer.classList.toggle("hidden",!visible);
+  layer.setAttribute("aria-hidden",String(!visible));
+}
+function unlockIntroStart(message="프롤로그가 끝났습니다. 이제 게임을 시작하세요.") { $("#introLoading").classList.add("hidden");setIntroStartLayerVisible(true);$("#introPlaybackHint").textContent=message;$("#introGameStartButton").disabled=false; }
+function updateIntroStartAvailability() {
+  const video=$("#introVideo"),isLast=introVideoIndex===activeIntroVideoPlaylist.length-1;
+  if(!isLast||!Number.isFinite(video.duration)||video.duration<=0)return false;
+  const remaining=video.duration-video.currentTime;
+  if(remaining>INTRO_START_LEAD_SECONDS)return false;
+  unlockIntroStart("프롤로그가 곧 끝납니다. 지금 게임을 시작할 수 있습니다.");
+  return true;
+}
+function skipStoryIntro() {
+  $("#skipIntroButton").disabled=true;
+  finishOnboarding();
+}
+function stopIntroPlayback() { const video=$("#introVideo");video.pause();video.removeAttribute("src");video.load(); }
+function finishOnboarding() { requestInitialFullscreen();stopIntroPlayback();state=onboarding.previewState;SaveManager.save(state);showGame(); }
 function startGame() { if(titleTransitioning)return;requestInitialFullscreen();titleTransitioning=true;$("#startButton").disabled=true;beginOnboarding(); }
 function restoreCampaignChapterProgress() {
   if(state.scenario?.enabled!==true)return false;
@@ -1376,7 +1403,7 @@ function renderNightHome() {
   $("#nightHomeTip").textContent = night.activities.length ? `오늘 밤: ${night.activities.map(item=>item.label).join(" · ")}` : "밤 활동은 시간을 사용합니다. 늦게 잘수록 내일 더 피곤해져요.";
   const soundKey = `${state.day}-night-home`;
   if (soundKey !== lastSceneSoundKey) { lastSceneSoundKey=soundKey;sound.playScene("night",state.day); }
-  if(wasHidden)setTimeout(()=>startGuide("room"),0);
+  if(wasHidden)setTimeout(()=>requestGuideWhenReady("room"),0);
 }
 
 function isDay1HospitalNight(){return state?.scenario?.enabled===true&&state.day===1&&state.storyFreeAction?.status==="REPORT";}
@@ -1434,12 +1461,18 @@ function renderWorldMap() {
 }
 
 function openWorldMap() {
-  const home=getPlayerHomeProfile(state.player?.archetypeId);const map=WORLD_MAPS[home.districtId];
   const outing=getNightOutingContext(ensureNightState(state).minutes,state.partner?.name??"여자친구");
+  $("#modalContent").innerHTML=`<span class="eyebrow">OUTING · ${escapeHtml(formatNightTime(ensureNightState(state).minutes))}</span><h2>${outing.alone?"혼자 외출":"데이트/외출"}</h2><p>${escapeHtml(outing.message)}</p><button id="nightOutingConfirm" class="primary-button" type="button">확인</button>`;
+  openModal();
+  $("#nightOutingConfirm").addEventListener("click",()=>{closeModal();enterWorldMap(outing);});
+}
+
+function enterWorldMap(outing) {
+  const home=getPlayerHomeProfile(state.player?.archetypeId);const map=WORLD_MAPS[home.districtId];
   state.world.mode="district";state.world.cityId="seoul";state.world.districtId=home.districtId;
   if(!Number.isFinite(state.world.x)||!Number.isFinite(state.world.y)){state.world.x=map.start.x;state.world.y=map.start.y;}
   state.logs.push({time:`DAY ${state.day} · OUTING`,text:outing.message});
-  SaveManager.save(state);renderWorldMap();toast(outing.message);
+  SaveManager.save(state);renderWorldMap();
   const continueToTransport=()=>{if(!state.world.transportConfirmed)openTransportSelector(true);};
   setTimeout(()=>{if(!startGuide("map",{onFinish:continueToTransport}))continueToTransport();},0);
 }
@@ -1717,7 +1750,7 @@ function openAlbumVideoLayer(entry){if(!entry)return;closeAlbumVideoLayer();cons
 function openNightPc() {
   const workButton=isWeekend(state.day)?"":`<button data-pc-action="work">💼 야간 업무<small>수입 증가 · 스트레스 증가</small></button>`;
   $("#modalContent").innerHTML=`<span class="eyebrow">MY COMPUTER · 60 MIN</span><h2>컴퓨터로 무엇을 할까?</h2><div class="pc-actions"><button data-pc-action="game">🎮 게임하기<small>스트레스 완화 · 피로 증가</small></button><button data-pc-action="study">📚 자기계발<small>업무 능력 증가 · 피로 증가</small></button>${workButton}</div>`;openModal();
-  document.querySelectorAll("[data-pc-action]").forEach(button=>button.addEventListener("click",()=>{const id=button.dataset.pcAction,activity={game:{title:"게임하기",icon:"🎮",effects:{stress:-10,fatigue:8,energy:-5}},study:{title:"자기계발",icon:"📚",effects:{work:6,confidence:3,fatigue:9,energy:-7}},work:{title:"야간 업무",icon:"💼",effects:{money:50000,work:5,stress:10,fatigue:12,energy:-10}}}[id];if(!activity)return;const before=Object.fromEntries(Object.keys(activity.effects).map(key=>[key,state[key]??0])),startTime=formatNightTime(ensureNightState(state).minutes),result=spendNightTime(state,60,activity.title);if(!result.ok){toast(result.reason);return;}applyEffects(state,activity.effects);if(activity.effects.money)appendTransaction(state,{category:"night-work",label:"야간 업무",amount:activity.effects.money});const changes=Object.fromEntries(Object.keys(activity.effects).map(key=>[key,Math.round((state[key]??0)-before[key])]));SaveManager.save(state);render();showNightPcResult(activity,result,startTime,changes);}));
+  document.querySelectorAll("[data-pc-action]").forEach(button=>button.addEventListener("click",()=>{const id=button.dataset.pcAction,activity={game:{title:"게임하기",icon:"🎮",effects:{stress:-10,fatigue:8,energy:-5}},study:{title:"자기계발",icon:"📚",effects:{work:1,confidence:2,fatigue:5,energy:-5}},work:{title:"야간 업무",icon:"💼",effects:{money:50000,work:5,stress:10,fatigue:12,energy:-10}}}[id];if(!activity)return;const before=Object.fromEntries(Object.keys(activity.effects).map(key=>[key,state[key]??0])),startTime=formatNightTime(ensureNightState(state).minutes),result=spendNightTime(state,60,activity.title);if(!result.ok){toast(result.reason);return;}applyEffects(state,activity.effects);if(activity.effects.money)appendTransaction(state,{category:"night-work",label:"야간 업무",amount:activity.effects.money});const changes=Object.fromEntries(Object.keys(activity.effects).map(key=>[key,Math.round((state[key]??0)-before[key])]));SaveManager.save(state);render();showNightPcResult(activity,result,startTime,changes);}));
 }
 
 function showNightPcResult(activity,result,startTime,changes) {
@@ -2344,6 +2377,25 @@ function startGuide(type,{manual=false,onFinish=null}={}) {
   document.body.classList.add("guide-running");$("#guideOverlay").classList.remove("hidden");renderGuideStep();return true;
 }
 
+function isGuideBlockedByLayer() {
+  const actionResultOpen=!$("#actionResultModal")?.classList.contains("hidden");
+  const modalOpen=!$("#modal")?.classList.contains("hidden");
+  return actionResultOpen||modalOpen||Boolean(immersiveScene);
+}
+
+function requestGuideWhenReady(type) {
+  if(isGuideBlockedByLayer()){deferredGuideType=type;return false;}
+  deferredGuideType=null;
+  return startGuide(type);
+}
+
+function resumeDeferredGuide() {
+  if(!deferredGuideType||isGuideBlockedByLayer())return false;
+  const type=deferredGuideType;
+  deferredGuideType=null;
+  return startGuide(type);
+}
+
 function stopGuide({complete=false,runContinuation=true}={}) {
   if(!activeGuide)return;
   const finished=activeGuide;activeGuide=null;
@@ -2426,7 +2478,9 @@ $("#introVideo").addEventListener("waiting",()=>{if($("#storyIntroComplete").cla
 $("#introVideo").addEventListener("playing",()=>$("#introLoading").classList.add("hidden"));
 $("#introVideo").addEventListener("error",()=>{if($("#storyIntroComplete").classList.contains("hidden")){$("#introLoading").classList.remove("hidden");$("#introLoadingText").textContent="영상을 불러오지 못했습니다. 잠시 후 다시 시도하거나 건너뛰어 주세요.";$("#introPlayButton").classList.remove("hidden");}});
 $("#introPlayButton").addEventListener("click",()=>{$("#introPlayButton").classList.add("hidden");$("#introLoadingText").textContent="프롤로그 준비 중";$("#introVideo").play().catch(()=>{$("#introLoadingText").textContent="재생하지 못했습니다. 다시 시도해 주세요.";$("#introPlayButton").classList.remove("hidden");});});
-$("#skipIntroButton").addEventListener("click",()=>{$("#introVideo").pause();introVideoIndex=activeIntroVideoPlaylist.length-1;unlockIntroStart("프롤로그 영상을 건너뛰었습니다. 게임을 시작할 수 있습니다.");});
+$("#introVideo").addEventListener("timeupdate",updateIntroStartAvailability);
+$("#introVideo").addEventListener("loadedmetadata",updateIntroStartAvailability);
+$("#skipIntroButton").addEventListener("click",skipStoryIntro);
 $("#introGameStartButton").addEventListener("click",finishOnboarding);
 document.addEventListener("keydown", handleModalKeydown);
 document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("#gameToolsLayer").classList.contains("hidden"))closeGameTools();});
