@@ -696,3 +696,41 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 하은 관계 수치·윤서진 두 축·DAY 11 세 전략·미확인 일정 단서의 불변과 조기 스포일러 차단을 PASS했다.
 - 원격 자유 모드 지도·야간 외출 변경을 충돌 없이 fast-forward 통합한 뒤 DAY 12 전체 집중 검사, DAY 11/13 인접 회귀, DAY 2~30 자유행동 감사, 브라우저 엔트리 88개 모듈과 전체 30일 시뮬레이션 회귀가 PASS했다.
 - 남은 NEEDS FIX: 현재 관문 0. 다음 관문은 DAY 12 실제 브라우저 연속 플레이 QA다.
+
+# 2026-08-26 DAY 12 실제 브라우저 연속 플레이 QA
+
+- 격리된 로컬 저장으로 DAY 12 세 선택과 첫 선택 뒤 새로고침 복원, 자유행동·공용 이벤트·DAY 13 전환을 실제 UI에서 검사했다.
+- 최초 검사에서 자유행동 완료가 현재 시퀀스를 계속 재생하고, 날짜 전환 뒤 남은 `pendingStoryId` 때문에 완료 DAY를 다시 여는 결함을 재현했다.
+- `#completeStoryFreeAction` 완료 경로를 `finishImmersiveScene()`으로 연결하고 `advanceCampaignChapter()`에서 `pendingStoryId`를 초기화했다. `game.js?v=161`로 브라우저 캐시 계약을 갱신했다.
+- 수정 뒤 DAY 13 잠금 장면 첫 내레이션, 선명한 배경·하은 스프라이트, console warning/error 0건을 재확인했다.
+- Node 문법, DAY 12 자유행동·시나리오·프레젠테이션·런타임·회귀, DAY 11/13 인접 런타임, DAY 2~30 자유행동 감사, 엔트리 모듈과 전체 시뮬레이션 회귀가 PASS했다.
+- 산출물: `docs/day12/DAY12_PLAYTHROUGH_QA.md`. 남은 관문은 커밋·origin push·동일 SHA gh-pages 배포와 공개 확인이다.
+
+# 2026-08-26 DAY 12 출시·공개 배포 완료
+
+- 검증 SHA `5d1e8e80589fa9bacea571d7590d88177f600ab8`을 기능 브랜치와 `gh-pages`에서 동일하게 확인했다.
+- GitHub Pages 두 Actions가 모두 `completed/success`이며 공개 게임의 `game.js?v=161`과 DAY 12 QA 문서의 `PLAYTHROUGH QA PASS`·`NEEDS FIX: 0`을 확인했다.
+- 사용자 미추적 원본 에셋 2종은 변경·추적하지 않았다.
+- DAY 12 전 출시 관문을 COMPLETE 처리했다. 다음 대상은 DAY 13 챕터 계약·Voice Profile·지식 장부와 완전 시나리오·내러티브 QA다.
+
+# 2026-08-26 DAY 13 챕터 계약·Voice Profile·지식 장부
+
+- `$marriage-30-narrative-director`와 `$marriage-30-chapter-story-writer`의 필수 참고자료를 적용해 DAY 13 계약 문서를 작성했다.
+- 선반영 `m30-day13-current-household-budget`의 3단계 선택·DAY 14 훅을 보존하면서 DAY 12 9개 선택의 고유 콜백, 정보 공개 예산, 8 Beat와 저장 복원 계약을 추가했다.
+- 하은은 23세의 밝고 생활적인 동거 파트너이며 과거 분담 기억을 현재 증거로 쓰지 않는다. 주인공은 예산 합의와 돈 이동 권한을 분리한다.
+- 신규 미스터리 단서는 0, 기존 `day11ScheduleNoteMismatch=unverified`, 윤서진 `AFFECTION`/`STATUS_INTEREST`, 투자 잠금은 불변이다.
+- 산출물: `docs/day13/DAY13_CHAPTER_CONTRACT_V1.md`, `tests/day13-contract.test.mjs`. 다음 관문은 8 Beat 완전 대본 초안이다.
+
+# 2026-08-26 DAY 13 완전한 플레이 가능 시나리오 초안
+
+- 챕터 계약의 8 Beat를 식탁 카드 분류, 마트 가격·수량 검증, 카페 부담 협상, 집 장부 공개 경계와 DAY 14 소비 시험 훅으로 완전 대본화했다.
+- DAY 12의 확인·비용 분류·접근 9개 전략을 고유 행동과 대사로 회수하고 DAY 13 세 선택 단계의 9개 반응·상태·저장 계약을 명시했다.
+- 하은의 생활 농담과 주도성, 주인공의 합리적 검증 순서, 사생활·소유권·실행 권한 분리, 미스터리·투자·프로필 정보 예산을 보존했다.
+- 산출물: `docs/day13/DAY13_SCENARIO_DRAFT_V1.md`, `tests/day13-scenario-draft.test.mjs`. 다음 관문은 자체 내러티브 QA·정적 계약 검사다.
+
+# 2026-08-26 DAY 13 자체 내러티브 QA·정적 계약 검사
+
+- 캐논·Voice Profile·지식 장부·8 Scene 밀도·3단계 전략 선택·DAY 12 3×3 콜백·정보 공개·저장/후속 계약을 전수 감사했다.
+- 하은 49회·주인공 46회의 대사 표기로 하은의 생활 주도성과 주인공의 합리적 검증 리듬이 공존한다. 조기 반전·악역 코딩·새 미스터리 단서·윤서진 양축 변화는 없다.
+- 계약과 대본을 각각 `CHAPTER CONTRACT LOCK V1`, `SCENARIO LOCK V1`로 승격하고 `NEEDS FIX: 0`을 확정했다.
+- 산출물: `docs/day13/DAY13_SCENARIO_QA_V1.md`, `tests/day13-scenario.test.mjs` 및 잠금 마커 갱신. 다음 관문은 기존 에셋 감사·8 Scene 연출/오디오 매핑이다.

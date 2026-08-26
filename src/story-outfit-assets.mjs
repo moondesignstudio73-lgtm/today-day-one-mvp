@@ -4,5 +4,6 @@ export const STORY_OUTFIT_ASSETS=Object.freeze({
   day5:"assets/characters/story-outfits/haeun-day5-navy-office-2d-v1.png",
   day6:"assets/characters/story-outfits/haeun-day6-neighborhood-casual-2d-v1.png",
   day7:"assets/characters/story-outfits/haeun-day7-date-dusty-rose-2d-v1.png",
-  day8:"assets/characters/story-outfits/haeun-day8-errand-sage-2d-v1.png"
+  day8:"assets/characters/story-outfits/haeun-day8-errand-sage-2d-v1.png",
+  day12:"assets/characters/story-outfits/haeun-day12-oatmeal-cardigan-2d-v1.png"
 });
