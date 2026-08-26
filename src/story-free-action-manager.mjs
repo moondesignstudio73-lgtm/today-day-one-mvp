@@ -72,6 +72,9 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   })]),
   15:Object.freeze([Object.freeze({
     id:"day15-cafe-evening",storySceneId:"m30-day15-current-leisure-date",phase:"evening",phaseIndex:2,location:"cafe",locationLabel:"동네 카페",maxActions:1,title:"EVENING · 동네 카페",description:"현재형 여가 데이트를 마쳤다. 오늘의 선택·변경·공개 경계 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 16, 현재의 관계망 확인으로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
+  })]),
+  16:Object.freeze([Object.freeze({
+    id:"day16-home-evening",storySceneId:"m30-day16-current-social-circle",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,title:"EVENING · 나의 집",description:"지훈과 현재 연락·만남·정보 공유 범위를 다시 합의했다. 한 사람의 관계 기록이나 다음 건강 루틴 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 17, 현재의 건강 루틴으로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
   })])
 });
 
@@ -192,6 +195,13 @@ export const DAY15_CAFE_ACTIONS=Object.freeze([
   Object.freeze({id:"prepare-current-social-circle",icon:"▧",title:"DAY 16 관계망 확인 범위를 준비한다",description:"현재 연락 가능한 사람과 소개자·확인 목적만 적고 과거 친밀도는 추정하지 않는다.",effects:{social:2,confidence:4,energy:-2},scenarioEffects:{investigation:2},flag:"day15_free_prepare_social",requiresFlag:"day16CurrentSocialCirclePending",summary:"다음 날 현재 관계망을 확인할 최소 범위만 준비했다."}),
   Object.freeze({id:"rest-after-leisure-date",icon:"☾",title:"기록을 닫고 카페에서 쉰다",description:"남은 시간을 추가 활동으로 채우지 않고 천천히 귀가 준비를 한다.",effects:{energy:15,fatigue:-12,stress:-9,health:4},scenarioEffects:{},flag:"day15_recovery_rest",summary:"데이트의 남은 시간을 보상 일정으로 채우지 않고 충분히 쉬었다."})
 ]);
+export const DAY16_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"file-current-social-circle",icon:"◎",title:"현재 관계망 한 칸을 저장한다",description:"지훈의 현재 소개·연락 목적·확인 상태만 관계망에 남긴다.",effects:{social:5,confidence:4,energy:-2,stress:-2},scenarioEffects:{investigation:2},flag:"day16_free_file_social",requiresAction:"current-social-circle",summary:"지훈을 현재 정보가 확인된 한 사람으로 관계망에 저장했다."}),
+  Object.freeze({id:"save-best-friend-contact-boundary",icon:"◇",title:"지훈과의 연락 경계를 저장한다",description:"1:1 연락·응답 선택권·다음 만남의 새 동의를 현재 연락처에 기록한다.",effects:{social:4,trust:3,confidence:4,energy:-2},scenarioEffects:{},flag:"day16_free_contact_boundary",requiresAction:"best-friend-current-contact",summary:"지훈과의 현재 연락 및 다음 만남 경계를 저장했다."}),
+  Object.freeze({id:"lock-friend-group-consent",icon:"□",title:"단체 연락과 소식 공유를 잠근다",description:"과거 단체방 초대와 내 상태 전달은 개별 동의 전까지 차단한다.",effects:{trust:5,confidence:4,energy:-2,stress:-3},scenarioEffects:{haeunTrust:1},flag:"day16_free_group_consent",requiresAction:"friend-group-consent",summary:"친구 단체방과 내 상태 공유 권한을 개별 동의 전까지 잠갔다."}),
+  Object.freeze({id:"prepare-current-health-routine",icon:"+",title:"DAY 17 건강 루틴 확인을 준비한다",description:"현재 처방·수면·식사·움직임 중 공식 확인이 필요한 항목만 적는다.",effects:{health:3,confidence:4,energy:-2},scenarioEffects:{investigation:2},flag:"day16_free_prepare_health",requiresFlag:"day17CurrentHealthRoutinePending",summary:"다음 날 현재 건강 루틴에서 확인할 최소 항목만 준비했다."}),
+  Object.freeze({id:"rest-after-social-check",icon:"☾",title:"연락처를 닫고 쉰다",description:"한 사람을 확인했다는 이유로 다른 연락처까지 열지 않고 회복한다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day16_recovery_rest",summary:"관계망을 한꺼번에 복원하지 않고 연락처를 닫은 채 충분히 쉬었다."})
+]);
 
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
@@ -202,7 +212,7 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"job",label:"직장",reason:"단계적 복귀 범위가 아직 합의되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS,15:DAY15_CAFE_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS,15:DAY15_CAFE_ACTIONS,16:DAY16_HOME_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -271,5 +281,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS],actions=groups.flat();return [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS],actions=groups.flat();return [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }
