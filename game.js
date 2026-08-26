@@ -27,7 +27,8 @@ import { speakWithElevenLabs, stopVoicePlayback } from "./src/elevenlabs-voice-c
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs?v=2";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs?v=3";
 import { analyzePlayHistory } from "./src/ending-manager.mjs";
-import { SoundManager } from "./src/sound-manager.mjs?v=6";
+import { SoundManager } from "./src/sound-manager.mjs?v=7";
+import { resolveStoryAudioCue } from "./src/story-audio-director.mjs?v=1";
 import { DAY1_BGM_CUES } from "./src/day1-audio-data.mjs";
 import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs?v=5";
 import { DAY2_BGM_CUES } from "./src/day2-audio-data.mjs";
@@ -41,7 +42,7 @@ import { LOCKED_DAY9_SCENE_ID, applyLockedDay9ChoiceState, getLockedDay9LegacyCh
 import { LOCKED_DAY10_SCENE_ID, applyLockedDay10ChoiceState, getLockedDay10LegacyChoice, getLockedDay10ResumePresentation, getLockedDay10Segment } from "./src/day10-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY11_SCENE_ID, applyLockedDay11ChoiceState, getLockedDay11LegacyChoice, getLockedDay11ResumePresentation, getLockedDay11Segment } from "./src/day11-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY12_SCENE_ID, applyLockedDay12ChoiceState, getLockedDay12LegacyChoice, getLockedDay12ResumePresentation, getLockedDay12Segment } from "./src/day12-campaign-runtime.mjs?v=3";
-import { LOCKED_DAY13_SCENE_ID, applyLockedDay13ChoiceState, getLockedDay13LegacyChoice, getLockedDay13ResumePresentation, getLockedDay13Segment } from "./src/day13-campaign-runtime.mjs?v=1";
+import { LOCKED_DAY13_SCENE_ID, applyLockedDay13ChoiceState, getLockedDay13LegacyChoice, getLockedDay13ResumePresentation, getLockedDay13Segment } from "./src/day13-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY14_SCENE_ID, applyLockedDay14ChoiceState, getLockedDay14LegacyChoice, getLockedDay14ResumePresentation, getLockedDay14Segment } from "./src/day14-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY15_SCENE_ID, applyLockedDay15ChoiceState, getLockedDay15LegacyChoice, getLockedDay15ResumePresentation, getLockedDay15Segment } from "./src/day15-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY16_SCENE_ID, applyLockedDay16ChoiceState, getLockedDay16LegacyChoice, getLockedDay16ResumePresentation, getLockedDay16Segment } from "./src/day16-campaign-runtime.mjs?v=1";
@@ -507,7 +508,7 @@ function openStoryScene(scene) {
   if(shouldClaimStoryPending(state,scene.id)&&!(lockedDay1&&state.storyFlags?.day1QuestionStrategy))state.pendingStoryId=scene.id;
   if(presentation.eventCgId&&!state.cgCollection.some(entry=>entry.id===presentation.eventCgId))state.cgCollection.push({id:presentation.eventCgId,title:scene.title,image:presentation.backgroundUrl,day:state.day});
   SaveManager.save(state);
-  if(!lockedDay1&&!lockedDay2)sound.playBgm(scene.bgm ?? "theme",state.day);
+  if(!lockedDay1&&!lockedDay2)sound.applyStoryAudio(resolveStoryAudioCue({day:state.day,sceneId:scene.id,label:scene.title,backgroundId:presentation.backgroundId,bgmId:scene.bgm}));
   const lockedSegment=state.storyFlags?.day1QuestionStrategy?2:state.storyFlags?.day1ContactStrategy?1:0;
   const day2Resume=lockedDay2?getLockedDay2ResumePresentation(state):null;
   const day4Resume=lockedDay4?getLockedDay4ResumePresentation(state):null;
@@ -807,15 +808,15 @@ function renderImmersiveStep() {
   $("#storyChoiceLayer").classList.add("hidden");
   $("#storyChoiceLayer").innerHTML="";
   enforceModeExclusiveUi("story-step");
-  if (!step || step.type === "sceneEnd") { finishImmersiveScene(); return; }
-  if(step.bgmCue){const cue=DAY1_BGM_CUES[step.bgmCue]??DAY2_BGM_CUES[step.bgmCue];if(cue?.action==="stop"||cue?.action==="silence")sound.stopBgm();else if(cue)sound.playBgm(cue.category,cue.variant,{volume:cue.volume});}
+  if (!step || step.type === "sceneEnd") { sound.restoreBgm({duration:240});sound.stopTransientCues();if(step?.type==="sceneEnd")sound.play("dayEnd");finishImmersiveScene(); return; }
+  if(step.bgmCue){const cue=DAY1_BGM_CUES[step.bgmCue]??DAY2_BGM_CUES[step.bgmCue];if(cue?.action==="stop"||cue?.action==="silence")sound.stopBgm({fadeOut:cue.action==="silence"?900:1200});else if(cue)sound.playBgm(cue.category,cue.variant,{volume:cue.volume,fadeIn:1000,crossFade:cue.action==="adjust"?1200:0});}
   if(step.backgroundId){
     const hasCharacter=Object.hasOwn(step,"characterId");
     if(step.characterAssetUrl)immersiveScene.activeCharacterAssetUrl=step.characterAssetUrl;
     immersiveScene.presentation={...immersiveScene.presentation,backgroundId:step.backgroundId,backgroundUrl:getBackgroundAsset(step.backgroundId),characterId:hasCharacter?step.characterId:immersiveScene.presentation.characterId,characterAssetUrl:step.characterAssetUrl??immersiveScene.presentation.characterAssetUrl,expressionId:hasCharacter?step.expressionId:step.expressionId??immersiveScene.presentation.expressionId,poseId:hasCharacter?step.poseId:step.poseId??immersiveScene.presentation.poseId,outfitId:step.outfitId??immersiveScene.presentation.outfitId,weather:step.weather??immersiveScene.presentation.weather,timeOfDay:step.timeOfDay??immersiveScene.presentation.timeOfDay};
     applyScenePresentation(immersiveScene.presentation);
     if(hasCharacter&&step.characterId===null){$("#vnCharacter").hidden=true;$("#vnCharacterVideo").hidden=true;}
-    if(step.bgmId)sound.playBgm(step.bgmId,state.day);
+    if(immersiveScene?.id!==LOCKED_DAY1_SCENE_ID&&immersiveScene?.id!==LOCKED_DAY2_SCENE_ID){const audioCue=resolveStoryAudioCue({day:state.day,sceneId:immersiveScene?.id,label:step.label,backgroundId:step.backgroundId,bgmId:step.bgmId});sound.applyStoryAudio(audioCue);audioCue.sfxIds.forEach(sfxId=>sound.playCue(sfxId));}
   }
   if (step.type === "transition") { if(eventRuntime.state!=="TRANSITIONING")eventRuntime.transition("TRANSITIONING",{sceneId:step.label});eventRuntime.input.lock(immersiveScene.id,"StoryTransition");showSceneTransition(step); return; }
   // Some debug/TIP events begin directly with narration instead of a visual
@@ -902,6 +903,8 @@ function renderImmersiveChoices(options=[]) {
   const day29Stage=state.storyFlags?.day29RuntimeStage??0;const day29Prompts={0:"예식 전날 각자의 현재 의사를 어떻게 확인할까?",1:"DAY 30 아침 몸 상태를 어떻게 우선할까?",2:"진행·축소·연기 선택을 어떻게 열어 둘까?"};
   const day30Stage=state.storyFlags?.day30RuntimeStage??0;const day30Prompts={0:"오늘의 몸 상태가 허용하는 범위를 어떻게 정할까?",1:"출발·도착·서명의 동의를 어떻게 확인할까?",2:"진행·연기·다른 관계 형식 중 무엇을 선택할까?"};
   layer.classList.toggle("exploration-hotspots",exploration);
+  const choiceCue=resolveStoryAudioCue({day:state.day,sceneId:immersiveScene?.id,label:immersiveScene?.currentStep?.label,backgroundId:immersiveScene?.presentation?.backgroundId});
+  sound.duckBgm(choiceCue.choiceDuck,{duration:240});sound.play("choiceOpen");
   const prompt=immersiveScene?.id===LOCKED_DAY4_SCENE_ID?(exploration?"집 안에서 무엇을 먼저 확인할까?":day4Prompts[day4Stage]??"어떤 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY5_SCENE_ID?(day5Prompts[day5Stage]??"어떤 복귀 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY6_SCENE_ID?(day6Prompts[day6Stage]??"어떤 생활 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY7_SCENE_ID?(day7Prompts[day7Stage]??"어떤 데이트 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY8_SCENE_ID?(day8Prompts[day8Stage]??"어떤 독립 생활 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY9_SCENE_ID?(day9Prompts[day9Stage]??"어떤 직장 적응 전략을 선택할까?"):immersiveScene?.id===LOCKED_DAY10_SCENE_ID?(day10Prompts[day10Stage]??"어떤 근무 리듬을 선택할까?"):immersiveScene?.id===LOCKED_DAY11_SCENE_ID?(day11Prompts[day11Stage]??"어떤 생활 계획을 선택할까?"):immersiveScene?.id===LOCKED_DAY12_SCENE_ID?(day12Prompts[day12Stage]??"어떤 금융 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY13_SCENE_ID?(day13Prompts[day13Stage]??"어떤 가계 예산 규칙을 선택할까?"):immersiveScene?.id===LOCKED_DAY14_SCENE_ID?(day14Prompts[day14Stage]??"어떤 소비 규칙을 선택할까?"):immersiveScene?.id===LOCKED_DAY15_SCENE_ID?(day15Prompts[day15Stage]??"어떤 데이트 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY16_SCENE_ID?(day16Prompts[day16Stage]??"어떤 관계 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY17_SCENE_ID?(day17Prompts[day17Stage]??"어떤 건강 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY18_SCENE_ID?(day18Prompts[day18Stage]??"어떤 집 안전 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY19_SCENE_ID?(day19Prompts[day19Stage]??"어떤 공동 생활 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY20_SCENE_ID?(day20Prompts[day20Stage]??"어떤 공동 식사 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY21_SCENE_ID?(day21Prompts[day21Stage]??"어떤 전일 근무 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY22_SCENE_ID?(day22Prompts[day22Stage]??"어떤 회복 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY23_SCENE_ID?(day23Prompts[day23Stage]??"어떤 가족 연락 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY24_SCENE_ID?(day24Prompts[day24Stage]??"어떤 결혼 동의 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY25_SCENE_ID?(day25Prompts[day25Stage]??"어떤 예식 범위 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY26_SCENE_ID?(day26Prompts[day26Stage]??"어떤 법적 준비 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY27_SCENE_ID?(day27Prompts[day27Stage]??"어떤 최종 점검 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY28_SCENE_ID?(day28Prompts[day28Stage]??"어떤 리허설 안전 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY29_SCENE_ID?(day29Prompts[day29Stage]??"어떤 전날 재확인 경계를 선택할까?"):immersiveScene?.id===LOCKED_DAY30_SCENE_ID?(day30Prompts[day30Stage]??"오늘의 결말을 어떻게 선택할까?"):"어떻게 대답할까?";
   const day2SearchCount=Math.min(3,new Set(state.storyFlags?.day2RoomSearches??[]).size);
   const visiblePrompt=day2Exploration?`방 안을 조사해보자. 조사 ${day2SearchCount} / 3 · 서로 다른 세 곳을 확인하면 계속할 수 있다.`:prompt;
@@ -913,6 +916,7 @@ function renderImmersiveChoices(options=[]) {
 function chooseImmersiveOption(choiceId) {
   if(!immersiveScene?.onChoice)return;
   if(!eventRuntime.selectChoice(choiceId))return;
+  sound.restoreBgm({duration:320});sound.play("confirm");sound.stopTransientCues();
   let choiceResult;
   try{
     choiceResult=immersiveScene.onChoice(choiceId);
@@ -942,7 +946,7 @@ function applySkippedScenePresentation(choiceIndex){
   if(characterStep?.assetUrl){immersiveScene.activeCharacterAssetUrl=characterStep.assetUrl;$("#vnCharacter").src=characterStep.assetUrl;$("#vnCharacter").hidden=false;applyCharacterStage($("#vnCharacter"),characterStep.stage,characterStep.characterId??immersiveScene.presentation.characterId);}
   else if((transition||characterStep)&&immersiveScene.presentation.characterId!==null)updateImmersiveCharacter(characterStep?.expressionId??transition?.expressionId??immersiveScene.presentation.expressionId);
 }
-function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){const choiceIndex=immersiveScene.sequence.indexOf(choice);applySkippedScenePresentation(choiceIndex);if(!eventRuntime.waitForInput("choice",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:choiceIndex})){persistEventRuntime(true);return;}immersiveScene.index=choiceIndex+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1,backgroundId:immersiveScene.presentation?.backgroundId});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
+function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;sound.stopTransientCues();sound.restoreBgm({duration:180});$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){const choiceIndex=immersiveScene.sequence.indexOf(choice);applySkippedScenePresentation(choiceIndex);if(!eventRuntime.waitForInput("choice",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:choiceIndex})){persistEventRuntime(true);return;}immersiveScene.index=choiceIndex+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1,backgroundId:immersiveScene.presentation?.backgroundId});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else finishImmersiveScene(); }
 function advanceCampaignChapter(completedSession) {
   if(state.scenario?.enabled!==true)return null;
   if(prepareCampaignDayAdvance(state,completedSession?.id)===null)return null;
@@ -2192,6 +2196,7 @@ function resetActiveRuntimeForLoad() {
   dialogueTimer=null;
   autoAdvanceTimer=null;
   immersiveScene=null;
+  sound.resetStoryAudio();
   eventRuntime.reset();
   const transition=$("#sceneTransition");
   if(transition){transition.classList.remove("active");transition.classList.add("hidden");}
@@ -2211,7 +2216,7 @@ function loadGame() {
     else toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`);
   }else if(!state.eventRuntime?.activeEvent)toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`);
 }
-function saveGame() { if (!state) return; SaveManager.save(state); toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
+function saveGame() { if (!state) return; SaveManager.save(state);sound.play("save");toast(`DAY ${state.day} 진행 상황을 저장했어요.`); }
 function openContinuePreview(){const loaded=SaveManager.load();if(!loaded){toast("이어할 저장 데이터가 없어요.");return;}const story=loaded.scenario?.enabled===true,mode=getGameModeConfig(loaded.gameMode),updated=loaded.updatedAt?new Intl.DateTimeFormat("ko-KR",{dateStyle:"medium",timeStyle:"short"}).format(new Date(loaded.updatedAt)):"저장 시각 없음";$("#modalContent").innerHTML=`<section class="continue-preview"><span>${story?"STORY MODE":"FREE MODE"}</span><h2>${story?"《결혼까지 30일!》":"나만의 30일"}</h2><div><strong>DAY ${loaded.day}</strong>${story?`<b>D-${Math.max(0,31-loaded.day)}</b>`:""}</div><p>${escapeHtml(mode.description)}</p><small>마지막 플레이 · ${escapeHtml(updated)}</small><button id="continueResumeButton" class="primary-button" type="button">이어하기 →</button></section>`;openModal();$("#continueResumeButton").addEventListener("click",()=>{closeModal();loadGame();});}
 
 function openTitleIntroduction(){
@@ -2374,7 +2379,7 @@ const isProtectedStorySurface=target=>target instanceof Element&&Boolean(target.
 document.addEventListener("dragstart",event=>{if(isProtectedStorySurface(event.target))event.preventDefault();},true);
 document.addEventListener("selectstart",event=>{if(isProtectedStorySurface(event.target))event.preventDefault();},true);
 $("#visualNovelStage").querySelectorAll("img,video").forEach(media=>media.draggable=false);
-$("#soundButton").addEventListener("click",()=>{const enabled=sound.toggle();renderSoundButton();if(enabled){sound.play("success");if(state)sound.playScene(phases[state.phase].key,state.day);else sound.playBgm("title",new Date().getDate());}toast(enabled?"효과음과 BGM을 켰어요.":"모든 소리를 껐어요.");});
+$("#soundButton").addEventListener("click",()=>{const enabled=sound.toggle();renderSoundButton();if(enabled){sound.play("success");if(immersiveScene)sound.applyStoryAudio(resolveStoryAudioCue({day:state.day,sceneId:immersiveScene.id,backgroundId:immersiveScene.presentation?.backgroundId}));else if(state)sound.playScene(phases[state.phase].key,state.day);else sound.playBgm("title",new Date().getDate(),{fadeIn:1000});}toast(enabled?"효과음과 BGM을 켰어요.":"모든 소리를 껐어요.");});
 $("#guideToggleButton").addEventListener("click",toggleGuide);
 $("#guideConfirmButton").addEventListener("click",advanceGuide);
 $("#debugButton").addEventListener("click",openDebug);
@@ -2428,5 +2433,6 @@ document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("#gameTo
 document.addEventListener("fullscreenchange",()=>{if(isGameplayVisible()&&!document.fullscreenElement)document.body.classList.add("theater-mode");renderFullscreenButtons();if(activeGuide)requestAnimationFrame(positionActiveGuide);});
 document.addEventListener("pointerdown",()=>{if(isGameplayVisible()&&!document.fullscreenElement)requestInitialFullscreen();},true);
 window.addEventListener("resize",()=>{if(activeGuide)requestAnimationFrame(positionActiveGuide);});
+window.addEventListener("beforeunload",()=>sound.resetStoryAudio());
 document.addEventListener("scroll",()=>{if(activeGuide)requestAnimationFrame(positionActiveGuide);},true);
 window.addEventListener("beforeunload",()=>clearInterval(runtimeWatchdogTimer));
