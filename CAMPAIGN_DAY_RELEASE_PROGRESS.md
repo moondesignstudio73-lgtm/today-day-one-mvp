@@ -132,7 +132,7 @@
 - [x] 필요한 신규 자산 제작·이미지 QA (신규 필요 0종, 기존 5배경·하은 스프라이트 QA PASS)
 - [x] 다단계 런타임·선택 상태·저장 복원 구현 감사
 - [x] 집중 테스트·전체 회귀
-- [ ] 실제 브라우저 연속 플레이 QA
+- [x] 실제 브라우저 연속 플레이 QA
 - [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 시나리오: `docs/day11/DAY11_SCENARIO_DRAFT_V1.md`  
@@ -140,7 +140,16 @@
 
 ## 다음 작업
 
-DAY 11 실제 브라우저 연속 플레이에서 세 선택·중간 저장 재개·생활형 컷 전환·DAY 12 진입을 검수한다.
+DAY 11 브라우저 QA 증적을 커밋하고 origin·동일 SHA gh-pages 공개 배포와 Actions·공개 문서를 확인한다.
+
+### 2026-08-26 DAY 11 실제 브라우저 연속 플레이 QA 기록
+
+- 동일 SHA 로컬 정적 빌드의 격리 저장으로 DAY 11 세 전략 선택과 첫 선택 직후 새로고침·이어하기 복원을 실제 UI에서 확인했다.
+- 집 아침→낮 카페→공원→집의 생활형 컷 흐름과 하은 세이지 외출복이 선명하게 로드됐고 확대 깨짐·화자 잔상·위기 연출 오용은 없었다.
+- DAY 11 자유행동에서 DAY 12 계정 확인 목록을 준비한 뒤 `SAVE · DAY 12`로 정상 전환했다.
+- 브라우저 console warning/error는 0건이며 STORY/VISUAL/DIRECTION/AUDIO/GAMEPLAY/UX/BUG 7영역 모두 PASS, NEEDS FIX 0건이다.
+- 공개 게임·DAY 11 런타임·프레젠테이션 모듈은 HTTP 200이며 `game.js?v=157`, 미확인 단서, 8개 `ready` Scene 계약을 대조했다.
+- 산출물: `docs/day11/DAY11_PLAYTHROUGH_QA.md`. 다음 관문은 검증 증적의 커밋·origin push·동일 SHA gh-pages 배포 확인이다.
 
 ### 2026-08-26 DAY 11 집중 테스트·전체 회귀 관문 기록
 
