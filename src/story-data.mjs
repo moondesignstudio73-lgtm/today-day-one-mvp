@@ -373,6 +373,14 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"account12_access_monthly_review",label:"월 1회 현재 생활비 검토만 일정에 저장한다",response:"계정 확인을 불안에 따른 감시가 아니라 목적과 주기가 있는 생활 관리로 정했다.",memory:"현재 생활비를 월 1회만 검토하기로 함"},
     {id:"account12_access_separate_investment",label:"생활 계정 확인과 투자·저축 판단을 완전히 분리한다",response:"현재 생활비 확인과 자산을 위험에 놓는 판단 권한을 분리했다.",memory:"기본 금융 확인과 투자·저축 판단을 분리함"}
   ]
+},{
+  id:"m30-day13-current-household-budget",arc:"합의된 만큼만 공동",window:[13,13],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day12-current-account-review"},
+  title:"합의된 만큼만 공동",speaker:"하은",message:"확인된 개인 생활비와 새로 동의한 공동 항목을 분리하고 부담·검토·사생활 경계를 가진 현재 가계 예산을 만든다.",chapterType:"daily-life/finance/relationship-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day12-current-account-review"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
+  choices:[
+    {id:"budget13_review_totals_only",label:"공동 장부에는 합계와 상태만 공유하고 개인 내역은 닫는다",response:"공동 비용의 투명성과 개인 금융 사생활을 함께 보존했다.",memory:"공동 장부에는 합계와 확인 상태만 공유하기로 함"},
+    {id:"budget13_review_receipt_consent",label:"영수증은 해당 항목을 함께 확인할 때만 연다",response:"공동 항목의 증빙 확인이 개인 소비 전체를 볼 권한이 되지 않게 했다.",memory:"공동 영수증은 항목별 동의가 있을 때만 열기로 함"},
+    {id:"budget13_review_weekly_changes",label:"주 1회 변경된 항목만 함께 검토한다",response:"가계 예산을 상시 감시가 아닌 정해진 주기의 변경 기록으로 만들었다.",memory:"가계 예산의 변경 항목을 주 1회만 함께 검토하기로 함"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [

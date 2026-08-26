@@ -229,6 +229,25 @@ const DAY12_HOME_INVESTMENT_PROMPT_BOUNDARY=Object.freeze({
   ],futureEventWeights:{money:1.1,recovery:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY13_HOME_FULL_LINK_PROMPT=Object.freeze({
+  id:"context-day13-home-full-link-prompt",title:"공동 장부의 전체 연결",category:"money",categoryLabel:"스토리 공용 이벤트",
+  hook:"공동 장부 앱이 자동 분류를 위해 두 사람의 전체 거래 내역을 연결하라고 제안했다.",message:"합의한 공동 항목을 확인하는 데 개인 소비 전체가 필요한지 경계를 적용해야 했다.",question:"전체 계정 연결 제안을 어떻게 처리할까?",
+  allowedLocations:["home"],allowedPhases:["evening"],dayRange:[13,13],heroineIds:["haeun"],requiredFeatures:["finance","current-household-budget","shared-expense-consent"],requiredStoryFlags:["day13RuntimeComplete","day13CurrentHouseholdBudgetCompleted"],
+  cooldown:30,maxTriggerCount:1,probability:.35,priority:310,baseWeight:100,tensionLevel:"low",effects:{trust:1},storyFlag:"context-day13-home-full-link-prompt:COMPLETED",forbiddenFlags:["context-day13-home-full-link-prompt:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",result:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",status:"ready"},presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},
+  scenes:[{id:"context-day13-home-full-link-prompt-scene",title:"공동 장부의 전체 연결",backgroundId:"day2-home-entry",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"evening",timeOfDay:"evening",weather:"clear",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"앱은 공동 비용을 자동으로 찾겠다며 두 계정의 모든 거래 내역에 접근 권한을 요청했다."},
+    {type:"dialogue",speaker:"하은",text:"편해 보여도 공동 세제 한 건 때문에 네 개인 소비 전체를 볼 필요는 없지?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"응. 합의한 항목의 합계와 영수증만 직접 올리고 전체 연결은 거절할게."},
+    {type:"dialogue",speaker:"하은",text:"내 계정도 같은 범위로. 투명성은 서로 같은 사생활 포기랑 다르니까.",expressionId:"smile"},
+    {type:"narration",speaker:"내레이션",text:"공동 장부는 개인 계정 전체를 복제하지 않고 둘이 동의한 항목만 담는 작은 공간으로 남았다."}
+  ]}],
+  choices:[
+    {id:"reject-full-account-link",label:"전체 계정 연결을 거절하고 항목별 합계만 입력한다",preferenceTags:["BOUNDARY","PRACTICAL"],effects:{trust:5,confidence:4,stress:-3},response:"전체 접근 권한을 거절하고 합의된 공동 항목만 수동으로 기록했다.",flag:"context-day13-home-full-link-prompt:REJECTED",memory:"DAY 13 공동 장부의 전체 계정 연결을 거절했다.",futureEventWeights:{money:1.15}},
+    {id:"receipt-by-consent",label:"각 공동 영수증을 새 동의가 있을 때만 첨부한다",preferenceTags:["EMPATHY","PLANNED"],effects:{trust:6,confidence:3,stress:-2},response:"공동 영수증도 항목별 새 동의 뒤에만 장부에 첨부했다.",flag:"context-day13-home-full-link-prompt:CONSENT",memory:"DAY 13 공동 장부에 영수증을 항목별 동의 후 첨부하기로 했다.",futureEventWeights:{romance:1.1,money:1.1}}
+  ],futureEventWeights:{money:1.15,romance:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
@@ -243,7 +262,8 @@ export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   DAY9_HOME_SEPARATE_FEEDBACK,
   DAY10_HOME_THREE_SCORE_REPORT,
   DAY11_HOME_PROTECTED_BUFFER,
-  DAY12_HOME_INVESTMENT_PROMPT_BOUNDARY
+  DAY12_HOME_INVESTMENT_PROMPT_BOUNDARY,
+  DAY13_HOME_FULL_LINK_PROMPT
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);
