@@ -1,0 +1,11 @@
+import assert from "node:assert/strict";
+import { createInitialState } from "../src/game-core.mjs";
+import { createGirlfriendFromProfile } from "../src/girlfriend-manager.mjs";
+import { GAME_MODES } from "../src/scenario-state.mjs";
+import { selectNextStoryScene } from "../src/story-manager.mjs";
+import { DAY19_RENEGOTIATE_CHOICES, DAY19_ROLE_CHOICES, DAY19_ZONE_CHOICES, applyLockedDay19ChoiceState, getLockedDay19ResumePresentation, getLockedDay19Segment, validateLockedDay19Runtime } from "../src/day19-campaign-runtime.mjs";
+const state=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});state.day=19;state.storyHistory=[{sceneId:"m30-day18-current-home-safety",choiceId:"home18_access_one_time_code",day:18,response:"완료"}];state.storyFlags={day19CurrentSharedChorePending:true};state.scenario.featureUnlocks={finance:true,shop:true};
+assert.equal(selectNextStoryScene(state)?.id,"m30-day19-current-shared-chore");assert.equal(validateLockedDay19Runtime(),true);assert.equal(getLockedDay19Segment(state).filter(step=>step.type==="choice").length,1);
+assert.equal(applyLockedDay19ChoiceState(state,DAY19_ROLE_CHOICES[0].id).stage,1);assert.equal(getLockedDay19ResumePresentation(state).backgroundId,"day2-bedroom");assert.equal(applyLockedDay19ChoiceState(state,DAY19_ZONE_CHOICES[0].id).stage,2);assert.equal(applyLockedDay19ChoiceState(state,DAY19_RENEGOTIATE_CHOICES[0].id).stage,3);
+assert.equal(state.storyFlags.day19CurrentSharedChoreCompleted,true);assert.equal(state.storyFlags.day20CurrentSharedMealPending,true);assert.equal(state.scenario.featureUnlocks.investment,undefined);assert.ok(state.scenario.unlockedActions.includes("current-shared-chore-plan"));assert.ok(state.scenario.unlockedActions.includes("private-home-zone"));assert.ok(state.scenario.unlockedActions.includes("chore-renegotiation"));assert.ok(state.scenario.followUpHooks.includes("day20-current-shared-meal"));assert.ok(state.scenario.clues.includes("current-shared-chore-record"));
+const restored=structuredClone(state);assert.equal(restored.storyFlags.day19RuntimeStage,3);assert.equal(getLockedDay19Segment(restored).at(-1).type,"sceneEnd");console.log("day19-runtime.test: all assertions passed");
