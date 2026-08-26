@@ -24,6 +24,26 @@ export const DAY10_DEBRIEF_CHOICES=Object.freeze([
   {id:"work10_debrief_separate_scores",label:"업무 결과·회복 상태·동료 관계를 서로 다른 점수로 남긴다"}
 ]);
 
+function day9Callbacks(state){
+  const scope=state.storyFlags?.day9ScopeStrategy;
+  const pressure=state.storyFlags?.day9PressureStrategy;
+  const debrief=state.storyFlags?.day9DebriefStrategy;
+  const lines=[];
+  if(scope==="office9_scope_shadow_handoff")lines.push(d("윤서진","어제처럼 실제 인계 한 건만 보고 질문을 남겨요. 오늘은 그 기록을 첫 블록에 쓰죠.","smile"));
+  else if(scope==="office9_scope_compare_decisions")lines.push(d("윤서진","어제 비교한 건 결론이 아니라 달라진 전제였죠. 오늘도 출처가 바뀐 항목만 표시해 뒀어요.","calm"));
+  else if(scope==="office9_scope_current_queue")lines.push(d("윤서진","어제 만든 현재 담당·마감·막힌 지점 지도를 첫 블록 위에 올려 뒀어요.","smile"));
+  else lines.push(d("윤서진","현재 담당·마감·막힌 지점부터 확인하고 첫 블록을 열어요.","calm"));
+  if(pressure==="office9_pressure_observe_annotate")lines.push(d("나","책임자가 오기 전에는 빠진 조건만 주석으로 남기겠습니다."));
+  else if(pressure==="office9_pressure_reversible_task")lines.push(d("나","오늘도 되돌릴 수 있는 출처 확인까지만 맡고 문구와 승인은 넘기겠습니다."));
+  else if(pressure==="office9_pressure_route_questions")lines.push(d("나","목적·근거·위험을 질문으로 묶고 답과 승인은 현재 책임자에게 넘기겠습니다."));
+  else lines.push(d("나","현재 책임자와 되돌릴 수 있는 기여부터 다시 확인하겠습니다."));
+  if(debrief==="office9_debrief_name_limits")lines.push(n("어제 적은 막힘과 불편을 기준으로 두 번째 블록의 화면 수를 하나로 제한했다."));
+  else if(debrief==="office9_debrief_targeted_feedback")lines.push(n("서진의 업무 판단 한 가지와 민호의 팀 상호작용 한 가지가 서로 다른 메모로 놓였다."));
+  else if(debrief==="office9_debrief_write_protocol")lines.push(n("자료 주인 확인, 되돌릴 수 있는 기여, 책임자 승인이라는 어제의 절차가 세 시간표의 첫 줄이 됐다."));
+  else lines.push(n("어제 기록의 업무·몸·사람 세 칸을 오늘의 세 시간표에도 나눠 두었다."));
+  return lines;
+}
+
 function rhythmReaction(id){
   if(id==="work10_rhythm_symptom_check")return [d("나","각 묶음이 끝날 때 증상과 집중도를 확인하고 다음 블록을 열겠습니다."),d("팀장","상태 확인이 업무 평가로 환산되지 않도록 별도 칸에 두죠."),n("다음 일을 시작하는 권한은 시계가 아니라 현재 몸 상태에 남았다.")];
   if(id==="work10_rhythm_task_milestones")return [d("나","출처 확인, 질문 정리, 인계 메모. 되돌릴 수 있는 세 작업 뒤에는 무조건 멈추겠습니다."),d("윤서진","작업이 남아 있어도 네 번째는 자동으로 시작하지 않는 거네요.","smile"),n("완료 수가 범위를 몰래 늘리지 못하도록 중단선이 먼저 적혔다.")];
@@ -52,9 +72,9 @@ const segment0=()=>[
 ];
 const segment1=state=>[
   ...rhythmReaction(state.storyFlags?.day10RhythmStrategy),transition("SCENE 04 · 되돌릴 수 있는 기여", "day9-office-project-room-day", "female-coworker", "smile"),enter("female-coworker","smile"),
-  n("서진은 현재 수치의 출처 확인과 질문표 정리를 분리해 놓고 승인란은 팀장 이름으로 남겼다."),d("윤서진","어제 만든 책임 분리 절차 그대로예요. 답을 알아도 승인하지 않기.","calm"),
-  d("나","출처가 바뀐 항목만 표시하고 결론은 현재 담당자에게 넘길게요."),d("윤서진","기억보다 절차가 먼저 돌아오고 있네요.","smile"),
-  transition("SCENE 05 · 현재 동료와의 점심", "cafe-rain-evening", "office-best-male", "smile"),enter("office-best-male","smile"),
+  n("서진은 현재 수치의 출처 확인과 질문표 정리를 분리해 놓고 승인란은 팀장 이름으로 남겼다."),...day9Callbacks(state),
+  d("윤서진","답을 알아도 승인하지 않기. 세 시간이 길어져도 그 선은 같아요.","calm"),d("나","결론은 현재 담당자에게 넘길게요."),d("윤서진","기억보다 절차가 먼저 돌아오고 있네요.","smile"),
+  transition("SCENE 05 · 현재 동료와의 점심", "neighborhood-cafe-day", "office-best-male", "smile"),enter("office-best-male","smile"),
   n("점심 자리는 과거의 나를 증언하는 인터뷰가 되지 않도록 종료 시각과 질문 범위를 먼저 정했다."),d("민호","예전 무용담 금지. 서진 평가 떠보기 금지. 지금 궁금한 건 직접 묻기."),
   d("윤서진","그리고 조용히 먹고 싶으면 그것도 현재 정보로 말하기.","calm"),d("나","좋아요. 오늘 점심 방식을 정하죠."),choice(DAY10_LUNCH_CHOICES)
 ];
@@ -76,7 +96,7 @@ const segment3=state=>[
 
 function addCollection(state,key,...ids){if(!state.scenario?.enabled||!Array.isArray(state.scenario[key]))return;state.scenario[key]=[...new Set([...state.scenario[key],...ids])];}
 export function getLockedDay10Segment(state,stage=state.storyFlags?.day10RuntimeStage??0){if(stage===0)return segment0(state);if(stage===1)return segment1(state);if(stage===2)return segment2(state);return segment3(state);}
-export function getLockedDay10ResumePresentation(state){const stage=state.storyFlags?.day10RuntimeStage??0;if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"};if(stage===1)return {backgroundId:"day9-office-project-room-day",characterId:"female-coworker",expressionId:"smile",poseId:"standing"};if(stage===2)return {backgroundId:"cafe-rain-evening",characterId:"office-best-male",expressionId:"smile",poseId:"standing"};return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"};}
+export function getLockedDay10ResumePresentation(state){const stage=state.storyFlags?.day10RuntimeStage??0;if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"};if(stage===1)return {backgroundId:"day9-office-project-room-day",characterId:"female-coworker",expressionId:"smile",poseId:"standing"};if(stage===2)return {backgroundId:"neighborhood-cafe-day",characterId:"office-best-male",expressionId:"smile",poseId:"standing"};return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"};}
 export function applyLockedDay10ChoiceState(state,id){
   state.storyFlags??={};
   if(DAY10_RHYTHM_CHOICES.some(item=>item.id===id)){state.storyFlags.day10RhythmStrategy=id;state.storyFlags.day10RuntimeStage=1;state.storyFlags[id]=true;addCollection(state,"unlockedActions","three-hour-work-rhythm");return {stage:1};}

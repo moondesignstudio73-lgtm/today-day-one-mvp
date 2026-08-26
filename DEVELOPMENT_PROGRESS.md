@@ -561,3 +561,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 검증 SHA `cf1ae28`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
 - 같은 SHA의 GitHub Pages 작업 2개가 SUCCESS로 완료됐고, 공개 게임·DAY 9 QA·프로젝트룸 이미지·DAY 30 런타임은 모두 HTTP 200과 최신 마커를 반환했다.
 - DAY 9을 COMPLETE 처리했다. 다음 작업은 원격에 선반영된 DAY 10 구현을 시나리오·에셋·저장·브라우저 출시 관문 기준으로 재감사하는 것이다.
+# 2026-08-26 DAY 10 시나리오·내러티브 QA 관문
+
+- 완료 관문: 챕터 계약·Voice Profile·지식 장부, 8개 Scene 완전 시나리오, 자체 내러티브 QA·정적 계약 검사.
+- 산출물: `docs/day10/DAY10_SCENARIO_DRAFT_V1.md`, `docs/day10/DAY10_SCENARIO_QA_V1.md`, `tests/day10-scenario.test.mjs`.
+- 변경 파일: 위 문서·테스트, `src/day10-campaign-runtime.mjs`, `tests/day10-runtime.test.mjs`, 두 진행 문서.
+- 검증: DAY 10 시나리오·런타임, DAY 9 런타임, DAY 10 자유행동, Node 문법, `tests/simulation.test.mjs` 전체 회귀 PASS.
+- 수정 사항: DAY 9의 9개 선택을 DAY 10 자료·행동·제한에 각각 회수했다. 점심·stage 2 복원 배경을 `cafe-rain-evening`에서 `neighborhood-cafe-day`로 교체해 낮 시간대와 맞췄다.
+- 남은 NEEDS FIX: 현재 관문 0. 출시 전체 기준으로 에셋·연출/오디오 감사, 27경로 저장 회귀, 실제 브라우저 QA, 공개 배포가 남았다.
+- 다음 관문: DAY 10 기존 에셋 감사와 8개 Scene 연출·오디오 매핑.
