@@ -741,3 +741,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 신규 최종 아트는 0종이며 기존·사용자 에셋을 덮어쓰거나 이동·삭제하지 않았다.
 - 8개 Scene의 카메라·전환, `daily` BGM, 문서·가방·카페·임시 예비폰 생활 SFX와 개인정보 비가독·위기 연출 금지 계약을 데이터와 집중 테스트로 고정했다.
 - 산출물: `docs/day13/DAY13_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day13-presentation-data.mjs`, `tests/day13-presentation.test.mjs`. 다음 관문은 기존 자산 이미지 품질 QA와 8 Scene `ready` 전환이다.
+
+# 2026-08-26 DAY 13 이미지 품질 QA 관문
+
+- 기존 배경 4종은 1672×941 RGB PNG, 하은 DAY 6 생활형 외출복은 887×1774 RGBA PNG로 확인하고 SHA-256을 고정했다.
+- 원본 해상도 육안 검사에서 깨진 알파·블러·비율 왜곡·크롭 손실·UI 안전 여백·고정 인물·워터마크 문제가 없었다.
+- 두 내러티브 스킬의 캐논 기준으로 하은이 밝고 생활적인 23세 동거 파트너로 보이며 공포·회피·악역 코딩이 없음을 확인했다.
+- 신규 자산 및 기존·사용자 에셋 변경은 0건이며 8개 Scene을 `ready`로 전환했다. 산출물: `docs/day13/DAY13_IMAGE_QUALITY_QA.md`, `src/day13-presentation-data.mjs`, `tests/day13-presentation.test.mjs`.
+- 다음 관문은 DAY 13 선반영 런타임의 8개 프레젠테이션 장면·의상·3단계 선택·중간 저장 복원 구현 감사다.
