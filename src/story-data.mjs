@@ -353,6 +353,16 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"work10_debrief_adjust_one_block",label:"피로가 높았던 한 블록만 줄이고 나머지는 유지한다",response:"하루 전체를 실패로 보지 않고 피로가 높았던 한 구간만 조정했다.",memory:"세 시간 근무 중 피로가 높았던 한 블록만 조정함"},
     {id:"work10_debrief_separate_scores",label:"업무 결과·회복 상태·동료 관계를 서로 다른 점수로 남긴다",response:"같은 하루의 업무·몸·사람을 서로 덮지 않는 세 기록으로 저장했다.",memory:"DAY 10의 업무 결과, 회복 상태, 동료 관계를 분리해 기록함"}
   ]
+},{
+  id:"m30-day11-current-life-plan",arc:"현재 생활표",window:[11,11],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day10-three-hour-work-rhythm"},
+  title:"현재 생활표",speaker:"하은",message:"병원·근무·개인 시간·공동 약속을 출처와 소유권이 있는 한 주 생활표로 만들고 충돌·공유 규칙을 정한다.",
+  chapterType:"daily-life/recovery/relationship-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day10-three-hour-work-rhythm"],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
+  choices:[
+    {id:"life11_share_changes_only",label:"하은과는 변경된 시간과 필요한 도움만 공유한다",response:"연락을 하루 전체 보고가 아니라 합의가 달라질 때 쓰는 도구로 정했다.",memory:"생활표의 변경 사항과 필요한 도움만 하은과 공유하기로 함"},
+    {id:"life11_share_weekly_review",label:"주말에 한 번만 함께 생활표를 검토한다",response:"매일 감시하지 않고 정해진 주기에 공동 계획만 검토하기로 했다.",memory:"하은과 주말 한 번만 공동 생활표를 검토하기로 함"},
+    {id:"life11_share_separate_ownership",label:"개인 일정은 각자 관리하고 공동 약속만 함께 수정한다",response:"연인 관계와 시간의 소유권을 분리해 공동 약속만 함께 관리했다.",memory:"개인 일정의 소유권을 지키고 공동 약속만 함께 수정하기로 함"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [

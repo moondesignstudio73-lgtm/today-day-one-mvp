@@ -191,6 +191,25 @@ const DAY10_HOME_THREE_SCORE_REPORT=Object.freeze({
   ],futureEventWeights:{work:1.15,recovery:1.05},requiredMemories:[],requiredEvents:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY11_HOME_PROTECTED_BUFFER=Object.freeze({
+  id:"context-day11-home-protected-buffer",title:"비어 있어야 하는 한 시간",category:"daily",categoryLabel:"스토리 공용 이벤트",
+  hook:"공동 달력이 빈 시간에 자동 추천 약속을 넣으려 하자 하은이 저장 버튼 앞에서 멈췄다.",message:"빈칸을 가능한 일정으로 볼지, 회복과 변경을 위해 보호된 시간으로 유지할지 확인해야 했다.",question:"생활표의 빈 한 시간을 어떻게 지킬까?",
+  allowedLocations:["home"],allowedPhases:["evening"],dayRange:[11,11],heroineIds:["haeun"],requiredFeatures:["shared-calendar-boundary","protected-buffer-time"],requiredStoryFlags:["day11RuntimeComplete","day11CurrentLifePlanCompleted"],
+  cooldown:30,maxTriggerCount:1,probability:.35,priority:290,baseWeight:100,tensionLevel:"low",effects:{stress:-1},storyFlag:"context-day11-home-protected-buffer:COMPLETED",forbiddenFlags:["context-day11-home-protected-buffer:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",result:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",status:"ready"},presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},
+  scenes:[{id:"context-day11-home-protected-buffer-scene",title:"비어 있어야 하는 한 시간",backgroundId:"day2-home-entry",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"evening",timeOfDay:"evening",weather:"clear",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"공동 달력은 이동 뒤 비어 있는 한 시간에 ‘함께 장보기’를 추천했다. 그러나 그 칸은 오늘 둘이 정한 완충 시간이었다."},
+    {type:"dialogue",speaker:"하은",text:"가능한 시간이 생겼다는 알림이지, 약속을 넣어도 된다는 동의는 아니지?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"응. 빈칸은 일정 후보가 아니라 회복과 변경을 위한 보호 시간으로 유지할게."},
+    {type:"dialogue",speaker:"하은",text:"그럼 장보기는 각자 가능한 다음 칸을 다시 물어보고 정하자.",expressionId:"smile"},
+    {type:"narration",speaker:"내레이션",text:"아무 일정도 없는 한 시간은 낭비가 아니라 계획이 흔들릴 때 선택권을 남기는 실제 자원이 되었다."}
+  ]}],
+  choices:[
+    {id:"lock-buffer-time",label:"완충 시간을 보호 상태로 잠근다",preferenceTags:["BOUNDARY","PRACTICAL"],effects:{health:2,confidence:4,stress:-4},response:"자동 추천을 거절하고 한 시간을 회복·변경 전용으로 잠갔다.",flag:"context-day11-home-protected-buffer:LOCKED",memory:"DAY 11 생활표의 빈 한 시간을 보호된 완충 시간으로 잠갔다.",futureEventWeights:{recovery:1.2}},
+    {id:"require-fresh-consent",label:"빈칸을 쓰려면 두 사람의 새 동의를 요구한다",preferenceTags:["EMPATHY","PLANNED"],effects:{trust:6,confidence:3,stress:-2},response:"빈 시간에 공동 약속을 추가할 때마다 새 동의를 확인하도록 설정했다.",flag:"context-day11-home-protected-buffer:FRESH_CONSENT",memory:"DAY 11 공동 달력의 빈칸 사용에 새 동의를 요구하도록 설정했다.",futureEventWeights:{romance:1.15,recovery:1.1}}
+  ],futureEventWeights:{recovery:1.15,romance:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
@@ -203,7 +222,8 @@ export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   DAY7_HOME_DATE_MEMORY,
   DAY8_HOME_MAIL_DEADLINE,
   DAY9_HOME_SEPARATE_FEEDBACK,
-  DAY10_HOME_THREE_SCORE_REPORT
+  DAY10_HOME_THREE_SCORE_REPORT,
+  DAY11_HOME_PROTECTED_BUFFER
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);
