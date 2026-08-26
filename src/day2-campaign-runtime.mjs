@@ -65,6 +65,14 @@ export const DAY2_SEARCH_CHOICES=Object.freeze([
 export const DAY2_KEY_CHOICES=Object.freeze([{id:"key_log_only",label:"사진과 발견 위치만 기록한다"},{id:"key_test_visible_only",label:"방 안의 보이는 잠금만 훼손 없이 대조한다"}]);
 export const DAY2_CONTACT_CHOICES=Object.freeze([{id:"contact_formal",label:"이하은"},{id:"contact_familiar",label:"하은"},{id:"contact_verify_playful",label:"여자친구(?)"}]);
 
+export function normalizeDay2StoryFlags(state){
+  state.storyFlags??={};const flags=state.storyFlags;
+  flags.day2RuntimeStage??=0;flags.day2RoomSearches=Array.isArray(flags.day2RoomSearches)?[...new Set(flags.day2RoomSearches.filter(id=>DAY2_SEARCH_CHOICES.some(choice=>choice.id===id)))]:[];
+  for(const key of ["family_question_first","accident_interest","recovery_focus","haeun_contact_unlocked"])flags[key]??=false;
+  for(const key of ["day2MarriageStrategy","day2HomeStrategy","day2TravelStrategy","day2PhotoStrategy","day2PendingPhotoReaction","day2LastSearch","day2KeyStrategy","day2ContactStrategy"])flags[key]??=null;
+  return flags;
+}
+
 const SEGMENT_0=[
   tr("DAY 2 · 30일 뒤",BG.bed),bgm("S01_CHOICE"),d("나","그러니까, 우리가 결혼하기로 했다고."),d("하은","응."),d("나","30일 뒤에."),d("하은","응."),d("나","대답이 자꾸 짧아지는데."),d("하은","길게 말하면 더 수상해 보일 것 같아서.","warm-playful"),d("나","그 판단도 조금 수상하고."),n("하은이 입술을 눌렀다가 결국 웃었다."),d("하은","네 입장에서는 그렇겠다. 눈 떴더니 1년 지났고, 처음 보는 여자가 여자친구라고 하고, 달력에는 결혼 날짜까지 있으니까."),d("나","부모님 이야기도 들었고."),d("하은","응. 그래서 날짜가 있다고 네 대답까지 정해진 건 아니야.","soft-vulnerable"),choice(DAY2_MARRIAGE_CHOICES)
 ];
@@ -132,10 +140,10 @@ function endingSegment(state){const id=state.storyFlags?.day2ContactStrategy;con
 function addMetric(state,key,amount){if(state.scenario?.enabled&&Number.isFinite(state.scenario[key]))state.scenario[key]=Math.max(0,state.scenario[key]+amount);}
 function remember(state,id){state.storyFlags??={};state.storyFlags[id]=true;}
 
-export function getLockedDay2Segment(state,stage=state.storyFlags?.day2RuntimeStage??0){if(stage===0)return structuredClone(SEGMENT_0);if(stage===1)return segment1(state);if(stage===2)return segment2(state);if(stage===3)return segment3(state);if(stage==="key")return keySegment();if(stage===4)return segment4(state);if(stage===5)return segment5(state);return endingSegment(state);}
+export function getLockedDay2Segment(state,stage=normalizeDay2StoryFlags(state).day2RuntimeStage){normalizeDay2StoryFlags(state);if(stage===0)return structuredClone(SEGMENT_0);if(stage===1)return segment1(state);if(stage===2)return segment2(state);if(stage===3)return segment3(state);if(stage==="key")return keySegment();if(stage===4)return segment4(state);if(stage===5)return segment5(state);return endingSegment(state);}
 
 export function getLockedDay2ResumePresentation(state){
-  const stage=state.storyFlags?.day2RuntimeStage??0;
+  const stage=normalizeDay2StoryFlags(state).day2RuntimeStage;
   if(stage===1)return {backgroundId:BG.bed,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["pack-and-present"]};
   if(stage===2)return {backgroundId:BG.bed,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["pack-and-present"]};
   if(stage===3)return {backgroundId:BG.car,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["safe-driving-2d-v3"]};
@@ -145,7 +153,7 @@ export function getLockedDay2ResumePresentation(state){
   return {backgroundId:BG.bed,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["pack-and-present"]};
 }
 
-export function applyLockedDay2ChoiceState(state,id){state.storyFlags??={};
+export function applyLockedDay2ChoiceState(state,id){normalizeDay2StoryFlags(state);
   if(DAY2_MARRIAGE_CHOICES.some(c=>c.id===id)){state.storyFlags.day2MarriageStrategy=id;remember(state,id);state.storyFlags.day2RuntimeStage=1;addMetric(state,id==="relationship_verify"?"investigation":id==="present_impression"?"haeunAffection":"haeunTrust",id==="relationship_verify"?1:2);return {stage:1};}
   if(DAY2_HOME_CHOICES.some(c=>c.id===id)){state.storyFlags.day2HomeStrategy=id;remember(state,id);state.storyFlags.day2RuntimeStage=2;addMetric(state,id==="thank_for_waiting"?"haeunAffection":id==="set_home_boundary"?"investigation":"haeunTrust",id==="ask_if_never_woke"?1:2);return {stage:2};}
   if(DAY2_TRAVEL_CHOICES.some(c=>c.id===id)&&(!DAY2_TRAVEL_CHOICES.find(c=>c.id===id).requires||state.storyFlags.accident_interest)){state.storyFlags.day2TravelStrategy=id;remember(state,id);state.storyFlags.day2RuntimeStage=3;addMetric(state,id==="ask_record_boundary"?"investigation":"haeunTrust",2);return {stage:3};}
@@ -158,3 +166,13 @@ export function applyLockedDay2ChoiceState(state,id){state.storyFlags??={};
 
 export function getLockedDay2LegacyChoice(state){if(state.storyFlags?.contact_acceptance)return "take-her-hand";if(state.storyFlags?.contact_boundary)return "use-the-rail";return "review-the-plan";}
 export function validateLockedDay2Runtime(){const sample={storyFlags:{contact_boundary:true,family_question_first:true,accident_interest:true,day2MarriageStrategy:"marriage_pause",day2HomeStrategy:"set_home_boundary",day2TravelStrategy:"ask_record_boundary",day2PhotoStrategy:"photo_observation",day2PendingPhotoReaction:"photo_observation",day2RoomSearches:["room_desk_checked","pc_interest","wardrobe_checked"],day2LastSearch:"wardrobe_checked",day2ContactStrategy:"contact_formal"}};const all=[...SEGMENT_0,...segment1(sample),...segment2(sample),...segment3(sample),...segment4(sample),...keySegment(),...segment5(sample),...endingSegment(sample)];return all.filter(x=>x.type==="transition").length>=13&&all.filter(x=>x.type==="dialogue").length>=90&&all.filter(x=>x.type==="cgShow").length===4&&!JSON.stringify(all).includes("D-29")&&!JSON.stringify(all).includes("가짜 하은")&&DAY2_SEARCH_CHOICES.length===5;}
+
+export function validateLockedDay2StateMachine(){
+  const allowed=new Set(["transition","narration","dialogue","characterEnter","itemShow","sfx","animation","cgShow","choice","sceneEnd"]),validSegment=segment=>segment.length>0&&segment.every(step=>allowed.has(step.type))&&["choice","sceneEnd"].includes(segment.at(-1).type);
+  const state={storyFlags:{family_question_first:false,accident_interest:false,recovery_focus:false},scenario:{enabled:true,investigation:0,memoryRecovery:0,haeunAffection:0,haeunTrust:0,homeSearchCount:0}};normalizeDay2StoryFlags(state);
+  const route=[DAY2_MARRIAGE_CHOICES[0].id,DAY2_HOME_CHOICES[0].id,DAY2_TRAVEL_CHOICES[0].id,DAY2_PHOTO_CHOICES[0].id,"room_desk_checked","pc_interest","wardrobe_checked",DAY2_CONTACT_CHOICES[0].id];
+  if(!validSegment(getLockedDay2Segment(state)))return false;
+  for(const id of route){const result=applyLockedDay2ChoiceState(state,id);if(!result||!validSegment(getLockedDay2Segment(state,result.stage)))return false;}
+  if(state.storyFlags.day2RuntimeStage!==6||getLockedDay2Segment(state,6).at(-1)?.type!=="sceneEnd")return false;
+  const keyState={storyFlags:{accident_interest:true},scenario:{enabled:true,investigation:0,memoryRecovery:0,haeunAffection:0,haeunTrust:0,homeSearchCount:0}};normalizeDay2StoryFlags(keyState);for(const id of [DAY2_MARRIAGE_CHOICES[1].id,DAY2_HOME_CHOICES[1].id,"ask_record_boundary",DAY2_PHOTO_CHOICES[1].id,"unclassified_key_found",DAY2_KEY_CHOICES[0].id,"friends_interest","wardrobe_checked",DAY2_CONTACT_CHOICES[1].id]){const result=applyLockedDay2ChoiceState(keyState,id);if(!result||!validSegment(getLockedDay2Segment(keyState,result.stage)))return false;}return keyState.storyFlags.day2RuntimeStage===6;
+}

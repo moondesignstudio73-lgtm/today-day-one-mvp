@@ -12,6 +12,7 @@ import { migrateJob } from "./jobs-data.mjs?v=6";
 import { migratePlayerProfile } from "./player-profile-data.mjs";
 import { migrateWorldState } from "./world-map-manager.mjs";
 import { migrateScenarioState, normalizeGameMode } from "./scenario-state.mjs";
+import { normalizeDay2StoryFlags } from "./day2-campaign-runtime.mjs";
 
 export class SaveManager {
   static key = "today-day-one.save.v1";
@@ -54,6 +55,7 @@ export class SaveManager {
       parsed.conversationHistory ??= [];
       parsed.storyHistory ??= [];
       parsed.storyFlags ??= {};
+      if(parsed.scenario?.enabled===true)normalizeDay2StoryFlags(parsed);
       parsed.storyFreeAction ??= null;
       parsed.eventCompatibility ??= {dailyCounts:{},lastCandidates:[],lastSelected:null};
       parsed.futureScore ??= 0;
