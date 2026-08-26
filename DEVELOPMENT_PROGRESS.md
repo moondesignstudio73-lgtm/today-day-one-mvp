@@ -696,3 +696,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 하은 관계 수치·윤서진 두 축·DAY 11 세 전략·미확인 일정 단서의 불변과 조기 스포일러 차단을 PASS했다.
 - 원격 자유 모드 지도·야간 외출 변경을 충돌 없이 fast-forward 통합한 뒤 DAY 12 전체 집중 검사, DAY 11/13 인접 회귀, DAY 2~30 자유행동 감사, 브라우저 엔트리 88개 모듈과 전체 30일 시뮬레이션 회귀가 PASS했다.
 - 남은 NEEDS FIX: 현재 관문 0. 다음 관문은 DAY 12 실제 브라우저 연속 플레이 QA다.
+
+# 2026-08-26 DAY 12 실제 브라우저 연속 플레이 QA
+
+- 격리된 로컬 저장으로 DAY 12 세 선택과 첫 선택 뒤 새로고침 복원, 자유행동·공용 이벤트·DAY 13 전환을 실제 UI에서 검사했다.
+- 최초 검사에서 자유행동 완료가 현재 시퀀스를 계속 재생하고, 날짜 전환 뒤 남은 `pendingStoryId` 때문에 완료 DAY를 다시 여는 결함을 재현했다.
+- `#completeStoryFreeAction` 완료 경로를 `finishImmersiveScene()`으로 연결하고 `advanceCampaignChapter()`에서 `pendingStoryId`를 초기화했다. `game.js?v=161`로 브라우저 캐시 계약을 갱신했다.
+- 수정 뒤 DAY 13 잠금 장면 첫 내레이션, 선명한 배경·하은 스프라이트, console warning/error 0건을 재확인했다.
+- Node 문법, DAY 12 자유행동·시나리오·프레젠테이션·런타임·회귀, DAY 11/13 인접 런타임, DAY 2~30 자유행동 감사, 엔트리 모듈과 전체 시뮬레이션 회귀가 PASS했다.
+- 산출물: `docs/day12/DAY12_PLAYTHROUGH_QA.md`. 남은 관문은 커밋·origin push·동일 SHA gh-pages 배포와 공개 확인이다.
