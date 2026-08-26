@@ -734,3 +734,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 하은 49회·주인공 46회의 대사 표기로 하은의 생활 주도성과 주인공의 합리적 검증 리듬이 공존한다. 조기 반전·악역 코딩·새 미스터리 단서·윤서진 양축 변화는 없다.
 - 계약과 대본을 각각 `CHAPTER CONTRACT LOCK V1`, `SCENARIO LOCK V1`로 승격하고 `NEEDS FIX: 0`을 확정했다.
 - 산출물: `docs/day13/DAY13_SCENARIO_QA_V1.md`, `tests/day13-scenario.test.mjs` 및 잠금 마커 갱신. 다음 관문은 기존 에셋 감사·8 Scene 연출/오디오 매핑이다.
+
+# 2026-08-26 DAY 13 기존 에셋·연출·오디오 관문
+
+- 집 아침·현관/거실·낮 마트·낮 카페 4배경과 하은 DAY 6 생활형 외출복을 감사해 8개 Scene의 기존 자산 재사용을 확정했다.
+- 신규 최종 아트는 0종이며 기존·사용자 에셋을 덮어쓰거나 이동·삭제하지 않았다.
+- 8개 Scene의 카메라·전환, `daily` BGM, 문서·가방·카페·임시 예비폰 생활 SFX와 개인정보 비가독·위기 연출 금지 계약을 데이터와 집중 테스트로 고정했다.
+- 산출물: `docs/day13/DAY13_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day13-presentation-data.mjs`, `tests/day13-presentation.test.mjs`. 다음 관문은 기존 자산 이미지 품질 QA와 8 Scene `ready` 전환이다.
