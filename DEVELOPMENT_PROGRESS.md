@@ -555,3 +555,9 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 로컬의 더 엄격한 27경로·DAY 5/8 콜백·서진 양축 분리 런타임을 보존하면서 원격 프로젝트룸 이미지와 DAY 10~28 후속 연결을 일반 병합했다.
 - DAY 9 집중 검사, DAY 8 회귀, DAY 10~28 런타임, DAY 6~28 자유행동, 전체 `tests/simulation.test.mjs`가 PASS했다.
 - STORY MODE 실제 브라우저 진입과 모듈 로드를 확인했고 콘솔 warning/error는 0건이다. 남은 작업은 검증 SHA의 origin·gh-pages 배포와 공개 확인이다.
+
+## DAY 9 출시·공개 배포 완료 (2026-08-26)
+
+- 검증 SHA `cf1ae28`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
+- 같은 SHA의 GitHub Pages 작업 2개가 SUCCESS로 완료됐고, 공개 게임·DAY 9 QA·프로젝트룸 이미지·DAY 30 런타임은 모두 HTTP 200과 최신 마커를 반환했다.
+- DAY 9을 COMPLETE 처리했다. 다음 작업은 원격에 선반영된 DAY 10 구현을 시나리오·에셋·저장·브라우저 출시 관문 기준으로 재감사하는 것이다.

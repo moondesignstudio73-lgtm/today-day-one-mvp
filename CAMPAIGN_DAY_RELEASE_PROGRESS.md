@@ -2,7 +2,7 @@
 
 운영 원칙: 한 DAY의 시나리오 작성·내러티브 QA·런타임 적용·저장 복원·전체 회귀·커밋·푸시·배포 확인이 모두 끝난 뒤에만 다음 DAY를 시작한다.
 
-현재 대상: `DAY 9`
+현재 대상: `DAY 10`
 
 ## DAY 5
 
@@ -22,7 +22,7 @@
 - [x] DAY 6
 - [x] DAY 7
 - [x] DAY 8
-- [ ] DAY 9
+- [x] DAY 9
 - [ ] DAY 10
 - [ ] DAY 11
 - [ ] DAY 12
@@ -101,14 +101,22 @@
 - [x] 다단계 런타임·선택 상태·저장 복원 구현
 - [x] 집중 테스트·전체 회귀
 - [x] 실제 브라우저 연속 플레이 QA
-- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+- [x] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 시나리오: `docs/day9/DAY9_SCENARIO_DRAFT_V1.md`  
 자체 QA: `docs/day9/DAY9_SCENARIO_QA_V1.md`
+실제 플레이 QA: `docs/day9/DAY9_PLAYTHROUGH_QA.md`
 
 ## 다음 작업
 
-검증된 병합 SHA를 origin과 `gh-pages`에 일반 push하고 공개 페이지와 Actions를 확인한다.
+DAY 10의 기존 런타임·자유행동 구현을 시나리오·에셋·연출·저장·브라우저 출시 관문 기준으로 감사한다.
+
+### 2026-08-26 DAY 9 출시·공개 배포 완료
+
+- 검증 SHA `cf1ae28`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
+- 동일 SHA의 `Deploy GitHub Pages`와 `pages build and deployment` 작업이 모두 SUCCESS로 완료됐다.
+- 캐시 우회 공개 게임, DAY 9 플레이 QA, 프로젝트룸 PNG, DAY 30 런타임이 모두 HTTP 200을 반환했고 `game.js?v=152`, DAY 9 QA, DAY 30 런타임 마커를 확인했다.
+- DAY 9 모든 관문을 COMPLETE 처리했다. 다음 대상은 원격에 선반영된 DAY 10 구현을 출시 관문 기준으로 재감사하는 작업이다.
 
 ### 2026-08-26 DAY 9 병합 후 회귀·브라우저 QA 기록
 
