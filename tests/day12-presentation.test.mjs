@@ -8,7 +8,7 @@ import { DAY2_AUDIO_CUES } from "../src/day2-audio-data.mjs";
 import { DAY12_PRESENTATION_SCENES,DAY12_REQUIRED_NEW_ASSETS,validateDay12PresentationData } from "../src/day12-presentation-data.mjs";
 
 assert.equal(validateDay12PresentationData(),true);
-assert.deepEqual(DAY12_REQUIRED_NEW_ASSETS,{});
+assert.deepEqual(DAY12_REQUIRED_NEW_ASSETS,{heroineOutfit:STORY_OUTFIT_ASSETS.day12});
 assert.equal(Object.keys(DAY12_PRESENTATION_SCENES).length,8);
 assert.ok(Object.values(DAY12_PRESENTATION_SCENES).every(scene=>scene.assetStatus==="ready"));
 
@@ -30,12 +30,12 @@ for(const id of backgroundIds){
   assert.equal(image.colorType,2,id);
   assert.ok(Math.abs(image.width/image.height-16/9)<0.01,id);
 }
-assert.ok(existsSync(new URL(`../${STORY_OUTFIT_ASSETS.day8}`,import.meta.url)));
-const heroine=pngData(STORY_OUTFIT_ASSETS.day8);
+assert.ok(existsSync(new URL(`../${STORY_OUTFIT_ASSETS.day12}`,import.meta.url)));
+const heroine=pngData(STORY_OUTFIT_ASSETS.day12);
 assert.equal(heroine.width,887);
 assert.equal(heroine.height,1774);
 assert.equal(heroine.colorType,6);
-assert.equal(heroine.sha256,"7526406e31919c4a5f625f31e5577d6f0a6d9a6ccead4a5f17a54cd0e30496ae");
+assert.equal(heroine.sha256,"6cc4baa8aea4572107bac09017bee07bd53e3d65c200d141de642982574a08f0");
 
 const audio={...DAY1_AUDIO_CUES,...DAY2_AUDIO_CUES};
 for(const [id,scene] of Object.entries(DAY12_PRESENTATION_SCENES))for(const cueId of scene.sfx){
@@ -51,7 +51,7 @@ assert.ok(Object.values(DAY12_PRESENTATION_SCENES).every(scene=>scene.bgm.catego
 assert.ok(Object.values(DAY12_PRESENTATION_SCENES).every(scene=>!scene.sfx.some(id=>/HEART|RING|CRISIS|IMPACT|GLITCH/.test(id))));
 
 const audit=readFileSync(new URL("../docs/day12/DAY12_ASSET_DIRECTION_AUDIO_AUDIT.md",import.meta.url),"utf8");
-for(const marker of ["신규 최종 아트 필요: 0종","개인정보 비가독","공포 줌·비네트·글리치 금지","assetStatus: audited"])assert.ok(audit.includes(marker),marker);
+for(const marker of ["신규 최종 아트 필요: 1종","개인정보 비가독","공포 줌·비네트·글리치 금지","assetStatus: audited"])assert.ok(audit.includes(marker),marker);
 const imageQa=readFileSync(new URL("../docs/day12/DAY12_IMAGE_QUALITY_QA.md",import.meta.url),"utf8");
 for(const marker of ["IMAGE QA PASS","NEEDS FIX: 0","1672×941","887×1774","RGBA"])assert.ok(imageQa.includes(marker),marker);
-console.log("✓ DAY 12 기존 3배경·하은 1인물 IMAGE QA PASS / 8 Scene ready / 신규 자산 0");
+console.log("✓ DAY 12 기존 3배경·전용 하은 생활복 IMAGE QA PASS / 8 Scene ready / 신규 자산 1");

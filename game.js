@@ -40,7 +40,7 @@ import { LOCKED_DAY8_SCENE_ID, applyLockedDay8ChoiceState, getLockedDay8LegacyCh
 import { LOCKED_DAY9_SCENE_ID, applyLockedDay9ChoiceState, getLockedDay9LegacyChoice, getLockedDay9ResumePresentation, getLockedDay9Segment } from "./src/day9-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY10_SCENE_ID, applyLockedDay10ChoiceState, getLockedDay10LegacyChoice, getLockedDay10ResumePresentation, getLockedDay10Segment } from "./src/day10-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY11_SCENE_ID, applyLockedDay11ChoiceState, getLockedDay11LegacyChoice, getLockedDay11ResumePresentation, getLockedDay11Segment } from "./src/day11-campaign-runtime.mjs?v=2";
-import { LOCKED_DAY12_SCENE_ID, applyLockedDay12ChoiceState, getLockedDay12LegacyChoice, getLockedDay12ResumePresentation, getLockedDay12Segment } from "./src/day12-campaign-runtime.mjs?v=2";
+import { LOCKED_DAY12_SCENE_ID, applyLockedDay12ChoiceState, getLockedDay12LegacyChoice, getLockedDay12ResumePresentation, getLockedDay12Segment } from "./src/day12-campaign-runtime.mjs?v=3";
 import { LOCKED_DAY13_SCENE_ID, applyLockedDay13ChoiceState, getLockedDay13LegacyChoice, getLockedDay13ResumePresentation, getLockedDay13Segment } from "./src/day13-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY14_SCENE_ID, applyLockedDay14ChoiceState, getLockedDay14LegacyChoice, getLockedDay14ResumePresentation, getLockedDay14Segment } from "./src/day14-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY15_SCENE_ID, applyLockedDay15ChoiceState, getLockedDay15LegacyChoice, getLockedDay15ResumePresentation, getLockedDay15Segment } from "./src/day15-campaign-runtime.mjs?v=1";
@@ -64,7 +64,7 @@ import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.m
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { getHeroineEventVideo, renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=11";
 import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=17";
-import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=29";
+import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=30";
 import { STORY_SCENES } from "./src/story-data.mjs?v=24";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, NIGHT_END_MINUTES, resetForNextDay, setNightStartTime, spendNightTime } from "./src/night-manager.mjs?v=3";
 import { completeLateNightInvitation, getPendingLateNightInvitation, LATE_NIGHT_INVITATION_CHANCE, LATE_NIGHT_INVITATION_MESSAGE, LATE_NIGHT_INVITATION_MIN_DAY, LATE_NIGHT_INVITATION_START_MINUTES, maybeTriggerLateNightInvitation } from "./src/late-night-invitation-manager.mjs?v=1";
