@@ -9,6 +9,7 @@ import { DAY11_PRESENTATION_SCENES,DAY11_REQUIRED_NEW_ASSETS,validateDay11Presen
 assert.equal(validateDay11PresentationData(),true);
 assert.deepEqual(DAY11_REQUIRED_NEW_ASSETS,{});
 assert.equal(Object.keys(DAY11_PRESENTATION_SCENES).length,8);
+assert.ok(Object.values(DAY11_PRESENTATION_SCENES).every(scene=>scene.assetStatus==="ready"));
 
 const audio={...DAY1_AUDIO_CUES,...DAY2_AUDIO_CUES};
 const pngDimensions=path=>{const png=readFileSync(new URL(`../${path}`,import.meta.url));assert.equal(png.subarray(1,4).toString(),"PNG",path);return {width:png.readUInt32BE(16),height:png.readUInt32BE(20),colorType:png[25]};};
@@ -24,5 +25,5 @@ for(const [id,scene] of Object.entries(DAY11_PRESENTATION_SCENES))for(const cueI
 assert.equal(DAY11_PRESENTATION_SCENES.S02_TWO_DATES.expressionId,"calm");
 assert.equal(DAY11_PRESENTATION_SCENES.S02_TWO_DATES.bgm.category,"daily");
 assert.ok(Object.values(DAY11_PRESENTATION_SCENES).every(scene=>!scene.sfx.some(id=>/HEART|RING|CRISIS|IMPACT|GLITCH/.test(id))));
-console.log("✓ DAY 11 기존 5배경·하은 1인물·8 Scene·생활형 daily BGM/SFX 감사 PASS / 신규 자산 0");
-
+assert.ok(existsSync(new URL("../docs/day11/DAY11_IMAGE_QUALITY_QA.md",import.meta.url)));
+console.log("✓ DAY 11 기존 5배경·하은 1인물 IMAGE QA PASS / 8 Scene ready / 신규 자산 0");

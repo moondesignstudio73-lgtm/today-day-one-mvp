@@ -614,3 +614,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `src/day11-presentation-data.mjs`와 `tests/day11-presentation.test.mjs`에 8개 Scene 카메라·전환, `daily` BGM, 기존 생활 SFX, 공포·위기 음향 차단 계약을 추가했다.
 - 날짜 차이는 메모 근접 후 하은 중경으로만 보여 주고 공포 줌·비네트·글리치·경직 표정을 쓰지 않는다. 신규 아트 필요는 0종이다.
 - 산출물: `docs/day11/DAY11_ASSET_DIRECTION_AUDIO_AUDIT.md`. 다음 관문은 기존 자산 이미지 QA와 `assetStatus=ready` 전환이다.
+
+# 2026-08-26 DAY 11 이미지 품질 QA 관문
+
+- 기존 배경 5종과 하은 DAY 8 세이지 외출복을 원본으로 재검사해 PNG 규격·16:9·투명 채널·선명도·UI 여백·생활 동선 적합성을 PASS 판정했다.
+- 하은의 밝고 생활적인 인상과 S02의 비위협적 `calm` 연출을 보존하며 공포 줌·글리치·비네트·위기 색보정을 금지했다.
+- 신규 아트는 0종이며 기존 사용자 에셋을 변경하지 않았다. `docs/day11/DAY11_IMAGE_QUALITY_QA.md`의 NEEDS FIX는 0건이다.
+- `src/day11-presentation-data.mjs`의 8개 Scene을 `assetStatus: ready`로 전환하고 집중 테스트에서 상태와 QA 문서 존재를 고정했다.
+- 다음 관문: DAY 11 다단계 런타임·세 전략 선택·DAY 10 콜백·단계별 저장 복원 구현 감사.
