@@ -75,6 +75,9 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   })]),
   16:Object.freeze([Object.freeze({
     id:"day16-home-evening",storySceneId:"m30-day16-current-social-circle",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,title:"EVENING · 나의 집",description:"지훈과 현재 연락·만남·정보 공유 범위를 다시 합의했다. 한 사람의 관계 기록이나 다음 건강 루틴 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 17, 현재의 건강 루틴으로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
+  })]),
+  17:Object.freeze([Object.freeze({
+    id:"day17-home-evening",storySceneId:"m30-day17-current-health-routine",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,title:"EVENING · 나의 집",description:"공식 현재 처방과 중단 기준으로 건강 루틴을 만들었다. 복약 기록·의료 연락·데이터 경계 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 18, 현재 집의 안전 확인으로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
   })])
 });
 
@@ -202,6 +205,13 @@ export const DAY16_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"prepare-current-health-routine",icon:"+",title:"DAY 17 건강 루틴 확인을 준비한다",description:"현재 처방·수면·식사·움직임 중 공식 확인이 필요한 항목만 적는다.",effects:{health:3,confidence:4,energy:-2},scenarioEffects:{investigation:2},flag:"day16_free_prepare_health",requiresFlag:"day17CurrentHealthRoutinePending",summary:"다음 날 현재 건강 루틴에서 확인할 최소 항목만 준비했다."}),
   Object.freeze({id:"rest-after-social-check",icon:"☾",title:"연락처를 닫고 쉰다",description:"한 사람을 확인했다는 이유로 다른 연락처까지 열지 않고 회복한다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day16_recovery_rest",summary:"관계망을 한꺼번에 복원하지 않고 연락처를 닫은 채 충분히 쉬었다."})
 ]);
+export const DAY17_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"file-verified-prescription",icon:"+",title:"현재 처방 근거를 저장한다",description:"발행일·복용량·누락 대응과 공식 확인처만 건강 기록에 남긴다.",effects:{health:4,confidence:5,energy:-2,stress:-2},scenarioEffects:{investigation:2},flag:"day17_free_file_prescription",requiresAction:"verified-current-prescription",summary:"현재 처방의 출처와 복용 지시를 공식 근거와 함께 저장했다."}),
+  Object.freeze({id:"save-current-health-routine",icon:"▦",title:"일주일 건강 루틴을 저장한다",description:"기상·식사·취침·복약과 증상별 중단 기준을 시험 기간과 함께 남긴다.",effects:{health:5,confidence:4,energy:-2,stress:-2},scenarioEffects:{},flag:"day17_free_save_routine",requiresAction:"current-health-routine",summary:"공식 확인 전 임의 변경하지 않는 일주일 건강 루틴을 저장했다."}),
+  Object.freeze({id:"lock-health-data-boundary",icon:"□",title:"건강 데이터 공유 범위를 잠근다",description:"필요한 도움 요약 외의 전체 기록·상시 위치·수치 공유를 닫는다.",effects:{trust:4,confidence:5,energy:-2,stress:-3},scenarioEffects:{haeunTrust:1},flag:"day17_free_data_boundary",requiresAction:"health-data-boundary",summary:"돌봄에 필요한 정보와 의료 데이터 접근 권한을 분리해 잠갔다."}),
+  Object.freeze({id:"prepare-current-home-safety",icon:"⌂",title:"DAY 18 집 안전 확인을 준비한다",description:"현재 생활 동선에서 넘어짐·약 보관·비상 연락과 공식 점검이 필요한 곳만 적는다.",effects:{health:3,confidence:4,energy:-2},scenarioEffects:{investigation:2},flag:"day17_free_prepare_home",requiresFlag:"day18CurrentHomeSafetyPending",summary:"다음 날 현재 집에서 확인할 안전 항목만 준비했다."}),
+  Object.freeze({id:"rest-after-health-routine",icon:"☾",title:"건강 기록을 닫고 쉰다",description:"루틴을 만들었다는 이유로 활동량을 늘리지 않고 현재 수면 시간을 지킨다.",effects:{energy:17,fatigue:-14,stress:-9,health:5},scenarioEffects:{},flag:"day17_recovery_rest",summary:"건강 루틴을 시험하기 전 추가 활동 없이 충분히 쉬었다."})
+]);
 
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
@@ -212,7 +222,7 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"job",label:"직장",reason:"단계적 복귀 범위가 아직 합의되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS,15:DAY15_CAFE_ACTIONS,16:DAY16_HOME_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS,15:DAY15_CAFE_ACTIONS,16:DAY16_HOME_ACTIONS,17:DAY17_HOME_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -281,5 +291,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS],actions=groups.flat();return [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS,DAY17_HOME_ACTIONS],actions=groups.flat();return [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }
