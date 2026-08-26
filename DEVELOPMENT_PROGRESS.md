@@ -720,3 +720,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 하은은 23세의 밝고 생활적인 동거 파트너이며 과거 분담 기억을 현재 증거로 쓰지 않는다. 주인공은 예산 합의와 돈 이동 권한을 분리한다.
 - 신규 미스터리 단서는 0, 기존 `day11ScheduleNoteMismatch=unverified`, 윤서진 `AFFECTION`/`STATUS_INTEREST`, 투자 잠금은 불변이다.
 - 산출물: `docs/day13/DAY13_CHAPTER_CONTRACT_V1.md`, `tests/day13-contract.test.mjs`. 다음 관문은 8 Beat 완전 대본 초안이다.
+
+# 2026-08-26 DAY 13 완전한 플레이 가능 시나리오 초안
+
+- 챕터 계약의 8 Beat를 식탁 카드 분류, 마트 가격·수량 검증, 카페 부담 협상, 집 장부 공개 경계와 DAY 14 소비 시험 훅으로 완전 대본화했다.
+- DAY 12의 확인·비용 분류·접근 9개 전략을 고유 행동과 대사로 회수하고 DAY 13 세 선택 단계의 9개 반응·상태·저장 계약을 명시했다.
+- 하은의 생활 농담과 주도성, 주인공의 합리적 검증 순서, 사생활·소유권·실행 권한 분리, 미스터리·투자·프로필 정보 예산을 보존했다.
+- 산출물: `docs/day13/DAY13_SCENARIO_DRAFT_V1.md`, `tests/day13-scenario-draft.test.mjs`. 다음 관문은 자체 내러티브 QA·정적 계약 검사다.
