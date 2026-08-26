@@ -114,6 +114,9 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   })]),
   29:Object.freeze([Object.freeze({
     id:"day29-home-evening",storySceneId:"m30-day29-current-eve-reconfirmation",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,title:"EVENING · 나의 집",description:"예식 전날 각자의 현재 의사와 몸 상태, 진행·축소·연기 선택을 확인했다. 기록이나 당일 준비 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 30, 당일의 현재 결혼 선택으로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
+  })]),
+  30:Object.freeze([Object.freeze({
+    id:"day30-home-evening",storySceneId:"m30-day30-current-wedding-decision",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,title:"EVENING · 나의 집",description:"DAY 30의 현재 결혼 선택을 마쳤다. 결과를 외부 평가와 분리해 기록하거나 회복하는 행동 하나만 고른다.",nextSchedule:"정리를 마치면 30일의 선택을 바탕으로 엔딩 리포트가 열린다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
   })])
 });
 
@@ -345,6 +348,14 @@ export const DAY29_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"sleep-before-wedding-decision",icon:"☾",title:"모든 알림을 끄고 잔다",description:"자정 확정·준비율·업체 연락을 끄고 수면과 회복을 최우선으로 둔다.",effects:{energy:20,fatigue:-16,stress:-11,health:6},scenarioEffects:{},flag:"day29_recovery_sleep",summary:"당일 선택을 위해 모든 알림을 끄고 충분히 쉬었다."})
 ]);
 
+export const DAY30_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"save-wedding-day-body-scope",icon:"☀",title:"당일 몸 상태와 가능 범위를 저장한다",description:"보이는 표정이 아니라 직접 말한 통증·피로·불안과 가능한 범위를 기록한다.",effects:{health:4,confidence:4,energy:-2,stress:-3},scenarioEffects:{},flag:"day30_free_body_scope",requiresAction:"wedding-day-current-body-scope",summary:"DAY 30 당일의 실제 몸 상태와 가능 범위를 저장했다."}),
+  Object.freeze({id:"save-wedding-day-stepwise-consent",icon:"♥",title:"단계별 당일 동의를 저장한다",description:"출발·도착·서명의 각 대답과 어느 단계에서든 멈출 권리를 기록한다.",effects:{trust:7,affection:5,confidence:5,energy:-2},scenarioEffects:{haeunTrust:2},flag:"day30_free_stepwise_consent",requiresAction:"wedding-day-stepwise-consent",summary:"DAY 30 각 단계의 독립된 현재 동의와 중단권을 저장했다."}),
+  Object.freeze({id:"save-wedding-outcome-without-penalty",icon:"◇",title:"오늘의 결말을 평가 없이 남긴다",description:"진행·연기·예식 없는 관계 중 선택한 결과를 성공·실패 점수 없이 남긴다.",effects:{trust:6,confidence:6,stress:-4},scenarioEffects:{haeunTrust:1},flag:"day30_free_outcome",requiresAction:"wedding-outcome-without-penalty",summary:"DAY 30의 결말을 외부 형식이나 성공 점수와 분리해 기록했다."}),
+  Object.freeze({id:"write-marriage30-current-choice-report",icon:"▤",title:"30일 현재 선택 리포트를 작성한다",description:"기억 복원이 아니라 확인·경계·재협상·중단권으로 만든 30일의 변화를 요약한다.",effects:{confidence:5,trust:4,energy:-2},scenarioEffects:{investigation:2},flag:"day30_free_campaign_report",requiresFlag:"marriage30CampaignCompleted",summary:"30일 동안 현재의 선택으로 다시 만든 관계와 생활을 요약했다."}),
+  Object.freeze({id:"rest-after-day30-decision",icon:"☾",title:"결말 뒤 함께 쉰다",description:"외부 반응과 사진·공지·점수를 열지 않고 오늘의 선택 뒤 회복한다.",effects:{energy:20,fatigue:-16,stress:-12,health:6},scenarioEffects:{},flag:"day30_recovery_rest",summary:"DAY 30의 선택을 마친 뒤 외부 평가 없이 함께 쉬었다."})
+]);
+
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
   Object.freeze({id:"shop",label:"온라인 쇼핑",reason:"스마트폰 기능이 아직 해금되지 않았습니다."}),
@@ -354,7 +365,7 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"job",label:"직장",reason:"단계적 복귀 범위가 아직 합의되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS,15:DAY15_CAFE_ACTIONS,16:DAY16_HOME_ACTIONS,17:DAY17_HOME_ACTIONS,18:DAY18_HOME_ACTIONS,19:DAY19_HOME_ACTIONS,20:DAY20_HOME_ACTIONS,21:DAY21_OFFICE_ACTIONS,22:DAY22_HOME_ACTIONS,23:DAY23_HOME_ACTIONS,24:DAY24_HOME_ACTIONS,25:DAY25_HOME_ACTIONS,26:DAY26_HOME_ACTIONS,27:DAY27_HOME_ACTIONS,28:DAY28_HOME_ACTIONS,29:DAY29_HOME_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS,15:DAY15_CAFE_ACTIONS,16:DAY16_HOME_ACTIONS,17:DAY17_HOME_ACTIONS,18:DAY18_HOME_ACTIONS,19:DAY19_HOME_ACTIONS,20:DAY20_HOME_ACTIONS,21:DAY21_OFFICE_ACTIONS,22:DAY22_HOME_ACTIONS,23:DAY23_HOME_ACTIONS,24:DAY24_HOME_ACTIONS,25:DAY25_HOME_ACTIONS,26:DAY26_HOME_ACTIONS,27:DAY27_HOME_ACTIONS,28:DAY28_HOME_ACTIONS,29:DAY29_HOME_ACTIONS,30:DAY30_HOME_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -423,5 +434,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS,DAY17_HOME_ACTIONS,DAY18_HOME_ACTIONS,DAY19_HOME_ACTIONS,DAY20_HOME_ACTIONS,DAY21_OFFICE_ACTIONS,DAY22_HOME_ACTIONS,DAY23_HOME_ACTIONS,DAY24_HOME_ACTIONS,DAY25_HOME_ACTIONS,DAY26_HOME_ACTIONS,DAY27_HOME_ACTIONS,DAY28_HOME_ACTIONS,DAY29_HOME_ACTIONS],actions=groups.flat();return Array.from({length:29},(_,i)=>i+1).every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS,DAY17_HOME_ACTIONS,DAY18_HOME_ACTIONS,DAY19_HOME_ACTIONS,DAY20_HOME_ACTIONS,DAY21_OFFICE_ACTIONS,DAY22_HOME_ACTIONS,DAY23_HOME_ACTIONS,DAY24_HOME_ACTIONS,DAY25_HOME_ACTIONS,DAY26_HOME_ACTIONS,DAY27_HOME_ACTIONS,DAY28_HOME_ACTIONS,DAY29_HOME_ACTIONS,DAY30_HOME_ACTIONS],actions=groups.flat();return Array.from({length:30},(_,i)=>i+1).every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }
