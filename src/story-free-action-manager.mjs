@@ -96,6 +96,9 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   })]),
   23:Object.freeze([Object.freeze({
     id:"day23-home-evening",storySceneId:"m30-day23-current-family-contact",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,title:"EVENING · 나의 집",description:"확인된 한 사람과 현재형 가족 연락을 마쳤다. 연락 기록이나 다음 결혼 의사 확인 준비 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 24, 현재의 결혼 의사 확인으로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
+  })]),
+  24:Object.freeze([Object.freeze({
+    id:"day24-home-evening",storySceneId:"m30-day24-current-commitment-check",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,title:"EVENING · 나의 집",description:"현재의 이유와 권리로 결혼 의사를 다시 확인했다. 동의 기록이나 다음 예식 범위 준비 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 25, 현재의 예식 범위 확인으로 넘어간다.",eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
   })])
 });
 
@@ -279,6 +282,14 @@ export const DAY23_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"rest-after-family-contact",icon:"☾",title:"연락 기록을 닫고 쉰다",description:"다른 가족이나 과거 자료를 더 열지 않고 오늘 확인한 범위에서 멈춘다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day23_recovery_rest",summary:"가족 관계를 더 넓히지 않고 오늘 확인한 한 사람에서 멈췄다."})
 ]);
 
+export const DAY24_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"save-current-mutual-commitment",icon:"♥",title:"현재의 결혼 의사를 저장한다",description:"각자가 말한 현재 이유와 상대의 대답을 대신하지 않는 범위만 남긴다.",effects:{trust:6,affection:4,confidence:4,energy:-2},scenarioEffects:{haeunTrust:2},flag:"day24_free_commitment",requiresAction:"current-mutual-commitment",summary:"과거 약속이 아닌 현재의 상호 결혼 의사를 저장했다."}),
+  Object.freeze({id:"lock-marriage-separate-rights",icon:"□",title:"결혼 뒤의 개별 권리를 잠근다",description:"각자의 계정·공간·연락·건강·재산 선택권을 포괄 동의에서 분리한다.",effects:{trust:5,confidence:5,energy:-2,stress:-3},scenarioEffects:{haeunTrust:1},flag:"day24_free_separate_rights",requiresAction:"marriage-separate-rights-boundary",summary:"결혼 뒤에도 유지할 각자의 권리와 미확인 항목을 잠갔다."}),
+  Object.freeze({id:"save-commitment-reconfirm-rights",icon:"↺",title:"재확인·연기·철회권을 저장한다",description:"예식 전 재확인과 이유 없는 연기·동의 철회가 가능한 규칙을 남긴다.",effects:{trust:5,confidence:5,energy:-2,stress:-2},scenarioEffects:{},flag:"day24_free_reconfirm_rights",requiresAction:"commitment-reconfirm-postpone-withdraw",summary:"결혼 동의를 계속 다시 묻고 바꿀 수 있게 했다."}),
+  Object.freeze({id:"prepare-current-wedding-scope",icon:"✓",title:"DAY 25 예식 범위를 준비한다",description:"예식·법적 절차·비용·초대·공개 항목 중 현재 확인할 것만 적는다.",effects:{confidence:4,trust:3,energy:-2},scenarioEffects:{investigation:2},flag:"day24_free_prepare_wedding",requiresFlag:"day25CurrentWeddingScopePending",summary:"다음 날 현재의 예식 범위에서 확인할 항목과 보류 항목만 준비했다."}),
+  Object.freeze({id:"rest-after-commitment-check",icon:"☾",title:"결혼 계획을 더 열지 않고 쉰다",description:"예약·가족 알림·과거 자료를 열지 않고 오늘의 대답에서 멈춘다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day24_recovery_rest",summary:"현재 결혼 의사를 확인한 뒤 실행 계획은 다음 날로 미뤘다."})
+]);
+
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
   Object.freeze({id:"shop",label:"온라인 쇼핑",reason:"스마트폰 기능이 아직 해금되지 않았습니다."}),
@@ -288,7 +299,7 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"job",label:"직장",reason:"단계적 복귀 범위가 아직 합의되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS,15:DAY15_CAFE_ACTIONS,16:DAY16_HOME_ACTIONS,17:DAY17_HOME_ACTIONS,18:DAY18_HOME_ACTIONS,19:DAY19_HOME_ACTIONS,20:DAY20_HOME_ACTIONS,21:DAY21_OFFICE_ACTIONS,22:DAY22_HOME_ACTIONS,23:DAY23_HOME_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS,13:DAY13_HOME_ACTIONS,14:DAY14_HOME_ACTIONS,15:DAY15_CAFE_ACTIONS,16:DAY16_HOME_ACTIONS,17:DAY17_HOME_ACTIONS,18:DAY18_HOME_ACTIONS,19:DAY19_HOME_ACTIONS,20:DAY20_HOME_ACTIONS,21:DAY21_OFFICE_ACTIONS,22:DAY22_HOME_ACTIONS,23:DAY23_HOME_ACTIONS,24:DAY24_HOME_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -357,5 +368,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS,DAY17_HOME_ACTIONS,DAY18_HOME_ACTIONS,DAY19_HOME_ACTIONS,DAY20_HOME_ACTIONS,DAY21_OFFICE_ACTIONS,DAY22_HOME_ACTIONS,DAY23_HOME_ACTIONS],actions=groups.flat();return Array.from({length:23},(_,i)=>i+1).every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS,DAY17_HOME_ACTIONS,DAY18_HOME_ACTIONS,DAY19_HOME_ACTIONS,DAY20_HOME_ACTIONS,DAY21_OFFICE_ACTIONS,DAY22_HOME_ACTIONS,DAY23_HOME_ACTIONS,DAY24_HOME_ACTIONS],actions=groups.flat();return Array.from({length:24},(_,i)=>i+1).every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }
