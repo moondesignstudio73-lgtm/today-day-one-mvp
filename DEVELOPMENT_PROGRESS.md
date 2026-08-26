@@ -630,3 +630,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 목요일 재활 메모와 금요일 외래 안내의 차이를 직접 확인한 뒤 `day11ScheduleNoteMismatch=unverified`와 `day11-schedule-note-mismatch` 단서로 저장하되 범죄·거짓말·정체 추론을 만들지 않는다.
 - 3×3×3 27개 선택 경로를 단계별 실제 `SaveManager` 저장·복원으로 검사해 하은 관계, 윤서진 `AFFECTION`/`STATUS_INTEREST`, DAY 10 선택의 불변을 확인했다.
 - `game.js?v=157`·DAY 11 런타임 모듈 `v=2`로 공개 캐시 계약을 갱신했다. 다음 관문은 DAY 11 집중 테스트·전체 회귀 고정이다.
+
+# 2026-08-26 DAY 11 집중 테스트·전체 회귀 관문
+
+- `tests/day11-regression.test.mjs`에서 잘못된 선택 무효화, 동일 선택 재적용 안전성, 레거시 stage 0 기본값, 세 단계 SaveManager 저장 복원과 선택 기억을 검사했다.
+- 미확인 일정 단서는 `unverified`로 유지되며 하은 호감·신뢰와 윤서진 `AFFECTION`/`STATUS_INTEREST`를 암묵적으로 바꾸지 않는다.
+- DAY 11 완료 상태의 DAY 12 도달, 자유 연애 모드 격리, 조기 스포일러 차단과 상태 컬렉션 중복 방지가 PASS했다.
+- DAY 11 시나리오·프레젠테이션·27경로 런타임·자유행동, DAY 10/12 인접 런타임과 전체 `tests/simulation.test.mjs`가 PASS했다.
+- 남은 NEEDS FIX: 현재 관문 0. 다음 관문은 DAY 11 실제 브라우저 연속 플레이 QA다.
