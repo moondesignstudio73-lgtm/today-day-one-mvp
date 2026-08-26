@@ -210,6 +210,25 @@ const DAY11_HOME_PROTECTED_BUFFER=Object.freeze({
   ],futureEventWeights:{recovery:1.15,romance:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
 });
 
+const DAY12_HOME_INVESTMENT_PROMPT_BOUNDARY=Object.freeze({
+  id:"context-day12-home-investment-prompt-boundary",title:"잔액 아래의 추천 버튼",category:"money",categoryLabel:"스토리 공용 이벤트",
+  hook:"읽기 전용 계정 화면 아래에 남은 금액을 자동 투자로 돌리라는 추천 버튼이 나타났다.",message:"기본 금융 확인이 가능해졌지만 투자 판단 권한은 아직 열지 않았다는 경계를 적용해야 했다.",question:"자동 투자 추천을 어떻게 처리할까?",
+  allowedLocations:["home"],allowedPhases:["evening"],dayRange:[12,12],heroineIds:["haeun"],requiredFeatures:["finance","basic-finance-review","account-ownership-boundary"],requiredStoryFlags:["day12RuntimeComplete","day12CurrentAccountReviewCompleted"],
+  cooldown:30,maxTriggerCount:1,probability:.35,priority:300,baseWeight:100,tensionLevel:"low",effects:{confidence:1},storyFlag:"context-day12-home-investment-prompt-boundary:COMPLETED",forbiddenFlags:["context-day12-home-investment-prompt-boundary:COMPLETED"],repeatable:false,
+  image:{intro:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",result:"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",status:"ready"},presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",expressionId:"calm-attentive",poseId:"phone"},
+  scenes:[{id:"context-day12-home-investment-prompt-boundary-scene",title:"잔액 아래의 추천 버튼",backgroundId:"day2-home-entry",characterIds:["girlfriend"],expression:"calm",pose:"phone",animation:"idle-breathe",outfit:"default",itemIds:[],bgmId:"daily",sfxId:"scene",transition:"fade",lighting:"evening",timeOfDay:"evening",weather:"clear",dialogueTurns:[
+    {type:"narration",speaker:"내레이션",text:"현재 잔액 아래에는 ‘남는 돈 자동 투자’ 버튼과 예상 수익률이 밝게 표시돼 있었다."},
+    {type:"dialogue",speaker:"하은",text:"계정을 볼 수 있게 됐다는 것과 이 돈을 위험에 놓아도 된다는 건 다른 권한이지?",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"응. 남는 돈인지도 아직 확인하지 않았고, 수익률은 소유권 근거가 아니야."},
+    {type:"dialogue",speaker:"하은",text:"그럼 추천은 닫고 오늘 정한 읽기 범위만 유지하자.",expressionId:"smile"},
+    {type:"narration",speaker:"내레이션",text:"추천 버튼은 기회가 아니라 아직 열지 않은 판단 범위를 시험하는 경계로 분류되었다."}
+  ]}],
+  choices:[
+    {id:"dismiss-investment-prompt",label:"자동 투자 추천을 끄고 읽기 전용 범위를 유지한다",preferenceTags:["BOUNDARY","PRACTICAL"],effects:{confidence:5,stress:-3},response:"추천을 끄고 현재 잔액·명세 확인 기능만 유지했다.",flag:"context-day12-home-investment-prompt-boundary:DISMISSED",memory:"DAY 12 자동 투자 추천을 끄고 기본 금융 확인 범위만 유지했다.",futureEventWeights:{money:1.1}},
+    {id:"record-before-future-review",label:"추천 조건만 기록하고 투자 검토는 별도 동의 뒤로 미룬다",preferenceTags:["LOGICAL","PLANNED"],effects:{confidence:4,trust:3,stress:-2},response:"추천의 수수료와 위험 조건만 기록하고 실행 권한은 열지 않았다.",flag:"context-day12-home-investment-prompt-boundary:RECORDED",memory:"DAY 12 투자 추천 조건만 기록하고 실행은 별도 동의 뒤로 미뤘다.",futureEventWeights:{money:1.15}}
+  ],futureEventWeights:{money:1.1,recovery:1.05},requiredMemories:[],requiredEvents:[],npcRequirements:[],kind:"story",sourceMode:"free-romance"
+});
+
 export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   Object.freeze({id:"context-hospital-haeun-water",title:"침대 옆의 물",text:"하은이 미지근한 물을 가져와 침대 옆에 두었다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{trust:2},storyFlag:"day1_event_haeun_water"}),
   Object.freeze({id:"context-hospital-nurse-check",title:"야간 상태 확인",text:"간호사가 들어와 수치를 확인하고 무리하지 말라고 당부했다.",category:"hospital",allowedLocations:["hospital"],allowedPhases:["evening","night"],dayRange:[1,3],effects:{health:1},storyFlag:"day1_event_nurse_check"}),
@@ -223,7 +242,8 @@ export const CONTEXTUAL_SHARED_EVENTS=Object.freeze([
   DAY8_HOME_MAIL_DEADLINE,
   DAY9_HOME_SEPARATE_FEEDBACK,
   DAY10_HOME_THREE_SCORE_REPORT,
-  DAY11_HOME_PROTECTED_BUFFER
+  DAY11_HOME_PROTECTED_BUFFER,
+  DAY12_HOME_INVESTMENT_PROMPT_BOUNDARY
 ]);
 
 export const SHARED_EVENT_CATALOG=Object.freeze([...FREE_MODE_EVENT_CATALOG,...CONTEXTUAL_SHARED_EVENTS]);

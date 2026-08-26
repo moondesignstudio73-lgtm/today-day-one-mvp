@@ -363,6 +363,16 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"life11_share_weekly_review",label:"주말에 한 번만 함께 생활표를 검토한다",response:"매일 감시하지 않고 정해진 주기에 공동 계획만 검토하기로 했다.",memory:"하은과 주말 한 번만 공동 생활표를 검토하기로 함"},
     {id:"life11_share_separate_ownership",label:"개인 일정은 각자 관리하고 공동 약속만 함께 수정한다",response:"연인 관계와 시간의 소유권을 분리해 공동 약속만 함께 관리했다.",memory:"개인 일정의 소유권을 지키고 공동 약속만 함께 수정하기로 함"}
   ]
+},{
+  id:"m30-day12-current-account-review",arc:"현재 계정의 주인",window:[12,12],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day11-current-life-plan"},
+  title:"현재 계정의 주인",speaker:"하은",message:"공식 명의·현재 명세·생활비 소유권만 확인하고 기본 금융 확인과 투자 판단의 권한을 분리한다.",
+  chapterType:"daily-life/finance/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day11-current-life-plan"],
+  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
+  choices:[
+    {id:"account12_access_read_only",label:"잔액·명세·고정 생활비만 읽기 전용으로 연다",response:"기본 금융 확인만 복구하고 송금과 투자 기능은 계속 잠갔다.",memory:"현재 계정을 읽기 전용 범위로 복구함"},
+    {id:"account12_access_monthly_review",label:"월 1회 현재 생활비 검토만 일정에 저장한다",response:"계정 확인을 불안에 따른 감시가 아니라 목적과 주기가 있는 생활 관리로 정했다.",memory:"현재 생활비를 월 1회만 검토하기로 함"},
+    {id:"account12_access_separate_investment",label:"생활 계정 확인과 투자·저축 판단을 완전히 분리한다",response:"현재 생활비 확인과 자산을 위험에 놓는 판단 권한을 분리했다.",memory:"기본 금융 확인과 투자·저축 판단을 분리함"}
+  ]
 }];
 
 const STANDARD_STORY_SCENES = [

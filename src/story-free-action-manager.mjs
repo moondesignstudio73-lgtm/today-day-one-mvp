@@ -1,6 +1,6 @@
 import { applyEffects } from "./game-core.mjs?v=9";
 import { createDaySnapshot, getDailyReport } from "./night-manager.mjs?v=2";
-import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=11";
+import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=12";
 
 export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   1:Object.freeze([Object.freeze({
@@ -57,6 +57,11 @@ export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
     id:"day11-home-evening",storySceneId:"m30-day11-current-life-plan",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,
     title:"EVENING · 나의 집",description:"현재 생활표와 일정 충돌·공유 규칙을 완성했다. 오늘 만든 경계나 다음 확인 준비 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 12, 현재 계정과 생활비 확인으로 넘어간다.",
     eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:false,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
+  })]),
+  12:Object.freeze([Object.freeze({
+    id:"day12-home-evening",storySceneId:"m30-day12-current-account-review",phase:"evening",phaseIndex:2,location:"home",locationLabel:"나의 집",maxActions:1,
+    title:"EVENING · 나의 집",description:"현재 계정과 생활비의 소유권을 확인했다. 읽기 전용 금융 기록이나 다음 예산 준비 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 13, 현재 가계 예산 합의로 넘어간다.",
+    eventContext:Object.freeze({phoneUnlocked:true,financeUnlocked:true,jobUnlocked:true,mapUnlocked:true,healthRiskAllowed:false})
   })])
 });
 
@@ -148,6 +153,14 @@ export const DAY11_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"rest-after-life-planning",icon:"☾",title:"생활표를 닫고 쉰다",description:"빈칸을 새 일정으로 채우지 않고 보호된 회복 시간으로 사용한다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day11_recovery_rest",summary:"생활표의 빈칸을 지키며 추가 계획 없이 충분히 쉬었다."})
 ]);
 
+export const DAY12_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"file-verified-current-balance",icon:"▧",title:"확인된 현재 잔액을 기록한다",description:"명의·명세 발행일·읽기 전용 잔액만 출처와 함께 저장한다.",effects:{confidence:5,energy:-2,stress:-2},scenarioEffects:{investigation:3},flag:"day12_free_file_balance",requiresAction:"verified-current-account",summary:"현재 계정의 명의와 잔액을 공식 출처와 함께 기록했다."}),
+  Object.freeze({id:"classify-verified-living-expenses",icon:"≡",title:"현재 생활비를 분류한다",description:"개인 책임·소유권 미확인·공동 합의 필요 항목을 서로 다른 칸에 둔다.",effects:{confidence:5,energy:-3,stress:-1},scenarioEffects:{investigation:2},flag:"day12_free_classify_expenses",requiresAction:"verified-living-expenses",summary:"현재 생활비를 소유권과 확인 상태에 따라 분리했다."}),
+  Object.freeze({id:"save-account-ownership-boundary",icon:"◇",title:"금융 접근 경계를 저장한다",description:"읽기 기능만 허용하고 송금·저축 이동·투자 판단은 계속 잠근다.",effects:{confidence:5,trust:3,energy:-2,stress:-2},scenarioEffects:{haeunTrust:1},flag:"day12_free_account_boundary",requiresAction:"account-ownership-boundary",summary:"기본 금융 확인과 자산 이동·투자 권한의 경계를 저장했다."}),
+  Object.freeze({id:"prepare-current-household-budget",icon:"▦",title:"DAY 13 현재 가계 예산을 준비한다",description:"확인된 고정 생활비와 합의가 필요한 항목만 예산 초안에 옮긴다.",effects:{confidence:4,energy:-3},scenarioEffects:{investigation:2},flag:"day12_free_prepare_budget",requiresFlag:"day13CurrentHouseholdBudgetPending",summary:"현재 출처가 확인된 항목만 다음 가계 예산 초안에 옮겼다."}),
+  Object.freeze({id:"rest-after-account-review",icon:"☾",title:"계정 화면을 닫고 쉰다",description:"잔액을 확인했다는 이유로 추가 금융 판단을 하지 않고 회복한다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day12_recovery_rest",summary:"기본 계정 확인 뒤 추가 금융 행동 없이 충분히 쉬었다."})
+]);
+
 export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"phone",label:"스마트폰",reason:"일반 스마트폰 기능은 아직 해금되지 않았습니다."}),
   Object.freeze({id:"shop",label:"온라인 쇼핑",reason:"스마트폰 기능이 아직 해금되지 않았습니다."}),
@@ -157,7 +170,7 @@ export const STORY_FEATURES=Object.freeze([
   Object.freeze({id:"job",label:"직장",reason:"단계적 복귀 범위가 아직 합의되지 않았습니다."})
 ]);
 
-const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS});
+const ACTIONS_BY_DAY=Object.freeze({1:DAY1_HOSPITAL_ACTIONS,2:DAY2_HOME_ACTIONS,3:DAY3_DISCHARGE_ACTIONS,4:DAY4_HOME_ACTIONS,5:DAY5_OFFICE_ACTIONS,6:DAY6_HOME_ACTIONS,7:DAY7_HOME_ACTIONS,8:DAY8_HOME_ACTIONS,9:DAY9_HOME_ACTIONS,10:DAY10_HOME_ACTIONS,11:DAY11_HOME_ACTIONS,12:DAY12_HOME_ACTIONS});
 
 export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
@@ -226,5 +239,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS,...DAY5_OFFICE_ACTIONS,...DAY6_HOME_ACTIONS,...DAY7_HOME_ACTIONS,...DAY8_HOME_ACTIONS,...DAY9_HOME_ACTIONS,...DAY10_HOME_ACTIONS,...DAY11_HOME_ACTIONS];return [1,2,3,4,5,6,7,8,9,10,11].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const actions=[...DAY1_HOSPITAL_ACTIONS,...DAY2_HOME_ACTIONS,...DAY3_DISCHARGE_ACTIONS,...DAY4_HOME_ACTIONS,...DAY5_OFFICE_ACTIONS,...DAY6_HOME_ACTIONS,...DAY7_HOME_ACTIONS,...DAY8_HOME_ACTIONS,...DAY9_HOME_ACTIONS,...DAY10_HOME_ACTIONS,...DAY11_HOME_ACTIONS,...DAY12_HOME_ACTIONS];return [1,2,3,4,5,6,7,8,9,10,11,12].every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS].every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }
