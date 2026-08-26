@@ -2,7 +2,7 @@
 
 운영 원칙: 한 DAY의 시나리오 작성·내러티브 QA·런타임 적용·저장 복원·전체 회귀·커밋·푸시·배포 확인이 모두 끝난 뒤에만 다음 DAY를 시작한다.
 
-현재 대상: `DAY 10`
+현재 대상: `DAY 11`
 
 ## DAY 5
 
@@ -23,7 +23,7 @@
 - [x] DAY 7
 - [x] DAY 8
 - [x] DAY 9
-- [ ] DAY 10
+- [x] DAY 10
 - [ ] DAY 11
 - [ ] DAY 12
 - [ ] DAY 13
@@ -117,7 +117,7 @@
 - [x] 다단계 런타임·선택 상태·저장 복원 구현 감사
 - [x] 집중 테스트·전체 회귀
 - [x] 실제 브라우저 연속 플레이 QA
-- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+- [x] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 시나리오: `docs/day10/DAY10_SCENARIO_DRAFT_V1.md`  
 자체 QA: `docs/day10/DAY10_SCENARIO_QA_V1.md`
@@ -125,7 +125,14 @@
 
 ## 다음 작업
 
-DAY 10 브라우저 QA 수정과 증적을 커밋하고 origin·동일 SHA gh-pages 배포·공개 페이지를 확인한다.
+DAY 11의 챕터 계약·Voice Profile·지식 장부와 완전한 플레이 가능 시나리오를 감사한다.
+
+### 2026-08-26 DAY 10 출시·공개 배포 완료
+
+- 검증 SHA `6f20543`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했다.
+- 동일 SHA의 GitHub Pages 작업 2개가 SUCCESS로 완료됐다.
+- 캐시 우회 공개 게임과 DAY 10 런타임 모듈은 HTTP 200을 반환했고 하은 귀가 반응 수정 마커가 공개본에 포함됐다.
+- DAY 10을 COMPLETE 처리했다. 현재 대상은 DAY 11 시나리오·내러티브 QA 관문이다.
 
 ### 2026-08-26 DAY 10 실제 브라우저 연속 플레이 QA 기록
 

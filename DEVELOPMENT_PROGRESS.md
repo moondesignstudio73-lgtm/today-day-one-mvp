@@ -591,3 +591,9 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 마지막 선택 반응의 하은 대사에서 민호 스프라이트가 잔류한 문제를 발견해 세 반응 모두 `speakerLine(..., "girlfriend", ...)`으로 수정하고 27경로 테스트에 하은 컷 계약을 추가했다.
 - 수정 후 실제 브라우저 하은 이미지 `887×1774`, Node 문법, DAY 10 27경로, 전체 시뮬레이션 회귀, console warning/error 0건이 PASS했다.
 - 산출물: `docs/day10/DAY10_PLAYTHROUGH_QA.md`. 남은 관문은 커밋·origin push·동일 SHA gh-pages 공개 배포 확인이다.
+
+# 2026-08-26 DAY 10 출시·공개 배포 완료
+
+- 검증 SHA `6f20543`을 기능 브랜치와 `gh-pages`에 일반 fast-forward push했고 같은 SHA의 GitHub Pages 작업 2개가 SUCCESS로 완료됐다.
+- 캐시 우회 공개 게임과 DAY 10 모듈은 HTTP 200을 반환했으며 하은 귀가 반응 수정 마커가 공개본에 포함됐다.
+- DAY 10 출시 관문 전체를 COMPLETE 처리했다. 다음 작업은 DAY 11 챕터 계약·시나리오·내러티브 QA 감사다.
