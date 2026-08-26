@@ -395,7 +395,7 @@ export function beginStoryFreeAction(state,windowId=""){
   if(!definition)return null;
   ensureStoryFeatureUnlocks(state);state.currentLocation=definition.location;
   const current=state.storyFreeAction;
-  if(current?.windowId===definition.id&&current.day===state.day&&current.status!=="COMPLETE")return current;
+  if(current?.windowId===definition.id&&current.day===state.day)return current;
   state.phase=definition.phaseIndex;
   state.storyFreeAction={windowId:definition.id,storySceneId:definition.storySceneId,day:state.day,phase:definition.phase,location:definition.location,maxActions:definition.maxActions,used:0,status:"ACTIVE",snapshot:createDaySnapshot(state),chosenActionId:null,result:null,event:null,reportShown:false};
   return state.storyFreeAction;
