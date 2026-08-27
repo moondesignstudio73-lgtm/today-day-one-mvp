@@ -1320,3 +1320,16 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `602f994` → `origin/feature/today-day-one-mvp` 일반 fast-forward push PASS; 원격 SHA 일치 확인.
 - 보호 규칙 우회는 저장소가 승인했으며 force push·rebase는 사용하지 않았다.
 - 다음 작업: 이 진행 기록을 포함한 최종 검증 SHA를 origin에 동기화하고 동일 SHA를 gh-pages에 배포한다.
+
+### 2026-08-28 DAY 4 gh-pages 동일 SHA 반영
+
+- `f07d369` → `origin/gh-pages` fast-forward PASS, 원격 SHA 일치.
+- Pages workflow run `33118013592`: `in_progress` (head `f07d369`).
+- 다음 작업: workflow success 확인 후 공개 URL에서 DAY 4 런타임·핵심 자산을 검증한다.
+
+### 2026-08-28 DAY 4 품질 재구축·배포 COMPLETE
+
+- Pages run `33118013592`, head `f07d369`: `completed/success`.
+- 공개 핵심 파일 5종 HTTP 200, DAY 4 이미지 3종 로컬 원본과 바이트 길이 일치.
+- 실제 공개 브라우저 타이틀·모드 선택·STORY MODE 카드 렌더링 PASS, console warning/error 0.
+- 다음 대상은 DAY 5다. 다음 실행에서 Notion 기준 페이지를 새로 조회하고 DAY 5 전체 Markdown 첨부를 잠그기 전까지 서사 수정은 시작하지 않는다.

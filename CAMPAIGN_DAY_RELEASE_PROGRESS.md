@@ -4,9 +4,9 @@
 
 현재 단계: `2단계 — DAY 4~16 품질 재구축`
 
-현재 재감사 대상: `DAY 4`
+현재 재감사 대상: `DAY 5`
 
-자동화 상태: `ACTIVE — DAY 4 V3 RUNTIME INTEGRATION, 자산 레지스트리·저장 복원 연결 PASS`
+자동화 상태: `ACTIVE — DAY 4 품질 재구축·배포 COMPLETE, DAY 5 원고 재조회 대기`
 
 ### 2026-08-28 DAY 4 V3 런타임 연결 1차
 
@@ -1288,3 +1288,16 @@ DAY 16 출시 전 관문을 완료했다. 다음 작업은 노션 사용자 원�
 - 최종 후보 `602f994`를 `feature/today-day-one-mvp`에 일반 fast-forward push했다. 저장소가 보호 규칙 우회를 승인했으며 force push·rebase는 사용하지 않았다.
 - `ls-remote`로 원격 브랜치가 정확히 `602f99438f46fd177de08e597d3fb685c06d79da`를 가리키는 것을 확인했다.
 - 이 기록을 포함한 최종 SHA를 재검증·origin 동기화한 뒤 동일 SHA로 gh-pages 배포를 진행한다.
+
+### 2026-08-28 DAY 4 동일 SHA gh-pages 배포 진행 중
+
+- 검증 SHA `f07d369cf9f89d6faccdb20ab2e9d4b5886cd6e7`를 `gh-pages`에 일반 fast-forward push했고 원격 참조가 동일 SHA임을 확인했다.
+- GitHub Pages 실행 `33118013592`가 같은 head SHA로 생성됐으며 현재 `in_progress`다.
+- 배포 성공 판정과 공개 URL의 DAY 4 자산·런타임 확인 전에는 DAY 4를 COMPLETE로 표시하거나 DAY 5 재구축을 시작하지 않는다.
+
+### 2026-08-28 DAY 4 품질 재구축·공개 배포 COMPLETE
+
+- Pages workflow `33118013592`가 head `f07d369`로 `completed/success`를 기록했다.
+- 공개 URL에서 `index.html`, DAY 4 V3 데이터 모듈, 핵심 배경·지훈 포즈·휴대전화 사진 CG가 모두 HTTP 200으로 로드됐다. 이미지 바이트 길이는 로컬 확정 원본과 일치했다.
+- 실제 인앱 브라우저에서 공개 타이틀 → 게임 시작 → STORY MODE 선택 화면을 확인했고 console warning/error는 0건이었다.
+- DAY 4의 모든 필수 관문은 PASS다. 현재 재감사 대상을 DAY 5로 전환하지만, DAY 5 작업은 다음 실행의 Notion 원고 새 조회 전에는 시작하지 않는다.
