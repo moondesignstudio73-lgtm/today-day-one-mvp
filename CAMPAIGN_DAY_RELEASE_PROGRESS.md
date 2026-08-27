@@ -2,7 +2,7 @@
 
 운영 원칙: 한 DAY의 시나리오 작성·내러티브 QA·런타임 적용·저장 복원·전체 회귀·커밋·푸시·배포 확인이 모두 끝난 뒤에만 다음 DAY를 시작한다.
 
-현재 대상: `DAY 15`
+현재 대상: `DAY 16`
 
 ## DAY 5
 
@@ -28,7 +28,7 @@
 - [x] DAY 12
 - [x] DAY 13
 - [x] DAY 14
-- [ ] DAY 15
+- [x] DAY 15
 - [ ] DAY 16
 - [ ] DAY 17
 - [ ] DAY 18
@@ -193,7 +193,7 @@
 - [x] 다단계 런타임·선택 상태·저장 복원 구현 감사
 - [x] 집중 테스트·전체 회귀
 - [x] 실제 브라우저 연속 플레이 QA
-- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+- [x] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 계약: `docs/day15/DAY15_CHAPTER_CONTRACT_V1.md`
 기준 시나리오: `docs/day15/DAY15_SCENARIO_DRAFT_V1.md`
@@ -202,7 +202,14 @@
 
 ## 다음 작업
 
-DAY 15 실제 브라우저 연속 플레이 QA가 완료됐다. 다음 작업은 QA 증적을 커밋하고 보호 브랜치용 PR로 origin에 병합한 뒤 동일 검증 SHA를 `gh-pages`에 배포하고 공개 페이지를 확인하는 것이다.
+DAY 15의 모든 출시 관문과 공개 배포가 완료됐다. 다음 작업은 DAY 16의 현재 코드·DAY 15 잠금본·선택·후속 훅·로컬 자료 조사와 챕터 계약·시나리오 작성이다.
+
+### 2026-08-27 DAY 15 비파괴 원격 통합·출시 완료
+
+- QA 증적은 PR #3, 엔딩 갤러리 보존 병합은 PR #4, 최신 자유 모드 이동·대출·스튜디오 변경 보존 병합은 PR #5로 정확한 검증 head를 `feature/today-day-one-mvp`에 반영했다.
+- `origin/gh-pages`의 엔딩 이미지 15종과 최신 자유 모드 변경을 삭제하지 않고 일반 병합했다. 병합 뒤 DAY 15 집중·DAY 14/16 인접·자유 모드 통합·모듈 엔트리·전체 `tests/simulation.test.mjs`가 PASS했다.
+- 검증 SHA `7050a9d10a0388ce44bbee0ca6020a22863f8b54`를 기능 브랜치와 `gh-pages`에 동일하게 일반 fast-forward push했다. `Deploy GitHub Pages`가 성공했고 캐시 우회 공개 게임·DAY 15 런타임·플레이 QA·엔딩 이미지가 모두 HTTP 200을 반환했다.
+- 공개 `game.js`의 DAY 15 잠금 런타임, `m30-day15` 저장 계약, `PLAYTHROUGH QA PASS`·`NEEDS FIX: 0` 마커를 확인했다. DAY 15를 COMPLETE 처리하고 현재 대상을 DAY 16으로 전환한다.
 
 ### 2026-08-27 DAY 15 실제 브라우저 연속 플레이 QA 관문
 
