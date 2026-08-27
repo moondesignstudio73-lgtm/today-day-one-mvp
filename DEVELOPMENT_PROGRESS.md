@@ -891,3 +891,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `src/day15-presentation-data.mjs`에 배경 분기·표정·카메라·전환, `dateShopping`에서 `daily`로 안착하는 BGM, 문서·연필·가방·자동문·컵·휴대폰·사진 생활 SFX를 `audited` 상태로 매핑했다.
 - 공포 줌·글리치·충격 컷·붉은 색보정·심박·하은 단독 감시 구도를 금지해 예약 표기 불일치가 조기 반전 신호로 과장되지 않게 했다.
 - 산출물: `docs/day15/DAY15_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day15-presentation-data.mjs`, `tests/day15-presentation.test.mjs`. 집중·인접·전체 회귀 PASS. 다음 관문은 기술·육안 이미지 QA다.
+
+# 2026-08-27 DAY 15 기존 자산 이미지 품질 QA
+
+- 재사용 배경 6종은 모두 1672×941 8-bit RGB PNG, 하은 DAY 7 데이트 외출복은 887×1774 8-bit RGBA PNG임을 원본 헤더와 SHA-256으로 검증했다.
+- 원본 해상도 육안 검사에서 선명도·압축·왜곡·크롭·알파·고정 인물·문자·로고·워터마크 결함이 없고 8 Scene의 캐릭터·대화 UI 안전 여백을 충족했다.
+- 밝은 생활형 데이트 톤을 유지하며 예약 표기 불일치를 공포·감시 이미지로 과장하지 않는다. 신규 자산 제작 0종, 기존·사용자 자산 변경 0건이다.
+- `docs/day15/DAY15_IMAGE_QUALITY_QA.md`를 `IMAGE QA PASS`, `NEEDS FIX: 0`으로 잠그고 `src/day15-presentation-data.mjs`의 8 Scene을 `assetStatus: ready`로 전환했다.
+- `tests/day15-presentation.test.mjs`가 7개 이미지의 규격·색상 유형·해시와 QA 표식을 검사한다. Node 문법, DAY 15 시나리오·프레젠테이션·런타임, DAY 14/16 인접 런타임, 전체 `tests/simulation.test.mjs`가 PASS했다.
+- 다음 관문은 DAY 15 잠금 시나리오·ready 프레젠테이션·기존 런타임의 선택 상태·DAY 14 콜백·중간 저장 복원·DAY 16 훅 구현 감사다.
