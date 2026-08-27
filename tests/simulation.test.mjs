@@ -343,13 +343,13 @@ assert.equal(minjunRouteState.worldEncounterRoutes.minjun.completed,true);
 assert.equal(minjunRouteState.npcs.find(npc=>npc.id==="male-rival").storyState,"haeun-boundary-closed");
 assert.equal(minjunRouteState.npcs.find(npc=>npc.id==="male-rival").active,false);
 assert.equal(rollRepeatWorldEncounter(minjunRouteState,lakeLocation,19*60,()=>0),null);
-assert.equal(Object.keys(JAEMIN_QUIZZES).length,3);
+assert.equal(Object.keys(JAEMIN_QUIZZES).length,5);
 assert.ok(Object.values(JAEMIN_QUIZZES).every(questions=>questions.length===5));
 const jaeminRouteState=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.FREE_ROMANCE});
 let helpOffer="";
-for(const locationId of ["prime-gym","boxing-studio","protein-cafe"]){const location=WORLD_MAPS.seongsu.locations.find(item=>item.id===locationId);for(let index=0;index<5;index+=1){const encounter=rollRepeatWorldEncounter(jaeminRouteState,location,19*60,()=>0);assert.equal(encounter.npcId,"gym-trainer");const correct=encounter.choices.find(choice=>choice.correct);const result=resolveRepeatWorldEncounter(jaeminRouteState,encounter,correct.id);helpOffer ||= result.followUpMessage;}assert.equal(rollRepeatWorldEncounter(jaeminRouteState,location,19*60,()=>0),null);}
+for(const locationId of ["prime-gym","boxing-studio","protein-cafe","running-park","climbing-lab"]){const location=WORLD_MAPS.seongsu.locations.find(item=>item.id===locationId);for(let index=0;index<5;index+=1){const encounter=rollRepeatWorldEncounter(jaeminRouteState,location,19*60,()=>0);assert.equal(encounter.npcId,"gym-trainer");const correct=encounter.choices.find(choice=>choice.correct);const result=resolveRepeatWorldEncounter(jaeminRouteState,encounter,correct.id);helpOffer ||= result.followUpMessage;}assert.equal(rollRepeatWorldEncounter(jaeminRouteState,location,19*60,()=>0),null);}
 assert.match(helpOffer,/헬스하러 오면/);
-assert.equal(jaeminRouteState.worldEncounterRoutes.jaemin.correctCount,15);
+assert.equal(jaeminRouteState.worldEncounterRoutes.jaemin.correctCount,25);
 assert.equal(jaeminRouteState.worldEncounterRoutes.jaemin.helpOffered,true);
 assert.equal(JUNHO_PARTNER_INSIGHTS.length,10);
 const junhoRouteState=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.FREE_ROMANCE});
@@ -358,7 +358,7 @@ assert.equal(rollRepeatWorldEncounter(junhoRouteState,neonClub,19*60,()=>.3001),
 for(let index=0;index<JUNHO_PARTNER_INSIGHTS.length;index+=1){const encounter=rollRepeatWorldEncounter(junhoRouteState,neonClub,19*60,()=>0);assert.deepEqual(encounter.choices.map(choice=>choice.label),["고마워.","안 알려줘도 돼."]);resolveRepeatWorldEncounter(junhoRouteState,encounter,index%2?"decline":"thanks");}
 assert.equal(rollRepeatWorldEncounter(junhoRouteState,neonClub,19*60,()=>0),null);
 assert.equal(validateWorldEncounterRoutes(junhoRouteState.worldEncounterRoutes),true);
-console.log("✓ 민준 10단계 고민·재민 15개 운동 퀴즈·준호 10개 연인 정보 지도 조우 검증 통과");
+console.log("✓ 민준 10단계 고민·재민 25개 운동 퀴즈·준호 10개 연인 정보 지도 조우 검증 통과");
 assert.equal(getNightOutingContext(19*60,"하은").message,"하은이와 같이 데이트/외출을 나왔다.");
 assert.equal(getNightOutingContext(19*60,"유리").message,"유리와 같이 데이트/외출을 나왔다.");
 assert.equal(getNightOutingContext(22*60,"하은").message,"나혼자 외출 나왔다.");

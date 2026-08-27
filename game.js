@@ -8,7 +8,7 @@ import { EventRuntimeManager } from "./src/event-runtime-manager.mjs?v=5";
 import { getMicroEventDiagnostics, rollMicroEvents } from "./src/micro-event-manager.mjs?v=5";
 import { auditEventSystems } from "./src/event-audit.mjs?v=4";
 import { EVENT_DEFINITIONS } from "./src/events-data.mjs?v=5";
-import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=17";
+import { ACTIONS as actions, PHASES as phases } from "./src/actions-data.mjs?v=18";
 import { getActionAvailability, getWeekdayName, isActionVisible, isWeekend } from "./src/action-manager.mjs?v=5";
 import { calculateActionEffects } from "./src/consequence-manager.mjs?v=2";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
@@ -17,7 +17,7 @@ import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DA
 import { acquireActionItem, addItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, purchaseItem } from "./src/inventory-manager.mjs?v=8";
 import { getItem, ITEMS } from "./src/items-data.mjs?v=7";
 import { giveGift } from "./src/gift-manager.mjs?v=7";
-import { applyNpcActionEffects, getNpcRelationshipStatus, isYujinSecretGirlfriend } from "./src/npc-manager.mjs?v=3";
+import { applyNpcActionEffects, getNpcRelationshipStatus, isYujinSecretGirlfriend } from "./src/npc-manager.mjs?v=4";
 import { getTemptationOpportunity, resolveTemptation, TEMPTATION_CHOICES } from "./src/temptation-manager.mjs?v=2";
 import { applyRivalPressure, calculateRivalRisk } from "./src/rival-manager.mjs";
 import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mjs";
@@ -66,7 +66,7 @@ import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { getHeroineEventVideo, renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=11";
-import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=17";
+import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=18";
 import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=32";
 import { STORY_SCENES } from "./src/story-data.mjs?v=26";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, NIGHT_END_MINUTES, resetForNextDay, setNightStartTime, spendNightTime } from "./src/night-manager.mjs?v=3";
@@ -82,14 +82,14 @@ import { getGirlfriendVisual } from "./src/girlfriend-visual-data.mjs";
 import { createPlayerProfile, PLAYER_ARCHETYPES, sanitizePlayerNameInput } from "./src/player-profile-data.mjs?v=2";
 import { getRandomPlayerName } from "./src/player-names-data.mjs?v=1";
 import { GAME_MODES, getGameModeConfig, isContentAvailableForMode } from "./src/scenario-state.mjs?v=3";
-import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=13";
+import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=14";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
 import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=3";
 import { getMapLocationAsset } from "./src/map-location-assets.mjs";
 import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=31";
 import { getSharedEventById } from "./src/event-compatibility.mjs?v=30";
 import { STORY_UI_STATES, deriveStoryUiState, getStoryUiInvariantViolations, isStoryFreeActionResume, prepareCampaignDayAdvance, reconcileCompletedStoryFreeAction, shouldClaimStoryPending } from "./src/story-flow-guard.mjs?v=2";
-import { JAEMIN_ENCOUNTER_CHANCE, JUNHO_ENCOUNTER_CHANCE, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=3";
+import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JUNHO_ENCOUNTER_CHANCE, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=5";
 import { formatEventProbability, getEventProbabilitySummary } from "./src/event-display.mjs?v=1";
 import { appendYujinConversationTurn, completeYujinRooftopMeeting, getPendingYujinRooftopInvitation, getYujinMessageSuggestions, isYujinRooftopInvitationReady, migrateYujinSecretRouteState, YUJIN_MESSAGE_CORPUS, YUJIN_NPC_ID, YUJIN_ROOFTOP_EVENT_IMAGE, YUJIN_ROOFTOP_INVITATION, YUJIN_ROOFTOP_LOCATION_ID, YUJIN_ROOFTOP_START_MINUTES } from "./src/yujin-secret-route.mjs?v=1";
 
@@ -1637,7 +1637,7 @@ function openRepeatWorldEncounter(map,location,encounter){
   const image=getWorldEventImage(map,null,location),characterImage=getNpcSprite(encounter.npcId);
   $("#modal").classList.add("world-event-active");
   $("#modalContent").innerHTML=`<article class="world-event-layer">${renderWorldEventMedia(image,encounter.title,characterImage,encounter.npcName)}<div class="world-event-copy"><span class="eyebrow">${escapeHtml(map.name)} · ${escapeHtml(formatEventProbability(encounter.chance??WORLD_REPEAT_ENCOUNTER_CHANCE))} ENCOUNTER</span><h2>${escapeHtml(encounter.title)}</h2><p>${escapeHtml(encounter.message)}</p><strong class="world-event-question">${escapeHtml(encounter.question)}</strong><div class="world-event-choices">${encounter.choices.map(choice=>`<button type="button" data-repeat-world-choice="${escapeHtml(choice.id)}">${escapeHtml(choice.label)}</button>`).join("")}</div></div></article>`;
-  document.querySelectorAll("[data-repeat-world-choice]").forEach(button=>button.addEventListener("click",()=>{const result=resolveRepeatWorldEncounter(state,encounter,button.dataset.repeatWorldChoice);if(!result)return;recordMemory(state,{type:"npc",summary:`${location.name}에서 ${result.npc.name}와 만남 · ${result.choice.label}`,importance:encounter.final?5:3,tags:["지도","반복 조우",location.id,result.npc.id]});state.logs.push({time:`DAY ${state.day} · ENCOUNTER`,text:`${location.name}에서 ${result.npc.name}와 만났다. · 호감도 ${result.effects.affection>=0?'+':''}${result.effects.affection??0}`});SaveManager.save(state);showWorldEventResult({map,image,title:encounter.title,response:[result.choice.response,result.followUpMessage].filter(Boolean).join(" "),effects:{npcAffection:result.effects.affection??0,npcTrust:result.effects.trust??0,npcInterest:result.effects.interestInPlayer??0},effectLabels:{npcAffection:`${result.npc.name} 호감도`,npcTrust:`${result.npc.name} 신뢰도`,npcInterest:`${result.npc.name}의 관심`},characterImage,characterName:result.npc.name});}));
+  document.querySelectorAll("[data-repeat-world-choice]").forEach(button=>button.addEventListener("click",()=>{const result=resolveRepeatWorldEncounter(state,encounter,button.dataset.repeatWorldChoice);if(!result)return;const extortion=encounter.routeType==="extortion";recordMemory(state,{type:extortion?"danger":"npc",summary:`${location.name}에서 ${result.npc.name}와 만남 · ${result.choice.label}`,importance:extortion?5:encounter.final?5:3,tags:["지도",extortion?"협박":"반복 조우",location.id,result.npc.id]});state.logs.push({time:`DAY ${state.day} · ${extortion?"DANGER":"ENCOUNTER"}`,text:extortion?`${location.name}에서 협박을 당했다. · ${result.choice.label}${result.moneyLoss?` · 피해 ${money(result.moneyLoss)}`:""}`:`${location.name}에서 ${result.npc.name}와 만났다. · 호감도 ${result.effects.affection>=0?'+':''}${result.effects.affection??0}`});SaveManager.save(state);const displayEffects=extortion?{...result.playerEffects,...(result.moneyLoss?{money:-result.moneyLoss}:{})}:{npcAffection:result.effects.affection??0,npcTrust:result.effects.trust??0,npcInterest:result.effects.interestInPlayer??0};const effectLabels=extortion?{energy:"체력",trust:"신뢰도",affection:"호감도",money:"보유 자산"}:{npcAffection:`${result.npc.name} 호감도`,npcTrust:`${result.npc.name} 신뢰도`,npcInterest:`${result.npc.name}의 관심`};showWorldEventResult({map,image,title:encounter.title,response:[result.choice.response,result.followUpMessage].filter(Boolean).join(" "),effects:displayEffects,effectLabels,characterImage,characterName:result.npc.name});}));
 }
 
 function openYujinRooftopMeeting(map,location) {
@@ -1855,8 +1855,8 @@ function applyAction() {
   if (acquiredItem) { const giftResult=action.autoGift?giveGift(state,acquiredItem.instanceId):null; toast(giftResult?`${giftResult.item.name} 선물 · “${giftResult.reaction.reaction}”`:`${getItem(acquiredItem.itemId).name} 획득${acquiredItem.equipped?' · 장착 완료':''}`); }
   const promotion = addJobProgress(state, action, fx);
   if (promotion) toast(`승진! 직업 레벨 ${promotion.level} · 수입 보정 상승`);
-  const npcResult = eventsUnlocked ? applyNpcActionEffects(state, action) : null;
-  if (npcResult) state.logs.push({time:`DAY ${state.day} · NPC`,text:`${npcResult.npc.name}와의 관계가 변했다.`});
+  const npcResult = (eventsUnlocked||action.id==="coworker-lunch") ? applyNpcActionEffects(state, action) : null;
+  if (npcResult) state.logs.push({time:`DAY ${state.day} · NPC`,text:`${npcResult.npcs.map(npc=>npc.name).join("·")}와의 관계가 변했다.`});
   const rivalResult = eventsUnlocked ? applyRivalPressure(state, action) : null;
   if (rivalResult?.record.delta > 0) state.logs.push({time:`DAY ${state.day} · RIVAL`,text:`${rivalResult.rival.name}의 접근 위험이 높아졌다.`});
   state.choices.push(action.tag); state.actionHistory.push({ day:state.day, phase:state.phase, actionId:action.id, tag:action.tag }); state.logs.push({time:`DAY ${state.day} · ${phase.time}`,text:`${action.title} — ${resultText(action)}`});
@@ -1887,7 +1887,7 @@ function applyAction() {
   SaveManager.save(state);
   const actionMessage = [resultText(action), ...microEvents.map(micro=>micro.text)].join(" ");
   render();
-  openActionResultModal(action, actionMessage, fx, () => {
+  openActionResultModal(action, actionMessage, {...fx,...(npcResult?.displayEffects??{})}, () => {
     const continueAfterSpecialEvent=()=>{if (breakup) showBreakup(breakup); else if (state.day > 30) showEnding(); else { const temptation=eventsUnlocked&&npcResult&&getTemptationOpportunity(state); const nextStory=selectNextStoryScene(state);const story=eventsUnlocked||isCampaignPrologueStory(nextStory?.id)?nextStory:null; if(story) openStoryScene(story); else if(temptation) openTemptation(temptation); else if(event) openEventScene(event); else if(["데이트","쇼핑"].includes(action.tag)) sound.playBgm("dateShopping",state.day); else if(action.tag==="유혹") sound.playBgm("crisis",state.day); }};
     if(unlockedSpecialOutfit)showSpecialOutfitEventPopup(continueAfterSpecialEvent);else continueAfterSpecialEvent();
   });
@@ -2380,8 +2380,9 @@ function openTitleIntroduction(){
 }
 
 function getWorldToolLocationNote(location) {
+  if(["jamsil-station","myeongdong-station"].includes(location.id))return ` · 불특정 인원 협박 ${formatEventProbability(EXTORTION_ENCOUNTER_CHANCE)} · 보유 현금 10% 위험`;
   if(["lake-promenade","mountain-trail"].includes(location.id))return ` · 저녁 민준 고민 상담 ${formatEventProbability(MINJUN_ENCOUNTER_CHANCE)} · 하은 루트 10단계`;
-  if(["prime-gym","boxing-studio","protein-cafe"].includes(location.id))return ` · 저녁 재민 운동 퀴즈 ${formatEventProbability(JAEMIN_ENCOUNTER_CHANCE)} · 장소별 5문항`;
+  if(["prime-gym","boxing-studio","protein-cafe","running-park","climbing-lab"].includes(location.id))return ` · 저녁 재민 운동 퀴즈 ${formatEventProbability(JAEMIN_ENCOUNTER_CHANCE)} · 장소별 5문항`;
   if(location.id==="neon-club")return ` · 저녁 준호 연인 정보 ${formatEventProbability(JUNHO_ENCOUNTER_CHANCE)}`;
   return "";
 }
