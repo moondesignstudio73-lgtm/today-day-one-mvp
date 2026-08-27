@@ -929,3 +929,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 6개 재사용 배경·하은 DAY 7 외출복·선택/자유행동 UI의 선명도·알파·종횡비·안전 여백이 PASS했다. 생활 BGM·SFX 상태에서 console warning/error는 0건이다.
 - 예약 표기 불일치는 `unverified`, 하은의 생활 톤·주인공의 합리성·윤서진 AFFECTION/STATUS_INTEREST 분리·프로필/반전 잠금을 유지한다.
 - 산출물: `docs/day15/DAY15_PLAYTHROUGH_QA.md`. 7영역 PASS, `NEEDS FIX: 0`; 다음 관문은 QA 증적 커밋·origin PR 병합·동일 SHA `gh-pages` 공개 배포와 공개 확인이다.
+
+# 2026-08-27 DAY 15 비파괴 원격 통합·출시 완료
+
+- QA 증적 커밋은 PR #3, 엔딩 갤러리 보존 병합은 PR #4, 최신 자유 모드 이동·대출·스튜디오 변경 보존 병합은 PR #5로 정확한 검증 head만 `feature/today-day-one-mvp`에 병합했다.
+- 기존 `gh-pages`의 엔딩 이미지 15종과 후속 자유 모드 변경을 삭제하지 않고 기능 브랜치 계보에 일반 병합했다. DAY 15 런타임·회귀·자유행동, DAY 14/16 인접, 자유 모드 통합, 모듈 엔트리와 전체 시뮬레이션이 병합 뒤 모두 PASS했다.
+- 검증 SHA `7050a9d10a0388ce44bbee0ca6020a22863f8b54`를 기능 브랜치와 `gh-pages`에 동일하게 일반 fast-forward push했다. `Deploy GitHub Pages`가 성공했고 캐시 우회 공개 게임·DAY 15 런타임·플레이 QA·엔딩 이미지가 HTTP 200을 반환했다.
+- 공개본에서 DAY 15 잠금 런타임, `m30-day15` 저장 계약, `PLAYTHROUGH QA PASS`와 `NEEDS FIX: 0`을 확인했다. DAY 15 출시 관문 전체를 COMPLETE 처리했으며 다음 작업은 DAY 16 챕터 계약·시나리오 조사다.
