@@ -909,3 +909,13 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 27개 경로를 각 stage에서 `SaveManager`로 왕복해 활동별 책방/전시 재개, 카페 재개, 두 현재 기억, 완료 플래그, DAY 16 훅을 확인했다. 윤서진 두 축과 DAY 11·14 미확인 단서, 금융·프로필 잠금은 불변이다.
 - `game.js`의 DAY 15 런타임 캐시를 `v=2`, `index.html`의 진입 캐시를 `v=172`로 갱신했다. Node 문법, DAY 15 계약·초안·시나리오·프레젠테이션·런타임, DAY 14/16 인접, DAY 15 및 DAY 2~30 자유행동, 브라우저 엔트리 94개와 전체 시뮬레이션이 PASS했다.
 - 산출물: `docs/day15/DAY15_RUNTIME_SAVE_AUDIT.md`, `src/day15-campaign-runtime.mjs`, `tests/day15-runtime.test.mjs`, `game.js`, `index.html`. 다음 관문은 DAY 15 전용 집중 테스트·전체 회귀다.
+
+# 2026-08-27 DAY 15 집중 테스트·전체 회귀
+
+- `tests/day15-regression.test.mjs`를 추가해 DAY 14→15→16 도달, 최종 선택 단일 기록, 레거시 stage 0 저장 복원과 자유 연애 모드 격리를 고정했다.
+- 활동·계획 변경·기록 공개 27경로의 실제 저장 복원, 예약 표기 불일치 `unverified`, 단서·행동·후속 훅 고유성을 재검증했다.
+- DAY 11·14 미확인 단서, DAY 14 전략, 금융·프로필·반전 잠금과 윤서진 `seojinAffection`/`seojinStatusInterest` 독립 값을 보존했다.
+- DAY 15 집중 7종, DAY 14/16 인접 3종, DAY 2~30 자유행동 감사, 브라우저 엔트리 94개, 자유 모드 `gh-pages` 통합, 전체 `tests/simulation.test.mjs`가 PASS했다. `DAY 15 NEEDS FIX: 0`이다.
+- 산출물: `docs/day15/DAY15_REGRESSION_QA.md`, `tests/day15-regression.test.mjs`. 다음 관문은 실제 브라우저 DAY 14→15 연속 플레이·stage 1 재개·SKIP·자유행동·DAY 16 진입 QA다.
+- 로컬 검증 커밋 `8d7790e`는 origin 기준 안전한 fast-forward였지만 직접 push가 새 저장소 규칙 `GH013: Changes must be made through a pull request`로 거부됐다. PR 생성 금지 지침에 따라 PR·강제 push·`gh-pages` 우회 배포를 하지 않았다.
+- 재개하려면 기능 브랜치 직접 push 허용을 복구하거나 사용자가 PR 금지를 명시적으로 해제해야 한다. 검증되지 않은 원격 변경이나 배포는 없다.
