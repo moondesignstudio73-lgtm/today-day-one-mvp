@@ -3,7 +3,8 @@ import { SaveManager } from "./src/save-manager.mjs?v=20";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, getRuntimeEventDefinitions, rollRuntimeEvent } from "./src/event-manager.mjs?v=10";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=9";
-import { resolveSituationEventChoice, rollLocationSituationEvent } from "./src/situation-event-manager.mjs?v=6";
+import { resolveSituationEventChoice, rollLocationSituationEvent } from "./src/situation-event-manager.mjs?v=7";
+import { isSubwayQuestionLocation, normalizeSubwayChoiceEffects } from "./src/subway-event-effects.mjs?v=1";
 import { EventRuntimeManager } from "./src/event-runtime-manager.mjs?v=5";
 import { getMicroEventDiagnostics, rollMicroEvents } from "./src/micro-event-manager.mjs?v=5";
 import { auditEventSystems } from "./src/event-audit.mjs?v=4";
@@ -14,7 +15,7 @@ import { calculateActionEffects } from "./src/consequence-manager.mjs?v=2";
 import { getRelationshipState } from "./src/relationship-manager.mjs";
 import { addJobProgress, getCareerSummary } from "./src/job-manager.mjs";
 import { appendTransaction, BOND_PURCHASE_AMOUNT, BOND_RETURN_RATE, BOND_TERM_DAYS, calculatePaycheck, depositSavings, getAssetSummary, getEconomySummary, getNextPayday, getPaycheckRange, processDayEndEconomy, purchaseBond, recordTransaction, SAVINGS_TRANSFER_AMOUNT, withdrawSavings } from "./src/economy-manager.mjs?v=6";
-import { acquireActionItem, addItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, purchaseItem } from "./src/inventory-manager.mjs?v=8";
+import { acquireActionItem, addItem, equipGirlfriendOutfit, equipItem, getEffectiveAppearance, getEquipmentBonuses, getPurchaseQuote, isItemOwnedBy, isPlayerItemEquipped, purchaseItem } from "./src/inventory-manager.mjs?v=10";
 import { getItem, ITEMS } from "./src/items-data.mjs?v=7";
 import { giveGift } from "./src/gift-manager.mjs?v=7";
 import { applyNpcActionEffects, getNpcRelationshipStatus, isYujinSecretGirlfriend } from "./src/npc-manager.mjs?v=4";
@@ -24,7 +25,7 @@ import { calculateBreakupRisk, evaluateBreakup } from "./src/conflict-manager.mj
 import { analyzeConversationInput, buildConversationContext, getContextualOpening, getHostileConversationResponse, getSuggestedConversationReplies, inferConversationQuestion, recordConversationTurn } from "./src/conversation-manager.mjs?v=13";
 import { requestGirlfriendReply } from "./src/ai-chat-client.mjs?v=5";
 import { HAEUN_MESSAGE_CORPUS } from "./src/haeun-message-data.mjs?v=4";
-import { applyGirlfriendLoan } from "./src/girlfriend-loan-manager.mjs?v=1";
+import { applyGirlfriendLargeLoan, applyGirlfriendLoan } from "./src/girlfriend-loan-manager.mjs?v=2";
 import { speakWithElevenLabs, stopVoicePlayback } from "./src/elevenlabs-voice-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs?v=2";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs?v=3";
@@ -66,7 +67,7 @@ import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { getHeroineEventVideo, renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=11";
-import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=18";
+import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=19";
 import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=32";
 import { STORY_SCENES } from "./src/story-data.mjs?v=26";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, NIGHT_END_MINUTES, resetForNextDay, setNightStartTime, spendNightTime } from "./src/night-manager.mjs?v=3";
@@ -84,7 +85,7 @@ import { getRandomPlayerName } from "./src/player-names-data.mjs?v=1";
 import { GAME_MODES, getGameModeConfig, isContentAvailableForMode } from "./src/scenario-state.mjs?v=3";
 import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=14";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
-import { discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=3";
+import { completeWorldFastTravel, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=4";
 import { getMapLocationAsset } from "./src/map-location-assets.mjs";
 import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=31";
 import { getSharedEventById } from "./src/event-compatibility.mjs?v=30";
@@ -671,6 +672,7 @@ function startImmersiveScene(session) {
   if(session.id===LOCKED_DAY30_SCENE_ID){const resumeVisual=getLockedDay30ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
   document.body.classList.remove("ui-classic-mode");
   document.body.classList.add("ui-story-mode");
+  $("#studioThanksBubble").classList.add("hidden");
   $(".story-toolbar").classList.remove("hidden");
   $("#gameScreen").classList.remove("classic-mode");
   $("#gameScreen").classList.add("story-mode");
@@ -1312,7 +1314,14 @@ function render() {
   $("#nightHome").classList.add("hidden");
   $(".play-panel").classList.remove("hidden");
   $("#visualNovelStage").dataset.scene = phase.key;
-  applyScenePresentation(resolvePhasePresentation(state,phase.key));
+  const phasePresentation=resolvePhasePresentation(state,phase.key);
+  const girlfriendHasSkylineStudio=isItemOwnedBy(state,"skyline-studio","girlfriend");
+  const skylineStudioActive=isPlayerItemEquipped(state,"skyline-studio")||girlfriendHasSkylineStudio;
+  const scenePresentation=phase.key==="morning"&&skylineStudioActive
+    ? {...phasePresentation,backgroundId:"home-morning-skyline-studio",backgroundUrl:getBackgroundAsset("home-morning-skyline-studio")}
+    : phasePresentation;
+  applyScenePresentation(scenePresentation);
+  $("#studioThanksBubble").classList.toggle("hidden",phase.key!=="morning"||!girlfriendHasSkylineStudio);
   const sceneSoundKey = `${state.day}-${phase.key}`;
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
@@ -1582,25 +1591,32 @@ function openTransportSelector(required=false) {
   const current=state.world.transport;
   const cards=TRANSPORT_OPTIONS.map(option=>{const locked=option.requiresVehicle&&!state.world.ownedVehicleId;return `<button class="transport-card ${current===option.id?"selected":""}" data-world-transport="${option.id}" type="button" ${locked?"disabled":""}><span>${option.icon}</span><b>${escapeHtml(option.name)}</b><small>${escapeHtml(option.description)}</small><em>${locked?"자동차 미보유":option.cost?`${money(option.cost)} / 1회`:"무료"}</em></button>`;}).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">MOVE STYLE</span><h2>이동수단 선택</h2><p>${required?"지도에서 이동하기 전에 이용할 수단을 선택해 주세요.":"이동수단에 따라 지도 위 캐릭터 표시가 달라집니다."}</p><div class="transport-grid">${cards}</div>`;$("#modal").classList.add("transport-modal-active");openModal();
-  document.querySelectorAll("[data-world-transport]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{if(button.dataset.worldTransport==="subway"&&getNearbyLocation(state.world)?.category!=="transport"){toast("지하철은 역 가까이에서 이용할 수 있어요.");return;}const result=selectWorldTransport(state.world,button.dataset.worldTransport);if(!result.ok){toast(result.reason);return;}SaveManager.save(state);closeModal();renderWorldMap();toast(`${result.option.name} 이동으로 변경했습니다.`);if(result.option.fastTravel)setTimeout(()=>openTransportDestination(result.option),0);}));
+  document.querySelectorAll("[data-world-transport]:not(:disabled)").forEach(button=>button.addEventListener("click",()=>{
+    const transportId=button.dataset.worldTransport;
+    if(transportId==="subway"){
+      const option=TRANSPORT_OPTIONS.find(item=>item.id==="subway");
+      if(option)openTransportDestination(option);
+      return;
+    }
+    const result=selectWorldTransport(state.world,transportId);if(!result.ok){toast(result.reason);return;}
+    SaveManager.save(state);closeModal();renderWorldMap();toast(`${result.option.name} 이동으로 변경했습니다.`);
+    if(result.option.fastTravel)setTimeout(()=>openTransportDestination(result.option),0);
+  }));
 }
 
 function openTransportDestination(option) {
   if(isWorldTurnEnded()){showWorldTurnEndedPopup();return;}
   const currentMap=WORLD_MAPS[state.world.districtId]??WORLD_MAPS.dongsu;
-  if(option.id==="subway"&&getNearbyLocation(state.world)?.category!=="transport"){toast("지하철은 역 가까이에서 이용할 수 있어요.");openTransportSelector();return;}
   const destinations=option.fastTravel==="station"
-    ? Object.values(WORLD_MAPS).filter(map=>map.cityId===currentMap.cityId).flatMap(map=>map.locations.filter(location=>location.category==="transport").map(location=>({...location,mapId:map.id,mapName:map.name})))
+    ? Object.values(WORLD_MAPS).filter(map=>map.cityId===currentMap.cityId).flatMap(map=>map.locations.filter(location=>isSubwayQuestionLocation(location.id)).map(location=>({...location,mapId:map.id,mapName:map.name})))
     : currentMap.locations.filter(location=>location.category!=="home").map(location=>({...location,mapId:currentMap.id,mapName:currentMap.name}));
   const cards=destinations.map(destination=>{const distance=destination.mapId===state.world.districtId?Math.abs(destination.x-state.world.x)+Math.abs(destination.y-state.world.y):8;const fare=option.id==="taxi"?option.cost+distance*1200:option.cost;return `<button class="transport-card" data-transport-destination="${escapeHtml(destination.id)}" data-map-id="${escapeHtml(destination.mapId)}" data-fare="${fare}" type="button"><span>${destination.icon}</span><b>${escapeHtml(destination.name)}</b><small>${escapeHtml(destination.mapName)} · ${option.minutes}분</small><em>${money(fare)}</em></button>`;}).join("");
   $("#modalContent").innerHTML=`<span class="eyebrow">${escapeHtml(option.name.toUpperCase())} DESTINATION</span><h2>${option.icon} 목적지 선택</h2><p>${option.id==="subway"?"이동할 역을 선택하세요. 역에서 역으로 빠르게 이동합니다.":"원하는 장소를 선택하세요. 거리에 따라 요금이 달라집니다."}</p><div class="transport-grid">${cards}</div>`;$("#modal").classList.add("transport-modal-active");openModal();
   document.querySelectorAll("[data-transport-destination]").forEach(button=>button.addEventListener("click",()=>{
     const map=WORLD_MAPS[button.dataset.mapId],destination=map?.locations.find(item=>item.id===button.dataset.transportDestination);if(!destination)return;
     const fare=Number(button.dataset.fare);const payment=payForTransport(option,fare,option.minutes,`${option.name} · ${destination.name}`);if(!payment.ok){if(/너무 늦/.test(payment.reason))showWorldTurnEndedPopup();else toast(payment.reason);return;}
-    state.world.cityId=map.cityId;state.world.districtId=map.id;state.world.x=destination.x;state.world.y=destination.y;
-    if(!state.world.discoveredLocations.includes(destination.id))state.world.discoveredLocations.push(destination.id);
-    state.world.travelHistory.push({cityId:map.cityId,districtId:map.id,transport:option.id,destinationId:destination.id,day:state.day});
-    SaveManager.save(state);closeModal();renderWorldMap();toast(`${option.name} · ${destination.name} 도착 · ${option.minutes}분 · ${money(fare)}`);if(ensureNightState(state).minutes>=NIGHT_END_MINUTES)showWorldTurnEndedPopup();else setTimeout(()=>openWorldLocation(destination.id),180);
+    const arrival=completeWorldFastTravel(state.world,map,destination,option.id,state.day);if(!arrival.ok){toast(arrival.reason);return;}
+    SaveManager.save(state);closeModal();renderWorldMap();toast(`${option.name} · ${destination.name} 도착 · ${option.minutes}분 · ${money(fare)}${arrival.switchedToWalk?" · 도보로 전환":""}`);if(ensureNightState(state).minutes>=NIGHT_END_MINUTES)showWorldTurnEndedPopup();else setTimeout(()=>openWorldLocation(destination.id),180);
   }));
 }
 
@@ -1660,7 +1676,7 @@ function openWorldEventLayer(map,location){
   const [message,question]=haeunEvent?[haeunEvent.message,haeunEvent.question]:genericCopy;
   const choices=haeunEvent?.choices??(alone?[{id:"observe",label:"혼자 천천히 둘러보며 분위기를 즐긴다",response:"조용히 주변을 둘러보며 복잡했던 생각을 정리했다.",effects:{stress:-4,confidence:2}},{id:"rest",label:"잠시 쉬면서 오늘 있었던 일을 돌아본다",response:"혼자 숨을 고르며 남은 밤을 차분하게 정리했다.",effects:{energy:2,stress:-3}},{id:"record",label:"사진과 메모로 혼자만의 기록을 남긴다",response:"오늘의 풍경을 기록하며 혼자서도 의미 있는 시간을 보냈다.",effects:{confidence:3,social:1}}]:[{id:"talk",label:"함께 둘러보며 솔직하게 대화한다",response:"장소를 천천히 둘러보며 서로의 생각을 편하게 나눴다.",effects:{affection:4,trust:3}},{id:"enjoy",label:"이곳에서 할 수 있는 활동을 즐긴다",response:"복잡한 생각은 잠시 내려놓고 지금의 경험을 함께 즐겼다.",effects:{excitement:6,stress:-3}},{id:"remember",label:"사진과 작은 추억을 남긴다",response:"평범한 방문이 나중에도 떠올릴 수 있는 두 사람의 기억이 됐다.",effects:{affection:5,confidence:2}}]);
   $("#modal").classList.add("world-event-active");$("#modalContent").innerHTML=`<article class="world-event-layer">${renderWorldEventMedia(image,`${getWorldLocationName(location)} 이벤트`,characterImage)}<div class="world-event-copy"><span class="eyebrow">${escapeHtml(map.name)} · LOCATION EVENT</span><h2>${location.icon} ${escapeHtml(getWorldLocationName(location))}</h2><p>${escapeHtml(message)}</p><strong class="world-event-question">${escapeHtml(question)}</strong><div class="world-event-choices">${choices.map(choice=>`<button type="button" data-world-event-choice="${escapeHtml(choice.id)}">${escapeHtml(choice.label)}</button>`).join("")}</div></div></article>`;
-  document.querySelectorAll("[data-world-event-choice]").forEach(button=>button.addEventListener("click",()=>{const choice=choices.find(item=>item.id===button.dataset.worldEventChoice);if(!choice)return;let effects=choice.effects??{},response=choice.response??choice.memory,mbtiLabel="";if(haeunEvent){const result=resolveSituationEventChoice(state,haeunEvent,choice.id);if(!result)return;effects=result.effects;response=choice.response??choice.memory;mbtiLabel=result.mbtiAdjustment?.label??"";}else applyEffects(state,effects);recordMemory(state,{type:"map-event",summary:`${getWorldLocationName(location)}: ${choice.label}`,importance:3,tags:["지도",map.id,location.id,choice.id]});state.logs.push({time:`DAY ${state.day} · MAP EVENT`,text:`${getWorldLocationName(location)} — ${choice.label}`});SaveManager.save(state);showWorldEventResult({map,image,title:getWorldLocationName(location),response,effects,mbtiLabel,characterImage});}));
+  document.querySelectorAll("[data-world-event-choice]").forEach(button=>button.addEventListener("click",()=>{const choice=choices.find(item=>item.id===button.dataset.worldEventChoice);if(!choice)return;let effects=normalizeSubwayChoiceEffects(location.id,choice.effects??{}),response=choice.response??choice.memory,mbtiLabel="";if(haeunEvent){const result=resolveSituationEventChoice(state,haeunEvent,choice.id);if(!result)return;effects=result.effects;response=choice.response??choice.memory;mbtiLabel=result.mbtiAdjustment?.label??"";}else applyEffects(state,effects);recordMemory(state,{type:"map-event",summary:`${getWorldLocationName(location)}: ${choice.label}`,importance:3,tags:["지도",map.id,location.id,choice.id]});state.logs.push({time:`DAY ${state.day} · MAP EVENT`,text:`${getWorldLocationName(location)} — ${choice.label}`});SaveManager.save(state);showWorldEventResult({map,image,title:getWorldLocationName(location),response,effects,mbtiLabel,characterImage});}));
 }
 
 function hasLateNightSpecialEvent(location) {
@@ -1928,11 +1944,11 @@ async function chatReply(message){
   if(activeConversation!==session)return;
   session.replyPending=false;
   if(!response){renderConversationSession();return;}
-  if(response.transaction?.type==="girlfriend-loan"){
-    const loan=applyGirlfriendLoan(state,response.transaction.amount);
+  if(["girlfriend-loan","girlfriend-large-loan"].includes(response.transaction?.type)){
+    const largeLoan=response.transaction.type==="girlfriend-large-loan",loan=largeLoan?applyGirlfriendLargeLoan(state):applyGirlfriendLoan(state,response.transaction.amount);
     if(loan.ok){const moneyValue=$("#moneyValue");if(moneyValue)moneyValue.textContent=money(state.money);toast(`${state.partner.name}에게 ${money(loan.amount)}을 빌렸어요. 보유 자산에 바로 반영됐습니다.`);}
     else if(loan.reason==="already-borrowed")response={...response,text:"전에 한 번 빌려줬잖아. 이번에는 더 빌려줄 수 없어.",transaction:null};
-    else response={...response,text:"미안하지만 지금 우리 신뢰로는 돈을 빌려줄 수 없어.",transaction:null};
+    else response={...response,text:largeLoan?"3천만 원은 큰돈이라 지금 우리 사이의 신뢰와 호감으로는 빌려줄 수 없어.":"미안하지만 지금 우리 신뢰로는 돈을 빌려줄 수 없어.",transaction:null};
   }
   const scale=session.turn>=7?0:session.turn>=4?.5:1,effects=Object.fromEntries(Object.entries(response.effects??{}).map(([key,value])=>[key,Math.round(value*(analysis.level==="hostile"?1:scale))]));
   for(const [key,value] of Object.entries(effects))session.effects[key]=(session.effects[key]??0)+value;
