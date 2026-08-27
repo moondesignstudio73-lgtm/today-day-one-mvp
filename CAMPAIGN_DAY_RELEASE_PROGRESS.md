@@ -200,9 +200,31 @@
 자체 QA: `docs/day15/DAY15_SCENARIO_QA_V1.md`
 실제 플레이 QA: `docs/day15/DAY15_PLAYTHROUGH_QA.md`
 
+### DAY 16 세부 관문
+
+- [x] 챕터 계약·Voice Profile·지식 장부
+- [ ] 완전한 플레이 가능 시나리오 초안
+- [ ] 자체 내러티브 QA·정적 계약 검사
+- [ ] 기존 에셋 감사·연출/오디오 매핑
+- [ ] 필요한 신규 자산 제작·이미지 QA
+- [ ] 다단계 런타임·선택 상태·저장 복원 구현 감사
+- [ ] 집중 테스트·전체 회귀
+- [ ] 실제 브라우저 연속 플레이 QA
+- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+
+기준 계약: `docs/day16/DAY16_CHAPTER_CONTRACT_V1.md`
+
 ## 다음 작업
 
-DAY 15의 모든 출시 관문과 공개 배포가 완료됐다. 다음 작업은 DAY 16의 현재 코드·DAY 15 잠금본·선택·후속 훅·로컬 자료 조사와 챕터 계약·시나리오 작성이다.
+DAY 16 챕터 계약·Voice Profile·지식 장부 관문이 완료됐다. 다음 작업은 계약의 8 Scene Beat, DAY 15 9콜백, DAY 16 9전략, DAY 17 건강 루틴 훅을 실제 대사·행동·반응으로 완전 대본화하는 것이다.
+
+### 2026-08-27 DAY 16 챕터 계약·Voice Profile·지식 장부 관문
+
+- 두 필수 내러티브 스킬과 4개 참고자료를 모두 읽고 DAY 15 잠금본·선택·저장 훅, 기존 DAY 16/17 런타임, DAY 4 지훈 연속성과 로컬 자료를 조사했다.
+- `docs/day16/DAY16_CHAPTER_CONTRACT_V1.md`에 세 화자의 Voice Profile, 9항목 지식 장부, MUST/MAY/MUST NOT REVEAL, PLAYER MAY SUSPECT, 감정·관계·단서 예산과 8 Scene Beat를 고정했다.
+- DAY 15의 활동·변경·공개 9전략을 고유 콜백으로 회수하고 DAY 16의 연락 채널·대면 조건·정보 공유 9전략, 단계별 저장 복원과 `day17-current-health-routine` 훅을 계약했다.
+- DAY 16~20 사고 의심 구간에 맞춰 지훈의 DAY 4 직접 증언 한계를 다시 확인하되 사고 고의·가해자·하은 잠금 프로필·반전을 공개하지 않는다. 윤서진 두 축은 독립 값·변화 0으로 보존한다.
+- `tests/day16-contract.test.mjs`, DAY 16 런타임, DAY 15 회귀, DAY 17 인접 런타임과 전체 시뮬레이션이 PASS했다. `CHAPTER CONTRACT PASS`, `NEEDS FIX: 0`이다.
 
 ### 2026-08-27 DAY 15 비파괴 원격 통합·출시 완료
 

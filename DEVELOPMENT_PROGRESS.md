@@ -936,3 +936,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 기존 `gh-pages`의 엔딩 이미지 15종과 후속 자유 모드 변경을 삭제하지 않고 기능 브랜치 계보에 일반 병합했다. DAY 15 런타임·회귀·자유행동, DAY 14/16 인접, 자유 모드 통합, 모듈 엔트리와 전체 시뮬레이션이 병합 뒤 모두 PASS했다.
 - 검증 SHA `7050a9d10a0388ce44bbee0ca6020a22863f8b54`를 기능 브랜치와 `gh-pages`에 동일하게 일반 fast-forward push했다. `Deploy GitHub Pages`가 성공했고 캐시 우회 공개 게임·DAY 15 런타임·플레이 QA·엔딩 이미지가 HTTP 200을 반환했다.
 - 공개본에서 DAY 15 잠금 런타임, `m30-day15` 저장 계약, `PLAYTHROUGH QA PASS`와 `NEEDS FIX: 0`을 확인했다. DAY 15 출시 관문 전체를 COMPLETE 처리했으며 다음 작업은 DAY 16 챕터 계약·시나리오 조사다.
+
+# 2026-08-27 DAY 16 챕터 계약·Voice Profile·지식 장부
+
+- 두 필수 내러티브 스킬과 `narrative-bible.md`, `character-voice-rules.md`, `narrative-director-workflow.md`, `chapter-construction-guide.md`를 모두 읽고 DAY 15 잠금 결과·9개 선택·후속 훅, DAY 4 지훈 연속성, 기존 DAY 16/17 런타임을 조사했다.
+- `docs/day16/DAY16_CHAPTER_CONTRACT_V1.md`에 챕터 메타데이터, 하은·주인공·지훈 Voice Profile, 전원 9항목 지식 장부, 정보 공개 예산, 감정·관계·단서 예산과 8 Scene Beat를 고정했다.
+- DAY 15 9개 선택을 연락 후보·회복 부담·시간 제한·종료권·현재 기록·제3자 공유에 고유하게 회수한다. DAY 16의 연락 채널·대면 조건·정보 공유 9개 행동 전략과 stage 0~3 저장 복원, DAY 17 건강 루틴 훅을 계약했다.
+- DAY 16~20 의심 구간은 지훈의 DAY 4 직접 증언 범위와 친구망의 잠재적 독립 출처만 열고, 사고 고의·가해자·차량 조작·하은 잠금 프로필·반전은 금지한다. 주인공의 관찰→가능성→확인→판단→행동과 윤서진 두 축 독립성을 유지한다.
+- `tests/day16-contract.test.mjs`, DAY 16 런타임, DAY 15 회귀, DAY 17 인접 런타임과 전체 `tests/simulation.test.mjs`가 PASS했다. 다음 관문은 8 Scene 완전 플레이 시나리오 초안이다.
