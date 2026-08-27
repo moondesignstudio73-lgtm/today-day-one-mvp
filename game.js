@@ -1315,7 +1315,9 @@ function render() {
   $(".play-panel").classList.remove("hidden");
   $("#visualNovelStage").dataset.scene = phase.key;
   const phasePresentation=resolvePhasePresentation(state,phase.key);
-  const girlfriendHasSkylineStudio=isItemOwnedBy(state,"skyline-studio","girlfriend");
+  // 이전 저장 데이터는 선물용 구매 후 보관함(owner: gift)에 남아 있을 수 있다.
+  // 스튜디오는 구매 즉시 주거 선물로 취급해 두 상태를 모두 활성화한다.
+  const girlfriendHasSkylineStudio=isItemOwnedBy(state,"skyline-studio",["gift","girlfriend"]);
   const girlfriendHasGiftedVehicle=(state.inventory??[]).some(entry=>entry.owner==="girlfriend"&&getGiftVehicleAsset(entry.itemId));
   const skylineStudioActive=isPlayerItemEquipped(state,"skyline-studio")||girlfriendHasSkylineStudio;
   const scenePresentation=phase.key==="morning"&&skylineStudioActive
@@ -2185,7 +2187,20 @@ function openPurchaseConfirmation(itemId, owner) {
   $("#modalContent").innerHTML=`<span class="eyebrow">PURCHASE CONFIRM</span><h2>구매 확인</h2><div class="purchase-confirm-item">${visual}<div><small>${escapeHtml(item.brand)} · ${escapeHtml(target)}</small><b>${escapeHtml(item.name)}</b><strong>${money(quote.price)}</strong></div></div><p class="venue-visit-question">구매하시겠습니까?</p><div class="venue-confirm-actions"><button id="purchaseCancel" type="button">아니오</button><button id="purchaseConfirm" class="primary-button" type="button">예</button></div>`;
   openModal();
   $("#purchaseCancel").addEventListener("click",openShop);
-  $("#purchaseConfirm").addEventListener("click",()=>{const result=purchaseItem(state,itemId,owner);if(!result.ok){toast(result.reason);openShop();return;}const outfitGift=result.item.category==="heroine-outfit"?giveGift(state,result.instance.instanceId):null;if(outfitGift){state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${outfitGift.item.name} 선물 · 바로 착용`});recordMemory(state,{type:"gift",summary:`${outfitGift.item.name} 의상 선물`,importance:4,tags:["선물","의상",outfitGift.item.id]});}SaveManager.save(state);render();openShop();toast(outfitGift?`${state.partner.name}에게 선물 완료 · 새 의상 착용`:`${result.item.name} 구매 완료`);});
+  $("#purchaseConfirm").addEventListener("click",()=>{
+    const result=purchaseItem(state,itemId,owner);
+    if(!result.ok){toast(result.reason);openShop();return;}
+    const autoGift=owner==="gift"&&(result.item.category==="heroine-outfit"||result.item.id==="skyline-studio")
+      ? giveGift(state,result.instance.instanceId)
+      : null;
+    if(autoGift){
+      const giftType=result.item.id==="skyline-studio"?"주거":"의상";
+      state.logs.push({time:`DAY ${state.day} · ${giftType==="주거"?"HOME":"OUTFIT"}`,text:`${autoGift.item.name} 선물 · 바로 전달`});
+      recordMemory(state,{type:"gift",summary:`${autoGift.item.name} ${giftType} 선물`,importance:4,tags:["선물",giftType,autoGift.item.id]});
+    }
+    SaveManager.save(state);render();openShop();
+    toast(autoGift?`${state.partner.name}에게 ${result.item.name} 선물 완료`:`${result.item.name} 구매 완료`);
+  });
 }
 
 function openFinance() {

@@ -1712,6 +1712,7 @@ studioGiftState.money = getItem("skyline-studio").price;
 const studioGiftPurchase = purchaseItem(studioGiftState, "skyline-studio", "gift");
 assert.ok(studioGiftPurchase.ok);
 assert.equal(isItemOwnedBy(studioGiftState, "skyline-studio", "girlfriend"), false);
+assert.equal(isItemOwnedBy(studioGiftState, "skyline-studio", ["gift", "girlfriend"]), true);
 assert.ok(giveGift(studioGiftState, studioGiftPurchase.instance.instanceId));
 assert.equal(isItemOwnedBy(studioGiftState, "skyline-studio", "girlfriend"), true);
 console.log("✓ 상점 구매·경제 원장·자동 장착·잔액 부족 차단 검증 통과");
