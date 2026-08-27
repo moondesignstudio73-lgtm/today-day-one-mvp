@@ -5,7 +5,7 @@ import { validateMemories } from "./memory-manager.mjs";
 import { createInvestmentState, validateInvestmentState } from "./investment-manager.mjs?v=2";
 import { createLotteryState, validateLotteryState } from "./lottery-manager.mjs";
 import { createAdvancedEconomyState, validateAdvancedEconomyState } from "./economy-manager.mjs";
-import { selectEnding } from "./ending-manager.mjs";
+import { selectEnding } from "./ending-manager.mjs?v=3";
 import { createVisualState, validateCharacterAppearance } from "./character-appearance.mjs";
 import { createHiddenRouteState, validateHiddenRouteState } from "./hidden-route-manager.mjs";
 import { createDaySnapshot } from "./night-manager.mjs";
