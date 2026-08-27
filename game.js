@@ -672,7 +672,6 @@ function startImmersiveScene(session) {
   if(session.id===LOCKED_DAY30_SCENE_ID){const resumeVisual=getLockedDay30ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
   document.body.classList.remove("ui-classic-mode");
   document.body.classList.add("ui-story-mode");
-  $("#studioThanksBubble").classList.add("hidden");
   $(".story-toolbar").classList.remove("hidden");
   $("#gameScreen").classList.remove("classic-mode");
   $("#gameScreen").classList.add("story-mode");
@@ -1318,17 +1317,11 @@ function render() {
   // 이전 저장 데이터는 선물용 구매 후 보관함(owner: gift)에 남아 있을 수 있다.
   // 스튜디오는 구매 즉시 주거 선물로 취급해 두 상태를 모두 활성화한다.
   const girlfriendHasSkylineStudio=isItemOwnedBy(state,"skyline-studio",["gift","girlfriend"]);
-  const girlfriendHasGiftedVehicle=(state.inventory??[]).some(entry=>entry.owner==="girlfriend"&&getGiftVehicleAsset(entry.itemId));
   const skylineStudioActive=isPlayerItemEquipped(state,"skyline-studio")||girlfriendHasSkylineStudio;
   const scenePresentation=phase.key==="morning"&&skylineStudioActive
     ? {...phasePresentation,backgroundId:"home-morning-skyline-studio",backgroundUrl:getBackgroundAsset("home-morning-skyline-studio")}
     : phasePresentation;
   applyScenePresentation(scenePresentation);
-  const giftThanksBubble=$("#studioThanksBubble");
-  const showStudioThanks=phase.key==="morning"&&girlfriendHasSkylineStudio;
-  const showVehicleThanks=phase.key==="evening"&&girlfriendHasGiftedVehicle;
-  giftThanksBubble.textContent=showVehicleThanks?"차 사줘서 고마워.":"“리버뷰 스튜디오”에 살게 해줘서 고마워.";
-  giftThanksBubble.classList.toggle("hidden",!showStudioThanks&&!showVehicleThanks);
   const sceneSoundKey = `${state.day}-${phase.key}`;
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
