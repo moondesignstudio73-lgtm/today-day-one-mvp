@@ -841,3 +841,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 생활용품점·카페·현관/거실·집 배경과 하은 DAY 8 생활복의 실제 로드·종횡비·알파·UI 안전 여백을 확인했다. DAY 15 집 아침 첫 화면도 정상 도달했다.
 - 하은의 밝고 생활적인 톤, 주인공의 합리적 출처 검증, 출처 없는 추천의 `unverified` 보류, 자동결제·투자 잠금을 실제 화면에서 확인했다.
 - 브라우저 console warning/error 0건, 7영역 PASS, `NEEDS FIX: 0`이다. 산출물: `docs/day14/DAY14_PLAYTHROUGH_QA.md`; 다음 관문은 QA 증적 커밋·origin push와 안전한 동일 SHA `gh-pages` 공개 배포 확인이다.
+
+# 2026-08-27 DAY 14 배포 안전성 재검사 — BLOCKED
+
+- 검증 커밋 `1bd22a5e2e147a9c24656125fa6a9707d7e469c8`은 기능 브랜치와 origin 기능 브랜치에 동일하게 반영돼 있다.
+- fetch 뒤 확인한 `origin/gh-pages`는 `82742e167697e810a064a2fee58d8f86a352589b`이며 공통 기준 `9ecdb48` 이후 서로 9/8개 커밋으로 분기돼 fast-forward가 아니다.
+- `gh-pages` 계보는 캠페인 진행표, DAY 4~13 문서·런타임·테스트와 다수 기존 에셋을 삭제한다. 일반 3-way `merge-tree`도 `DEVELOPMENT_PROGRESS.md`, `game.js` 등에서 실제 충돌을 보고했다.
+- 보호 파일 삭제, 충돌 있는 자동 병합, force push를 수행하지 않았다. 따라서 동일 SHA `gh-pages` 배포, GitHub Actions, 공개 캐시 우회 페이지 확인은 아직 미완료다.
+- Node 문법, DAY 14 집중 7종, DAY 13/15 인접 3종, DAY 2~30 자유행동 감사, 90개 브라우저 엔트리와 전체 시뮬레이션을 재실행해 모두 PASS했다.
+- 재개 조건은 완료 DAY·사용자 에셋을 보존하고 자유 모드 변경만 통합한 비파괴 일반 병합 커밋이 원격에 준비되어, 기능 브랜치와 `gh-pages` 모두 같은 검증 SHA로 일반 fast-forward 가능해지는 것이다. DAY 15는 시작하지 않는다.

@@ -185,7 +185,17 @@
 
 ## 다음 작업
 
-DAY 14 브라우저 QA 증적을 커밋하고 origin에 안전하게 push한 뒤, `gh-pages` 분기 보호 파일을 보존하는 일반 통합 가능성을 재검사해 동일 검증 SHA를 공개 배포·확인한다.
+DAY 14 검증 커밋 `1bd22a5`는 origin 기능 브랜치에 반영됐다. `gh-pages`의 삭제 계보와 실제 병합 충돌을 해소할 수 있는 비파괴 일반 병합 커밋이 원격에 준비된 뒤, 동일 검증 SHA를 `gh-pages`에 fast-forward 배포하고 Actions·공개 페이지를 확인한다. 그 전에는 DAY 15를 시작하지 않는다.
+
+### 2026-08-27 DAY 14 배포 안전성 재검사 — BLOCKED
+
+- `origin fetch --prune` 뒤 기능 브랜치와 origin 기능 브랜치가 검증 커밋 `1bd22a5e2e147a9c24656125fa6a9707d7e469c8`로 일치함을 확인했다.
+- `origin/gh-pages`는 `82742e167697e810a064a2fee58d8f86a352589b`이며 공통 기준 `9ecdb48` 뒤 기능 브랜치 9개, `gh-pages` 8개 커밋으로 갈라져 있어 fast-forward 배포가 불가능하다.
+- `gh-pages` 쪽에는 `CAMPAIGN_DAY_RELEASE_PROGRESS.md`, DAY 4~13 문서·런타임·테스트, 기존 이미지·영상·오디오의 대량 삭제가 포함된다. 일반 `merge-tree` 검사에서도 `DEVELOPMENT_PROGRESS.md`, `game.js` 등에 실제 충돌 표식이 발생했다.
+- 보호 파일 삭제나 충돌 있는 자동 병합, force push는 금지되어 있으므로 `gh-pages` push·Actions·공개 페이지 확인을 시작하지 않았다. 사용자 원본 에셋 2종과 완료 DAY 1~13은 변경하지 않았다.
+- 시도: 원격 fetch, 양쪽 이름/상태 diff, 공통 기준과 분기 수 확인, 일반 3-way 병합 충돌 검사. 필요한 개선: 보호 파일을 유지하고 자유 모드 변경만 보존한 비파괴 일반 병합 커밋을 원격에 준비한다. 재개 조건: 그 커밋이 기능 브랜치 또는 `gh-pages`의 일반 fast-forward 선조가 되어 동일 검증 SHA 배포가 가능할 것.
+- 배포 재검사 뒤 Node 문법, DAY 14 집중 7종, DAY 13/15 인접 3종, DAY 2~30 자유행동 감사, 90개 브라우저 엔트리와 전체 `tests/simulation.test.mjs`를 다시 실행해 모두 PASS했다.
+- DAY 14 배포 관문과 DAY 14 전체 상태는 미완료로 유지한다. DAY 15는 시작하지 않는다.
 
 ### 2026-08-27 DAY 14 실제 브라우저 연속 플레이 QA 관문
 
