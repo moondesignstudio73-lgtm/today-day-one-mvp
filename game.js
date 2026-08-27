@@ -36,7 +36,7 @@ import { DAY1_BGM_CUES } from "./src/day1-audio-data.mjs";
 import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment } from "./src/day1-campaign-runtime.mjs?v=5";
 import { DAY2_BGM_CUES } from "./src/day2-audio-data.mjs";
 import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyChoice, getLockedDay2ResumePresentation, getLockedDay2Segment } from "./src/day2-campaign-runtime.mjs?v=5";
-import { LOCKED_DAY4_SCENE_ID, applyLockedDay4ChoiceState, getLockedDay4LegacyChoice, getLockedDay4ResumePresentation, getLockedDay4Segment } from "./src/day4-campaign-runtime.mjs?v=2";
+import { LOCKED_DAY4_SCENE_ID, applyLockedDay4ChoiceState, getLockedDay4LegacyChoice, getLockedDay4ResumePresentation, getLockedDay4Segment } from "./src/day4-campaign-runtime.mjs?v=3";
 import { LOCKED_DAY5_SCENE_ID, applyLockedDay5ChoiceState, getLockedDay5LegacyChoice, getLockedDay5ResumePresentation, getLockedDay5Segment } from "./src/day5-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY6_SCENE_ID, applyLockedDay6ChoiceState, getLockedDay6LegacyChoice, getLockedDay6ResumePresentation, getLockedDay6Segment } from "./src/day6-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY7_SCENE_ID, applyLockedDay7ChoiceState, getLockedDay7LegacyChoice, getLockedDay7ResumePresentation, getLockedDay7Segment } from "./src/day7-campaign-runtime.mjs?v=2";
@@ -634,7 +634,8 @@ function openStoryScene(scene) {
 
 function startImmersiveScene(session) {
   if (!session?.sequence?.length) return;
-  if (["story","event","temptation"].includes(session.type) && !session.debugPreview && !areGameplayEventsUnlocked() && !(session.type==="story"&&isCampaignPrologueStory(session.id))) return;
+  const campaignFreeActionEvent=session.type==="event"&&session.fromStoryFreeAction&&state.scenario?.enabled===true;
+  if (["story","event","temptation"].includes(session.type) && !session.debugPreview && !areGameplayEventsUnlocked() && !(session.type==="story"&&isCampaignPrologueStory(session.id)) && !campaignFreeActionEvent) return;
   const runtimeStart=eventRuntime.start({...session,sceneId:session.sequence.find(step=>step.backgroundId)?.label??session.id,triggerReason:session.triggerReason??[]});
   if(!runtimeStart.started){persistEventRuntime(true);return;}
   if (sceneAdvanceTimer) clearTimeout(sceneAdvanceTimer);
@@ -921,8 +922,8 @@ function renderImmersiveChoices(options=[]) {
   const layer=$("#storyChoiceLayer");
   const day4Stage=state.storyFlags?.day4RuntimeStage??0;
   const day2Exploration=isDay2ExplorationChoice({type:"choice",options});
-  const exploration=day2Exploration||(immersiveScene?.id===LOCKED_DAY4_SCENE_ID&&day4Stage===0);
-  const day4Prompts={1:"오래된 연락에 어떻게 응답할까?",2:"과거의 나를 어떤 방식으로 확인할까?",3:"사고에 관해 어디까지 물을까?",4:"오늘 확인한 내용을 하은과 어떻게 나눌까?"};
+  const exploration=day2Exploration;
+  const day4Prompts={0:"하은의 아침 제안에 어떻게 답할까?",1:"사진 속 오래된 연락을 어떤 방식으로 확인할까?",2:"지훈에게 무엇부터 물어볼까?",3:"오늘의 만남을 하은과 어떻게 공유할까?",4:"과거의 취향과 현재의 감각 사이에서 무엇을 고를까?",5:"익숙하지 않은 옛 주문에 어떻게 반응할까?",6:"사진 속 하은에 관해 무엇을 확인할까?",7:"사고 전의 나를 어디까지 물어볼까?",8:"다시 만난 친구와 계산을 어떻게 나눌까?",9:"오늘 복원된 관계를 어떤 방식으로 남길까?"};
   const day5Stage=state.storyFlags?.day5RuntimeStage??0;
   const day5Prompts={0:"회사 문턱에서 무엇을 먼저 확인할까?",1:"윤서진과의 관계를 어떤 방식으로 확인할까?",2:"첫 업무 자료를 어떤 방식으로 검토할까?",3:"다음 복귀의 우선순위를 어디에 둘까?"};
   const day6Stage=state.storyFlags?.day6RuntimeStage??0;
@@ -1080,12 +1081,14 @@ function finishImmersiveScene() {
   $("#visualNovelStage").classList.remove("narration-mode","location-event-scene");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.toggle("hidden",state.scenario?.enabled===true);$("#nextButton").classList.toggle("hidden",state.scenario?.enabled===true);
   SaveManager.save(state);render();$(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true);
   if(returnToFreeAction){const story=getStoryScene(state.storyFreeAction?.storySceneId);if(story)setTimeout(()=>openStoryScene(story),0);return;}
-  const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);else if(nextCampaignScene)setTimeout(()=>openStoryScene(nextCampaignScene),0);
+  if(nextCampaignScene){eventRuntime.queue=[];eventRuntime.microQueue=[];setTimeout(()=>openStoryScene(nextCampaignScene),0);return;}
+  const queued=eventRuntime.queue.shift();if(queued)setTimeout(()=>startImmersiveScene(queued),0);
 }
 
 function restoreEventCheckpoint(){
   const saved=state?.eventRuntime;if(!saved?.activeEvent||!saved.checkpoint||state.storyFlags?.[`${saved.activeEvent}:COMPLETED`])return;
-  if(!areGameplayEventsUnlocked()&&!isCampaignPrologueStory(saved.activeEvent)){state.eventRuntime={...saved,activeEvent:null,state:"IDLE",checkpoint:null,eventQueue:[],microQueue:[],pendingEvent:null,inputLock:{locked:false,owner:null,reason:null,lockedFor:0}};SaveManager.save(state);return;}
+  const campaignFreeActionEvent=state.scenario?.enabled===true&&state.storyFreeAction?.status==="EVENT"&&state.storyFreeAction?.event?.id===saved.activeEvent;
+  if(!areGameplayEventsUnlocked()&&!isCampaignPrologueStory(saved.activeEvent)&&!campaignFreeActionEvent){state.eventRuntime={...saved,activeEvent:null,state:"IDLE",checkpoint:null,eventQueue:[],microQueue:[],pendingEvent:null,inputLock:{locked:false,owner:null,reason:null,lockedFor:0}};SaveManager.save(state);return;}
   const situation=SITUATION_EVENTS.find(event=>event.id===saved.activeEvent)??getSharedEventById(saved.activeEvent);
   if(situation){const index=Math.max(0,Number(saved.checkpoint.sequenceIndex)||0);openEventScene(situation,{resumeSequenceIndex:index});toast("진행 중이던 에피소드를 안전한 지점에서 복구했어요.");return;}
   const story=getStoryScene(saved.activeEvent);if(story&&state.scenario?.enabled===true&&isContentAvailableForMode(state,story)){openStoryScene(story);toast("진행 중이던 스토리를 Scene 시작점에서 복구했어요.");return;}

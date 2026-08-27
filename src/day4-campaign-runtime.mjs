@@ -1,11 +1,25 @@
 import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs";
+import {applyDay4V3OpeningChoiceState,getDay4V3MorningSegment,getDay4V3PhotoSegment,getDay4V3FirstCallSegment,getDay4V3MeetingSetupSegment,getDay4V3CafeArrivalSegment,getDay4V3TasteReaction,getDay4V3PhotoMemoriesSegment,getDay4V3PreAccidentPreamble,getDay4V3BondAndPaymentSegment,getDay4V3FarewellSegment,getDay4V3EndingSegment} from "./day4-v3-campaign-data.mjs";
 
 const ID="m30-day4-arrive-home";
-const BG={entry:"day2-home-entry",room:"day2-bedroom",day:"home-morning",cafe:"cafe-rain-evening",night:"home-night"};
+const BG={entry:"day2-home-entry",room:"day4-bedroom-morning",day:"day4-bedroom-morning",cafe:"day4-station-cafe-afternoon",night:"day4-home-night"};
+export const DAY4_VISUAL_ASSETS=Object.freeze({
+  haeun:STORY_OUTFIT_ASSETS.day4,
+  jihoonGreeting:"assets/characters/day4/jihoon-day4-cautious-greeting-v1.png",
+  jihoonHugStop:"assets/characters/day4/jihoon-day4-hug-stop-v1.png",
+  jihoonWarmTease:"assets/characters/day4/jihoon-day4-warm-tease-v1.png",
+  jihoonSerious:"assets/characters/day4/jihoon-day4-serious-testimony-v1.png",
+  morningMessageCg:"assets/events/day4/cg-day4-morning-message-pov-v1.png",
+  groupPhotoBackCg:"assets/events/day4/cg-day4-group-photo-back-pov-v1.png",
+  stoppedHugCg:"assets/events/day4/cg-day4-jihoon-stopped-hug-v1.png",
+  phonePhotoCg:"assets/events/day4/cg-day4-table-phone-photo-pov-v1.png",
+  paymentCg:"assets/events/day4/cg-day4-payment-card-receipt-pov-v1.png"
+});
 
 const n=(text,extra={})=>({type:"narration",text,...extra});
 const d=(speaker,text,expressionId="calm",extra={})=>({type:"dialogue",speaker,text,expressionId,...extra});
-const tr=(label,backgroundId,characterId="girlfriend")=>({type:"transition",style:"fade",label,backgroundId,characterId});
+const tr=(label,backgroundId,characterId="girlfriend",characterAssetUrl=characterId==="girlfriend"?DAY4_VISUAL_ASSETS.haeun:undefined)=>({type:"transition",style:"fade",label,backgroundId,characterId,characterAssetUrl});
+const enterJihoon=(assetUrl,expressionId="calm")=>({type:"characterEnter",characterId:"best-friend",assetUrl,expressionId,animationId:"idle-breathe"});
 const choice=options=>({type:"choice",options});
 
 export const LOCKED_DAY4_SCENE_ID=ID;
@@ -92,8 +106,8 @@ function segment2(state){return [
   d("하은","휴대폰 충전, 약, 귀가 시간. 세 개 확인하고 가."),
   d("나","보호자 모드야?"),
   d("하은","여자친구 겸 생활 안전 앱. 광고는 없어.","smile"),
-  tr("SCENE 03 · 친구라는 증거",BG.cafe,"best-friend"),
-  {type:"characterEnter",characterId:"best-friend",expressionId:"calm"},
+  tr("SCENE 03 · 친구라는 증거",BG.cafe,"best-friend",DAY4_VISUAL_ASSETS.jihoonGreeting),
+  enterJihoon(DAY4_VISUAL_ASSETS.jihoonHugStop),
   n("카페 구석에 앉은 남자가 나를 보자 일어섰다가, 악수도 포옹도 하지 않고 다시 손을 내렸다."),
   d("지훈","박지훈. 네 연락처의 마감지옥. 가까이 앉아도 되냐?"),
   d("나","맞은편이면 돼."),
@@ -116,8 +130,8 @@ function identityReaction(id){
 
 function segment3(state){return [
   ...identityReaction(state.storyFlags?.day4IdentityFocus),
-  tr("SCENE 04 · 세 장의 시간",BG.cafe,"best-friend"),
-  {type:"characterEnter",characterId:"best-friend",expressionId:"calm"},
+  tr("SCENE 04 · 세 장의 시간",BG.cafe,"best-friend",DAY4_VISUAL_ASSETS.jihoonSerious),
+  enterJihoon(DAY4_VISUAL_ASSETS.jihoonSerious),
   n("졸업식, 첫 입사 날, 야간 작업실. 세 사진 속 나는 같은 얼굴로 조금씩 다른 자세를 하고 있었다."),
   d("지훈","기억나는 척 안 해도 돼. 사진 속 네가 지금 너한테 낯선 건 당연하니까."),
   d("나","사진은 네 말을 확인해 주지만 내 감정까지 증명하지는 않아."),
@@ -135,8 +149,8 @@ function accidentReaction(id){
 
 function segment4(state){return [
   ...accidentReaction(state.storyFlags?.day4AccidentQuestion),
-  tr("SCENE 05 · 지금부터의 친구",BG.cafe,"best-friend"),
-  {type:"characterEnter",characterId:"best-friend",expressionId:"calm"},
+  tr("SCENE 05 · 지금부터의 친구",BG.cafe,"best-friend",DAY4_VISUAL_ASSETS.jihoonWarmTease),
+  enterJihoon(DAY4_VISUAL_ASSETS.jihoonWarmTease,"smile"),
   d("지훈","번호는 그대로 둘게. 답장 속도나 만나는 횟수는 지금 네가 정해."),
   d("나","다음에는 네가 가진 원본 사진 목록만 보내 줘. 설명은 내가 물을 때."),
   d("지훈","업무 지시 받는 기분인데, 네가 맞긴 맞네."),
@@ -178,7 +192,7 @@ function addMetric(state,key,amount){if(state.scenario?.enabled&&Number.isFinite
 function addCollection(state,key,...ids){if(!state.scenario?.enabled||!Array.isArray(state.scenario[key]))return;state.scenario[key]=[...new Set([...state.scenario[key],...ids])];}
 function remember(state,id){state.storyFlags??={};state.storyFlags[id]=true;}
 
-export function getLockedDay4Segment(state,stage=state.storyFlags?.day4RuntimeStage??0){
+function getLegacyDay4Segment(state,stage=state.storyFlags?.day4RuntimeStage??0){
   if(stage===0){const segment=structuredClone(SEGMENT_0);segment.at(-1).options=getAvailableDay4HomeChoices(state);return segment;}
   if(stage===1)return segment1(state);
   if(stage===2)return segment2(state);
@@ -187,9 +201,9 @@ export function getLockedDay4Segment(state,stage=state.storyFlags?.day4RuntimeSt
   return endingSegment(state);
 }
 
-export function getLockedDay4ResumePresentation(state){const stage=state.storyFlags?.day4RuntimeStage??0;if(stage===2||stage===3||stage===4)return {backgroundId:BG.cafe,characterId:"best-friend",characterAssetUrl:STORY_OUTFIT_ASSETS.day4};if(stage>=5)return {backgroundId:BG.night,characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day4};return {backgroundId:stage===0?BG.entry:BG.day,characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day4};}
+function getLegacyDay4ResumePresentation(state){const stage=state.storyFlags?.day4RuntimeStage??0;if(stage===2)return {backgroundId:BG.cafe,characterId:"best-friend",characterAssetUrl:DAY4_VISUAL_ASSETS.jihoonGreeting};if(stage===3)return {backgroundId:BG.cafe,characterId:"best-friend",characterAssetUrl:DAY4_VISUAL_ASSETS.jihoonSerious};if(stage===4)return {backgroundId:BG.cafe,characterId:"best-friend",characterAssetUrl:DAY4_VISUAL_ASSETS.jihoonWarmTease};if(stage>=5)return {backgroundId:BG.night,characterId:"girlfriend",characterAssetUrl:DAY4_VISUAL_ASSETS.haeun};return {backgroundId:stage===0?BG.entry:BG.day,characterId:"girlfriend",characterAssetUrl:DAY4_VISUAL_ASSETS.haeun};}
 
-export function applyLockedDay4ChoiceState(state,id){state.storyFlags??={};
+function applyLegacyDay4ChoiceState(state,id){state.storyFlags??={};
   if(getAvailableDay4HomeChoices(state).some(item=>item.id===id)){state.storyFlags.day4HomeStrategy=id;remember(state,id);state.storyFlags.day4RuntimeStage=1;return {stage:1};}
   if(DAY4_CONTACT_CHOICES.some(item=>item.id===id)){state.storyFlags.day4ContactStrategy=id;remember(state,id);state.storyFlags.day4RuntimeStage=2;addMetric(state,"investigation",id==="contact_written_proof"?2:1);addCollection(state,"unlockedActions",`day4-${id}`);return {stage:2};}
   if(DAY4_IDENTITY_CHOICES.some(item=>item.id===id)){state.storyFlags.day4IdentityFocus=id;remember(state,id);state.storyFlags.day4RuntimeStage=3;addMetric(state,id==="identity_evidence_first"?"investigation":"memoryRecovery",id==="identity_evidence_first"?2:1);return {stage:3};}
@@ -200,9 +214,39 @@ export function applyLockedDay4ChoiceState(state,id){state.storyFlags??={};
 
 export function getLockedDay4LegacyChoice(state){return state.storyFlags?.day4HomeStrategy??"map-home-basics";}
 
+function isLegacyDay4Save(state){return state.storyFlags?.day4RuntimeVersion!==3&&Number(state.storyFlags?.day4RuntimeStage)>0;}
+const V3_SEGMENTS=[getDay4V3MorningSegment,getDay4V3PhotoSegment,getDay4V3FirstCallSegment,getDay4V3MeetingSetupSegment,getDay4V3CafeArrivalSegment,getDay4V3TasteReaction,getDay4V3PhotoMemoriesSegment,getDay4V3PreAccidentPreamble,getDay4V3BondAndPaymentSegment,getDay4V3FarewellSegment,getDay4V3EndingSegment];
+
+export function getLockedDay4Segment(state,stage=state.storyFlags?.day4RuntimeStage??0){
+  if(isLegacyDay4Save(state))return getLegacyDay4Segment(state,stage);
+  return V3_SEGMENTS[Math.max(0,Math.min(10,Number(stage)||0))](state);
+}
+
+export function applyLockedDay4ChoiceState(state,id){
+  state.storyFlags??={};
+  if(isLegacyDay4Save(state))return applyLegacyDay4ChoiceState(state,id);
+  const legacyIds=[...DAY4_HOME_CHOICES,...DAY4_CONTACT_CHOICES,...DAY4_IDENTITY_CHOICES,...DAY4_ACCIDENT_CHOICES,...DAY4_SHARING_CHOICES].map(item=>item.id);
+  if(state.storyFlags.day4RuntimeVersion!==3&&legacyIds.includes(id)){state.storyFlags.day4RuntimeVersion=2;return applyLegacyDay4ChoiceState(state,id);}
+  const applied=state.storyFlags.day4V3AppliedChoiceIds??=[];
+  if(applied.includes(id))return {stage:state.storyFlags.day4RuntimeStage??state.storyFlags.day4V3RuntimeStage??0};
+  const result=applyDay4V3OpeningChoiceState(state,id);
+  if(!result)return null;
+  applied.push(id);state.storyFlags.day4RuntimeVersion=3;state.storyFlags.day4RuntimeStage=result.stage;
+  if(result.stage===10){state.storyFlags.day4SharingStrategy??="sharing_transparent";state.storyFlags.day4TestimonyLedgerUnlocked=true;state.storyFlags.day4WorkContactPending=true;addCollection(state,"unlockedActions","past-contacts-index","day5-work-contact");addCollection(state,"followUpHooks","day5-work-return");}
+  return result;
+}
+
+export function getLockedDay4ResumePresentation(state){
+  if(isLegacyDay4Save(state))return getLegacyDay4ResumePresentation(state);
+  const stage=state.storyFlags?.day4RuntimeStage??0;
+  if(stage<=4)return {backgroundId:stage===0?BG.day:stage===4?BG.entry:BG.day,characterId:"girlfriend",characterAssetUrl:DAY4_VISUAL_ASSETS.haeun};
+  if(stage<=9)return {backgroundId:BG.cafe,characterId:"best-friend",characterAssetUrl:stage===7||stage===8?DAY4_VISUAL_ASSETS.jihoonSerious:DAY4_VISUAL_ASSETS.jihoonWarmTease};
+  return {backgroundId:BG.night,characterId:"girlfriend",characterAssetUrl:DAY4_VISUAL_ASSETS.haeun};
+}
+
 export function validateLockedDay4Runtime(){
   const sample={gameMode:"marriage-in-30-days",storyFlags:{day4HomeStrategy:"map-home-basics",day4ContactStrategy:"contact_direct_call",day4IdentityFocus:"identity_evidence_first",day4AccidentQuestion:"accident_direct_knowledge_only",day4SharingStrategy:"sharing_transparent"},storyHistory:[{sceneId:"m30-day3-discharge-phone",choiceId:"inspect-system-first"}]};
-  const all=[...getLockedDay4Segment(sample,0),...segment1(sample),...segment2(sample),...segment3(sample),...segment4(sample),...endingSegment(sample)];
+  const all=[...getLegacyDay4Segment(sample,0),...segment1(sample),...segment2(sample),...segment3(sample),...segment4(sample),...endingSegment(sample)];
   const text=JSON.stringify(all);
   return all.filter(step=>step.type==="transition").length>=7&&all.filter(step=>step.type==="dialogue").length>=55&&all.filter(step=>step.type==="choice").length===5&&!text.includes("가짜 하은")&&!text.includes("D-27")&&!text.includes("트럭");
 }

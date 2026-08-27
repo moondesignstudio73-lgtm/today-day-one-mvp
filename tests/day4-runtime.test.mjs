@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 import {getNpcSprite} from "../src/assets/asset-manifest.mjs";
 import {
   DAY4_ACCIDENT_CHOICES,DAY4_CONTACT_CHOICES,DAY4_HOME_CHOICES,DAY4_IDENTITY_CHOICES,DAY4_SHARING_CHOICES,
-  applyLockedDay4ChoiceState,getAvailableDay4HomeChoices,getLockedDay4LegacyChoice,getLockedDay4ResumePresentation,getLockedDay4Segment,validateLockedDay4Runtime
+  DAY4_VISUAL_ASSETS,applyLockedDay4ChoiceState,getAvailableDay4HomeChoices,getLockedDay4LegacyChoice,getLockedDay4ResumePresentation,getLockedDay4Segment,validateLockedDay4Runtime
 } from "../src/day4-campaign-runtime.mjs";
 import {createScenarioState} from "../src/scenario-state.mjs";
 
@@ -14,6 +14,7 @@ assert.equal(DAY4_CONTACT_CHOICES.length,3);
 assert.equal(DAY4_IDENTITY_CHOICES.length,3);
 assert.equal(DAY4_ACCIDENT_CHOICES.length,3);
 assert.equal(DAY4_SHARING_CHOICES.length,3);
+for(const asset of Object.values(DAY4_VISUAL_ASSETS))assert.ok(asset.startsWith("assets/"),asset);
 
 function stateFor(day3Choice="inspect-system-first"){
   return {
@@ -55,6 +56,7 @@ for(const forbidden of ["가짜 하은","D-27","트럭 충돌","하은이 사고
 assert.ok(allText.includes("직접 겪은 것"));
 assert.ok(allText.includes("미확인 증언"));
 assert.ok(allText.includes("민호입니다"));
+for(const asset of [DAY4_VISUAL_ASSETS.jihoonGreeting,DAY4_VISUAL_ASSETS.jihoonHugStop,DAY4_VISUAL_ASSETS.jihoonWarmTease,DAY4_VISUAL_ASSETS.jihoonSerious])assert.ok(allText.includes(asset),asset);
 
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 assert.match(game,/LOCKED_DAY4_SCENE_ID/);

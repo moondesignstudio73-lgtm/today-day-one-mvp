@@ -35,4 +35,6 @@ const noContact=create();delete noContact.storyFlags.haeun_contact_unlocked;begi
 const gameSource=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 assert.match(gameSource,/completedSession\?\.id===LOCKED_DAY2_SCENE_ID[\s\S]*?day2FreeActionComplete/);
 assert.match(gameSource,/fromStoryFreeAction/);assert.match(gameSource,/getSharedEventById\(saved\.activeEvent\)/);
+assert.match(gameSource,/campaignFreeActionEvent=session\.type==="event"&&session\.fromStoryFreeAction/);
+assert.match(gameSource,/storyFreeAction\?\.event\?\.id===saved\.activeEvent/);
 console.log("✓ DAY 2 집 자유행동 5종·공용 이벤트 실제 장면·저장 복원·중첩·스토리 중 차단 PASS");

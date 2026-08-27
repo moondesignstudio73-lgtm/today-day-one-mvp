@@ -27,9 +27,8 @@ for(const source of Object.values(STORY_OUTFIT_ASSETS)){
 const day3=STORY_SCENES.find(scene=>scene.id==="m30-day3-discharge-phone");
 assert.equal(resolveStoryPresentation(day3,{day:3,phase:1}).characterAssetUrl,STORY_OUTFIT_ASSETS.day3);
 
-for(const stage of [0,1,2,3,4,5]){
-  assert.equal(getLockedDay4ResumePresentation({storyFlags:{day4RuntimeStage:stage}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day4);
-}
+for(const stage of [0,1,2,3,4,10])assert.equal(getLockedDay4ResumePresentation({storyFlags:{day4RuntimeVersion:3,day4RuntimeStage:stage}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day4);
+for(const stage of [5,6,7,8,9])assert.match(getLockedDay4ResumePresentation({storyFlags:{day4RuntimeVersion:3,day4RuntimeStage:stage}}).characterAssetUrl,/assets\/characters\/day4\/jihoon-/);
 for(const stage of [0,1,2,3,4]){
   assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:stage}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day5);
 }
