@@ -1,6 +1,6 @@
 # DAY 15 챕터 계약 V1 — 오늘의 여가
 
-상태: `CHAPTER CONTRACT V1`  
+상태: `CHAPTER CONTRACT LOCK V1`
 기준 Scene ID: `m30-day15-current-leisure-date`
 
 ## 1. 챕터 메타데이터
@@ -212,7 +212,7 @@
 - 체크포인트 C: SCENE 08 선택 직전. 활동·변경 전략, 현재 몸 상태 반응, DAY 14 9개 콜백을 보존한다.
 - 완료 저장: 세 선택 축, 라벨 불일치·보류 상태, 현재 기억, 완료 플래그, DAY 16 훅을 독립 필드로 저장한다.
 - 레거시 저장: 누락 필드는 `null`/`false`/stage 0으로 보충하고 선택을 추정하지 않는다. 기존 최종 선택 ID 3종은 유지한다.
-- 불변: 하은 기존 관계 수치, 윤서진 두 축, `day11ScheduleNoteMismatch=unverified`, `day14PastPreferenceRecommendation=unverified`, 금융·쇼핑 잠금, 기존 컬렉션의 순서와 고유성을 보존한다.
+- 불변: 하은의 선택 전 관계 기준값은 보존하고 대본에 명시된 소폭 상승만 한 번 적용한다. 윤서진 두 축, `day11ScheduleNoteMismatch=unverified`, `day14PastPreferenceRecommendation=unverified`, 금융·쇼핑 잠금, 기존 컬렉션의 순서와 고유성은 그대로 보존한다.
 
 ## 13. 계약 QA 판정
 
