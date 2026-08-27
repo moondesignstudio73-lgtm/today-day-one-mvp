@@ -263,9 +263,9 @@
         <img id="actionResultImage" src="" alt="" hidden>
         <video id="actionResultVideo" muted autoplay loop playsinline preload="metadata" hidden></video>
         <div id="actionResultPending" class="action-result-pending" hidden>
-          <span aria-hidden="true">✦</span>
-          <strong>이미지 준비 중</strong>
-          <small>이 활동의 장면 일러스트는 곧 추가됩니다.</small>
+          <span id="actionResultPendingIcon" aria-hidden="true">✦</span>
+          <strong id="actionResultPendingTitle">이미지 준비 중</strong>
+          <small id="actionResultPendingText">이 활동의 장면 일러스트는 곧 추가됩니다.</small>
         </div>
       </div>
       <div class="action-result-copy">
@@ -278,6 +278,6 @@
     </article>
   </section>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=176"></script>
+  <script type="module" src="game.js?v=177"></script>
 </body>
 </html>

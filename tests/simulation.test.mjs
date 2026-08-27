@@ -1706,7 +1706,7 @@ const homePurchase = purchaseItem(shoppingState, "skyline-studio", "player");
 assert.ok(homePurchase.ok && homePurchase.instance.equipped);
 assert.equal(shoppingState.equipment.home, homePurchase.instance.instanceId);
 assert.equal(isPlayerItemEquipped(shoppingState, "skyline-studio"), true);
-assert.equal(getBackgroundAsset("home-morning-skyline-studio"), "assets/items/shop-products/skyline-studio.png");
+assert.equal(getBackgroundAsset("home-morning-skyline-studio"), "assets/backgrounds/home/skyline-riverview-studio-morning-hd.png");
 const studioGiftState = createInitialState(generateGirlfriend(() => 0.5), () => 0.5);
 studioGiftState.money = getItem("skyline-studio").price;
 const studioGiftPurchase = purchaseItem(studioGiftState, "skyline-studio", "gift");

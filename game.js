@@ -67,7 +67,7 @@ import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { getHeroineEventVideo, renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=11";
-import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=19";
+import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=20";
 import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=32";
 import { STORY_SCENES } from "./src/story-data.mjs?v=26";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, NIGHT_END_MINUTES, resetForNextDay, setNightStartTime, spendNightTime } from "./src/night-manager.mjs?v=3";
@@ -317,16 +317,55 @@ function openActionResultModal(action, message, effects, continuation, customAss
   $("#actionResultText").textContent = message;
   video.pause();
   video.hidden = true;
+  video.onerror = null;
+  video.onloadeddata = null;
+  video.oncanplay = null;
+  delete video.dataset.expectedSource;
   video.removeAttribute("src");
+  pending.className = "action-result-pending";
+  $("#actionResultPendingIcon").textContent = "✦";
+  $("#actionResultPendingTitle").textContent = "이미지 준비 중";
+  $("#actionResultPendingText").textContent = "이 활동의 장면 일러스트는 곧 추가됩니다.";
   if (videoAsset) {
     image.removeAttribute("src");
     image.alt = "";
     image.hidden = true;
-    video.src = videoAsset;
+    pending.className = "action-result-pending loading";
+    $("#actionResultPendingIcon").textContent = "";
+    $("#actionResultPendingTitle").textContent = "영상 로딩 중…";
+    $("#actionResultPendingText").textContent = "잠시만 기다려 주세요.";
+    pending.hidden = false;
     video.setAttribute("aria-label", `${action.title} 행동 결과 영상`);
-    video.hidden = false;
-    pending.hidden = true;
-    video.play().catch(() => {});
+    video.dataset.expectedSource = videoAsset;
+    const revealVideo=()=>{
+      if(video.dataset.expectedSource!==videoAsset)return;
+      pending.hidden=true;
+      pending.className="action-result-pending";
+      video.hidden=false;
+      video.play().catch(()=>{});
+    };
+    const showVideoFallback=()=>{
+      if(video.dataset.expectedSource!==videoAsset)return;
+      video.pause();
+      video.hidden=true;
+      if(asset){
+        image.src=asset;
+        image.alt=`${action.title} 활동 결과 장면`;
+        image.hidden=false;
+        pending.hidden=true;
+      }else{
+        pending.className="action-result-pending error";
+        $("#actionResultPendingIcon").textContent="!";
+        $("#actionResultPendingTitle").textContent="영상을 불러오지 못했어요";
+        $("#actionResultPendingText").textContent="결과 내용은 아래에서 정상적으로 확인할 수 있습니다.";
+        pending.hidden=false;
+      }
+    };
+    video.onerror=showVideoFallback;
+    video.onloadeddata=revealVideo;
+    video.oncanplay=revealVideo;
+    video.src=videoAsset;
+    video.load();
   } else if (asset) {
     image.src = asset;
     image.alt = `${action.title} 활동 결과 장면`;
@@ -354,6 +393,10 @@ function confirmActionResult() {
   video.pause();
   video.currentTime = 0;
   video.hidden = true;
+  video.onerror = null;
+  video.onloadeddata = null;
+  video.oncanplay = null;
+  delete video.dataset.expectedSource;
   video.removeAttribute("src");
   modal.classList.add("hidden");
   const continuation = actionResultContinuation;
