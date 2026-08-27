@@ -65,7 +65,7 @@ import { getMapLocationAsset, MAP_LOCATION_ASSETS, validateMapLocationAssets } f
 import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JAEMIN_QUIZZES, JUNHO_ENCOUNTER_CHANCE, JUNHO_PARTNER_INSIGHTS, MINJUN_CONCERNS, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, validateWorldEncounterRoutes, WORLD_REPEAT_ENCOUNTER_CHANCE } from "../src/world-encounter-manager.mjs";
 import { appendYujinConversationTurn, completeYujinRooftopMeeting, getPendingYujinRooftopInvitation, isYujinRooftopInvitationReady, YUJIN_MESSAGE_CORPUS, YUJIN_ROOFTOP_EVENT_IMAGE, YUJIN_ROOFTOP_INVITATION, YUJIN_ROOFTOP_LOCATION_ID, YUJIN_ROOFTOP_START_MINUTES } from "../src/yujin-secret-route.mjs";
 
-const coreActionResultAssetIds=["coworker-lunch","dinner-date","early-sleep","focused-work","handsome-meet-female-friends","handsome-meet-friends","lunch-date","manager-feedback","morning-contact","morning-gym","overtime","sleep-in","stock-check","temptation-secret"];
+const coreActionResultAssetIds=["coworker-drinks","coworker-lunch","dinner-date","early-sleep","focused-work","handsome-meet-female-friends","handsome-meet-friends","lunch-date","manager-feedback","morning-contact","morning-gym","overtime","sleep-in","stock-check","temptation-secret"];
 assert.deepEqual(ACTIONS.day.find(action=>action.id==="lunch-date").effects,{money:-38000,affection:5,trust:5,stress:-1,energy:-3});
 assert.deepEqual(ACTIONS.morning.find(action=>action.id==="early-work").effects,{money:25000,work:1,energy:-8,fatigue:7,stress:8});
 assert.deepEqual(ACTIONS.evening.find(action=>action.id==="handsome-meet-friends").effects,{money:-80000,social:1,stress:-3,confidence:1});
@@ -86,6 +86,7 @@ assert.equal(getActionResultAsset("morning-gym"),"assets/action-results/morning-
 assert.equal(getActionResultAsset("morning-contact"),"assets/action-results/morning-contact.png");
 assert.equal(getActionResultAsset("dinner-date"),"assets/action-results/dinner-date.png");
 assert.equal(getActionResultAsset("temptation-secret"),"assets/action-results/coworker-drinks.png");
+assert.equal(getActionResultAsset("coworker-drinks"),"assets/action-results/generated/coworker-drinks-01.png");
 assert.equal(getActionResultAsset("handsome-meet-friends"),"assets/action-results/generated/handsome-meet-friends-01.png");
 assert.equal(getActionResultAsset("handsome-meet-female-friends"),"assets/action-results/generated/handsome-meet-female-friends-01.png");
 assert.equal(getActionResultAsset("unknown-action"),null);
