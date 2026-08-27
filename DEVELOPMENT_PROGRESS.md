@@ -917,3 +917,5 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - DAY 11·14 미확인 단서, DAY 14 전략, 금융·프로필·반전 잠금과 윤서진 `seojinAffection`/`seojinStatusInterest` 독립 값을 보존했다.
 - DAY 15 집중 7종, DAY 14/16 인접 3종, DAY 2~30 자유행동 감사, 브라우저 엔트리 94개, 자유 모드 `gh-pages` 통합, 전체 `tests/simulation.test.mjs`가 PASS했다. `DAY 15 NEEDS FIX: 0`이다.
 - 산출물: `docs/day15/DAY15_REGRESSION_QA.md`, `tests/day15-regression.test.mjs`. 다음 관문은 실제 브라우저 DAY 14→15 연속 플레이·stage 1 재개·SKIP·자유행동·DAY 16 진입 QA다.
+- 로컬 검증 커밋 `8d7790e`는 origin 기준 안전한 fast-forward였지만 직접 push가 새 저장소 규칙 `GH013: Changes must be made through a pull request`로 거부됐다. PR 생성 금지 지침에 따라 PR·강제 push·`gh-pages` 우회 배포를 하지 않았다.
+- 재개하려면 기능 브랜치 직접 push 허용을 복구하거나 사용자가 PR 금지를 명시적으로 해제해야 한다. 검증되지 않은 원격 변경이나 배포는 없다.

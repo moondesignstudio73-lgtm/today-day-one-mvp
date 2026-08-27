@@ -210,6 +210,8 @@ DAY 15 집중 테스트·전체 회귀가 완료됐다. 다음 작업은 실제 
 - DAY 11·14 미확인 단서와 DAY 14 전략, 윤서진 AFFECTION/STATUS_INTEREST, 금융·프로필·반전 잠금이 보존되며 조기 반전·범인 단정·상투적 공포 문구가 없는지 확인했다.
 - DAY 15 집중 7종, DAY 14/16 인접 3종, DAY 2~30 자유행동 감사, 브라우저 엔트리 94개, 자유 모드 `gh-pages` 통합과 전체 시뮬레이션이 모두 PASS했다. `DAY 15 NEEDS FIX: 0`이다.
 - 산출물: `docs/day15/DAY15_REGRESSION_QA.md`, `tests/day15-regression.test.mjs`. 다음 관문은 실제 브라우저 연속 플레이 QA다.
+- 검증 커밋 `8d7790e`의 origin 기능 브랜치 push는 저장소 규칙 `GH013: Changes must be made through a pull request`로 거부됐다. fetch·fast-forward 안전성은 PASS했으나 PR 생성 금지 지침 때문에 우회·PR·`gh-pages` push를 하지 않았다.
+- 재개 조건: 저장소 관리자가 `feature/today-day-one-mvp`의 직접 push를 다시 허용하거나, 사용자가 기존 PR 금지 지침을 명시적으로 변경해야 한다. 그전까지 검증 커밋은 로컬에만 보존한다.
 
 ### 2026-08-27 DAY 15 다단계 런타임·선택 상태·저장 복원 구현 감사 관문
 
