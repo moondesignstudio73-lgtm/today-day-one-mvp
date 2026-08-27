@@ -1276,3 +1276,9 @@ DAY 16 출시 전 관문을 완료했다. 다음 작업은 노션 사용자 원�
 - 감사 완료된 35개 파일을 `6c3021f` (`Rebuild campaign day 4 experience`)로 커밋했다.
 - 커밋에는 삭제 파일과 별도 DAY 1 미추적 사용자 에셋이 포함되지 않았다.
 - 다음 작업은 진행 기록 커밋을 포함한 최종 로컬 HEAD에서 구문·집중·전체 회귀를 다시 실행하고, 그 동일 SHA를 origin 반영 대상으로 확정하는 것이다.
+
+### 2026-08-28 DAY 4 커밋 후 재검증 PASS
+
+- 로컬 HEAD `019d2e4`에서 `game.js` 구문 검사, DAY 4 V3 opening/regression/runtime-integration 집중 검사 3종, 전체 `simulation.test.mjs`를 모두 실행해 exit 0을 확인했다.
+- 선택 전략·DAY 3 콜백·DAY 5 훅·SaveManager 왕복·10단계 멱등성·레거시 저장 호환과 전체 자유 연애/지도/경제/에셋 회귀가 유지된다.
+- 이 결과 기록을 포함한 최종 후보 HEAD를 다시 같은 검사로 확인한 뒤 origin 반영 대상으로 확정한다.

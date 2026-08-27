@@ -1308,3 +1308,9 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 구현 검증 커밋: `6c3021f` (`Rebuild campaign day 4 experience`).
 - 범위: 감사된 35개 파일, 삭제 0; DAY 1 미추적 소스 이미지 2개 제외.
 - 다음 작업: 진행 기록을 포함한 로컬 HEAD 재검증 후 origin 반영. DAY 5 재구축은 계속 금지한다.
+
+### 2026-08-28 DAY 4 HEAD 재검증 PASS
+
+- 검증 HEAD: `019d2e4`.
+- PASS: `node --check game.js`, DAY 4 V3 집중 검사 3종, `node tests/simulation.test.mjs` 전체 회귀.
+- 다음 작업: 이 기록 커밋의 최종 SHA를 동일 검사로 재확인한 뒤 origin에 반영한다.
