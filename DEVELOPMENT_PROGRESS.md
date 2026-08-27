@@ -819,3 +819,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 확대 육안 검사에서 알파·압축·블러·왜곡·크롭·고정 인물·로고·워터마크 결함이 없고, UI 안전 여백과 밝은 생활형 톤을 충족했다. 개인정보 가독 정보와 공포·감시 코딩도 없다.
 - 신규 자산 제작 0종, 기존·사용자 자산 변경 0건이다. `docs/day14/DAY14_IMAGE_QUALITY_QA.md`의 `NEEDS FIX: 0`을 기록하고 8 Scene을 `assetStatus: ready`로 전환했다.
 - 이미지 해시·규격·문서 표식을 `tests/day14-presentation.test.mjs`에 고정했다. 관련 문법·집중·인접·전체 회귀 PASS. 다음 관문은 DAY 14 런타임·선택 상태·저장 복원 구현 감사다.
+
+# 2026-08-27 DAY 14 다단계 런타임·선택 상태·저장 복원 구현 감사
+
+- `src/day14-campaign-runtime.mjs`를 잠금 시나리오와 `ready` 프레젠테이션 데이터에 맞춰 확장해 8 Scene·17 SFX·DAY 13 9콜백·DAY 14 27경로를 실제 런타임에 연결했다.
+- 출처 없는 추천은 첫 선택 뒤 `day14PastPreferenceRecommendation=unverified`로 저장하며 현재 구매와 분리한다. 완료 시 기본 쇼핑·선물 동의·DAY 15 훅만 해금하고 자동결제·고가 구매·투자는 잠근다.
+- `tests/day14-runtime.test.mjs`를 실제 SaveManager stage 1·2·3 왕복, 재개 프레젠테이션, 무효·순서 오류, 중복 적용, 관계·윤서진 두 축·이전 기억 불변, 자유 연애 격리와 DAY 15 도달성까지 확장했다.
+- 산출물: `docs/day14/DAY14_RUNTIME_SAVE_AUDIT.md`, `src/day14-campaign-runtime.mjs`, `tests/day14-runtime.test.mjs`, `game.js`. 다음 관문은 DAY 14 집중 테스트·전체 회귀다.
