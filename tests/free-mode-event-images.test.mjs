@@ -9,7 +9,7 @@ function pngSize(source){
   return {width:data.readUInt32BE(16),height:data.readUInt32BE(20)};
 }
 
-assert.equal(SITUATION_EVENTS.length,44,"all free-mode and Yuna events are covered");
+assert.equal(SITUATION_EVENTS.length,45,"all free-mode and Yuna events are covered");
 for(const event of SITUATION_EVENTS){
   assert.equal(event.image?.status,"ready",`${event.id}: image ready`);
   assert.ok(event.image?.intro,`${event.id}: intro image declared`);

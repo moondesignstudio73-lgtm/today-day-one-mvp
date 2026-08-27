@@ -368,6 +368,7 @@ function compactFreeRomanceEvent(event){
   if(FRIEND_ADVICE_IDS.has(event.id)){event.npcRequirements=["best-friend"];event.conditions.push({stat:"relationshipStress",operator:">=",value:45});}
   if(event.id===MINHO_DATE_WARNING_ID){
     event.npcId="office-best-male";event.npcName="민호";event.eventType="COWORKER";event.timeOfDay="evening";
+    event.image={intro:"assets/events/work/office-rumor-01.png",result:"assets/events/work/office-rumor-01.png",status:"ready"};
     event.npcRequirements=["office-best-male","male-rival","female-coworker"];
     event.npcInterestRequirements=[{npcId:"female-coworker",stat:"interestInPlayer",operator:">=",value:95}];
     event.relatedNpcIds=["office-best-male","male-rival","female-coworker"];

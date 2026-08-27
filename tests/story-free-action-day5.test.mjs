@@ -12,7 +12,7 @@ const create=()=>{const state=createInitialState(createGirlfriendFromProfile("ha
 const context={occurrence:"free-action-result",location:"office",phase:"evening",activeStoryId:"m30-day5-work-return",phoneUnlocked:true,financeUnlocked:false,jobUnlocked:true,mapUnlocked:false,healthRiskAllowed:false};
 const storage=()=>{const values=new Map();return {getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value),removeItem:key=>values.delete(key)}};
 
-assert.equal(FREE_MODE_EVENT_CATALOG.length,63);assert.equal(DAY5_OFFICE_ACTIONS.length,5);
+assert.equal(FREE_MODE_EVENT_CATALOG.length,64);assert.equal(DAY5_OFFICE_ACTIONS.length,5);
 const state=create(),progress=beginStoryFreeAction(state,"day5-office-evening");
 assert.equal(progress.location,"office");assert.equal(progress.phase,"evening");assert.equal(state.currentLocation,"office");assert.equal(state.phase,2);
 assert.equal(getStoryFreeActions(state).length,5);assert.equal(getStoryFeatureAvailability(state,"phone").available,true);assert.equal(getStoryFeatureAvailability(state,"job").available,true);assert.equal(getStoryFeatureAvailability(state,"investment").available,false);

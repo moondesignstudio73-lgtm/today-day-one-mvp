@@ -12,7 +12,7 @@ const create=()=>{const state=createInitialState(createGirlfriendFromProfile("ha
 const context={occurrence:"free-action-result",location:"hospital",phase:"day",activeStoryId:"m30-day3-discharge-phone",phoneUnlocked:true,financeUnlocked:false,jobUnlocked:false,mapUnlocked:false,healthRiskAllowed:false};
 const storage=()=>{const values=new Map();return {getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value),removeItem:key=>values.delete(key)}};
 
-assert.equal(FREE_MODE_EVENT_CATALOG.length,63);
+assert.equal(FREE_MODE_EVENT_CATALOG.length,64);
 assert.equal(DAY3_DISCHARGE_ACTIONS.length,5);
 const state=create(),progress=beginStoryFreeAction(state,"day3-discharge-room-day");
 assert.equal(progress.location,"hospital");assert.equal(progress.phase,"day");assert.equal(state.currentLocation,"hospital");assert.equal(state.phase,1);

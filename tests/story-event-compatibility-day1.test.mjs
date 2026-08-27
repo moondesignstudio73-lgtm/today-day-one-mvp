@@ -19,9 +19,9 @@ const compatibleStateFor=event=>{
   return {state,context:{occurrence:"free-action-result",location:probe.allowedLocations[0]??"home",phase:probe.allowedPhases[0]??"night",...unlockContext}};
 };
 
-assert.equal(FREE_MODE_EVENT_CATALOG.length,63);
-assert.equal(SHARED_EVENT_CATALOG.length,95);
-assert.equal(new Set(SHARED_EVENT_CATALOG.map(event=>event.id)).size,95);
+assert.equal(FREE_MODE_EVENT_CATALOG.length,64);
+assert.equal(SHARED_EVENT_CATALOG.length,96);
+assert.equal(new Set(SHARED_EVENT_CATALOG.map(event=>event.id)).size,96);
 for(const event of FREE_MODE_EVENT_CATALOG){
   const {state,context}=compatibleStateFor(event),result=evaluateEventCompatibility(state,event,context);
   assert.equal(typeof result.eligible,"boolean",event.id);
