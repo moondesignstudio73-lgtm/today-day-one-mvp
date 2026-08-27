@@ -1,6 +1,6 @@
 # DAY 16 챕터 계약 V1 — 한 명씩 다시
 
-상태: `CHAPTER CONTRACT PASS`  
+상태: `CHAPTER CONTRACT LOCK V1`
 적용 시나리오 ID: `m30-day16-current-social-circle`
 
 ## 1. 챕터 메타데이터
