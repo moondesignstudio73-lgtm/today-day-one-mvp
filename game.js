@@ -1,5 +1,5 @@
-import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=15";
-import { SaveManager } from "./src/save-manager.mjs?v=19";
+import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=16";
+import { SaveManager } from "./src/save-manager.mjs?v=20";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, getRuntimeEventDefinitions, rollRuntimeEvent } from "./src/event-manager.mjs?v=10";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=9";
@@ -28,7 +28,7 @@ import { applyGirlfriendLoan } from "./src/girlfriend-loan-manager.mjs?v=1";
 import { speakWithElevenLabs, stopVoicePlayback } from "./src/elevenlabs-voice-client.mjs";
 import { advanceStockMarket, buyStock, getPortfolioSummary, sellStock } from "./src/investment-manager.mjs?v=2";
 import { buyInstantLottery, DAILY_TICKET_LIMIT, getLotterySummary, LOTTERY_TICKET_PRICE } from "./src/lottery-manager.mjs?v=3";
-import { analyzePlayHistory, ENDING_DEFINITIONS, ENDING_VIDEO_SPEC, getEndingToolEntries } from "./src/ending-manager.mjs?v=1";
+import { analyzePlayHistory, ENDING_DEFINITIONS, ENDING_VIDEO_SPEC, getEndingResult, getEndingToolEntries } from "./src/ending-manager.mjs?v=3";
 import { SoundManager } from "./src/sound-manager.mjs?v=7";
 import { resolveStoryAudioCue } from "./src/story-audio-director.mjs?v=1";
 import { DAY1_BGM_CUES } from "./src/day1-audio-data.mjs";
@@ -687,7 +687,7 @@ function startImmersiveScene(session) {
   preloadImmersiveAssets([{assetUrl:immersiveScene.activeCharacterAssetUrl},...session.sequence]);
   eventRuntime.markAssets(immersiveScene.presentation?.backgroundUrl?"READY":"FALLBACK");eventRuntime.transition("TRANSITIONING");persistEventRuntime(true);
   updateImmersiveCharacter(immersiveScene.presentation.expressionId);
-  if(immersiveScene.presentation.characterId===null){$("#vnCharacter").hidden=true;$("#vnCharacterVideo").hidden=true;}
+  if(immersiveScene.presentation.characterId===null||session.hideCharacter){$("#vnCharacter").hidden=true;$("#vnCharacterVideo").hidden=true;}
   if(session.id===LOCKED_DAY1_SCENE_ID){$("#vnCharacter").hidden=true;delete $("#vnCharacter").dataset.day1Pose;}
   renderImmersiveStep();
 }
@@ -721,6 +721,7 @@ function updateDay1Focus(focusCharacterId="pov",effect="") {
 function updateImmersiveCharacter(expressionId="calm") {
   const character=$("#vnCharacter");
   const characterId=immersiveScene?.presentation?.characterId??"girlfriend";
+  if(immersiveScene?.hideCharacter){character.hidden=true;$("#vnCharacterVideo").hidden=true;return;}
   if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID){const allowed=new Set(["resting-tired","startled-relief","teary-relief","apologetic-worried","calm-attentive","warm-playful","soft-vulnerable","gentle-resolve"]);const id=allowed.has(expressionId)?expressionId:"calm-attentive";if(!character.dataset.day1Pose){character.src=`assets/characters/day1/haeun/expressions/haeun-expression-${id}-2d.png`;}character.dataset.expression=id;applyCharacterStage(character,{},"haeun");$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   if(immersiveScene?.id===LOCKED_DAY2_SCENE_ID&&immersiveScene.activeCharacterAssetUrl){character.src=immersiveScene.activeCharacterAssetUrl;character.hidden=false;character.dataset.expression=expressionId;applyCharacterStage(character,{},"haeun");$("#vnAccessoryLayer").hidden=true;syncOutfitCharacterMedia(true);return;}
   updateGiftVehicleLayer(characterId);
@@ -1993,7 +1994,21 @@ function renderEndingToolsContent(){
   const eventMarkup=[...relatedEvents.map(event=>`<button type="button" data-tools-event="${escapeHtml(event.id)}"><span>EVENT</span>${escapeHtml(event.title)}</button>`),...selected.systemEvents.map(label=>`<span><i>SYSTEM</i>${escapeHtml(label)}</span>`)].join("");
   const groups=endings.reduce((result,ending)=>{(result[ending.category]??=[]).push(ending);return result;},{});
   const endingLists=Object.entries(groups).map(([category,items])=>`<section class="tools-ending-group"><h3>${escapeHtml(category)} <span>${items.length}</span></h3>${items.map(ending=>`<button type="button" data-tools-ending="${escapeHtml(ending.id)}" class="tools-ending-row ${ending.id===selected.id?'active':''} ${ending.selected?'predicted':''}"><strong>${String(ending.priority).padStart(2,'0')}</strong><span><b>${escapeHtml(ending.title)}</b><small>${escapeHtml(ending.conditionLabel)}</small></span><em>${ending.selected?'현재 예상':ending.eligible?'조건 충족':'미충족'}</em></button>`).join("")}</section>`).join("");
-  return `<div class="game-tools-intro tools-ending-intro"><b>엔딩 전체 목록 · ${endings.length}종</b><span>위쪽 엔딩부터 우선 판정하며, 여러 조건이 동시에 충족되면 가장 높은 순위의 엔딩이 선택됩니다. 목록을 누르면 조건과 관련 이벤트, 향후 영상 연결 경로를 확인할 수 있습니다.</span></div><article class="tools-ending-prediction"><span>CURRENT ENDING FORECAST</span><b>${escapeHtml(predicted.title)}</b><small>${escapeHtml(predicted.description)}</small></article><article class="tools-ending-detail"><header><span>ENDING ${String(selected.priority).padStart(2,'0')} · ${escapeHtml(selected.category)}</span><h3>${escapeHtml(selected.title)}</h3><mark class="${selected.selected?'selected':selected.eligible?'eligible':''}">${selected.selected?'현재 예상 엔딩':selected.eligible?'현재 조건 충족':'현재 조건 미충족'}</mark></header><p>${escapeHtml(selected.description)}</p><dl><div><dt>판정 조건</dt><dd>${escapeHtml(selected.conditionLabel)}</dd></div><div><dt>판정 순위</dt><dd>${selected.priority} / ${endings.length} · 위 조건부터 우선 적용</dd></div></dl><section class="tools-ending-events"><h4>관련 조건·이벤트</h4><div>${eventMarkup||'<span><i>SYSTEM</i>DAY 30 최종 판정</span>'}</div></section><section class="tools-ending-video-plan"><div class="tools-ending-video-placeholder"><i class="fa-solid fa-film"></i><b>ENDING VIDEO · PLANNED</b><small>영상 파일 추가 시 이 영역에서 미리보기 및 재생</small></div><dl><div><dt>영상</dt><dd>${escapeHtml(selected.video.assetPath)}</dd></div><div><dt>포스터</dt><dd>${escapeHtml(selected.video.posterPath)}</dd></div><div><dt>제작 규격</dt><dd>${escapeHtml(ENDING_VIDEO_SPEC.format)} · ${escapeHtml(ENDING_VIDEO_SPEC.resolution)} · ${escapeHtml(ENDING_VIDEO_SPEC.duration)}</dd></div><div><dt>재생 방식</dt><dd>${escapeHtml(ENDING_VIDEO_SPEC.playback)}</dd></div></dl></section></article><div class="tools-ending-list">${endingLists}</div>`;
+  const currentStateMarkup=selected.currentState.map(item=>`<span><i>NOW</i>${escapeHtml(item)}</span>`).join("");
+  const narrativeMarkup=selected.narrative.map(paragraph=>`<p>${escapeHtml(paragraph)}</p>`).join("");
+  return `<div class="game-tools-intro tools-ending-intro"><b>엔딩 전체 목록 · ${endings.length}종</b><span>위쪽 엔딩부터 우선 판정하며, 여러 조건이 동시에 충족되면 가장 높은 순위의 엔딩이 선택됩니다. 목록을 누르면 조건과 관련 이벤트, 향후 영상 연결 경로를 확인할 수 있습니다.</span></div><article class="tools-ending-prediction"><span>CURRENT ENDING FORECAST</span><b>${escapeHtml(predicted.title)}</b><small>${escapeHtml(predicted.description)}</small></article><article class="tools-ending-detail"><header><span>ENDING ${String(selected.priority).padStart(2,'0')} · ${escapeHtml(selected.category)}</span><h3>${escapeHtml(selected.title)}</h3><mark class="${selected.selected?'selected':selected.eligible?'eligible':''}">${selected.selected?'현재 예상 엔딩':selected.eligible?'현재 조건 충족':'현재 조건 미충족'}</mark></header><p>${escapeHtml(selected.description)}</p><dl><div><dt>판정 조건</dt><dd>${escapeHtml(selected.conditionLabel)}</dd></div><div><dt>현재 판정 이유</dt><dd>${escapeHtml(selected.reason)}</dd></div><div><dt>판정 순위</dt><dd>${selected.priority} / ${endings.length} · 위 조건부터 우선 적용</dd></div></dl><section class="tools-ending-events"><h4>현재 상태</h4><div>${currentStateMarkup}</div></section><section class="tools-ending-copy"><h4>엔딩 본문</h4>${narrativeMarkup}</section><section class="tools-ending-events"><h4>관련 조건·이벤트</h4><div>${eventMarkup||'<span><i>SYSTEM</i>DAY 30 최종 판정</span>'}</div></section><section class="tools-ending-video-plan"><div class="tools-ending-video-placeholder"><i class="fa-solid fa-film"></i><b>ENDING VIDEO · PLANNED</b><small>영상 파일 추가 시 이 영역에서 미리보기 및 재생</small></div><dl><div><dt>영상</dt><dd>${escapeHtml(selected.video.assetPath)}</dd></div><div><dt>포스터</dt><dd>${escapeHtml(selected.video.posterPath)}</dd></div><div><dt>제작 규격</dt><dd>${escapeHtml(ENDING_VIDEO_SPEC.format)} · ${escapeHtml(ENDING_VIDEO_SPEC.resolution)} · ${escapeHtml(ENDING_VIDEO_SPEC.duration)}</dd></div><div><dt>재생 방식</dt><dd>${escapeHtml(ENDING_VIDEO_SPEC.playback)}</dd></div></dl></section></article><div class="tools-ending-list">${endingLists}</div>`;
+}
+
+function renderEndingToolsImage(container){
+  const endings=getEndingToolEntries(state),predicted=endings.find(ending=>ending.selected)??endings.at(-1);
+  const selected=endings.find(ending=>ending.id===selectedToolsEndingId)??predicted;
+  const header=container?.querySelector(".tools-ending-detail>header");
+  if(!header||!selected)return;
+  const figure=document.createElement("figure");
+  figure.className="tools-ending-image";
+  figure.innerHTML=`<img src="${escapeHtml(selected.imagePath)}?v=1" alt="${escapeHtml(selected.title)} 엔딩 일러스트" loading="lazy"><figcaption><b>${escapeHtml(selected.title)}</b><span>${escapeHtml(selected.description)}</span></figcaption>`;
+  header.nextElementSibling?.remove();
+  header.after(figure);
 }
 
 function renderGameTools() {
@@ -2021,6 +2036,7 @@ function renderGameTools() {
     content.innerHTML=`<div class="game-tools-intro"><b>지도·장소 이벤트</b><span>19:00–21:59에는 여자친구와 함께 외출하고, 22:00 이후에는 혼자 외출합니다. 22:00 이후 일반 장소 이벤트에는 여자친구 캐릭터가 표시되지 않습니다.</span></div><div class="tools-map-list">${Object.values(WORLD_MAPS).map(map=>`<section class="tools-map-card"><header><span>${map.theme.toUpperCase()}</span><b>${escapeHtml(map.name)}</b><small>${escapeHtml(map.subtitle)}</small></header><div>${map.locations.map(location=>`<article><span>${location.icon}</span><div><b>${escapeHtml(location.name)}</b><small>${escapeHtml(location.category)} · ${escapeHtml(location.description)}${location.id==="small-cafe"?" · 유리 반복 조우 50%":location.id==="night-food"?" · 22시 이후 유진 조우 50%":""}</small></div><button type="button" data-tools-map-go="${map.id}:${location.id}">이동</button>${location.category!=="home"?`<button type="button" data-tools-map-event="${map.id}:${location.id}">이벤트</button>`:""}</article>`).join("")}</div></section>`).join("")}</div>`;
   }else if(gameToolsTab==="endings"){
     content.innerHTML=renderEndingToolsContent();
+    renderEndingToolsImage(content);
   }else{
     selectedToolsNpcId??=state.npcs?.[0]?.id??null;
     const selected=(state.npcs??[]).find(npc=>npc.id===selectedToolsNpcId),selectedSprite=selected?getNpcSprite(selected.id):"",related=selected?SITUATION_EVENTS.filter(event=>event.npcId===selected.id||event.npcId===selected.role||event.relatedNpcIds?.includes(selected.id)):[];
@@ -2279,15 +2295,18 @@ function showLotteryResult(result) {
   $("#lotteryResultConfirm").addEventListener("click",openInvestment);
 }
 
-function showEnding(){ state.ended=true; const [title, desc] = determineEnding(state); const analysis=analyzePlayHistory(state);
+function showEnding(){ state.ended=true; const ending=getEndingResult(state); const analysis=analyzePlayHistory(state);
   sound.play("success");
   sound.playBgm("ending",Math.round(state.affection+state.trust),{loop:false});
-  const presentation={...resolvePhasePresentation(state,"evening"),expressionId:state.affection+state.trust>=1200?"smile":"calm",animationId:"soft-sway"};
+  const presentation={...resolvePhasePresentation(state,"evening"),backgroundId:`ending-${ending.id}`,backgroundUrl:ending.imagePath,characterId:ending.focusNpcId??"girlfriend",expressionId:state.affection+state.trust>=1200?"smile":"calm",animationId:"soft-sway"};
   const highlights=analysis.highlights.join(" ");
-  startImmersiveScene({id:"day-30-ending",type:"ending",presentation,sequence:[
-    {type:"transition",style:"flash",label:"DAY 30 · OUR ENDING"},
-    {type:"narration",text:desc},
-    {type:"dialogue",speaker:state.partner.name,text:title,expressionId:presentation.expressionId},
+  startImmersiveScene({id:"day-30-ending",type:"ending",presentation,hideCharacter:true,sequence:[
+    {type:"transition",style:"flash",label:`DAY 30 · ${ending.title}`},
+    {type:"dialogue",speaker:ending.speaker,text:ending.title,expressionId:presentation.expressionId},
+    {type:"narration",text:ending.description},
+    {type:"narration",text:`현재 상태 · ${ending.currentState.join(" · ")}`},
+    {type:"narration",text:`이 엔딩이 선택된 이유 · ${ending.reason}`},
+    ...ending.narrative.map(text=>({type:"narration",text})),
     {type:"narration",text:`30일 동안 ${analysis.totalChoices}번 선택했다. 가장 많이 택한 방향은 ${analysis.dominantChoice.tag}, 우리의 관계는 ${analysis.relationshipLabel}으로 남았다.`},
     {type:"narration",text:highlights||"서로의 선택이 하나의 이야기가 되었다."},
     {type:"choice",options:[{id:"restart",label:"새로운 30일 시작하기 →"}]}
