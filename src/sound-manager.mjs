@@ -7,10 +7,7 @@ export const SOUND_PRESETS = {
   select:{ frequency:520, endFrequency:620, duration:0.07, volume:0.035, wave:"sine" },
   confirm:{ frequency:440, endFrequency:720, duration:0.11, volume:0.045, wave:"sine" },
   alert:{ frequency:220, endFrequency:150, duration:0.18, volume:0.05, wave:"triangle" },
-  success:{ frequency:660, endFrequency:990, duration:0.24, volume:0.055, wave:"sine" },
-  choiceOpen:{frequency:480,endFrequency:560,duration:0.09,volume:0.025,wave:"sine"},
-  save:{frequency:540,endFrequency:810,duration:0.16,volume:0.04,wave:"sine"},
-  dayEnd:{frequency:392,endFrequency:784,duration:0.34,volume:0.045,wave:"sine"}
+  success:{ frequency:660, endFrequency:990, duration:0.24, volume:0.055, wave:"sine" }
 };
 
 export const SCENE_SOUND_PRESETS = {
@@ -65,7 +62,7 @@ export function validateSceneSoundPresets(presets = SCENE_SOUND_PRESETS) {
 }
 
 export class SoundManager {
-  constructor({ storage = globalThis.localStorage, contextFactory, audioFactory, defaultEnabled = true, now = () => Date.now(), requestFrame = globalThis.requestAnimationFrame?.bind(globalThis), cancelFrame = globalThis.cancelAnimationFrame?.bind(globalThis) } = {}) {
+  constructor({ storage = globalThis.localStorage, contextFactory, audioFactory, defaultEnabled = true } = {}) {
     this.storage = storage;
     this.contextFactory = contextFactory ?? (() => {
       const AudioContextClass = globalThis.AudioContext ?? globalThis.webkitAudioContext;
@@ -75,17 +72,7 @@ export class SoundManager {
     this.context = null;
     this.bgm = null;
     this.bgmSource = "";
-    this.bgmTargetVolume = 0;
-    this.bgmDuckRatio = 1;
-    this.fadeTokens = new WeakMap();
-    this.fadeFrames = new WeakMap();
     this.cueChannels = new Map();
-    this.transientCues = new Set();
-    this.activeAmbientId = null;
-    this.lastCueAt = new Map();
-    this.now = now;
-    this.requestFrame = requestFrame;
-    this.cancelFrame = cancelFrame;
     const savedSetting = this.storage?.getItem(SOUND_SETTING_KEY);
     this.enabled = savedSetting === null || savedSetting === undefined
       ? Boolean(defaultEnabled)
@@ -95,7 +82,7 @@ export class SoundManager {
   toggle(force) {
     this.enabled = typeof force === "boolean" ? force : !this.enabled;
     this.storage?.setItem(SOUND_SETTING_KEY,this.enabled ? "on" : "off");
-    if (!this.enabled) this.resetStoryAudio();
+    if (!this.enabled) { this.stopBgm(); this.stopAllCues(); }
     return this.enabled;
   }
 
@@ -124,42 +111,25 @@ export class SoundManager {
     }
   }
 
-  fadeAudio(audio,target,duration=0,onDone){
-    if(!audio)return false;
-    const to=Math.max(0,Math.min(1,Number(target)||0));
-    const ms=Math.max(0,Number(duration)||0);
-    if(!this.requestFrame||ms===0){audio.volume=to;onDone?.();return true;}
-    const token=(this.fadeTokens.get(audio)??0)+1,start=this.now(),from=Number(audio.volume)||0;
-    this.fadeTokens.set(audio,token);
-    const prior=this.fadeFrames.get(audio);if(prior)this.cancelFrame?.(prior);
-    const tick=()=>{if(token!==this.fadeTokens.get(audio))return;const progress=Math.min(1,(this.now()-start)/ms);audio.volume=from+(to-from)*progress;if(progress<1)this.fadeFrames.set(audio,this.requestFrame(tick));else{this.fadeFrames.delete(audio);onDone?.();}};
-    this.fadeFrames.set(audio,this.requestFrame(tick));return true;
-  }
-
-  playBgm(category, variant = 0, { loop = true, volume = 0.22, fadeIn = 0, crossFade = 0 } = {}) {
+  playBgm(category, variant = 0, { loop = true, volume = 0.22 } = {}) {
     if (!this.enabled) return false;
     const source = getBgmTrack(category,variant);
     if (!source) return false;
     try {
       if (this.bgm && this.bgmSource === source) {
-        this.bgmTargetVolume = Math.max(0,Math.min(1,Number(volume) || 0));
-        this.fadeAudio(this.bgm,this.bgmTargetVolume*this.bgmDuckRatio,crossFade);
+        this.bgm.volume = Math.max(0,Math.min(1,Number(volume) || 0));
         if (this.bgm.paused) this.bgm.play()?.catch?.(()=>{});
         return true;
       }
-      const previous=this.bgm;
+      this.stopBgm();
       const audio = this.audioFactory(source);
       if (!audio) return false;
       audio.loop = loop;
-      this.bgmTargetVolume = Math.max(0,Math.min(1,Number(volume) || 0));
-      const transition=Math.max(Number(crossFade)||0,Number(fadeIn)||0);
-      audio.volume = transition>0?0:this.bgmTargetVolume*this.bgmDuckRatio;
+      audio.volume = Math.max(0,Math.min(1,Number(volume) || 0));
       audio.preload = "auto";
       this.bgm = audio;
       this.bgmSource = source;
       audio.play()?.catch?.(()=>{});
-      if(previous&&previous!==audio)this.fadeAudio(previous,0,crossFade,()=>{try{previous.pause?.();}catch{}});
-      this.fadeAudio(audio,this.bgmTargetVolume*this.bgmDuckRatio,transition);
       return true;
     } catch {
       this.bgm = null;
@@ -168,25 +138,17 @@ export class SoundManager {
     }
   }
 
-  stopBgm(options={}) {
-    const fadeOut=typeof options==="number"?options:Number(options?.fadeOut)||0;
-    const audio=this.bgm;
-    if(audio&&fadeOut>0)this.fadeAudio(audio,0,fadeOut,()=>{try{audio.pause?.();}catch{}});
-    else try { audio?.pause?.(); } catch {}
+  stopBgm() {
+    try { this.bgm?.pause?.(); } catch {}
     this.bgm = null;
     this.bgmSource = "";
-    this.bgmTargetVolume=0;
-    this.bgmDuckRatio=1;
   }
 
-  playCue(cueId,{cooldownMs=120}={}) {
+  playCue(cueId) {
     if (!this.enabled) return false;
     const preset = getDay1AudioCue(cueId) ?? getDay2AudioCue(cueId);
     if (!preset) return false;
     try {
-      const now=this.now(),last=this.lastCueAt.get(cueId)??-Infinity;
-      if(!preset.loop&&now-last<cooldownMs)return false;
-      this.lastCueAt.set(cueId,now);
       const existing = this.cueChannels.get(cueId);
       if (existing && preset.loop) {
         if (existing.paused) existing.play()?.catch?.(()=>{});
@@ -198,7 +160,6 @@ export class SoundManager {
       audio.volume = preset.volume;
       audio.preload = "auto";
       if (preset.loop) this.cueChannels.set(cueId,audio);
-      else {this.transientCues.add(audio);audio.onended=()=>this.transientCues.delete(audio);}
       audio.play()?.catch?.(()=>{});
       return true;
     } catch {
@@ -211,7 +172,6 @@ export class SoundManager {
     if (!audio) return false;
     try { audio.pause?.(); } catch {}
     this.cueChannels.delete(cueId);
-    if(this.activeAmbientId===cueId)this.activeAmbientId=null;
     return true;
   }
 
@@ -220,34 +180,6 @@ export class SoundManager {
       try { audio.pause?.(); } catch {}
     }
     this.cueChannels.clear();
-    this.stopTransientCues();
-    this.activeAmbientId=null;
-  }
-
-  stopTransientCues(){for(const audio of this.transientCues){try{audio.pause?.();}catch{}}this.transientCues.clear();}
-
-  setAmbient(cueId){
-    if(cueId===this.activeAmbientId)return true;
-    if(this.activeAmbientId)this.stopCue(this.activeAmbientId);
-    this.activeAmbientId=null;
-    if(!cueId)return true;
-    const played=this.playCue(cueId,{cooldownMs:0});
-    if(played)this.activeAmbientId=cueId;
-    return played;
-  }
-
-  duckBgm(ratio=0.68,{duration=220}={}){this.bgmDuckRatio=Math.max(0.2,Math.min(1,Number(ratio)||0.68));if(this.bgm)this.fadeAudio(this.bgm,this.bgmTargetVolume*this.bgmDuckRatio,duration);}
-  restoreBgm({duration=260}={}){this.bgmDuckRatio=1;if(this.bgm)this.fadeAudio(this.bgm,this.bgmTargetVolume,duration);}
-
-  applyStoryAudio(cue={}){
-    if(!this.enabled)return false;
-    this.setAmbient(cue.ambientId??null);
-    if(cue.silence){this.stopBgm({fadeOut:cue.fadeOutMs??900});return true;}
-    return this.playBgm(cue.category,cue.variant,{volume:cue.volume,fadeIn:cue.fadeInMs,crossFade:cue.crossFadeMs});
-  }
-
-  resetStoryAudio(){
-    this.stopBgm();this.stopAllCues();this.lastCueAt.clear();this.bgmDuckRatio=1;
   }
 
   playScene(scene, variant = 0) {

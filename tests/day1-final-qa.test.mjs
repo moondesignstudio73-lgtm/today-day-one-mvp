@@ -62,21 +62,6 @@ assert.match(gameSource,/StoryCg/);
 assert.match(gameSource,/StoryAutoCue/);
 assert.match(cssSource,/prefers-reduced-motion:reduce/);
 assert.match(cssSource,/body\.campaign-story-mode \.vn-expression-layer\{display:none!important\}/);
-assert.match(gameSource,/const STORY_INTRO_VIDEO_PLAYLIST = \["assets\/video\/story-prologue\.mp4"\];/);
-assert.match(gameSource,/const DEFAULT_INTRO_VIDEO_PLAYLIST = \["assets\/video\/free-mode-prologue\.mp4"\];/);
-assert.doesNotMatch(htmlSource,/<video id="introVideo"[^>]*\scontrols(?:\s|>)/);
-assert.match(htmlSource,/id="introLoading" class="intro-loading"/);
-assert.match(htmlSource,/id="skipIntroButton" class="secondary-button story-intro-skip"/);
-assert.match(gameSource,/activeIntroVideoPlaylist=onboarding\?\.previewState\?\.scenario\?\.enabled===true\?STORY_INTRO_VIDEO_PLAYLIST:DEFAULT_INTRO_VIDEO_PLAYLIST;/);
-assert.match(gameSource,/const storyMode=state\.scenario\?\.enabled===true;\$\("#menuButton"\)\.classList\.toggle\("hidden",storyMode\);\$\("#fullscreenButton"\)\.classList\.toggle\("hidden",storyMode\);/);
-assert.match(cssSource,/body\.campaign-story-mode\.theater-mode:not\(\.ui-night-mode\) \.topbar>\.top-actions\{\s*display:none!important;/);
-assert.match(cssSource,/grid-template-columns:minmax\(190px,1fr\) auto minmax\(390px,1fr\);/);
-assert.match(cssSource,/:fullscreen \.topbar,[\s\S]*?background:linear-gradient\(90deg,#090a12f7,#211c29f2 58%,#3a303bf2\);/);
-assert.match(cssSource,/:fullscreen \.topbar :is\(\.brand,\.brand strong,\.brand small\)[\s\S]*?color:#fff!important;/);
-assert.match(cssSource,/:fullscreen \.topbar \.game-mode-badge,[\s\S]*?background:#f06f98;[\s\S]*?color:#fff;/);
-assert.match(cssSource,/\.vn-stage :is\(img,video\)\{[\s\S]*?-webkit-user-drag:none;[\s\S]*?pointer-events:none;/);
-assert.match(gameSource,/document\.addEventListener\("dragstart",event=>\{if\(isProtectedStorySurface\(event\.target\)\)event\.preventDefault\(\);\},true\);/);
-assert.match(gameSource,/document\.addEventListener\("selectstart",event=>\{if\(isProtectedStorySurface\(event\.target\)\)event\.preventDefault\(\);\},true\);/);
 console.log("✓ DIRECTION — Scene 전환·CG·입력 잠금·감소 모션 PASS");
 
 // AUDIO

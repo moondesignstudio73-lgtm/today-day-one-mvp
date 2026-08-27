@@ -1,4 +1,4 @@
-import { YUNA_STORY_EVENTS } from "./yuna-data.mjs?v=2";
+import { YUNA_STORY_EVENTS } from "./yuna-data.mjs";
 
 const CATEGORY_CONFIG = {
   romance:{label:"연애·데이트",npcRole:"girlfriend",backgrounds:["home-morning","cafe-rain-evening","river-night","home-night"],bgm:"theme",baseEffects:{affection:4,excitement:3}},
@@ -89,7 +89,6 @@ function makeChoices(event) {
 
 function buildEvent([id,title,category,startDay,endDay,hook,pressure,reveal,echo],index) {
   const config=CATEGORY_CONFIG[category];
-  const eventImage=`assets/events/${category}/${id}-01.png`;
   const namedText=text=>category==="temptation"?String(text).replaceAll("서브 히로인",config.npcName??"유진"):text;
   const event={id:`situation-${id}`,title,category,categoryLabel:config.label,npcId:config.npcRole,npcName:config.npcName??null,hook:namedText(hook),pressure:namedText(pressure),reveal:namedText(reveal),echo:namedText(echo),moods:MOODS[category]};
   event.scenes=config.backgrounds.map((backgroundId,sceneIndex)=>({
@@ -100,7 +99,7 @@ function buildEvent([id,title,category,startDay,endDay,hook,pressure,reveal,echo
     dialogueTurns:makeTurns(event,sceneIndex)
   }));
   return {
-    ...event,message:hook,question:`${title}에서 나는 어떻게 답하고 행동할까?`,eventType:category==="friends"?"FRIEND":category==="work"||category==="temptation"?"COWORKER":"GIRLFRIEND",image:{intro:eventImage,result:eventImage,status:"ready"},conditions:[{stat:"day",operator:">=",value:startDay}],probability:.025+(index%4)*.008,priority:52+(index%7),cooldown:7+(index%5),effects:config.baseEffects,
+    ...event,message:hook,question:`${title}에서 나는 어떻게 답하고 행동할까?`,eventType:category==="friends"?"FRIEND":category==="work"||category==="temptation"?"COWORKER":"GIRLFRIEND",image:{intro:`assets/events/${category}/${id}-01.png`,result:`assets/events/${category}/${id}-result-01.png`,status:"planned"},conditions:[{stat:"day",operator:">=",value:startDay}],probability:.025+(index%4)*.008,priority:52+(index%7),cooldown:7+(index%5),effects:config.baseEffects,
     baseWeight:45+(index%6)*5,dayRange:[startDay,endDay],timeOfDay:index%3===0?"evening":"day",location:event.scenes[0].backgroundId,tensionLevel:category==="conflict"||category==="mystery"?"high":category==="temptation"?"medium-high":"medium",
     relationshipStates:category==="conflict"?["SUSPICIOUS","CONFLICT","RECOVERING"]:category==="romance"?["HONEYMOON","STABLE","PASSIONATE"]:["DISTANT","STABLE","SUSPICIOUS"],
     npcRequirements:config.npcRole==="girlfriend"?[]:[config.npcRole],requiredMemories:[],requiredEvents:[],forbiddenFlags:[`${event.id}:COMPLETED`],repeatable:false,maxTriggerCount:1,eventState:"LOCKED",
@@ -127,20 +126,6 @@ for(const event of BASE_SITUATION_EVENTS){
     scene.dialogueTurns.forEach(turn=>{
       if(turn.speaker==="연인")turn.speaker="전 여자친구 · 유리";
     });
-  });
-}
-const EVENT_CHARACTER_OVERRIDES={
-  "situation-meet-her-friends":{npcId:"heroine-best-friend",npcName:"소라",eventType:"FRIEND"},
-  "situation-parents-first-story":{npcId:"girlfriend",npcName:"연인",eventType:"GIRLFRIEND"}
-};
-for(const event of BASE_SITUATION_EVENTS){
-  const override=EVENT_CHARACTER_OVERRIDES[event.id];
-  if(!override)continue;
-  event.npcId=override.npcId;event.npcName=override.npcName;event.eventType=override.eventType;
-  event.npcRequirements=override.npcId==="girlfriend"?[]:[override.npcId];
-  event.scenes.forEach(scene=>{
-    scene.characterIds=[override.npcId];
-    scene.dialogueTurns.forEach(turn=>{if(turn.speaker==="친구")turn.speaker=override.npcName;});
   });
 }
 const HAEUN_HOME_TIERS={

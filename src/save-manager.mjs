@@ -1,5 +1,5 @@
-import { validateState } from "./game-core.mjs?v=15";
-import { migrateNpcRoster } from "./npc-manager.mjs?v=3";
+import { validateState } from "./game-core.mjs?v=17";
+import { migrateNpcRoster } from "./npc-manager.mjs?v=4";
 import { migrateHeroineProfile } from "./girlfriend-manager.mjs?v=6";
 import { migrateInvestmentState } from "./investment-manager.mjs?v=2";
 import { createLotteryState } from "./lottery-manager.mjs";
@@ -12,9 +12,8 @@ import { migrateJob } from "./jobs-data.mjs?v=6";
 import { migratePlayerProfile } from "./player-profile-data.mjs";
 import { migrateWorldState } from "./world-map-manager.mjs";
 import { migrateScenarioState, normalizeGameMode } from "./scenario-state.mjs";
-import { normalizeDay2StoryFlags } from "./day2-campaign-runtime.mjs";
 import { migrateYujinSecretRouteState } from "./yujin-secret-route.mjs";
-import { migrateWorldEncounterRoutes } from "./world-encounter-manager.mjs?v=3";
+import { migrateWorldEncounterRoutes } from "./world-encounter-manager.mjs?v=5";
 import { migrateGirlfriendLoanState } from "./girlfriend-loan-manager.mjs?v=1";
 
 export class SaveManager {
@@ -60,9 +59,6 @@ export class SaveManager {
       parsed.conversationHistory ??= [];
       parsed.storyHistory ??= [];
       parsed.storyFlags ??= {};
-      if(parsed.scenario?.enabled===true)normalizeDay2StoryFlags(parsed);
-      parsed.storyFreeAction ??= null;
-      parsed.eventCompatibility ??= {dailyCounts:{},lastCandidates:[],lastSelected:null};
       parsed.futureScore ??= 0;
       parsed.pendingStoryId ??= null;
       parsed.cgCollection ??= [];

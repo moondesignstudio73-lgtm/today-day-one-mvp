@@ -45,6 +45,7 @@ export const NPC_ASSETS = {
   "love-advisor":"assets/npcs/love-advisor.png",
   "hospital-nurse":"assets/npcs/hospital-nurse.png",
   "male-rival":"assets/npcs/male-rival-clean.png",
+  "anonymous-extortionist":"assets/npcs/anonymous-extortionist-2d.png",
   "player-ex":"assets/heroines/yuri/yuri-ex-girlfriend-2d.png?v=2"
 };
 
@@ -99,16 +100,6 @@ export const BACKGROUND_ASSETS = {
   "home-morning":"assets/backgrounds/morning-studio-2d.png",
   "home-night":"assets/backgrounds/home/BG_HOME_NIGHT_001.webp",
   "office-day":"assets/backgrounds/office/BG_OFFICE_DAY_001.webp",
-  "neighborhood-street-day":"assets/backgrounds/street/BG_RELATIONSHIP_STREET_DAY_001.png",
-  "neighborhood-pharmacy-day":"assets/backgrounds/day6/day6-neighborhood-pharmacy-day-v1.png",
-  "neighborhood-market-day":"assets/backgrounds/day6/day6-neighborhood-market-day-v1.png",
-  "neighborhood-cafe-day":"assets/backgrounds/day6/day6-neighborhood-cafe-day-v1.png",
-  "neighborhood-park-day":"assets/backgrounds/map-locations/035_running-park.png",
-  "day7-gallery-day":"assets/backgrounds/map-locations/016_gallery.png",
-  "day9-office-project-room-day":"assets/backgrounds/day9/day9-office-project-room-day-v1.png",
-  "day7-bookshop-day":"assets/backgrounds/day7/day7-small-bookshop-day-v1.png",
-  "day7-river-promenade-day":"assets/backgrounds/day7/day7-river-promenade-day-v1.png",
-  "day8-household-store-day":"assets/backgrounds/day8/day8-household-store-day-v1.png",
   "cafe-rain-evening":"assets/backgrounds/cafe/BG_CAFE_RAIN_EVENING_001.webp",
   "river-night":"assets/backgrounds/street/BG_RIVER_NIGHT_001.webp",
   ...YUNA_BACKGROUNDS

@@ -1,6 +1,5 @@
 import { HIDDEN_ROUTE_SCENES } from "./hidden-route-data.mjs";
 import { HEROINE_STORY_SCENES } from "./heroine-data.mjs";
-import { STORY_OUTFIT_ASSETS } from "./story-outfit-assets.mjs?v=3";
 
 export const MARRIAGE_30_STORY_SCENES = [{
   id:"m30-day1-hospital-awakening",arc:"잃어버린 1년",window:[1,1],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],
@@ -112,88 +111,31 @@ export const MARRIAGE_30_STORY_SCENES = [{
 },{
   id:"m30-day3-discharge-phone",arc:"병원 밖으로",window:[3,3],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day2-rehabilitation"},
   title:"돌아온 휴대폰",speaker:"하은",message:"퇴원 서류 위에 오래된 휴대폰과 병원 보관 봉투가 놓였다. 액정 한쪽에는 사고 때 생긴 금이 남아 있었다.",
-  chapterType:"recovery/daily-life-investigation-hybrid",targetPlaytimeMinutes:[5,8],timeWindow:"morning",location:"병원 퇴원 병실과 복도",participants:["protagonist","haeun","nurse"],previousChoiceReferences:["m30-day2-rehabilitation"],
   dramaticPurpose:"퇴원을 생활 회복의 전환점으로 만들고 스마트폰을 조사와 관계 회복의 공용 도구로 해금한다.",
-  characterWants:{protagonist:"돌아온 물건과 기록을 자신이 감당할 수 있는 순서로 확인한다",haeun:"퇴원 준비를 빠뜨리지 않으면서 휴대폰 확인의 결정권을 주인공에게 돌려준다",nurse:"보관품 인계와 복약·외래 교육을 정확히 끝낸다"},
-  informationBudget:{mustReveal:["보관 봉투에는 휴대폰·지갑·열쇠가 있다","휴대폰 액정은 사고 때 깨졌고 기기는 잠겨 있다","기록 확인 범위와 시점은 주인공이 선택한다"],mayReveal:["하은은 잠금 암호의 단서를 안다","하은은 충전기와 복약 준비를 생활적으로 챙겼다","주인공의 손이 익숙한 숫자 배열 일부를 기억한다"],mustNotReveal:["사고의 진짜 원인","가짜 하은의 정체","휴대폰 메시지와 사진의 구체적 내용","하은이 알 수 없는 기기 기록"],playerMaySuspect:["휴대폰 기록은 과거 생활을 복원할 자료지만 출처와 날짜를 따로 검증해야 한다"]},
-  relationshipBudget:{haeunAffection:"small-to-medium",haeunTrust:"small-to-medium",haeunDependency:"choice-dependent",investigation:"choice-dependent"},
-  clueBudget:{allowed:["phone-return-receipt"],forbidden:["accident-culprit","fake-haeun-proof","private-message-content"]},
-  emotionalCurve:["퇴원 아침의 가벼움 3","보관 봉투 앞의 긴장 5","생활적 농담과 안도 3","깨진 휴대폰의 충격 7","잠금 해제와 기록의 부담 6","복약·주소 확인으로 현실 복귀 4","확인 범위 선택 6","병원 문을 나서는 기대와 낯섦 4"],
-  sceneBeats:["정리된 병실과 퇴원 체크리스트","하은의 양말·충전기 농담으로 생활 온도 회복","간호사의 보관품 인계와 본인 개봉 원칙","휴대폰 파손 상태와 인계 영수증 직접 확인","잠금 암호 힌트와 기록을 마주할 부담 처리","복약 시간·외래 일정·집 주소를 실용적으로 확인","시스템 우선·공동 필수 설정·집에서 개봉 중 전략 선택","열쇠와 봉투를 챙겨 DAY 4 집 도착으로 연결"],
-  voiceProfiles:{
-    protagonist:{rhythm:"관찰 뒤 짧은 확인 질문과 범위 선언",address:"간호사에게 존댓말, 하은에게 담담한 반말",vocabulary:"목록·날짜·기록·범위처럼 검증 가능한 말",humor:"하은의 생활 농담을 한 박자 늦게 건조하게 받음",questions:"물건의 출처와 확인 절차를 먼저 묻는다",silence:"깨진 화면과 알림 숫자를 본 뒤 손을 멈춘다",emotion:"두려움을 숨기지 않되 확인 순서로 바꾼다",lyingBehavior:"모르는 것을 아는 척하지 않는다",relationshipVariation:"하은의 도움을 받을 때도 화면과 결정권은 자신이 가진다"},
-    haeun:{rhythm:"먼저 말을 열고 실용적 세부와 짧은 장난을 섞음",address:"주인공에게 익숙한 반말, 간호사에게 존댓말",vocabulary:"양말·충전기·약봉투·배달 메뉴 같은 생활어",humor:"과거의 사소한 고집을 놀리되 기억 시험으로 만들지 않음",questions:"허락을 먼저 확인하고 한 번에 하나만 묻는다",silence:"주인공이 화면을 볼 때 옆에서 끼어들지 않고 물건을 정리한다",emotion:"서운함보다 손을 멈추고 선택을 기다리는 행동으로 드러냄",lyingBehavior:"아는 암호 단서만 말하고 기기 내용은 모른다고 구분한다",relationshipVariation:"DAY 2에서 정한 도움 방식처럼 휴대폰 확인 거리도 조절한다"},
-    nurse:{rhythm:"항목별로 짧고 정확한 존댓말",address:"환자 본인에게 직접 설명",vocabulary:"인계 목록·서명·복약·외래 일정",humor:"거의 없음",questions:"이해 여부와 물품 수량을 확인",silence:"환자가 기기를 살필 시간을 준다",emotion:"불안을 평가하지 않고 절차와 안전으로 환원",lyingBehavior:"알지 못하는 기기 내용에는 답하지 않는다",relationshipVariation:"하은이 대신 답하려 해도 환자 본인의 선택을 우선한다"}
-  },
   knowledgeLedger:{
     protagonist:{KNOWS:["오늘 퇴원한다","휴대폰은 사고 뒤 병원이 보관했다"],BELIEVES:["기록은 기억과 별개로 확인할 수 있다"],SUSPECTS:["휴대폰에 사고 전 생활 정보가 남아 있을 수 있다"],DOES_NOT_KNOW:["잠금 암호","최근 백업 상태"],HIDES:["알림을 보는 일이 두렵다"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["기기를 자신의 기준으로 확인한다"],FEARS:["기록 속 자신이 낯설게 느껴지는 것"]},
     haeun:{KNOWS:["휴대폰 잠금 암호의 단서","퇴원 뒤 복약 일정"],BELIEVES:["휴대폰을 돌려주는 것이 주인공의 선택권을 회복시킨다"],SUSPECTS:[],DOES_NOT_KNOW:["어떤 기록이 남아 있는지"],HIDES:["알림을 대신 확인하고 싶은 충동"],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["퇴원 준비를 실수 없이 끝낸다"],FEARS:["기록이 주인공을 한꺼번에 압도하는 것"]},
     nurse:{KNOWS:["보관 봉투 인계 절차","복약과 외래 일정"],BELIEVES:["기기 확인은 환자가 직접 해야 한다"],SUSPECTS:[],DOES_NOT_KNOW:["휴대폰 내용과 두 사람의 과거"],HIDES:[],LIES_ABOUT:[],MISREMEMBERS:[],WANTS:["인계 확인과 퇴원 교육을 마친다"],FEARS:["분실 또는 복약 누락"]}
   },
-  lineLayers:[
-    {line:"여는 건 네가 해. 나는 목록만 읽을게.",surface:"보관 봉투 개봉 역할을 나눈다",emotion:"익숙한 연인처럼 대신하고 싶지만 침범할까 조심스럽다",intention:"휴대폰과 과거 기록에 대한 결정권이 주인공에게 있음을 행동으로 보여 준다"},
-    {line:"내용이 무서운 거지, 기계가 무서운 건 아니야.",surface:"휴대폰을 망설이는 이유를 구분한다",emotion:"기록 속 낯선 자신을 마주할 두려움이 있다",intention:"감정적 회피 대신 확인 범위를 정할 준비를 한다"},
-    {line:"필요한 기능과 과거 기록을 나눠서 볼 거야.",surface:"휴대폰 확인 원칙을 선언한다",emotion:"통제감을 되찾고 싶다",intention:"관계 회복과 조사를 어느 한쪽에 넘기지 않는 전략을 선택한다"}
-  ],
   dialogueTurns:[
-    {type:"narration",text:"아침 회진이 끝난 병실은 처음으로 비어 보였다. 침대 옆 서랍은 열려 있었고, 퇴원 서류와 병원 팔찌만 탁자 위에 남았다."},
-    {type:"dialogue",speaker:"하은",text:"양말 두 켤레, 물병, 충전기. 병원에서 짐이 늘면 퇴원 성공이라던데, 우리는 꽤 우수한 환자였어.",expressionId:"smile"},
-    {type:"dialogue",speaker:"나",text:"환자보다 보호자 짐이 더 많아 보이는데.",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"그건 밤샘 간식이야. 네가 깨어난 뒤로는 절반도 못 먹었으니까 칭찬해 줘.",expressionId:"smile"},
-    {type:"dialogue",speaker:"나",text:"남은 절반을 집까지 가져가면 생각해 볼게.",expressionId:"calm"},
-    {type:"narration",text:"하은은 웃으며 과자 봉지를 가방 옆주머니에 밀어 넣었다. 문이 열리고 간호사가 투명 지퍼백과 봉인된 회색 봉투를 들고 들어왔다."},
-    {type:"dialogue",speaker:"간호사",text:"퇴원 전 마지막 확인하겠습니다. 환자 팔찌 제거, 처방약 수령, 다음 주 외래 예약까지 세 항목입니다.",expressionId:"calm"},
-    {type:"dialogue",speaker:"나",text:"보관 물품 인계도 지금 합니까?",expressionId:"calm"},
-    {type:"dialogue",speaker:"간호사",text:"네. 사고 당일 들어온 봉투입니다. 본인이 개봉하고 수량을 확인한 뒤 서명해 주세요.",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"여는 건 네가 해. 나는 목록만 읽을게.",expressionId:"calm"},
-    {type:"dialogue",speaker:"나",text:"대신 확인하지 않은 이유가 있어?",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"네 물건이니까. 지갑 속 영수증까지 연인 공동 재산은 아니잖아.",expressionId:"smile"},
-    {type:"dialogue",speaker:"간호사",text:"봉투 겉면의 접수 번호와 날짜부터 확인해 주세요. 봉인은 훼손되지 않았습니다.",expressionId:"calm"},
-    {type:"narration",text:"사고 날짜와 같은 날 적힌 접수 번호를 읽었다. 봉인 가장자리를 손톱으로 천천히 뜯자 오래된 가죽 냄새가 먼저 났다."},
-    {type:"dialogue",speaker:"나",text:"지갑 하나. 열쇠 세 개. 휴대폰 하나.",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"목록하고 맞아. 열쇠고리도 그대로네. 저 고무 오리는 내가 고른 거 아니야, 미리 말해 둘게.",expressionId:"smile"},
-    {type:"dialogue",speaker:"나",text:"과거의 내가 해명할 일이 하나 늘었군.",expressionId:"calm"},
-    {type:"narration",text:"휴대폰을 들어 빛에 기울였다. 액정 오른쪽 위에서 시작한 금이 모서리까지 이어졌지만 뒷면은 부풀지 않았고 카메라 렌즈도 깨지지 않았다."},
-    {type:"dialogue",speaker:"나",text:"화면만 파손된 것 같습니다. 전원을 켜 봐도 됩니까?",expressionId:"calm"},
-    {type:"dialogue",speaker:"간호사",text:"기기 작동 확인은 괜찮습니다. 다만 내용 확인은 병원 인계 절차와 별개입니다.",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"충전기는 챙겼어. 화면 보호필름은 장렬하게 전사했고.",expressionId:"smile"},
-    {type:"narration",text:"전원 버튼을 누르자 진동이 짧게 울렸다. 배터리 12퍼센트, 신호 없음, 잠금 화면에는 읽지 않은 알림 숫자만 겹쳐 있었다."},
-    {type:"dialogue",speaker:"나",text:"암호가 기억나지 않으면 시도 횟수부터 낭비하게 되겠네.",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"힌트까지만 줄게. 네가 매일 보던 숫자였어. 틀리면 내 탓 말고 과거의 네 탓.",expressionId:"smile"},
-    {type:"dialogue",speaker:"나",text:"생일이나 전화번호는 매일 보지 않아. 시계도 네 자리인데 암호는 여섯 자리야.",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"그렇게 후보부터 지우는 건 그대로네. 한 번만 해 보고 아니면 집에서 천천히 찾자.",expressionId:"smile"},
-    {type:"narration",text:"숫자 배열 위에 엄지를 올리자 손이 먼저 첫 두 자리를 짚었다. 남은 네 자리는 확신이 아니라 습관처럼 이어졌고, 잠금 표시가 사라졌다."},
-    {type:"dialogue",speaker:"나",text:"숫자는 익숙했어. 왜 익숙한지는 모르겠고.",expressionId:"worried"},
-    {type:"dialogue",speaker:"하은",text:"그럼 기억났다고 적지 말고, 손이 기억한 것 같다고 적자. 어제 재활할 때처럼.",expressionId:"calm"},
-    {type:"dialogue",speaker:"나",text:"이 휴대폰을 네가 열어 본 적은?",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"없어. 암호 힌트는 알았지만 화면은 네 거니까. 병원에서 필요한 연락은 내 번호로 받았고.",expressionId:"calm"},
-    {type:"narration",text:"나는 알림 내용을 누르지 않고 설정 화면으로 들어갈 수 있는지만 확인한 뒤 다시 잠갔다. 하은은 화면 대신 약봉투의 라벨을 날짜순으로 맞췄다."},
-    {type:"dialogue",speaker:"간호사",text:"복약은 아침 식후와 저녁 식후입니다. 어지럼이 심해지거나 새 통증이 생기면 복용을 미루지 말고 병원에 연락하세요.",expressionId:"calm"},
-    {type:"dialogue",speaker:"나",text:"외래 전까지 재활 기록은 종이에 남기면 됩니까?",expressionId:"calm"},
-    {type:"dialogue",speaker:"간호사",text:"네. 휴대폰 알람은 편의를 위한 선택입니다. 기록 방식은 환자분이 정하시면 됩니다.",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"나는 알람 담당, 감독은 안 함. 치료사 선생님하고 정한 계약 그대로.",expressionId:"smile"},
-    {type:"dialogue",speaker:"나",text:"집 주소는 휴대폰 없이도 확인할 수 있어?",expressionId:"calm"},
-    {type:"dialogue",speaker:"하은",text:"퇴원 서류에 적혀 있고 열쇠도 있어. 기억 시험처럼 맞혀 보라고 안 할 테니까 걱정 마.",expressionId:"smile"},
-    {type:"dialogue",speaker:"나",text:"내용이 무서운 거지, 기계가 무서운 건 아니야.",expressionId:"worried"},
-    {type:"dialogue",speaker:"하은",text:"알아. 그래서 오늘 필요한 것부터 하자. 약 알람, 집 주소, 그리고 배달 앱 단골 메뉴는… 급하지 않지만 중요하고.",expressionId:"smile"},
-    {type:"dialogue",speaker:"나",text:"필요한 기능과 과거 기록을 나눠서 볼 거야. 어디까지 지금 확인할지 내가 정할게.",expressionId:"calm"},
-    {type:"dialogue",speaker:"간호사",text:"좋습니다. 수량과 기기 작동에 이상 없으면 여기 서명해 주세요.",expressionId:"calm"},
-    {type:"narration",text:"인계 확인란에 이름을 적고 열쇠와 휴대폰을 탁자 위에 나란히 놓았다. 병실 밖에서는 퇴원 카트 바퀴 소리가 지나갔다. 다음 선택은 기기가 아니라, 돌아갈 생활을 어떤 순서로 열 것인지에 가까웠다."}
+    {type:"dialogue",speaker:"간호사",text:"보관 봉투는 본인이 개봉해 주세요. 휴대폰, 지갑, 열쇠 세 가지입니다. 확인 뒤 서명하시면 됩니다.",expressionId:"calm"},
+    {type:"dialogue",speaker:"나",text:"암호가 기억나지 않으면?",expressionId:"calm"},
+    {type:"dialogue",speaker:"하은",text:"힌트까지만 줄게. 네가 매일 보는 숫자였어. 틀리면 내 탓 말고 과거의 네 탓.",expressionId:"smile"},
+    {type:"dialogue",speaker:"나",text:"열어 보고 싶은데, 뭐가 나올지는 겁나네.",expressionId:"worried"},
+    {type:"dialogue",speaker:"하은",text:"그럼 순서를 정하자. 오늘 필요한 것부터. 약 알람, 집 주소, 그리고… 배달 앱 단골 메뉴 정도.",expressionId:"smile"}
   ],
-  presentation:{backgroundId:"day2-hospital-bedside",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day3,expressionId:"smile",poseId:"phone"},
+  presentation:{backgroundId:"day2-hospital-bedside",characterId:"girlfriend",expressionId:"smile",poseId:"phone"},
   choices:[
-    {id:"inspect-system-first",label:"계정·날짜·백업 상태부터 직접 확인하고 사적 기록은 닫아 둔다",effects:{confidence:7,trust:3},scenarioEffects:{investigation:8,memoryRecovery:3},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-system"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"잠금 화면의 날짜와 계정 이름부터 적었다. 사진과 메시지는 닫아 둔 채, 확인한 사실과 아직 보지 않은 영역을 구분했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["set-boundary"]}}],effects:{confidence:3},scenarioEffects:{investigation:3},response:"병원에서 받은 사고 날짜와 기기 백업 날짜를 나란히 적었다. 아직 결론은 없지만 확인 순서는 분명해졌다."},{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["review-the-plan"]}}],unlockedActions:["recovery-plan-phone-check"],response:"재활 계획표처럼 확인 항목과 중단 기준을 적었다. 하은은 ‘약 알람’ 아래에만 자기 이름을 쓰고 휴대폰을 내 쪽으로 돌려놓았다."}],memory:"돌아온 휴대폰의 시스템 정보부터 확인함"},
-    {id:"set-up-together",label:"하은과 복약 알람·병원 번호·필수 연락처만 함께 설정한다",effects:{affection:8,trust:10},scenarioEffects:{haeunAffection:8,haeunTrust:10,memoryRecovery:2},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","call-haeun"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"하은은 자신의 번호를 ‘하은’이라고만 저장했다. 하트를 붙였다가 내 얼굴을 보고 지운 뒤, “이건 네가 기억나면 직접.”이라고 말했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["take-her-hand"]}}],effects:{affection:4},scenarioEffects:{haeunAffection:4},unlockedActions:["rehab-trust-phone-setup"],response:"알람 설정을 마친 하은이 손을 내밀었다. 어제처럼 이번에도 잡을지는 내 쪽에서 정할 수 있게, 손바닥만 펴 둔 채였다."}],memory:"하은과 휴대폰의 필수 기능만 다시 설정함"},
-    {id:"seal-until-home",label:"인계 목록과 기기 작동만 대조하고 기록 확인은 집 책상에서 한다",effects:{confidence:8,stress:-4,trust:4},scenarioEffects:{investigation:4,haeunTrust:4},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-at-home"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"휴대폰, 지갑, 열쇠를 목록과 대조한 뒤 다시 봉투에 넣었다. 하은은 재촉하지 않고 봉투를 내 가방 맨 위에 놓았다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["use-the-rail"]}}],unlockedActions:["paced-phone-review"],response:"어제 세 걸음을 나눠 걸었던 것처럼 오늘도 수량 확인에서 멈췄다. 하은은 봉투 겉면에 ‘집에서, 네 순서대로’라고만 적었다."}],memory:"휴대폰 기록 확인을 집에 도착한 뒤로 미룸"}
+    {id:"inspect-system-first",label:"계정·날짜·백업 상태부터 직접 확인한다",effects:{confidence:7,trust:3},scenarioEffects:{investigation:8,memoryRecovery:3},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-system"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"잠금 화면의 날짜와 계정 이름부터 적었다. 사진과 메시지는 닫아 둔 채, 확인한 사실과 아직 보지 않은 영역을 구분했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day1-hospital-awakening",choiceIds:["set-boundary"]}}],effects:{confidence:3},scenarioEffects:{investigation:3},response:"병원에서 받은 사고 날짜와 기기 백업 날짜를 나란히 적었다. 아직 결론은 없지만 확인 순서는 분명해졌다."}],memory:"돌아온 휴대폰의 시스템 정보부터 확인함"},
+    {id:"set-up-together",label:"하은과 복약 알람과 필수 연락처만 함께 설정한다",effects:{affection:8,trust:10},scenarioEffects:{haeunAffection:8,haeunTrust:10,memoryRecovery:2},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","call-haeun"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"하은은 자신의 번호를 ‘하은’이라고만 저장했다. 하트를 붙였다가 내 얼굴을 보고 지운 뒤, “이건 네가 기억나면 직접.”이라고 말했다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day2-rehabilitation",choiceIds:["take-her-hand"]}}],effects:{affection:4},scenarioEffects:{haeunAffection:4},response:"알람 설정을 마친 하은이 손을 내밀었다. 어제처럼 이번에도 잡을지는 내 쪽에서 정할 수 있게, 손바닥만 펴 둔 채였다."}],memory:"하은과 휴대폰의 필수 기능만 다시 설정함"},
+    {id:"seal-until-home",label:"인계 목록만 대조하고 내용 확인은 집에서 하기로 한다",effects:{confidence:8,stress:-4,trust:4},scenarioEffects:{investigation:4,haeunTrust:4},clues:["phone-return-receipt"],unlockedActions:["smartphone-basic","inspect-phone-at-home"],profileUnlocks:["haeun-contact"],followUpHooks:["day4-arrive-home"],response:"휴대폰, 지갑, 열쇠를 목록과 대조한 뒤 다시 봉투에 넣었다. 하은은 재촉하지 않고 봉투를 내 가방 맨 위에 놓았다.",memory:"휴대폰 기록 확인을 집에 도착한 뒤로 미룸"}
   ]
 },{
   id:"m30-day4-arrive-home",arc:"낯선 나의 집",window:[4,4],priority:1000,bgm:"theme",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day3-discharge-phone"},
-  title:"내가 알던 사람들",speaker:"하은",message:"낯선 집에서 생활의 기준을 세운 뒤, 휴대폰 속 오래된 별명이 말을 걸었다. 친구라는 사람의 기억도 하은의 설명도 자동으로 정답이 되지는 않았다.",
-  chapterType:"daily-life/social-verification-hybrid",targetPlaytimeMinutes:[12,16],timeWindow:"day-to-evening",location:"주인공의 집·역 앞 카페",participants:["protagonist","haeun","jihoon"],previousChoiceReferences:["m30-day3-discharge-phone"],
-  dramaticPurpose:"주인공이 집의 주도권을 회복하고 오래된 친구의 증언을 출처·시간·직접성에 따라 검증하며, 하은과 공유할 정보의 범위도 스스로 결정하게 한다.",
-  emotionalCurve:["낯선 집의 경계 5","생활적 온기 3","오래된 연락의 긴장 6","친구 재회의 어색함 5","사진과 습관의 친숙함 4","사고 질문의 긴장 7","증언 분류로 통제 회복 4","하은과 공유하는 신뢰 3","직장 연락의 다음 훅 5"],
-  sceneBeats:["맞는 열쇠와 낯선 현관","집에서 지킬 생활·조사 기준 선택","오래된 친구 지훈의 연락과 접촉 방식 선택","공개된 카페에서 관계와 출처 확인","시간이 붙은 취향 차이를 무해한 변화로 해석","사진·날짜·행동 사례로 과거 자아 대조","사고 관련 직접 지식과 전언 분리","지금부터의 친구 관계 규칙 합의","하은과 증언 공유 방식 선택","민호의 직장 복귀 연락으로 DAY 5 연결"],
-  informationBudget:{mustReveal:["지훈은 오래된 친구이며 직접 경험과 전언을 구분하려 한다","과거 취향과 현재 정보가 달라도 시간에 따른 변화일 수 있다","사고 전 마지막 직접 연락은 제한적이며 사고 경위는 확인되지 않았다","민호가 다음 날 복귀 절차를 설명할 예정이다"],mayReveal:["졸업식·입사 날·야간 작업실 사진의 날짜","주인공이 확인을 먼저 하던 행동 습관","하은은 지훈을 두 번 본 정도만 안다"],mustNotReveal:["사고의 진짜 원인","가짜 하은의 정체","하은이 알 수 없는 지훈과의 대화 내용","확인되지 않은 동승자나 충돌 세부"],playerMaySuspect:["친구와 연인의 기억은 서로 대조할 수 있는 자료이며 어느 한쪽도 단독 정답이 아니다"]},
+  title:"현관 안의 생활",speaker:"하은",message:"열쇠는 맞았지만 문 안쪽의 냄새도, 신발장에 놓인 운동화도 내 기억에는 없었다. 하은은 먼저 들어가지 않고 장바구니 손잡이만 고쳐 잡았다.",
+  dramaticPurpose:"주인공이 자신의 집을 첫 조사 공간으로 받아들이게 하고, 하은과 함께 살았던 생활의 온기를 미스터리보다 먼저 축적한다.",
+  emotionalCurve:["퇴원 안도 3","낯섦 5","생활적 웃음 4","상실감 7","과거의 온기 6","주도권 회복 5","내일의 부담 4"],
+  sceneBeats:["맞는 열쇠와 낯선 현관","하은이 입장 허락을 기다림","슬리퍼와 냉장고 메모를 통한 생활 대화","자신의 필체를 알아보지 못하는 상실","스마트폰 처리 방식에 따른 첫 조사 전략","집 조사 상태 저장","DAY 5 직장 복귀 예고"],
   voiceProfiles:{
     protagonist:{rhythm:"짧은 관찰과 확인 질문",humor:"마른 반문",emotion:"행동 순서와 시선으로 드러냄",relationshipVariation:"하은의 익숙함을 인정하되 입장과 조사 범위를 직접 정함"},
     haeun:{rhythm:"주인공보다 조금 길고 먼저 말을 엶",humor:"생활 습관을 이용한 가벼운 놀림",emotion:"재촉하지 않고 손을 멈추거나 실용적인 일을 함",relationshipVariation:"연인의 익숙함과 낯선 사람에게 필요한 허락을 함께 지킴"}
@@ -240,7 +182,7 @@ export const MARRIAGE_30_STORY_SCENES = [{
 },{
   id:"m30-day5-work-return",arc:"다시 만난 자리",window:[5,5],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day4-arrive-home"},
   title:"내 자리에 앉는 법",speaker:"윤서진",message:"출입증 사진 속 남자는 익숙한 표정으로 웃고 있었다. 회사 로비의 회전문 앞에서 하은은 내 넥타이를 한 번 보고 손을 거뒀다.",
-  chapterType:"daily-life/workplace-hybrid",targetPlaytimeMinutes:[12,16],timeWindow:"morning",participants:["protagonist","haeun","seojin","team-lead"],
+  chapterType:"daily-life/workplace-hybrid",targetPlaytimeMinutes:[5,8],timeWindow:"morning",participants:["protagonist","haeun","seojin","team-lead"],
   previousChoiceReferences:["m30-day4-arrive-home"],
   dramaticPurpose:"주인공이 과거의 직장 평판에 휩쓸리지 않고 복귀 방식을 선택하게 하며, 윤서진이 사람에 대한 호감과 능력·성장 가능성 평가를 서로 다른 축으로 시작하게 한다.",
   informationBudget:{mustReveal:["주인공은 사고 전 서비스 전략 업무를 맡았다","오늘은 정식 근무가 아니라 두 시간 적응 방문이다","윤서진은 주인공의 과거 업무 방식을 알고 있다"],mayReveal:["주인공이 실패를 문서로 남기던 습관","윤서진이 병원 소식을 꾸준히 확인했다"],mustNotReveal:["사고의 진짜 배후","가짜 하은의 정체","윤서진이 알 수 없는 사고 세부"],playerMaySuspect:["서진은 단순한 동료보다 주인공의 복귀에 관심이 많다"]},
@@ -303,135 +245,6 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"rebuild-social-context",label:"업무 전에 서진과 팀원들에게 내가 놓친 관계와 최근 변화를 직접 묻는다",effects:{social:7,confidence:3,energy:-3},scenarioEffects:{coworkerRelation:8,seojinAffection:10,seojinStatusInterest:2},unlockedActions:["coworker-lunch","ask-team-history"],profileUnlocks:["seojin-basic"],followUpHooks:["day6-life-restart"],response:"서진은 조직도 대신 사람 이름 옆에 ‘요즘 맡은 일’을 적었다. “관계를 업무 부록으로 안 보는 건 의외네요.” 말은 가벼웠지만, 점심 가능한 시간을 먼저 알려 준 사람은 서진이었다.",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day4-arrive-home",choiceIds:["restore-routine-together"]}}],scenarioEffects:{seojinAffection:3},unlockedActions:["seojin-lunch-invitation"],response:"복약 시간 때문에 점심 종료 시각을 먼저 말하자 서진이 바로 달력에 반영했다. “생활 계획을 숨기지 않는 쪽이 훨씬 같이 일하기 편해요. 점심은 짧게, 대신 다음에 제대로.”"}],memory:"업무보다 먼저 현재 동료 관계와 팀 변화를 다시 배움"},
     {id:"set-return-boundary",label:"기억 공백과 의료 제한을 공개하고 다음 방문의 업무 범위를 문서로 합의한다",effects:{confidence:9,health:3,stress:-3,work:3},scenarioEffects:{coworkerRelation:5,seojinAffection:5,seojinStatusInterest:7},clues:["work-return-plan"],unlockedActions:["planned-work-return","review-current-work"],profileUnlocks:["seojin-basic"],followUpHooks:["day6-life-restart"],response:"팀장은 업무 시간과 중단 기준을 문서에 적었다. 서진은 마지막 줄에 ‘모르면 확인, 기억나는 척 금지’를 추가했다. “책임지는 사람이 무리까지 책임질 필요는 없으니까요.”",outcomes:[{conditions:[{storyChoice:{sceneId:"m30-day4-arrive-home",choiceIds:["map-home-basics"]}}],scenarioEffects:{seojinStatusInterest:3},unlockedActions:["structured-work-review"],response:"집에서 정한 생활 구역표 옆에 회사의 업무 범위를 같은 형식으로 적었다. 서진은 잠시 보더니 중단 조건까지 숫자로 바꿨다. “경계를 정할 줄 아는 사람은 일정도 덜 망쳐요.”"}],memory:"기억 공백과 회복 한계를 공개하고 단계적 직장 복귀 범위를 합의함"}
   ]
-},{
-  id:"m30-day6-neighborhood",arc:"우리가 사는 동네",window:[6,6],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day5-work-return"},
-  title:"우리가 사는 동네",speaker:"하은",message:"약 목록과 임시 예비폰, 빈 동네 지도를 식탁 위에 펼쳤다. 오늘은 익숙한 길을 외우는 대신 돌아올 기준을 만들기로 했다.",
-  chapterType:"daily-life/relationship-hybrid",targetPlaytimeMinutes:[10,14],timeWindow:"late-morning-to-afternoon",participants:["protagonist","haeun","pharmacist","cafe-staff"],previousChoiceReferences:["m30-day5-work-return"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day6,expressionId:"calm",poseId:"phone"},
-  choices:[
-    {id:"date_new_place",label:"둘 다 처음인 곳에서 같은 출발선으로 시작한다",response:"둘 다 처음인 작은 전시관을 첫 현재형 데이트 장소로 정했다.",memory:"둘 다 처음인 장소에서 현재형 데이트를 시작하기로 함"},
-    {id:"date_revisit_with_opt_out",label:"과거 장소를 다시 가되 불편하면 즉시 바꾼다",response:"기억을 시험하지 않고 언제든 장소를 바꿀 수 있는 재방문을 약속했다.",memory:"과거 장소를 기억 시험 없이 다시 가기로 함"},
-    {id:"date_alternate_choices",label:"이동·식사·활동을 번갈아 고른다",response:"서로 정답을 맞히지 않고 한 번씩 직접 고르는 데이트를 약속했다.",memory:"데이트의 선택권을 번갈아 갖기로 함"}
-  ]
-},{
-  id:"m30-day7-first-present-date",arc:"오늘부터 우리의 데이트",window:[7,7],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day6-neighborhood"},
-  title:"오늘부터 우리의 데이트",speaker:"하은",message:"DAY 6에 정한 방식으로 첫 현재형 데이트를 시작한다. 계획을 지키는 것보다 함께 바꾸는 규칙을 지키기로 했다.",
-  chapterType:"relationship/daily-life-hybrid",targetPlaytimeMinutes:[9,13],timeWindow:"late-morning-to-late-afternoon",participants:["protagonist","haeun","bookshop-owner","gallery-staff"],previousChoiceReferences:["m30-day6-neighborhood"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day7,expressionId:"smile",poseId:"standing"},
-  choices:[
-    {id:"date7_record_shared_photo",label:"고른 물건과 손만 나오게 사진을 남기고 함께 제목을 붙인다",response:"오늘 함께 고른 물건과 손만 담은 사진에 둘만의 제목을 붙였다.",memory:"첫 현재형 데이트를 함께 고른 물건의 사진으로 남김"},
-    {id:"date7_record_two_sentences",label:"각자 기억하고 싶은 한 문장을 써서 서로 바꿔 읽는다",response:"서로의 한 문장을 바꿔 읽으며 오늘의 기억을 과거와 분리해 남겼다.",memory:"첫 현재형 데이트를 서로 쓴 두 문장으로 남김"},
-    {id:"date7_record_next_rule",label:"오늘 잘된 변경 규칙을 다음 데이트의 공동 규칙으로 저장한다",response:"계획은 함께 세우고 변경은 실패로 세지 않는다는 규칙을 저장했다.",memory:"첫 현재형 데이트의 변경 원칙을 다음 공동 규칙으로 남김"}
-  ]
-},{
-  id:"m30-day8-independent-errand",arc:"혼자 할 것, 같이 할 것",window:[8,8],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day7-first-present-date"},
-  title:"혼자 할 것, 같이 할 것",speaker:"하은",message:"약 관련 확인은 함께 마친 뒤 우편함과 세제 구매는 혼자 처리한다. 출발 전에 정한 연락 계약은 두 사람 모두가 지킨다.",
-  chapterType:"daily-life/independence-hybrid",targetPlaytimeMinutes:[9,13],timeWindow:"morning-to-early-afternoon",participants:["protagonist","haeun","pharmacist","household-store-staff"],previousChoiceReferences:["m30-day7-first-present-date"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
-  choices:[
-    {id:"errand8_sort_receipt_together",label:"영수증과 우편물을 함께 분류하며 처리 결과를 공유한다",response:"우편물과 영수증을 함께 분류하며 혼자 처리한 하루를 현재의 생활 기록으로 남겼다.",memory:"혼자 다녀온 생활 심부름의 결과를 함께 분류함"},
-    {id:"errand8_explain_decision_log",label:"관찰·가능성·확인·선택 순서로 판단 기록을 설명한다",response:"결과보다 판단 순서를 설명해 기억 공백 속에서도 사용할 수 있는 생활 기준을 공유했다.",memory:"혼자 처리한 심부름의 판단 과정을 현재 기록으로 남김"},
-    {id:"errand8_set_next_solo_boundary",label:"오늘의 예외를 정리하고 다음 혼자 외출의 경계를 합의한다",response:"혼자 처리할 일과 함께 확인할 일, 변경 시 연락할 조건을 다음 외출 규칙으로 저장했다.",memory:"다음 혼자 외출의 연락·공유 경계를 합의함"}
-  ]
-},{
-  id:"m30-day9-second-office-adaptation",arc:"두 번째 출근, 현재의 방식",window:[9,9],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day8-independent-errand"},
-  title:"두 번째 출근, 현재의 방식",speaker:"윤서진",message:"DAY 5에 합의한 제한 범위와 DAY 8에 검증한 독립 행동 규칙을 들고 두 번째 직장 적응 방문을 시작한다.",
-  chapterType:"work/independence/relationship-hybrid",targetPlaytimeMinutes:[9,13],timeWindow:"morning-to-early-afternoon",participants:["protagonist","haeun","minho","team-lead","seojin"],previousChoiceReferences:["m30-day5-work-return","m30-day8-independent-errand"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
-  choices:[
-    {id:"office9_debrief_name_limits",label:"막힌 지점과 불편했던 순간을 먼저 공개하고 다음 제한을 조정한다",response:"취약함을 숨기지 않되 업무 평가와 섞지 않는 피드백 계약을 남겼다.",memory:"두 번째 직장 적응 방문의 불편과 제한을 직접 말함"},
-    {id:"office9_debrief_write_protocol",label:"책임 분리 절차와 다음 3시간 블록의 평가 기준을 문서화한다",response:"현재의 책임 분리 절차를 재현 가능한 다음 방문 기준으로 저장했다.",memory:"다음 3시간 직장 리듬의 업무 절차를 문서화함"},
-    {id:"office9_debrief_targeted_feedback",label:"서진에게 업무 판단 하나, 민호에게 상호작용 하나만 묻는다",response:"업무와 관계의 평가자를 분리해 과잉 일반화하지 않는 피드백을 받았다.",memory:"업무 판단과 팀 상호작용 피드백을 분리해 받음"}
-  ]
-},{
-  id:"m30-day10-three-hour-work-rhythm",arc:"세 시간이라는 현재",window:[10,10],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day9-second-office-adaptation"},
-  title:"세 시간이라는 현재",speaker:"하은",message:"DAY 9의 90분 업무 경계를 세 시간 리듬으로 확장하되 휴식·승인 금지·현재 동료 점심을 각각 독립된 기준으로 검증한다.",
-  chapterType:"work/recovery/social-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun","minho","team-lead","seojin"],previousChoiceReferences:["m30-day9-second-office-adaptation"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
-  choices:[
-    {id:"work10_debrief_keep_rhythm",label:"오늘의 세 시간 리듬을 다음 방문에도 그대로 유지한다",response:"작동한 리듬을 성급히 확대하지 않고 반복 가능한 현재 기준으로 남겼다.",memory:"DAY 10의 세 시간 업무 리듬을 다음 방문에도 유지하기로 함"},
-    {id:"work10_debrief_adjust_one_block",label:"피로가 높았던 한 블록만 줄이고 나머지는 유지한다",response:"하루 전체를 실패로 보지 않고 피로가 높았던 한 구간만 조정했다.",memory:"세 시간 근무 중 피로가 높았던 한 블록만 조정함"},
-    {id:"work10_debrief_separate_scores",label:"업무 결과·회복 상태·동료 관계를 서로 다른 점수로 남긴다",response:"같은 하루의 업무·몸·사람을 서로 덮지 않는 세 기록으로 저장했다.",memory:"DAY 10의 업무 결과, 회복 상태, 동료 관계를 분리해 기록함"}
-  ]
-},{
-  id:"m30-day11-current-life-plan",arc:"현재 생활표",window:[11,11],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day10-three-hour-work-rhythm"},
-  title:"현재 생활표",speaker:"하은",message:"병원·근무·개인 시간·공동 약속을 출처와 소유권이 있는 한 주 생활표로 만들고 충돌·공유 규칙을 정한다.",
-  chapterType:"daily-life/recovery/relationship-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day10-three-hour-work-rhythm"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
-  choices:[
-    {id:"life11_share_changes_only",label:"하은과는 변경된 시간과 필요한 도움만 공유한다",response:"연락을 하루 전체 보고가 아니라 합의가 달라질 때 쓰는 도구로 정했다.",memory:"생활표의 변경 사항과 필요한 도움만 하은과 공유하기로 함"},
-    {id:"life11_share_weekly_review",label:"주말에 한 번만 함께 생활표를 검토한다",response:"매일 감시하지 않고 정해진 주기에 공동 계획만 검토하기로 했다.",memory:"하은과 주말 한 번만 공동 생활표를 검토하기로 함"},
-    {id:"life11_share_separate_ownership",label:"개인 일정은 각자 관리하고 공동 약속만 함께 수정한다",response:"연인 관계와 시간의 소유권을 분리해 공동 약속만 함께 관리했다.",memory:"개인 일정의 소유권을 지키고 공동 약속만 함께 수정하기로 함"}
-  ]
-},{
-  id:"m30-day12-current-account-review",arc:"현재 계정의 주인",window:[12,12],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day11-current-life-plan"},
-  title:"현재 계정의 주인",speaker:"하은",message:"공식 명의·현재 명세·생활비 소유권만 확인하고 기본 금융 확인과 투자 판단의 권한을 분리한다.",
-  chapterType:"daily-life/finance/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day11-current-life-plan"],
-  presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day12,expressionId:"calm",poseId:"standing"},
-  choices:[
-    {id:"account12_access_read_only",label:"잔액·명세·고정 생활비만 읽기 전용으로 연다",response:"기본 금융 확인만 복구하고 송금과 투자 기능은 계속 잠갔다.",memory:"현재 계정을 읽기 전용 범위로 복구함"},
-    {id:"account12_access_monthly_review",label:"월 1회 현재 생활비 검토만 일정에 저장한다",response:"계정 확인을 불안에 따른 감시가 아니라 목적과 주기가 있는 생활 관리로 정했다.",memory:"현재 생활비를 월 1회만 검토하기로 함"},
-    {id:"account12_access_separate_investment",label:"생활 계정 확인과 투자·저축 판단을 완전히 분리한다",response:"현재 생활비 확인과 자산을 위험에 놓는 판단 권한을 분리했다.",memory:"기본 금융 확인과 투자·저축 판단을 분리함"}
-  ]
-},{
-  id:"m30-day13-current-household-budget",arc:"합의된 만큼만 공동",window:[13,13],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day12-current-account-review"},
-  title:"합의된 만큼만 공동",speaker:"하은",message:"확인된 개인 생활비와 새로 동의한 공동 항목을 분리하고 부담·검토·사생활 경계를 가진 현재 가계 예산을 만든다.",chapterType:"daily-life/finance/relationship-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day12-current-account-review"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day6,expressionId:"smile",poseId:"standing"},
-  choices:[
-    {id:"budget13_review_totals_only",label:"공동 장부에는 합계와 상태만 공유하고 개인 내역은 닫는다",response:"공동 비용의 투명성과 개인 금융 사생활을 함께 보존했다.",memory:"공동 장부에는 합계와 확인 상태만 공유하기로 함"},
-    {id:"budget13_review_receipt_consent",label:"영수증은 해당 항목을 함께 확인할 때만 연다",response:"공동 항목의 증빙 확인이 개인 소비 전체를 볼 권한이 되지 않게 했다.",memory:"공동 영수증은 항목별 동의가 있을 때만 열기로 함"},
-    {id:"budget13_review_weekly_changes",label:"주 1회 변경된 항목만 함께 검토한다",response:"가계 예산을 상시 감시가 아닌 정해진 주기의 변경 기록으로 만들었다.",memory:"가계 예산의 변경 항목을 주 1회만 함께 검토하기로 함"}
-  ]
-},{
-  id:"m30-day14-current-choice-spending",arc:"지금 고르는 것",window:[14,14],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day13-current-household-budget"},title:"지금 고르는 것",speaker:"하은",message:"현재 예산 안에서 개인·공동·선물 소비의 소유권과 동의를 분리하고 안전한 일반 쇼핑 범위를 연다.",chapterType:"daily-life/finance/relationship-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day13-current-household-budget"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
-  choices:[{id:"spend14_consent_ask_first",label:"선물은 품목·가격 범위를 먼저 물은 뒤에만 산다",response:"선물을 비밀 지출이 아니라 동의와 선택이 함께 있는 소비로 정했다.",memory:"선물의 품목과 가격 범위를 먼저 확인하기로 함"},{id:"spend14_consent_wishlist",label:"서로의 현재 위시리스트를 각자 수정할 수 있게 만든다",response:"선물 후보를 변할 수 있고 의무가 아닌 현재 취향 기록으로 만들었다.",memory:"각자 수정 가능한 현재 위시리스트를 만듦"},{id:"spend14_consent_no_surprise",label:"오늘은 선물을 사지 않고 필요한 것만 기록한다",response:"사지 않는 선택을 애정 부족으로 세지 않는 선물 경계를 만들었다.",memory:"선물을 사지 않고 필요한 항목만 기록함"}]
-},{
-  id:"m30-day15-current-leisure-date",arc:"오늘의 여가",window:[15,15],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day14-current-choice-spending"},title:"오늘의 여가",speaker:"하은",message:"현재 상태와 예산 안에서 활동 선택권·계획 변경권·기록 공개 동의를 분리한 여가 데이트를 만든다.",chapterType:"daily-life/romance/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day14-current-choice-spending"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day7,expressionId:"smile",poseId:"standing"},
-  choices:[{id:"leisure15_privacy_private_note",label:"사진 없이 각자 고른 한 문장만 비공개로 남긴다",response:"데이트 기록을 공개 증명이 아닌 둘의 현재 기억으로 남겼다.",memory:"DAY 15 데이트를 비공개 한 문장으로 기록함"},{id:"leisure15_privacy_ask_each_photo",label:"사진마다 촬영·보관·공개 동의를 따로 확인한다",response:"한 번의 동의를 모든 사진의 공개 권한으로 확대하지 않았다.",memory:"사진별 촬영·보관·공개 동의를 분리함"},{id:"leisure15_privacy_no_location",label:"둘만 보는 사진에도 위치와 이동 경로는 저장하지 않는다",response:"데이트 기록과 생활 반경의 사생활을 분리했다.",memory:"데이트 사진에서 위치와 이동 경로를 제외함"}]
-},{
-  id:"m30-day16-current-social-circle",arc:"한 명씩 다시",window:[16,16],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day15-current-leisure-date"},title:"한 명씩 다시",speaker:"지훈",message:"과거 친구 관계를 자동 복원하지 않고 현재 소개·연락 범위·만남 종료권·정보 공유 동의를 다시 정한다.",chapterType:"daily-life/social/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun","best-friend"],previousChoiceReferences:["m30-day15-current-leisure-date","m30-day4-arrive-home"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"social16_sharing_current_notes",label:"오늘 직접 확인한 현재 정보만 관계망 기록에 남긴다",response:"현재 확인된 사실만 지훈의 관계 기록으로 남겼다.",memory:"지훈과 오늘 확인한 현재 정보만 관계망에 저장함"},{id:"social16_sharing_old_media_closed",label:"과거 사진·대화 백업은 별도 동의 전까지 열지 않는다",response:"친구 관계 확인과 과거 아카이브 접근 권한을 분리했다.",memory:"과거 친구 사진과 대화 백업을 계속 닫아 둠"},{id:"social16_sharing_ask_each_person",label:"다른 사람에게 내 상태를 전할 때마다 먼저 묻도록 한다",response:"친구라는 이유로 내 상태를 대신 공유하지 못하게 했다.",memory:"내 상태를 다른 사람에게 알릴 때마다 동의를 묻기로 함"}]
-},{
-  id:"m30-day17-current-health-routine",arc:"지금의 몸",window:[17,17],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day16-current-social-circle"},title:"지금의 몸",speaker:"혜원",message:"공식 현재 처방을 기준으로 복약·수면·식사·움직임 루틴과 의료 연락·데이터 공유 경계를 다시 만든다.",chapterType:"daily-life/health/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun","hospital-nurse"],previousChoiceReferences:["m30-day16-current-social-circle","m30-day6-neighborhood"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"health17_data_private_summary",label:"하은에게는 필요한 도움과 이상 신호 요약만 공유한다",response:"돌봄에 필요한 정보와 전체 의료 기록 접근 권한을 분리했다.",memory:"하은에게 필요한 건강 도움과 이상 신호 요약만 공유함"},{id:"health17_data_hospital_first",label:"이상 수치는 병원에 먼저 연락하고 관계 알림은 그다음에 한다",response:"의료 판단과 연인의 걱정이 연락 순서를 뒤바꾸지 않게 했다.",memory:"이상 수치가 생기면 병원에 먼저 연락하기로 함"},{id:"health17_data_no_continuous",label:"건강 앱의 상시 위치·수치 공유는 계속 꺼 둔다",response:"돌봄과 건강 데이터 상시 감시 권한을 분리했다.",memory:"건강 앱의 상시 위치와 수치 공유를 끔"}]
-},{
-  id:"m30-day18-current-home-safety",arc:"안전하게 사는 집",window:[18,18],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day17-current-health-routine"},title:"안전하게 사는 집",speaker:"하은",message:"현재 생활 동선·약 보관·비상 연락·출입 권한을 점검하되 집 안전 확인을 과거 물건 수색이나 상시 관리 권한으로 확대하지 않는다.",chapterType:"daily-life/home-safety/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day17-current-health-routine","m30-day2-rehabilitation"],presentation:{backgroundId:"day2-home-entry",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"home18_access_one_time_code",label:"비상시에는 목적과 만료 시간이 있는 1회 출입 코드를 쓴다",response:"비상 출입을 영구 권한이 아닌 기록되는 일회성 도움으로 제한했다.",memory:"DAY 18 비상 출입에 만료되는 1회 코드를 사용하기로 함"},{id:"home18_access_call_first",label:"응답 가능할 때는 연락 후 내가 직접 문을 연다",response:"도움을 요청하는 순서에서도 집에 들어올 사람을 직접 선택했다.",memory:"DAY 18 비상 상황이 아니면 연락 후 직접 문을 열기로 함"},{id:"home18_access_no_admin",label:"누구에게도 영구 도어락 관리자 권한을 주지 않는다",response:"연인과 관리자의 도움을 집의 영구 접근 권한과 분리했다.",memory:"DAY 18 도어락 영구 관리자 권한을 공유하지 않기로 함"}]
-},{
-  id:"m30-day19-current-shared-chore",arc:"같이 사는 연습",window:[19,19],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day18-current-home-safety"},title:"같이 사는 연습",speaker:"하은",message:"과거 역할을 복원하지 않고 현재 체력·소유 구역·동의·중단 기준으로 공동 집안일을 다시 나눈다.",chapterType:"daily-life/shared-chore/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day18-current-home-safety","m30-day11-current-life-plan"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"chore19_renegotiate_stop",label:"피로나 통증 기준에 닿으면 즉시 멈추고 다시 나눈다",response:"처음 정한 역할보다 현재 몸의 중단 기준을 우선했다.",memory:"DAY 19 피로나 통증이 생기면 집안일을 즉시 재협상하기로 함"},{id:"chore19_renegotiate_swap",label:"못 한 몫은 빚으로 남기지 않고 다음 역할과 교환한다",response:"대신 한 집안일을 관계의 빚으로 계산하지 않았다.",memory:"DAY 19 못 한 집안일은 다음 역할과 교환하기로 함"},{id:"chore19_renegotiate_no_score",label:"속도·완성도·횟수를 관계 점수로 계산하지 않는다",response:"공동 생활표를 연인의 평가표와 분리했다.",memory:"DAY 19 집안일 기록을 관계 평가에 사용하지 않기로 함"}]
-},{
-  id:"m30-day20-current-shared-meal",arc:"오늘 함께 먹는 것",window:[20,20],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day19-current-shared-chore"},title:"오늘 함께 먹는 것",speaker:"하은",message:"과거 입맛과 주문 기록을 복원하지 않고 현재 건강·비용·조리 부담·남은 음식 동의로 공동 식사를 만든다.",chapterType:"daily-life/shared-meal/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day19-current-shared-chore","m30-day17-current-health-routine"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"meal20_finish_stop_cooking",label:"피로나 어지럼이 생기면 조리를 멈추고 간단식으로 바꾼다",response:"식사의 완성보다 현재 몸의 안전한 중단을 우선했다.",memory:"DAY 20 피로나 어지럼이 생기면 조리를 중단하기로 함"},{id:"meal20_finish_ask_leftovers",label:"남은 음식의 보관·처분은 소유자에게 먼저 묻는다",response:"공동 식사 뒤에도 각자의 음식 선택권을 유지했다.",memory:"DAY 20 남은 음식은 소유자 동의 후 처리하기로 함"},{id:"meal20_finish_no_food_score",label:"먹은 양과 조리 완성도를 건강·관계 점수로 쓰지 않는다",response:"공동 식사를 건강 검사와 관계 평가에서 분리했다.",memory:"DAY 20 섭취량과 조리 완성도를 평가하지 않기로 함"}]
-},{
-  id:"m30-day21-current-full-workday",arc:"하루를 끝까지 일하는 법",window:[21,21],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day20-current-shared-meal"},title:"하루를 끝까지 일하는 법",speaker:"민호",message:"과거의 정상 근무를 복원하지 않고 현재 업무 권한·휴식·건강 정보·퇴근과 초과근무 동의로 첫 전일 근무를 완성한다.",chapterType:"work/full-day/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun","office-best-male","team-lead"],previousChoiceReferences:["m30-day20-current-shared-meal","m30-day10-three-hour-work-rhythm"],presentation:{backgroundId:"office-day",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"work21_exit_on_time",label:"미완료 업무를 인계하고 정시에 퇴근한다",response:"미완료 업무를 건강과 퇴근 선택권보다 우선하지 않았다.",memory:"DAY 21 미완료 업무를 인계하고 정시에 퇴근함"},{id:"work21_exit_new_approval",label:"초과근무는 당일 범위·시간·보상 재승인 뒤에만 한다",response:"과거 포괄 동의와 현재의 초과근무 승인을 분리했다.",memory:"DAY 21 초과근무를 매번 새로 승인받기로 함"},{id:"work21_exit_no_auto_overtime",label:"근태 시스템의 자동 연장·과거 야근 권한을 계속 끈다",response:"과거 야근 관행이 현재 근무를 자동 연장하지 못하게 했다.",memory:"DAY 21 자동 근무 연장과 과거 야근 권한을 끔"}]
-},{
-  id:"m30-day22-current-recovery-day",arc:"아무것도 증명하지 않는 날",window:[22,22],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day21-current-full-workday"},title:"아무것도 증명하지 않는 날",speaker:"하은",message:"전일 근무 뒤 현재 몸의 신호·최소 루틴·연락하지 않을 시간·활동 중단 기준으로 회복일을 지킨다.",chapterType:"daily-life/recovery/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day21-current-full-workday","m30-day17-current-health-routine"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"recovery22_activity_stop_early",label:"괜찮아 보여도 정한 시간 전에 가벼운 활동을 끝낸다",response:"상태가 좋을 때도 회복일의 중단 기준을 지켰다.",memory:"DAY 22 가벼운 활동을 정한 시간 전에 끝냄"},{id:"recovery22_activity_symptom_stop",label:"증상이 생기면 목표량과 관계없이 즉시 멈춘다",response:"회복 목표보다 현재 증상과 안전을 우선했다.",memory:"DAY 22 증상이 생기면 목표량과 무관하게 활동을 멈추기로 함"},{id:"recovery22_activity_no_score",label:"걸음·수면·회복량을 연속 달성이나 관계 점수로 쓰지 않는다",response:"회복을 성과와 관계 평가에서 분리했다.",memory:"DAY 22 회복 수치를 연속 달성이나 관계 점수로 쓰지 않기로 함"}]
-},{
-  id:"m30-day23-current-family-contact",arc:"가족도 현재형으로 다시",window:[23,23],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day22-current-recovery-day"},title:"가족도 현재형으로 다시",speaker:"하은",message:"가족이라는 이름만으로 과거 관계를 복원하지 않고 공식 확인·현재 정보 공유·통화 종료·다음 연결 동의를 새로 정한다.",chapterType:"daily-life/family/boundary-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun","verified-family-contact"],previousChoiceReferences:["m30-day22-current-recovery-day","m30-day4-arrive-home"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"family23_future_scheduled_call",label:"다음 통화의 날짜·길이·주제를 새로 정한다",response:"가족 연락도 일정과 범위를 매번 새로 합의하게 했다.",memory:"DAY 23 다음 가족 통화의 날짜·길이·주제를 새로 정함"},{id:"family23_future_each_consent",label:"다른 가족에게 연결할 때마다 먼저 내게 묻도록 한다",response:"한 사람의 확인을 가족 전체 접근 권한으로 확대하지 않았다.",memory:"DAY 23 다른 가족 연결마다 동의를 받기로 함"},{id:"family23_future_end_anytime",label:"불편하거나 피곤하면 설명 없이 통화를 끝낼 수 있게 한다",response:"가족 연락에서도 현재 몸과 감정에 따른 종료권을 지켰다.",memory:"DAY 23 가족 통화를 언제든 종료할 수 있게 함"}]
-},{
-  id:"m30-day24-current-commitment-check",arc:"약속을 다시 선택하는 날",window:[24,24],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day23-current-family-contact"},title:"약속을 다시 선택하는 날",speaker:"하은",message:"사고 전 결혼 약속과 돌봄의 빚이 아니라 현재의 이유·생활 권리·미확인 항목·재확인·연기·철회권으로 결혼 의사를 다시 확인한다.",chapterType:"romance/commitment/consent-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day23-current-family-contact","m30-day13-current-household-budget"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"commit24_consent_reconfirm",label:"예식 전날까지 서로의 의사를 다시 확인한다",response:"오늘의 동의가 예식 날의 대답을 대신하지 않게 했다.",memory:"DAY 24 예식 전날까지 결혼 의사를 다시 확인하기로 함"},{id:"commit24_consent_postpone",label:"한 사람이라도 부담되면 이유 없이 일정을 미룰 수 있게 한다",response:"결혼 일정의 연기를 거절이나 배신과 분리했다.",memory:"DAY 24 누구든 이유 없이 결혼 일정을 미룰 수 있게 함"},{id:"commit24_consent_withdraw",label:"결혼 동의는 언제든 철회할 수 있고 관계의 처벌로 쓰지 않는다",response:"결혼 의사를 관계 유지의 의무와 분리했다.",memory:"DAY 24 결혼 동의를 언제든 철회할 수 있게 함"}]
-},{
-  id:"m30-day25-current-wedding-scope",arc:"우리에게 필요한 결혼의 범위",window:[25,25],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day24-current-commitment-check"},title:"우리에게 필요한 결혼의 범위",speaker:"하은",message:"현재 결혼 의사를 법적 절차·예식 형식·비용·초대·개인정보 공개의 별도 동의로 나누고 실행 전 변경·보류권을 정한다.",chapterType:"romance/wedding/scope-consent-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day24-current-commitment-check","m30-day13-current-household-budget","m30-day23-current-family-contact"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"wedding25_guest_each_consent",label:"초대 대상은 한 사람씩 함께 확인한 뒤 연락한다",response:"과거 명단을 현재 초대 동의로 간주하지 않았다.",memory:"DAY 25 초대 대상을 한 명씩 현재 동의로 확인하기로 함"},{id:"wedding25_guest_private_health",label:"사고·기억·건강 정보는 별도 허락 없이는 공개하지 않는다",response:"결혼 소식과 개인 건강 정보의 공개 동의를 분리했다.",memory:"DAY 25 사고와 건강 정보를 예식 공개 범위에서 분리함"},{id:"wedding25_guest_change_anytime",label:"초대·공개 범위는 발송 전까지 누구든 줄이거나 보류할 수 있다",response:"초대 명단과 공개 범위를 언제든 변경할 수 있게 했다.",memory:"DAY 25 초대와 공개 범위를 발송 전까지 변경 가능하게 함"}]
-},{
-  id:"m30-day26-current-legal-preparation",arc:"서명보다 먼저 확인할 것",window:[26,26],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day25-current-wedding-scope"},title:"서명보다 먼저 확인할 것",speaker:"하은",message:"혼인 준비와 제출을 분리하고 최소 서류·법적 효과·개별 재산과 정보 권리·직접 서명·전문가 확인·중단권을 현재 동의로 정한다.",chapterType:"romance/legal/preparation-consent-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day25-current-wedding-scope","m30-day12-financial-rescue","m30-day18-current-home-safety"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"legal26_signature_each_read",label:"최종 문서는 각자가 직접 읽고 같은 자리에서 따로 서명한다",response:"한 사람의 서명이나 설명이 둘의 동의를 대신하지 않게 했다.",memory:"DAY 26 최종 문서를 각자 읽고 따로 서명하기로 함"},{id:"legal26_signature_expert_check",label:"불명확한 조항은 독립된 전문가에게 확인한 뒤 결정한다",response:"모르는 법적 효과를 관계 안의 추측으로 결정하지 않았다.",memory:"DAY 26 불명확한 법적 조항을 독립 전문가에게 확인하기로 함"},{id:"legal26_signature_stop_anytime",label:"제출 직전까지 누구든 설명 없이 중단하고 다시 검토할 수 있다",response:"준비 비용과 시간이 최종 제출을 강제하지 못하게 했다.",memory:"DAY 26 혼인 서류 제출을 직전까지 중단할 수 있게 함"}]
-},{
-  id:"m30-day27-current-final-check",arc:"멈출 수 있는 최종 점검",window:[27,27],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day26-current-legal-preparation"},title:"멈출 수 있는 최종 점검",speaker:"하은",message:"완료율이 아니라 현재 결혼 의사·몸과 감정의 중단 신호·확인된 실행 항목·담당과 승인·연기·취소·귀가 경로를 함께 점검한다.",chapterType:"romance/wedding/final-check-consent-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day26-current-legal-preparation","m30-day17-current-health-routine","m30-day24-current-commitment-check"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"final27_execute_only_confirmed",label:"확인된 비용·서류·초대 항목만 실행 목록에 남긴다",response:"미확인 항목을 완료나 동의로 바꾸지 않았다.",memory:"DAY 27 확인된 항목만 결혼 실행 목록에 남김"},{id:"final27_execute_each_owner",label:"각 업무의 담당자와 최종 승인자를 분리해 적는다",response:"준비 담당이 상대의 최종 결정을 대신하지 않게 했다.",memory:"DAY 27 결혼 준비 담당과 최종 승인자를 분리함"},{id:"final27_execute_cancel_path",label:"연기·취소 연락과 환불·귀가 동선을 실제 연락처와 함께 준비한다",response:"중단권을 실제로 실행할 수 있는 연락과 이동 경로를 만들었다.",memory:"DAY 27 연기·취소·환불·귀가 경로를 준비함"}]
-},{
-  id:"m30-day28-current-ceremony-rehearsal",arc:"멈추는 연습도 리허설",window:[28,28],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day27-current-final-check"},title:"멈추는 연습도 리허설",speaker:"하은",message:"확정되지 않은 예식장을 꾸며내지 않고 집에서 짧은 동선·휴식·출구·귀가·중단 신호를 실제로 시험해 부담 구간을 삭제하고 여유 시간을 늘린다.",chapterType:"romance/wedding/rehearsal-safety-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day27-current-final-check","m30-day17-current-health-routine","m30-day25-current-wedding-scope"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"rehearsal28_adapt_remove_step",label:"부담이 된 순서는 본식 계획에서 삭제한다",response:"리허설의 부담을 참아야 할 과제로 바꾸지 않았다.",memory:"DAY 28 부담이 된 예식 순서를 삭제함"},{id:"rehearsal28_adapt_time_buffer",label:"각 순서 사이 휴식 여유와 지연 가능 시간을 늘린다",response:"예식 진행표에 회복과 지연을 위한 실제 여유를 넣었다.",memory:"DAY 28 예식 순서 사이 휴식과 지연 여유를 늘림"},{id:"rehearsal28_adapt_no_audience_proof",label:"하객·촬영·진행자의 기대보다 둘의 중단 결정을 우선한다",response:"타인의 기다림과 촬영이 둘의 중단권을 무효화하지 못하게 했다.",memory:"DAY 28 하객과 촬영보다 둘의 중단 결정을 우선함"}]
-},{
-  id:"m30-day29-current-eve-reconfirmation",arc:"내일을 확정하지 않는 전날",window:[29,29],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day28-current-ceremony-rehearsal"},title:"내일을 확정하지 않는 전날",speaker:"하은",message:"각자의 현재 의사를 독립적으로 확인하고 수면·식사·복약·아침 몸 상태를 우선하며 진행·축소·연기를 같은 크기의 선택으로 남긴다.",chapterType:"romance/wedding/eve-reconfirmation-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-night",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day28-current-ceremony-rehearsal","m30-day24-current-commitment-check","m30-day17-current-health-routine"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"eve29_plan_proceed_reask",label:"진행하되 출발·도착·서명 직전에 매번 다시 묻는다",response:"전날의 동의가 당일 각 단계의 대답을 대신하지 않게 했다.",memory:"DAY 29 출발·도착·서명 직전에 결혼 의사를 다시 묻기로 함"},{id:"eve29_plan_simplify",label:"예식 순서를 더 줄이고 둘의 의사 확인만 남긴다",response:"외부 형식보다 둘의 현재 의사 확인만 남겼다.",memory:"DAY 29 예식 순서를 더 줄이고 의사 확인만 남김"},{id:"eve29_plan_postpone",label:"한 사람이라도 부담되면 비용과 알림보다 먼저 연기한다",response:"비용과 외부 기대가 당일 연기를 막지 못하게 했다.",memory:"DAY 29 누구든 부담되면 예식을 연기하기로 함"}]
-},{
-  id:"m30-day30-current-wedding-decision",arc:"오늘의 우리가 고르는 결말",window:[30,30],priority:1000,bgm:"dateShopping",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day29-current-eve-reconfirmation"},title:"오늘의 우리가 고르는 결말",speaker:"하은",message:"아침 몸 상태와 각자의 당일 동의를 확인하고 현재 범위 진행·연기·예식 없는 관계를 모두 처벌 없는 완성된 선택으로 남긴다.",chapterType:"romance/wedding/current-decision-finale",targetPlaytimeMinutes:[10,15],timeWindow:"morning-to-evening",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day29-current-eve-reconfirmation","m30-day24-current-commitment-check","m30-day1-hospital-awakening"],presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"calm",poseId:"standing"},
-  choices:[{id:"decision30_proceed_current_scope",label:"오늘 확인한 최소 범위로 진행하고 단계마다 다시 묻는다",response:"현재 범위 안에서 각 단계의 동의를 다시 확인하며 진행했다.",memory:"DAY 30 현재 최소 범위와 단계별 동의로 진행함"},{id:"decision30_postpone_together",label:"오늘은 연기하고 다음 날짜를 정하지 않은 채 함께 돌아온다",response:"외부 비용과 기대보다 둘의 현재 상태를 우선해 함께 연기했다.",memory:"DAY 30 새 날짜를 강제하지 않고 결혼을 연기함"},{id:"decision30_partnership_without_ceremony",label:"예식·서명 없이도 현재의 관계를 계속 선택한다",response:"형식과 무관하게 현재의 관계를 계속 선택했다.",memory:"DAY 30 예식 없이 현재의 관계를 계속 선택함"}]
 }];
 
 const STANDARD_STORY_SCENES = [

@@ -1,29 +1,29 @@
 const ID="m30-day2-rehabilitation";
 const BG={bed:"day2-hospital-bedside",corridor:"day2-recovery-corridor",lobby:"day2-hospital-lobby",exit:"day2-hospital-exit",car:"day2-car-interior",outside:"day2-home-exterior",home:"day2-home-entry",room:"day2-bedroom"};
-const H="assets/characters/day2/haeun/poses/",P="assets/props/day2/pov/",CG="assets/events/day2/",NPC="assets/npcs/day1/hq/";
+const H="assets/characters/day2/haeun/poses/",P="assets/props/day2/pov/",CG="assets/events/day2/",NPC="assets/npcs/day1/";
 export const DAY2_RUNTIME_OVERLAYS=Object.freeze({
   haeun:Object.freeze({
-    "support-offer-open-palm":`${H}haeun-day2-pose-support-offer-open-palm-2d-v3.png`,
+    "support-offer-open-palm":`${H}haeun-day2-pose-support-offer-open-palm-2d-hq-v2.png`,
     "forearm-support-2d-v3":`${H}haeun-day2-pose-forearm-support-2d-v3.png`,
-    "paced-walk-beside":`${H}haeun-day2-pose-paced-walk-beside-2d-v3.png`,
-    "pack-and-present":`${H}haeun-day2-pose-pack-and-present-2d-v3.png`,
+    "paced-walk-beside":`${H}haeun-day2-pose-paced-walk-beside-2d-hq-v2.png`,
+    "pack-and-present":`${H}haeun-day2-pose-pack-and-present-2d-hq-v2.png`,
     "safe-driving-2d-v3":`${H}haeun-day2-pose-safe-driving-2d-v3.png`,
-    "key-handover-step-aside":`${H}haeun-day2-pose-key-handover-step-aside-2d-v3.png`,
-    "photo-side-inspection":`${H}haeun-day2-pose-photo-side-inspection-2d-v3.png`,
-    "doorframe-permission-wait":`${H}haeun-day2-pose-doorframe-permission-wait-2d-v3.png`,
-    "departing-open-wave":`${H}haeun-day2-pose-departing-open-wave-2d-v3.png`
+    "key-handover-step-aside":`${H}haeun-day2-pose-key-handover-step-aside-2d-hq-v2.png`,
+    "photo-side-inspection":`${H}haeun-day2-pose-photo-side-inspection-2d-hq-v2.png`,
+    "doorframe-permission-wait":`${H}haeun-day2-pose-doorframe-permission-wait-2d-hq-v2.png`,
+    "departing-open-wave":`${H}haeun-day2-pose-departing-open-wave-2d-hq-v2.png`
   }),
   pov:Object.freeze({
     "bed-edge-prep-2d-v3":`${P}pov-day2-gesture-bed-edge-prep-2d-v3.png`,
-    "rail-grip-release":`${P}pov-day2-gesture-rail-grip-release-2d-v3.png`,
-    "document-receive":`${P}pov-day2-gesture-document-receive-2d-v3.png`,
-    "key-inspect-unlock":`${P}pov-day2-gesture-key-inspect-unlock-2d-v3.png`,
+    "rail-grip-release":`${P}pov-day2-gesture-rail-grip-release-2d-hq-v2.png`,
+    "document-receive":`${P}pov-day2-gesture-document-receive-2d-hq-v2.png`,
+    "key-inspect-unlock":`${P}pov-day2-gesture-key-inspect-unlock-2d-hq-v2.png`,
     "family-photo-hold-2d-v2":`${P}pov-day2-gesture-family-photo-hold-2d-v2.png`,
-    "couple-photo-turn":`${P}pov-day2-gesture-couple-photo-turn-2d-v3.png`,
-    "search-interactions":`${P}pov-day2-gesture-search-interactions-2d-v3.png`,
-    "small-key-classify":`${P}pov-day2-gesture-small-key-classify-2d-v3.png`,
-    "three-column-note":`${P}pov-day2-gesture-three-column-note-2d-v3.png`,
-    "spare-phone-contact":`${P}pov-day2-gesture-spare-phone-contact-2d-v3.png`
+    "couple-photo-turn":`${P}pov-day2-gesture-couple-photo-turn-2d-hq-v2.png`,
+    "search-interactions":`${P}pov-day2-gesture-search-interactions-2d-hq-v2.png`,
+    "small-key-classify":`${P}pov-day2-gesture-small-key-classify-2d-hq-v2.png`,
+    "three-column-note":`${P}pov-day2-gesture-three-column-note-2d-hq-v2.png`,
+    "spare-phone-contact":`${P}pov-day2-gesture-spare-phone-contact-2d-hq-v2.png`
   })
 });
 const n=(text,extra={})=>({type:"narration",text,...extra});
@@ -65,14 +65,6 @@ export const DAY2_SEARCH_CHOICES=Object.freeze([
 export const DAY2_KEY_CHOICES=Object.freeze([{id:"key_log_only",label:"사진과 발견 위치만 기록한다"},{id:"key_test_visible_only",label:"방 안의 보이는 잠금만 훼손 없이 대조한다"}]);
 export const DAY2_CONTACT_CHOICES=Object.freeze([{id:"contact_formal",label:"이하은"},{id:"contact_familiar",label:"하은"},{id:"contact_verify_playful",label:"여자친구(?)"}]);
 
-export function normalizeDay2StoryFlags(state){
-  state.storyFlags??={};const flags=state.storyFlags;
-  flags.day2RuntimeStage??=0;flags.day2RoomSearches=Array.isArray(flags.day2RoomSearches)?[...new Set(flags.day2RoomSearches.filter(id=>DAY2_SEARCH_CHOICES.some(choice=>choice.id===id)))]:[];
-  for(const key of ["family_question_first","accident_interest","recovery_focus","haeun_contact_unlocked"])flags[key]??=false;
-  for(const key of ["day2MarriageStrategy","day2HomeStrategy","day2TravelStrategy","day2PhotoStrategy","day2PendingPhotoReaction","day2LastSearch","day2KeyStrategy","day2ContactStrategy"])flags[key]??=null;
-  return flags;
-}
-
 const SEGMENT_0=[
   tr("DAY 2 · 30일 뒤",BG.bed),bgm("S01_CHOICE"),d("나","그러니까, 우리가 결혼하기로 했다고."),d("하은","응."),d("나","30일 뒤에."),d("하은","응."),d("나","대답이 자꾸 짧아지는데."),d("하은","길게 말하면 더 수상해 보일 것 같아서.","warm-playful"),d("나","그 판단도 조금 수상하고."),n("하은이 입술을 눌렀다가 결국 웃었다."),d("하은","네 입장에서는 그렇겠다. 눈 떴더니 1년 지났고, 처음 보는 여자가 여자친구라고 하고, 달력에는 결혼 날짜까지 있으니까."),d("나","부모님 이야기도 들었고."),d("하은","응. 그래서 날짜가 있다고 네 대답까지 정해진 건 아니야.","soft-vulnerable"),choice(DAY2_MARRIAGE_CHOICES)
 ];
@@ -90,7 +82,7 @@ function segment1(state){const recovery=state.storyFlags?.recovery_focus;return 
   tr("SCENE 02 · 내 몸의 거리",BG.corridor),sfx("AMB_HOSPITAL_CORRIDOR_DAY"),bgm("S02_STAND"),pov("bed-edge-prep-2d-v3"),n("주인공은 침대 가장자리에 앉아 발바닥을 바닥에 붙였다. 일어서기 전 손잡이와 호출 버튼의 위치를 먼저 확인했다."),
   ...(recovery?[d("나","어지럼 다섯 이상이면 앉고, 새 통증이 있으면 중단. 어제 들은 기준 그대로지?"),d("하은","응. 오늘은 내가 먼저 외우고 왔어. 혼자 시험하지 않기까지 포함.")]:[d("하은","일어나기 전에 오늘 중단 기준부터 말해 볼래?"),d("나","어지럼, 호흡 곤란, 새 통증. 셋 중 하나면 멈춘다.")]),
   n("손잡이를 잡고 일어서자 무릎은 버텼지만 시야 가장자리가 좁아졌다."),d("나","잠깐. 어지럼이 올라온다."),sprite("support-offer-open-palm"),...contactCallback(state),sprite("forearm-support-2d-v3"),n("하은은 요청한 위치만 받쳤다. 다시 앉자 물병을 내밀지 않고 가까운 탁자 위에 놓았다."),d("하은","혼자 걷겠다는 첫 시도, 결과는?"),d("나","실패가 아니라 기준 확인. 지금은 혼자 세 걸음이 한계라는 뜻이야."),d("하은","그 말 재활 선생님이 들으면 좋아하겠다. 나는 조금 덜 놀라고.","warm-playful"),pov("rail-grip-release"),sfx("SFX_RAIL_GRIP_RELEASE"),n("둘은 복도 끝까지 천천히 걸었다. 하은은 걸음 수만 세고 속도를 재촉하지 않았다."),clearPov(),
-  tr("SCENE 03 · 돌아가도 되는 조건",BG.bed),{type:"itemShow",layer:"npcFront",source:`${NPC}doctor-record-and-explain-2d-v2.png`},{type:"itemShow",layer:"npcRear",source:`${NPC}nurse-safety-guidance-2d-v2.png`},d("담당 의사","검사 결과만 보면 귀가 조건은 충족했습니다. 기억이나 몸이 완전히 회복됐다는 뜻은 아닙니다."),d("나","집에 가는 게 기억 회복에 실제로 도움이 됩니까?"),d("담당 의사","익숙한 환경이 단서가 될 수는 있지만 떠오른 느낌이 정확한 기억은 아닐 수 있습니다."),d("나","그러면 본 것, 들은 설명, 떠오른 장면을 구분해 적겠습니다."),d("담당 의사","좋습니다. 두통·새 어지럼·혼란이 심해지면 조사를 멈추세요."),
+  tr("SCENE 03 · 돌아가도 되는 조건",BG.bed),{type:"itemShow",layer:"npcFront",source:`${NPC}doctor-record-and-explain-2d.png`},{type:"itemShow",layer:"npcRear",source:`${NPC}nurse-safety-guidance-2d.png`},d("담당 의사","검사 결과만 보면 귀가 조건은 충족했습니다. 기억이나 몸이 완전히 회복됐다는 뜻은 아닙니다."),d("나","집에 가는 게 기억 회복에 실제로 도움이 됩니까?"),d("담당 의사","익숙한 환경이 단서가 될 수는 있지만 떠오른 느낌이 정확한 기억은 아닐 수 있습니다."),d("나","그러면 본 것, 들은 설명, 떠오른 장면을 구분해 적겠습니다."),d("담당 의사","좋습니다. 두통·새 어지럼·혼란이 심해지면 조사를 멈추세요."),
   ...(state.storyFlags?.accident_interest?[d("나","사고 경위 기록은 병원 기록과 별도로 신청하는 거죠?"),d("담당 의사","그렇습니다. 요청 경로만 퇴원 서류에 적어 두겠습니다.")]:[]),...(state.storyFlags?.family_question_first?[d("나","가족사진을 알아보지 못해도 이상한 반응은 아닙니까?"),d("담당 의사","사진을 알아보지 못하는 것과 가족을 사랑하지 않았던 것은 같은 말이 아닙니다.")]:[]),pov("document-receive"),sfx("SFX_DOCUMENT_RECEIVE"),d("간호사","휴대폰은 보안 해제 확인이 남아 다음 인계 때 돌려드립니다. 오늘은 이 서류만 보관해 주세요."),d("하은","서류 담당은 누가 할까요?"),d("나","내가 들고 갈게. 네가 필요할 때만 위치를 알려 줘."),clearPov(),{type:"itemShow",layer:"npcFront",source:""},{type:"itemShow",layer:"npcRear",source:""},
   tr("SCENE 04 · 돌아갈 집",BG.bed),sprite("pack-and-present"),sfx("SFX_BAG_ZIPPER"),d("나","내가 살던 곳은 어디야?"),d("하은","부모님과 살던 집. 지금은 비어 있어."),d("나","그동안은?"),d("하은","일주일에 한 번쯤 환기하고 우편물 모아 뒀어. 냉장고 음식은 버렸고, 네 물건은 가능한 그대로 뒀고."),d("나","열쇠는 왜 네가 가지고 있어?"),d("하은","사고 전부터 네가 맡겼어. 내가 그렇게 주장하는 거고, 집에 들어가면 여분 열쇠 둔 자리부터 네가 확인해."),choice(DAY2_HOME_CHOICES)
 ];}
@@ -140,10 +132,10 @@ function endingSegment(state){const id=state.storyFlags?.day2ContactStrategy;con
 function addMetric(state,key,amount){if(state.scenario?.enabled&&Number.isFinite(state.scenario[key]))state.scenario[key]=Math.max(0,state.scenario[key]+amount);}
 function remember(state,id){state.storyFlags??={};state.storyFlags[id]=true;}
 
-export function getLockedDay2Segment(state,stage=normalizeDay2StoryFlags(state).day2RuntimeStage){normalizeDay2StoryFlags(state);if(stage===0)return structuredClone(SEGMENT_0);if(stage===1)return segment1(state);if(stage===2)return segment2(state);if(stage===3)return segment3(state);if(stage==="key")return keySegment();if(stage===4)return segment4(state);if(stage===5)return segment5(state);return endingSegment(state);}
+export function getLockedDay2Segment(state,stage=state.storyFlags?.day2RuntimeStage??0){if(stage===0)return structuredClone(SEGMENT_0);if(stage===1)return segment1(state);if(stage===2)return segment2(state);if(stage===3)return segment3(state);if(stage==="key")return keySegment();if(stage===4)return segment4(state);if(stage===5)return segment5(state);return endingSegment(state);}
 
 export function getLockedDay2ResumePresentation(state){
-  const stage=normalizeDay2StoryFlags(state).day2RuntimeStage;
+  const stage=state.storyFlags?.day2RuntimeStage??0;
   if(stage===1)return {backgroundId:BG.bed,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["pack-and-present"]};
   if(stage===2)return {backgroundId:BG.bed,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["pack-and-present"]};
   if(stage===3)return {backgroundId:BG.car,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["safe-driving-2d-v3"]};
@@ -153,7 +145,7 @@ export function getLockedDay2ResumePresentation(state){
   return {backgroundId:BG.bed,characterAssetUrl:DAY2_RUNTIME_OVERLAYS.haeun["pack-and-present"]};
 }
 
-export function applyLockedDay2ChoiceState(state,id){normalizeDay2StoryFlags(state);
+export function applyLockedDay2ChoiceState(state,id){state.storyFlags??={};
   if(DAY2_MARRIAGE_CHOICES.some(c=>c.id===id)){state.storyFlags.day2MarriageStrategy=id;remember(state,id);state.storyFlags.day2RuntimeStage=1;addMetric(state,id==="relationship_verify"?"investigation":id==="present_impression"?"haeunAffection":"haeunTrust",id==="relationship_verify"?1:2);return {stage:1};}
   if(DAY2_HOME_CHOICES.some(c=>c.id===id)){state.storyFlags.day2HomeStrategy=id;remember(state,id);state.storyFlags.day2RuntimeStage=2;addMetric(state,id==="thank_for_waiting"?"haeunAffection":id==="set_home_boundary"?"investigation":"haeunTrust",id==="ask_if_never_woke"?1:2);return {stage:2};}
   if(DAY2_TRAVEL_CHOICES.some(c=>c.id===id)&&(!DAY2_TRAVEL_CHOICES.find(c=>c.id===id).requires||state.storyFlags.accident_interest)){state.storyFlags.day2TravelStrategy=id;remember(state,id);state.storyFlags.day2RuntimeStage=3;addMetric(state,id==="ask_record_boundary"?"investigation":"haeunTrust",2);return {stage:3};}
@@ -166,13 +158,3 @@ export function applyLockedDay2ChoiceState(state,id){normalizeDay2StoryFlags(sta
 
 export function getLockedDay2LegacyChoice(state){if(state.storyFlags?.contact_acceptance)return "take-her-hand";if(state.storyFlags?.contact_boundary)return "use-the-rail";return "review-the-plan";}
 export function validateLockedDay2Runtime(){const sample={storyFlags:{contact_boundary:true,family_question_first:true,accident_interest:true,day2MarriageStrategy:"marriage_pause",day2HomeStrategy:"set_home_boundary",day2TravelStrategy:"ask_record_boundary",day2PhotoStrategy:"photo_observation",day2PendingPhotoReaction:"photo_observation",day2RoomSearches:["room_desk_checked","pc_interest","wardrobe_checked"],day2LastSearch:"wardrobe_checked",day2ContactStrategy:"contact_formal"}};const all=[...SEGMENT_0,...segment1(sample),...segment2(sample),...segment3(sample),...segment4(sample),...keySegment(),...segment5(sample),...endingSegment(sample)];return all.filter(x=>x.type==="transition").length>=13&&all.filter(x=>x.type==="dialogue").length>=90&&all.filter(x=>x.type==="cgShow").length===4&&!JSON.stringify(all).includes("D-29")&&!JSON.stringify(all).includes("가짜 하은")&&DAY2_SEARCH_CHOICES.length===5;}
-
-export function validateLockedDay2StateMachine(){
-  const allowed=new Set(["transition","narration","dialogue","characterEnter","itemShow","sfx","animation","cgShow","choice","sceneEnd"]),validSegment=segment=>segment.length>0&&segment.every(step=>allowed.has(step.type))&&["choice","sceneEnd"].includes(segment.at(-1).type);
-  const state={storyFlags:{family_question_first:false,accident_interest:false,recovery_focus:false},scenario:{enabled:true,investigation:0,memoryRecovery:0,haeunAffection:0,haeunTrust:0,homeSearchCount:0}};normalizeDay2StoryFlags(state);
-  const route=[DAY2_MARRIAGE_CHOICES[0].id,DAY2_HOME_CHOICES[0].id,DAY2_TRAVEL_CHOICES[0].id,DAY2_PHOTO_CHOICES[0].id,"room_desk_checked","pc_interest","wardrobe_checked",DAY2_CONTACT_CHOICES[0].id];
-  if(!validSegment(getLockedDay2Segment(state)))return false;
-  for(const id of route){const result=applyLockedDay2ChoiceState(state,id);if(!result||!validSegment(getLockedDay2Segment(state,result.stage)))return false;}
-  if(state.storyFlags.day2RuntimeStage!==6||getLockedDay2Segment(state,6).at(-1)?.type!=="sceneEnd")return false;
-  const keyState={storyFlags:{accident_interest:true},scenario:{enabled:true,investigation:0,memoryRecovery:0,haeunAffection:0,haeunTrust:0,homeSearchCount:0}};normalizeDay2StoryFlags(keyState);for(const id of [DAY2_MARRIAGE_CHOICES[1].id,DAY2_HOME_CHOICES[1].id,"ask_record_boundary",DAY2_PHOTO_CHOICES[1].id,"unclassified_key_found",DAY2_KEY_CHOICES[0].id,"friends_interest","wardrobe_checked",DAY2_CONTACT_CHOICES[1].id]){const result=applyLockedDay2ChoiceState(keyState,id);if(!result||!validSegment(getLockedDay2Segment(keyState,result.stage)))return false;}return keyState.storyFlags.day2RuntimeStage===6;
-}
