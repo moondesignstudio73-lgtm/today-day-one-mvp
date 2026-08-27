@@ -859,3 +859,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `tests/free-mode-gh-pages-integration.test.mjs`를 포함한 저장소 전체 110개 테스트가 `PASS=110`, `FAIL=0`이다. DAY 14 집중, DAY 13/15 인접, 자유 연애, 이미지, 모듈 엔트리, 전체 시뮬레이션을 모두 통과했다.
 - 검증 SHA `a9bdeccacdcc7ac0fa164ebc5b43041e3de80ed3`를 `feature/today-day-one-mvp`와 `gh-pages`에 동일하게 일반 fast-forward push했다. 두 GitHub Pages 워크플로가 `success`로 끝났고 캐시 우회 공개본에서 핵심 파일 HTTP 200·DAY 14 런타임·민호 이벤트 CG 연결을 확인했다.
 - DAY 14의 시나리오·내러티브·에셋·이미지·연출/오디오·런타임·저장·집중/전체 회귀·브라우저·공개 배포 관문을 모두 COMPLETE 처리했다. 다음 작업은 DAY 15 챕터 계약과 시나리오 작성이다.
+
+# 2026-08-27 DAY 15 챕터 계약·Voice Profile·지식 장부
+
+- 두 필수 내러티브 스킬의 전체 지침과 필수 참고자료를 읽고 현재 DAY 15 런타임, DAY 14 잠금 선택·후속 훅, DAY 16 진입 계약, 로컬 자료와 기존 자산 후보를 조사했다.
+- `docs/day15/DAY15_CHAPTER_CONTRACT_V1.md`에 챕터 메타데이터, 하은·주인공 Voice Profile, 전체 지식 장부, MUST/MAY/MUST NOT REVEAL, PLAYER MAY SUSPECT, 감정·관계·단서 예산을 고정했다.
+- DAY 14 9개 선택을 활동 배분·계획 변경·기록 공개에 고유하게 회수하고 DAY 15의 9개 행동 전략, 8 Scene Beat, 단계별 저장 복원과 `day16-current-social-circle` 후속 훅을 계약했다.
+- `첫 예약`/`재방문` 라벨 불일치는 출처 없는 작은 위화감으로만 허용해 `day15LeisureReservationVisitLabel=unverified`로 보류한다. 반전·사고 고의·잠금 프로필은 공개하지 않는다.
+- 윤서진 두 축과 기존 금융·쇼핑 잠금, 완료 DAY 1~14, 자유 연애 모드, 사용자 원본 에셋은 변경하지 않았다. `tests/day15-contract.test.mjs`를 추가했으며 다음 관문은 8 Scene 완전 플레이 시나리오 초안이다.

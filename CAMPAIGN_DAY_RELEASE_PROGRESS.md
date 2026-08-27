@@ -183,9 +183,32 @@
 자체 QA: `docs/day14/DAY14_SCENARIO_QA_V1.md`
 실제 플레이 QA: `docs/day14/DAY14_PLAYTHROUGH_QA.md`
 
+### DAY 15 세부 관문
+
+- [x] 챕터 계약·Voice Profile·지식 장부
+- [ ] 완전한 플레이 가능 시나리오 초안
+- [ ] 자체 내러티브 QA·정적 계약 검사
+- [ ] 기존 에셋 감사·연출/오디오 매핑
+- [ ] 필요한 신규 자산 제작·이미지 QA
+- [ ] 다단계 런타임·선택 상태·저장 복원 구현 감사
+- [ ] 집중 테스트·전체 회귀
+- [ ] 실제 브라우저 연속 플레이 QA
+- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+
+기준 계약: `docs/day15/DAY15_CHAPTER_CONTRACT_V1.md`
+
 ## 다음 작업
 
-DAY 14의 모든 출시 관문이 완료됐다. 다음 작업은 DAY 15의 현재 코드·DAY 14 잠금본·선택·후속 훅·로컬 기획 자료 조사와 챕터 계약·Voice Profile·지식 장부 작성이다.
+DAY 15 챕터 계약·Voice Profile·지식 장부 관문이 완료됐다. 다음 작업은 계약의 8 Beat, DAY 14 9개 콜백, DAY 15 9개 전략 반응, 작은 예약 라벨 불일치와 저장 복원 계약을 완전한 플레이 가능 시나리오 초안으로 작성하는 것이다.
+
+### 2026-08-27 DAY 15 챕터 계약·Voice Profile·지식 장부 관문
+
+- 두 필수 내러티브 스킬과 캐논·화자·워크플로·챕터 구성 가이드를 모두 적용해 `docs/day15/DAY15_CHAPTER_CONTRACT_V1.md`를 작성했다.
+- DAY 14 탐색·구매·선물 동의 9개 선택을 활동 선택·계획 변경·기록 공개에 고유하게 회수하는 계약을 세웠다.
+- 예약 앱의 `첫 예약`과 업체의 `재방문` 라벨 불일치를 복수의 생활적 설명이 가능한 `unverified` 작은 위화감으로 제한하고, 주인공의 관찰→가능성→확인→판단→행동을 고정했다.
+- 하은·주인공 Voice Profile과 전체 지식 장부, MUST/MAY/MUST NOT REVEAL, PLAYER MAY SUSPECT, 8 Scene Beat, 9개 행동 전략, 감정·단서·저장·DAY 16 훅 계약을 명시했다.
+- 윤서진 `seojinAffection`/`seojinStatusInterest`, DAY 11·14 미확인 단서, 기본 금융·쇼핑과 자동결제·고가 구매·투자 잠금을 불변으로 보존했다.
+- `tests/day15-contract.test.mjs`로 계약 구조·콜백·전략·정보 예산을 고정했다. 다음 관문은 완전한 플레이 가능 시나리오 초안이다.
 
 ### 2026-08-27 DAY 14 비파괴 원격 통합·공개 배포 완료
 
