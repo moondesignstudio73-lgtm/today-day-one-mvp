@@ -2,7 +2,7 @@
 
 운영 원칙: 한 DAY의 시나리오 작성·내러티브 QA·런타임 적용·저장 복원·전체 회귀·커밋·푸시·배포 확인이 모두 끝난 뒤에만 다음 DAY를 시작한다.
 
-현재 대상: `DAY 14`
+현재 대상: `DAY 15`
 
 ## DAY 5
 
@@ -27,7 +27,7 @@
 - [x] DAY 11
 - [x] DAY 12
 - [x] DAY 13
-- [ ] DAY 14
+- [x] DAY 14
 - [ ] DAY 15
 - [ ] DAY 16
 - [ ] DAY 17
@@ -176,7 +176,7 @@
 - [x] 다단계 런타임·선택 상태·저장 복원 구현 감사
 - [x] 집중 테스트·전체 회귀
 - [x] 실제 브라우저 연속 플레이 QA
-- [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
+- [x] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 계약: `docs/day14/DAY14_CHAPTER_CONTRACT_V1.md`
 기준 시나리오: `docs/day14/DAY14_SCENARIO_DRAFT_V1.md`
@@ -185,7 +185,16 @@
 
 ## 다음 작업
 
-DAY 14 검증 커밋 `1bd22a5`는 origin 기능 브랜치에 반영됐다. `gh-pages`의 삭제 계보와 실제 병합 충돌을 해소할 수 있는 비파괴 일반 병합 커밋이 원격에 준비된 뒤, 동일 검증 SHA를 `gh-pages`에 fast-forward 배포하고 Actions·공개 페이지를 확인한다. 그 전에는 DAY 15를 시작하지 않는다.
+DAY 14의 모든 출시 관문이 완료됐다. 다음 작업은 DAY 15의 현재 코드·DAY 14 잠금본·선택·후속 훅·로컬 기획 자료 조사와 챕터 계약·Voice Profile·지식 장부 작성이다.
+
+### 2026-08-27 DAY 14 비파괴 원격 통합·공개 배포 완료
+
+- 삭제 계보를 포함한 `82742e1` 전체를 적용하지 않고, 앞선 자유 연애 모드 5개 커밋을 순서대로 보존한 뒤 협박 조우·동료 점심 변경만 선별 통합했다. 완료 DAY 1~13과 사용자 원본 에셋 2종의 삭제·이동·덮어쓰기는 없었다.
+- `720d6c2`의 비파괴 ancestry merge로 기존 `origin/gh-pages`를 현재 계보의 조상으로 연결해 force push 없이 양쪽 브랜치가 일반 fast-forward 가능해졌다. 자유 모드 신규 경로는 `tests/free-mode-gh-pages-integration.test.mjs`로 고정했다.
+- 누락된 민호 이벤트 CG는 기존 고해상도 `assets/events/work/office-rumor-01.png`를 재사용했고, 공용 이벤트 64개·공유 카탈로그 96개·상황 이벤트 45개와 현재 캐시 버전에 맞춰 정적 계약을 갱신했다.
+- 저장소 전체 테스트 110개를 실행해 `PASS=110`, `FAIL=0`을 확인했다. DAY 14 집중·DAY 13/15 인접·자유 연애·전체 시뮬레이션 회귀가 모두 포함된다.
+- 검증 SHA `a9bdeccacdcc7ac0fa164ebc5b43041e3de80ed3`를 기능 브랜치와 `gh-pages`에 동일하게 일반 push했다. GitHub Actions `Deploy GitHub Pages`와 `pages build and deployment`가 모두 `success`로 완료됐다.
+- 캐시 우회 공개본의 `index.html`, `game.js`, `src/situation-events-data.mjs`가 HTTP 200이며 `game.js?v=171`, DAY 14 런타임, 민호 이벤트와 재사용 CG 경로를 확인했다. DAY 14를 COMPLETE 처리하고 현재 대상을 DAY 15로 전환한다.
 
 ### 2026-08-27 DAY 14 배포 안전성 재검사 — BLOCKED
 
