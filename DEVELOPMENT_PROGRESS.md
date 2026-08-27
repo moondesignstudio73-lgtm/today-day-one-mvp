@@ -1314,3 +1314,9 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 검증 HEAD: `019d2e4`.
 - PASS: `node --check game.js`, DAY 4 V3 집중 검사 3종, `node tests/simulation.test.mjs` 전체 회귀.
 - 다음 작업: 이 기록 커밋의 최종 SHA를 동일 검사로 재확인한 뒤 origin에 반영한다.
+
+### 2026-08-28 DAY 4 origin 반영 PASS
+
+- `602f994` → `origin/feature/today-day-one-mvp` 일반 fast-forward push PASS; 원격 SHA 일치 확인.
+- 보호 규칙 우회는 저장소가 승인했으며 force push·rebase는 사용하지 않았다.
+- 다음 작업: 이 진행 기록을 포함한 최종 검증 SHA를 origin에 동기화하고 동일 SHA를 gh-pages에 배포한다.

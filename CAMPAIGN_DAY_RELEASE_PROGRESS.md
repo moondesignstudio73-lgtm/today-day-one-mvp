@@ -1282,3 +1282,9 @@ DAY 16 출시 전 관문을 완료했다. 다음 작업은 노션 사용자 원�
 - 로컬 HEAD `019d2e4`에서 `game.js` 구문 검사, DAY 4 V3 opening/regression/runtime-integration 집중 검사 3종, 전체 `simulation.test.mjs`를 모두 실행해 exit 0을 확인했다.
 - 선택 전략·DAY 3 콜백·DAY 5 훅·SaveManager 왕복·10단계 멱등성·레거시 저장 호환과 전체 자유 연애/지도/경제/에셋 회귀가 유지된다.
 - 이 결과 기록을 포함한 최종 후보 HEAD를 다시 같은 검사로 확인한 뒤 origin 반영 대상으로 확정한다.
+
+### 2026-08-28 DAY 4 origin 반영 PASS
+
+- 최종 후보 `602f994`를 `feature/today-day-one-mvp`에 일반 fast-forward push했다. 저장소가 보호 규칙 우회를 승인했으며 force push·rebase는 사용하지 않았다.
+- `ls-remote`로 원격 브랜치가 정확히 `602f99438f46fd177de08e597d3fb685c06d79da`를 가리키는 것을 확인했다.
+- 이 기록을 포함한 최종 SHA를 재검증·origin 동기화한 뒤 동일 SHA로 gh-pages 배포를 진행한다.
