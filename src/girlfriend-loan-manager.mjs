@@ -4,6 +4,9 @@ export const GIRLFRIEND_LOAN_MIN_TRUST = 500;
 export const GIRLFRIEND_LOAN_MIN_AMOUNT = 100000;
 export const GIRLFRIEND_LOAN_MAX_AMOUNT = 300000;
 export const GIRLFRIEND_LOAN_STEP = 10000;
+export const GIRLFRIEND_LARGE_LOAN_AMOUNT = 30000000;
+export const GIRLFRIEND_LARGE_LOAN_MIN_TRUST = 200;
+export const GIRLFRIEND_LARGE_LOAN_MIN_AFFECTION = 200;
 
 export function createGirlfriendLoanState(){
   return {borrowed:false,amount:0,day:null};
@@ -35,4 +38,16 @@ export function applyGirlfriendLoan(state,amount){
   state.logs??=[];
   state.logs.push({time:`DAY ${state.day} · LOAN`,text:`${partnerName}에게 ${normalized.toLocaleString("ko-KR")}원을 빌렸다. 보유 자산에 즉시 반영됐다.`});
   return {ok:true,reason:null,amount:normalized,transaction,balance:state.money};
+}
+
+export function applyGirlfriendLargeLoan(state){
+  state.girlfriendLoan=migrateGirlfriendLoanState(state.girlfriendLoan);
+  if(state.girlfriendLoan.borrowed)return {ok:false,reason:"already-borrowed",amount:0};
+  if(Number(state.trust)<GIRLFRIEND_LARGE_LOAN_MIN_TRUST||Number(state.affection)<GIRLFRIEND_LARGE_LOAN_MIN_AFFECTION)return {ok:false,reason:"low-relationship",amount:0};
+  const partnerName=state.partner?.name??"여자친구";
+  const transaction=recordTransaction(state,{day:state.day,category:"girlfriend-large-loan",label:`${partnerName}에게 빌린 3천만 원`,amount:GIRLFRIEND_LARGE_LOAN_AMOUNT});
+  state.girlfriendLoan={borrowed:true,amount:GIRLFRIEND_LARGE_LOAN_AMOUNT,day:state.day};
+  state.logs??=[];
+  state.logs.push({time:`DAY ${state.day} · LARGE LOAN`,text:`${partnerName}에게 30,000,000원을 빌렸다. 보유 자산에 즉시 반영됐다.`});
+  return {ok:true,reason:null,amount:GIRLFRIEND_LARGE_LOAN_AMOUNT,transaction,balance:state.money};
 }
