@@ -919,3 +919,13 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 산출물: `docs/day15/DAY15_REGRESSION_QA.md`, `tests/day15-regression.test.mjs`. 다음 관문은 실제 브라우저 DAY 14→15 연속 플레이·stage 1 재개·SKIP·자유행동·DAY 16 진입 QA다.
 - 로컬 검증 커밋 `8d7790e`는 origin 기준 안전한 fast-forward였지만 직접 push가 새 저장소 규칙 `GH013: Changes must be made through a pull request`로 거부됐다. PR 생성 금지 지침에 따라 PR·강제 push·`gh-pages` 우회 배포를 하지 않았다.
 - 재개하려면 기능 브랜치 직접 push 허용을 복구하거나 사용자가 PR 금지를 명시적으로 해제해야 한다. 검증되지 않은 원격 변경이나 배포는 없다.
+
+# 2026-08-27 DAY 15 실제 브라우저 연속 플레이 QA
+
+- PR #1로 검증 head를 `feature/today-day-one-mvp`에 병합해 직접 push `GH013` 차단을 승인된 PR 흐름으로 해결했다. 검사 기준 SHA는 `7bdc11627b431e3edb4e70a306748ce9eec1bf9f`다.
+- 일반 경로는 `leisure15_activity_low_sensory` → `leisure15_change_switch` → `leisure15_privacy_no_location`을 선택하고 첫 선택 뒤 새로고침·`이어하기`로 stage 1 책방 재개를 확인했다.
+- 별도 SKIP 경로는 `leisure15_activity_two_options` → `leisure15_change_end` → `leisure15_privacy_ask_each_photo`를 선택했다. SKIP은 선택과 5개 자유행동 카드를 건너뛰지 않았다.
+- 자유행동 `DAY 16 관계망 확인 범위를 준비한다`, 결과 화면과 DAY 16 현재 관계망 첫 장면까지 도달했다.
+- 6개 재사용 배경·하은 DAY 7 외출복·선택/자유행동 UI의 선명도·알파·종횡비·안전 여백이 PASS했다. 생활 BGM·SFX 상태에서 console warning/error는 0건이다.
+- 예약 표기 불일치는 `unverified`, 하은의 생활 톤·주인공의 합리성·윤서진 AFFECTION/STATUS_INTEREST 분리·프로필/반전 잠금을 유지한다.
+- 산출물: `docs/day15/DAY15_PLAYTHROUGH_QA.md`. 7영역 PASS, `NEEDS FIX: 0`; 다음 관문은 QA 증적 커밋·origin PR 병합·동일 SHA `gh-pages` 공개 배포와 공개 확인이다.

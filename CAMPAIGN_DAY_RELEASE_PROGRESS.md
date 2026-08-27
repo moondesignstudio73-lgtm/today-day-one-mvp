@@ -192,16 +192,26 @@
 - [x] 필요한 신규 자산 제작·이미지 QA (신규 필요 0종, 기존 6배경·하은 DAY 7 외출복 QA PASS)
 - [x] 다단계 런타임·선택 상태·저장 복원 구현 감사
 - [x] 집중 테스트·전체 회귀
-- [ ] 실제 브라우저 연속 플레이 QA
+- [x] 실제 브라우저 연속 플레이 QA
 - [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 계약: `docs/day15/DAY15_CHAPTER_CONTRACT_V1.md`
 기준 시나리오: `docs/day15/DAY15_SCENARIO_DRAFT_V1.md`
 자체 QA: `docs/day15/DAY15_SCENARIO_QA_V1.md`
+실제 플레이 QA: `docs/day15/DAY15_PLAYTHROUGH_QA.md`
 
 ## 다음 작업
 
-DAY 15 집중 테스트·전체 회귀가 완료됐다. 다음 작업은 실제 브라우저에서 DAY 14→15 연속 진입, 세 선택, stage 1 저장 재개, 별도 SKIP 경로, 자유행동, DAY 16 전환과 이미지·오디오·콘솔을 검수하는 것이다.
+DAY 15 실제 브라우저 연속 플레이 QA가 완료됐다. 다음 작업은 QA 증적을 커밋하고 보호 브랜치용 PR로 origin에 병합한 뒤 동일 검증 SHA를 `gh-pages`에 배포하고 공개 페이지를 확인하는 것이다.
+
+### 2026-08-27 DAY 15 실제 브라우저 연속 플레이 QA 관문
+
+- PR #1로 검증 head를 기능 브랜치에 병합해 이전 `GH013` 직접 push 차단을 승인된 PR 흐름으로 해결했고, 검사 기준 기능 브랜치는 `7bdc11627b431e3edb4e70a306748ce9eec1bf9f`다.
+- 일반 경로 `leisure15_activity_low_sensory` → `leisure15_change_switch` → `leisure15_privacy_no_location`과 별도 SKIP 경로 `leisure15_activity_two_options` → `leisure15_change_end` → `leisure15_privacy_ask_each_photo`를 실제 UI로 완료했다.
+- 첫 선택 직후 새로고침·`이어하기`로 stage 1 선택 반응과 책방 재개를 확인했다. SKIP은 세 선택과 5개 자유행동 카드를 건너뛰지 않았다.
+- 자유행동 결과와 DAY 16 현재 관계망 첫 장면까지 두 경로 모두 도달했다. 예약 표기 불일치는 `unverified`, 잠금 프로필·반전은 미공개이며 윤서진 두 축은 독립 값을 유지한다.
+- 6개 배경·하은 DAY 7 외출복·선택/자유행동 UI의 선명도·알파·종횡비·안전 여백이 PASS했고 브라우저 console warning/error는 0건이다.
+- 산출물: `docs/day15/DAY15_PLAYTHROUGH_QA.md`; 7영역 PASS, `NEEDS FIX: 0`. 다음 관문은 QA 증적 커밋·origin PR 병합·동일 SHA `gh-pages` 공개 배포 확인이다.
 
 ### 2026-08-27 DAY 15 집중 테스트·전체 회귀 관문
 
