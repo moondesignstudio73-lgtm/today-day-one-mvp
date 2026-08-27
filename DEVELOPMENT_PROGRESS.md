@@ -965,3 +965,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 연락처·답장·단체 알림·관계망은 개인정보가 읽히지 않는 흐린 소품으로 처리한다. 증거 CG 확대, 공포 줌·글리치·심박·위기 sting·하은 단독 감시 구도를 금지했다.
 - `src/day16-presentation-data.mjs`에 Scene별 배경·캐릭터·카메라·전환, 전 Scene `daily` BGM, 휴대전화·문서·연필·컵·자동문·가방 SFX를 `audited` 상태로 매핑했다.
 - 산출물: `docs/day16/DAY16_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day16-presentation-data.mjs`, `tests/day16-presentation.test.mjs`. 다음 관문은 배경 3종·하은 DAY 8·지훈 NPC의 기술·육안 이미지 QA다.
+
+# 2026-08-27 DAY 16 기존 자산 이미지 품질 QA
+
+- 배경 3종은 1672×941 8-bit RGB PNG, 하은 DAY 8은 887×1774 8-bit RGBA PNG, 지훈 NPC는 1024×1536 8-bit RGBA PNG임을 원본 헤더와 SHA-256으로 검증했다.
+- 원본 해상도 육안 검사에서 선명도·압축·왜곡·크롭·알파·문자·워터마크·UI 안전 여백이 모두 PASS했다. 지훈은 흰 배경 합성으로 투명 경계와 검은 프린지 부재를 추가 확인했다.
+- 신규 자산 제작 0종, 기존·사용자 자산 변경 0건이다. `docs/day16/DAY16_IMAGE_QUALITY_QA.md`를 `IMAGE QA PASS`, `NEEDS FIX: 0`으로 잠갔다.
+- `src/day16-presentation-data.mjs`의 8 Scene을 `assetStatus: ready`로 전환하고 `tests/day16-presentation.test.mjs`에 5개 이미지의 규격·색상 유형·해시·QA 표식을 고정했다. 다음 관문은 런타임·선택·저장 복원 구현 감사다.
