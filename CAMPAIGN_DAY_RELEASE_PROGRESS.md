@@ -1270,3 +1270,9 @@ DAY 16 출시 전 관문을 완료했다. 다음 작업은 노션 사용자 원�
 - DAY 4 코드·문서·집중 테스트·전용 이미지 12종과 공용 런타임 회귀 수정만 포함한 35개 파일을 선별했다. cached diff는 `4617 insertions`, `24 deletions`이며 삭제 파일은 0개다.
 - 별도 미추적 사용자 에셋 `assets/source-sheets/day1/1.png`, `assets/source-sheets/day1/haeun-day1-poses-clean-v2.png`는 스테이징하지 않았고 이동·삭제·덮어쓰지 않았다.
 - 다음 작업은 현재 검증된 staged 집합을 커밋하고 커밋 SHA 기준으로 재검증하는 것이다.
+
+### 2026-08-28 DAY 4 구현 검증 커밋 생성 PASS
+
+- 감사 완료된 35개 파일을 `6c3021f` (`Rebuild campaign day 4 experience`)로 커밋했다.
+- 커밋에는 삭제 파일과 별도 DAY 1 미추적 사용자 에셋이 포함되지 않았다.
+- 다음 작업은 진행 기록 커밋을 포함한 최종 로컬 HEAD에서 구문·집중·전체 회귀를 다시 실행하고, 그 동일 SHA를 origin 반영 대상으로 확정하는 것이다.

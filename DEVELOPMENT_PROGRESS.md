@@ -1302,3 +1302,9 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - cached diff: 35 files, 4617 insertions, 24 deletions, 삭제 0.
 - DAY 1 미추적 소스 이미지 2개와 개발 잠금 파일은 제외했다. 사용자 에셋에는 변경을 가하지 않았다.
 - 다음 작업: 검증 staged 집합 커밋 → 해당 SHA 재검증 → origin 반영 → 동일 SHA gh-pages 배포·공개 확인.
+
+### 2026-08-28 DAY 4 구현 커밋 PASS
+
+- 구현 검증 커밋: `6c3021f` (`Rebuild campaign day 4 experience`).
+- 범위: 감사된 35개 파일, 삭제 0; DAY 1 미추적 소스 이미지 2개 제외.
+- 다음 작업: 진행 기록을 포함한 로컬 HEAD 재검증 후 origin 반영. DAY 5 재구축은 계속 금지한다.
