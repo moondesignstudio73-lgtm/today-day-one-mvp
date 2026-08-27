@@ -36,6 +36,23 @@ export function equipItem(state, instanceId) {
   return instance;
 }
 
+export function isPlayerItemEquipped(state, itemId) {
+  const item = getItem(itemId);
+  if (!item) return false;
+  const equippedInstanceId = state?.equipment?.[item.category];
+  return (state?.inventory ?? []).some(entry =>
+    entry.instanceId === equippedInstanceId
+    && entry.itemId === itemId
+    && entry.owner === "player"
+    && entry.equipped === true
+  );
+}
+
+export function isItemOwnedBy(state, itemId, owners = ["player"]) {
+  const allowedOwners = new Set(Array.isArray(owners) ? owners : [owners]);
+  return (state?.inventory ?? []).some(entry => entry.itemId === itemId && allowedOwners.has(entry.owner));
+}
+
 export function equipGirlfriendOutfit(state, instanceId) {
   const instance = (state.inventory ?? []).find(entry => entry.instanceId === instanceId && entry.owner === "girlfriend");
   if (!instance) return null;

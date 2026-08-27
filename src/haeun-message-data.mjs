@@ -1,4 +1,4 @@
-import { GIRLFRIEND_LOAN_MIN_TRUST, getGirlfriendLoanAmount } from "./girlfriend-loan-manager.mjs?v=1";
+import { GIRLFRIEND_LARGE_LOAN_AMOUNT, GIRLFRIEND_LARGE_LOAN_MIN_AFFECTION, GIRLFRIEND_LARGE_LOAN_MIN_TRUST, GIRLFRIEND_LOAN_MIN_TRUST, getGirlfriendLoanAmount } from "./girlfriend-loan-manager.mjs?v=2";
 
 const EMOTIONAL_FOLLOW_UPS = Object.freeze([
   "그래서 너는 어떻게 생각해?",
@@ -159,6 +159,18 @@ const HAEUN_LOAN_REPEAT_REPLIES = Object.freeze([
   "먼저 전에 빌린 돈부터 정리해 줘. 추가 대여는 하지 않을게.",
   "돈을 계속 빌려주는 관계가 되고 싶지는 않아. 이번에는 안 돼.",
   "이미 한 차례 도와줬으니 이번 부탁은 거절할게."
+]);
+
+const HAEUN_LARGE_LOAN_APPROVAL_REPLIES = Object.freeze([
+  "우리 사이를 믿고 이번 한 번만 3천만 원 빌려줄게. 방금 보냈으니 꼭 필요한 곳에 써 줘.",
+  "큰돈이라 고민했지만 널 믿어 볼게. 3천만 원 보냈어. 어떻게 쓸 건지는 꼭 이야기해 줘.",
+  "이번 한 번만이야. 3천만 원을 보유 자산으로 보냈으니 계획을 세워서 사용해 줘."
+]);
+
+const HAEUN_LARGE_LOAN_LOW_RELATIONSHIP_REPLIES = Object.freeze([
+  "3천만 원은 너무 큰돈이야. 지금 우리 사이의 믿음과 마음으로는 빌려줄 수 없어.",
+  "그 정도 돈을 빌려주려면 서로 더 믿고 가까운 사이여야 해. 지금은 안 돼.",
+  "미안하지만 지금은 3천만 원을 맡길 만큼 관계가 충분히 깊지 않아."
 ]);
 
 const UNCOMFORTABLE_MESSAGE_PATTERNS = Object.freeze([
@@ -392,6 +404,11 @@ export function isHaeunLoanRequest(message){
   return /(?:돈|현금|생활비|급전|10만|십만|20만|이십만|30만|삼십만).{0,14}(?:빌려|빌릴|빌려줄|빌려\s*줄)|(?:빌려|빌릴).{0,14}(?:돈|현금|생활비|급전)/.test(value);
 }
 
+export function isHaeunLargeLoanRequest(message){
+  const value=normalize(message).replaceAll(",","");
+  return /(?:3\s*천\s*만|삼\s*천\s*만|30000000)\s*원?(?:만)?\s*(?:땡겨|빌려|빌릴|빌려줄|빌려\s*줄)/.test(value);
+}
+
 export function isHaeunBoundaryMessage(message){
   const raw=String(message??"").normalize("NFKC").trim(),value=normalize(raw),compact=raw.replace(/\s+/g,"");
   if(!raw)return false;
@@ -405,6 +422,7 @@ export function isHaeunBoundaryMessage(message){
 
 export function classifyHaeunMessage(message,session={}){
   const value=normalize(message),lastQuestion=session?.lastQuestionId;
+  if(isHaeunLargeLoanRequest(message))return "large-loan";
   if(isHaeunLoanRequest(message))return "loan";
   if(isHaeunBoundaryMessage(message))return "boundary";
   if(/^(응|어|그래|맞아|좋아|웅|그럼|당연)([.!~ㅋㅎ]*)$/.test(value)||/^(아니|싫어|별로|됐어|안돼)([.!~ㅋㅎ]*)$/.test(value)){
@@ -483,6 +501,11 @@ function buildContextualHaeunReply(context,message,definition,seed){
 export function getHaeunMessageReply(context,message){
   const relationshipSeed=Math.round((Number(context?.relationship?.affection)||0)+(Number(context?.relationship?.trust)||0));
   const seed=hash(`${normalize(message)}|${context?.day??0}|${context?.phase??0}|${context?.sessionState?.turn??0}|${context?.sessionState?.variantSeed??0}|${relationshipSeed}`),topicId=classifyHaeunMessage(message,context?.sessionState);
+  if(topicId==="large-loan"){
+    const borrowed=context?.girlfriendLoan?.borrowed===true,trust=Number(context?.relationship?.trust)||0,affection=Number(context?.relationship?.affection)||0,loanState=borrowed?"repeat":trust<GIRLFRIEND_LARGE_LOAN_MIN_TRUST||affection<GIRLFRIEND_LARGE_LOAN_MIN_AFFECTION?"low-relationship":"approved";
+    const templates=loanState==="repeat"?HAEUN_LOAN_REPEAT_REPLIES:loanState==="low-relationship"?HAEUN_LARGE_LOAN_LOW_RELATIONSHIP_REPLIES:HAEUN_LARGE_LOAN_APPROVAL_REPLIES,template=templates[seed%templates.length];
+    return {id:`haeun-large-loan-${loanState}-${seed%templates.length+1}`,replyId:`haeun-large-loan-${loanState}-${seed%templates.length+1}`,topic:"large-loan",text:template,effects:{},source:`haeun-large-loan-${loanState}`,style:"short",transaction:loanState==="approved"?{type:"girlfriend-large-loan",amount:GIRLFRIEND_LARGE_LOAN_AMOUNT}:null};
+  }
   if(topicId==="loan"){
     const borrowed=context?.girlfriendLoan?.borrowed===true,trust=Number(context?.relationship?.trust)||0,loanState=borrowed?"repeat":trust<GIRLFRIEND_LOAN_MIN_TRUST?"low-trust":"approved",amount=getGirlfriendLoanAmount(seed);
     const templates=loanState==="repeat"?HAEUN_LOAN_REPEAT_REPLIES:loanState==="low-trust"?HAEUN_LOAN_LOW_TRUST_REPLIES:HAEUN_LOAN_APPROVAL_REPLIES,template=templates[seed%templates.length],text=template.replace("{amount}",amount.toLocaleString("ko-KR"));
