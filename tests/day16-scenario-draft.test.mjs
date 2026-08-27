@@ -12,7 +12,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
 const scenario = fs.readFileSync(path.join(root, 'docs/day16/DAY16_SCENARIO_DRAFT_V1.md'), 'utf8');
 
-assert.match(scenario, /FULL PLAYABLE SCENARIO DRAFT V1/);
+assert.match(scenario, /(FULL PLAYABLE SCENARIO DRAFT V1|NARRATIVE QA PASS · SCENARIO LOCK V1)/);
 assert.equal((scenario.match(/^## SCENE \d+ —/gm) ?? []).length, 8, 'DAY 16 must contain exactly 8 playable scenes');
 assert.ok((scenario.match(/MICRO-PROGRESSION/g) ?? []).length >= 8, 'each beat needs micro-progression');
 assert.equal((scenario.match(/^### 선택 \d+ —/gm) ?? []).length, 3, 'three strategy moments are required');
@@ -65,6 +65,6 @@ for (const spoiler of ['가해자는 하은', '차량을 조작', '가짜 하은
 
 assert.match(scenario, /## 선택 반응·후속 기억표/);
 assert.match(scenario, /## 저장·복원 계약/);
-assert.match(scenario, /## 초안 자체 점검/);
+assert.match(scenario, /## (초안 자체 점검|잠금 QA 결과)/);
 
 console.log('DAY 16 full playable scenario draft tests passed.');

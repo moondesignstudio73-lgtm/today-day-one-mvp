@@ -1,6 +1,6 @@
 # DAY 16 완전 플레이 시나리오 초안 V1 — 한 명씩 다시
 
-상태: `FULL PLAYABLE SCENARIO DRAFT V1`  
+상태: `NARRATIVE QA PASS · SCENARIO LOCK V1`
 적용 시나리오 ID: `m30-day16-current-social-circle`  
 기준 계약: `docs/day16/DAY16_CHAPTER_CONTRACT_V1.md`  
 예상 플레이 시간: 8–12분
@@ -274,7 +274,7 @@ DAY 4에서 신원과 일부 기록 확인. 지금 연락 범위는 미정.
 
 ### 선택 1 — 현재 연락 범위
 
-#### CHOICE `social16_contact_one_to_one` — 지훈과 1:1 연락만 다시 연다
+#### CHOICE `social16_contact_one_to_one` — 지훈과의 1:1 연락만 현재 연락처로 다시 연다
 
 **주인공**  
 개인 번호로 1:1 연락만 열자. 다른 사람을 끼우지 말고.
@@ -292,7 +292,7 @@ DAY 4에서 신원과 일부 기록 확인. 지금 연락 범위는 미정.
 `EFFECT: jihunCurrentContact=true, friendGroupAccess=false`  
 `MEMORY: 지훈은 1:1 채널만 허용되었다고 기억한다.`
 
-#### CHOICE `social16_contact_written_intro` — 현재 소개를 글로 받은 뒤 저장한다
+#### CHOICE `social16_contact_written_intro` — 이름·현재 역할·연락 목적을 글로 받은 뒤 저장한다
 
 **주인공**  
 이름, 현재 일, 연락 목적을 메시지로 다시 보내 줘. 그걸 저장한 뒤 연락할게.
@@ -310,7 +310,7 @@ DAY 4에서 신원과 일부 기록 확인. 지금 연락 범위는 미정.
 `EFFECT: jihunWrittenIntroStored=true, friendGroupAccess=false`  
 `MEMORY: 지훈은 검증 가능한 현재 소개가 연락의 선행 조건임을 기억한다.`
 
-#### CHOICE `social16_contact_no_group` — 개인 연락은 열되 단체방은 닫는다
+#### CHOICE `social16_contact_no_group` — 개인 연락은 열되 과거 단체 채팅은 계속 닫아 둔다
 
 **주인공**  
 개인 연락은 괜찮아. 과거 단체방은 닫아 둬.
@@ -409,7 +409,7 @@ DAY 4 때 네가 보여 준 사진 원본도 같은 기준이었지.
 지금 네가 허용한 호칭과 채널만 쓸게. 별명은 봉인.
 
 **내레이션**  
-지훈은 휴대전화를 테이블 가운데 놓지 않고 자기 쪽에 뒤집어 두었다. 보여 주겠다는 압박도, 숨기는 연출도 아니었다.
+지훈은 휴대전화를 자기 쪽에 뒤집어 두었다. 화면을 내 쪽으로 밀지도, 몸으로 가리지도 않았다.
 
 **지훈**  
 궁금한 게 하나 있어. 요즘 하루는 어때?
@@ -519,7 +519,7 @@ DAY 4 때 네가 보여 준 사진 원본도 같은 기준이었지.
 필요할 때, 네가 먼저 요청하면 한 명씩 소개할게.
 
 **내레이션**  
-관계망은 단서가 아니라 접근 경로였다. 지금 판단할 수 있는 건 지훈이 오늘 경계를 지키는지뿐이었다.
+명단 칸은 비어 있었다. 지금 확인한 것은 지훈이 초대 화면을 닫고 내 질문에 출처를 나눠 답한 일뿐이었다.
 
 [TRANSITION] 타이머 35분, 빈 컵 두 개
 
@@ -544,7 +544,7 @@ DAY 4 때 네가 보여 준 사진 원본도 같은 기준이었지.
 
 ### 선택 2 — 다음 만남의 경계
 
-#### CHOICE `social16_meeting_public_45` — 낮 카페 45분과 종료 시각을 먼저 정한다
+#### CHOICE `social16_meeting_public_45` — 낮 카페에서 45분만 만나고 종료 시각을 먼저 정한다
 
 **주인공**  
 다음에도 공개된 낮 카페, 45분. 시작할 때 종료 시각부터 확인하자.
@@ -562,7 +562,7 @@ DAY 4 때 네가 보여 준 사진 원본도 같은 기준이었지.
 `EFFECT: nextMeetingPublic=true, nextMeetingMinutes=45`  
 `MEMORY: 지훈은 정해진 종료 시각을 먼저 확인한다.`
 
-#### CHOICE `social16_meeting_topics_current` — 현재 생활과 오늘 확인 질문만 다룬다
+#### CHOICE `social16_meeting_topics_current` — 현재 생활과 오늘 확인할 질문만 이야기한다
 
 **주인공**  
 다음 만남도 현재 생활과 내가 준비한 질문만. 과거 자료는 미리 합의한 것만 보자.
@@ -580,7 +580,7 @@ DAY 4 때 네가 보여 준 사진 원본도 같은 기준이었지.
 `EFFECT: currentTopicsOnly=true, oldMediaAutoOpen=false`  
 `MEMORY: 지훈은 과거 자료가 사전 합의 주제임을 기억한다.`
 
-#### CHOICE `social16_meeting_exit_anytime` — 설명 없이 언제든 끝낼 수 있게 합의한다
+#### CHOICE `social16_meeting_exit_anytime` — 설명 없이도 언제든 자리를 끝낼 수 있게 합의한다
 
 **주인공**  
 다음에도 내가 “여기까지”라고 하면 설명 없이 끝내자.
@@ -598,20 +598,49 @@ DAY 4 때 네가 보여 준 사진 원본도 같은 기준이었지.
 `EFFECT: unconditionalExit=true, followupAutoPromise=false`  
 `MEMORY: 지훈은 설명 없는 종료권과 재연락의 분리를 기억한다.`
 
-**내레이션**  
+### 선택 2 실행 결과
+
+#### IF `social16_meeting_public_45`
+
+**내레이션**
 타이머가 두 시 사십사 분을 가리켰다. 지훈은 남은 커피를 억지로 마시지 않고 가방을 닫았다.
 
-**지훈**  
+**지훈**
 45분 약속이면 지금 일어나야 계산하고 나갈 수 있겠네.
 
-**주인공**  
+**주인공**
 내가 먼저 말하지 않아도 기억했군.
+
+#### IF `social16_meeting_topics_current`
+
+**내레이션**
+준비한 질문 목록의 마지막 칸에 표시하자 지훈이 노트북을 닫았다.
+
+**지훈**
+오늘 확인할 질문은 여기까지네. 옛날 자료로 다음 장면을 붙이지 않고 끝낼게.
+
+**주인공**
+주제 범위를 네가 먼저 확인했군.
+
+#### IF `social16_meeting_exit_anytime`
+
+**주인공**
+오늘은 여기까지.
+
+**내레이션**
+지훈은 이유를 묻지 않고 컵에서 손을 떼고 가방을 들었다.
+
+**지훈**
+알겠어. 다음 연락 여부도 지금 묻지 않을게.
+
+**주인공**
+종료와 재연락을 분리한 거 확인했어.
 
 **지훈**  
 오늘 내가 보여 줄 수 있는 건 기억보다 행동이니까.
 
 **내레이션**  
-두 시 사십오 분, 우리는 카페 문밖에 서 있었다.
+우리는 합의한 방식대로 대화를 끝내고 카페 문밖에 섰다.
 
 [BACKGROUND] `neighborhood-street-day`  
 [SFX] 보행 신호음
@@ -728,7 +757,7 @@ DAY 4 기록과 오늘 행동을 대조한 뒤 차이가 없는 항목만 공유
 
 ### 선택 3 — 내 소식의 공유 범위
 
-#### CHOICE `social16_sharing_current_notes` — 오늘 직접 확인한 현재 정보만 기록한다
+#### CHOICE `social16_sharing_current_notes` — 오늘 직접 확인한 현재 정보만 관계망 기록에 남긴다
 
 **주인공**  
 오늘 직접 확인한 현재 정보만 남기자. 이름, 일, 번호, 지킨 약속.
@@ -746,7 +775,7 @@ DAY 4 기록과 오늘 행동을 대조한 뒤 차이가 없는 항목만 공유
 `EFFECT: currentSocialCircleRecord=true, recordScope=currentOnly`  
 `MEMORY: 관계망 장부는 직접 확인한 현재 정보만 포함한다.`
 
-#### CHOICE `social16_sharing_old_media_closed` — 과거 사진·대화 백업을 별도 동의 전까지 닫는다
+#### CHOICE `social16_sharing_old_media_closed` — 과거 사진·대화 백업은 별도 동의 전까지 열지 않는다
 
 **주인공**  
 옛 사진과 대화 백업은 닫아 둔다. 파일이 있다는 사실만 적어.
@@ -764,7 +793,7 @@ DAY 4 기록과 오늘 행동을 대조한 뒤 차이가 없는 항목만 공유
 `EFFECT: oldMediaAutoOpen=false, oldMediaConsentRequired=true`  
 `MEMORY: 과거 미디어는 존재만 기록되고 열람은 항목별 재동의다.`
 
-#### CHOICE `social16_sharing_ask_each_person` — 다른 사람에게 상태를 전할 때마다 먼저 묻는다
+#### CHOICE `social16_sharing_ask_each_person` — 다른 사람에게 내 상태를 전할 때마다 먼저 묻도록 한다
 
 **주인공**  
 누구에게든 내 상태를 전하기 전에 나한테 먼저 묻는 걸로 하자.
@@ -914,7 +943,7 @@ DAY 4 기록과 오늘 행동을 대조한 뒤 차이가 없는 항목만 공유
 - 모든 stage에서 선택 효과는 한 번만 적용한다. 이전 DAY 선택을 덮어쓰거나 다음 scene을 건너뛰지 않는다.
 - 레거시 저장에서 DAY 16 필드가 없으면 선택은 `null`, 완료는 `false`, stage는 `0`으로 마이그레이션한다.
 
-## 초안 자체 점검
+## 잠금 QA 결과
 
 - 8개 Scene Beat와 세 번의 전략 선택이 실제 대화·행동·반응으로 전개된다: PASS.
 - DAY 15 9개 선택과 DAY 4 12개 선택 ID가 고유 조건부 대사로 회수된다: PASS.
@@ -924,4 +953,6 @@ DAY 4 기록과 오늘 행동을 대조한 뒤 차이가 없는 항목만 공유
 - 새로운 사고 사실을 만들지 않고 조각난 친구망을 이후의 검증 경로로만 연다: PASS.
 - 카페 입구·주문·좌석·명함·타이머·출구와 집 식탁·메모가 행동 공간으로 기능한다: PASS.
 - 반복 요약, 긴 Pause, 금지 표현, 잠금 프로필·후반 반전 누출 없음: PASS.
-
+- 선택 2 종료 행동은 45분·현재 주제·즉시 종료 전략마다 고유하게 실행된다: PASS.
+- 런타임 선택 ID와 플레이어 표시 문구가 잠금 대본에 정확히 일치한다: PASS.
+- 내러티브 QA와 시나리오 잠금 판정은 완료했다. 다음 관문은 기존 에셋 감사·연출/오디오 매핑이다.
