@@ -1316,12 +1316,17 @@ function render() {
   $("#visualNovelStage").dataset.scene = phase.key;
   const phasePresentation=resolvePhasePresentation(state,phase.key);
   const girlfriendHasSkylineStudio=isItemOwnedBy(state,"skyline-studio","girlfriend");
+  const girlfriendHasGiftedVehicle=(state.inventory??[]).some(entry=>entry.owner==="girlfriend"&&getGiftVehicleAsset(entry.itemId));
   const skylineStudioActive=isPlayerItemEquipped(state,"skyline-studio")||girlfriendHasSkylineStudio;
   const scenePresentation=phase.key==="morning"&&skylineStudioActive
     ? {...phasePresentation,backgroundId:"home-morning-skyline-studio",backgroundUrl:getBackgroundAsset("home-morning-skyline-studio")}
     : phasePresentation;
   applyScenePresentation(scenePresentation);
-  $("#studioThanksBubble").classList.toggle("hidden",phase.key!=="morning"||!girlfriendHasSkylineStudio);
+  const giftThanksBubble=$("#studioThanksBubble");
+  const showStudioThanks=phase.key==="morning"&&girlfriendHasSkylineStudio;
+  const showVehicleThanks=phase.key==="evening"&&girlfriendHasGiftedVehicle;
+  giftThanksBubble.textContent=showVehicleThanks?"차 사줘서 고마워.":"“리버뷰 스튜디오”에 살게 해줘서 고마워.";
+  giftThanksBubble.classList.toggle("hidden",!showStudioThanks&&!showVehicleThanks);
   const sceneSoundKey = `${state.day}-${phase.key}`;
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
