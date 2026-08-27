@@ -812,3 +812,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `src/day14-presentation-data.mjs`에 배경·표정·카메라·전환, `daily` BGM, 문서·연필·가방·컵·휴대폰 생활 SFX를 `audited` 상태로 매핑했다.
 - 작은 위화감에도 공포·충격·감시 연출을 금지해 하은의 밝고 생활적인 인상과 DAY 14 정보 예산을 보존했다.
 - 산출물: `docs/day14/DAY14_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day14-presentation-data.mjs`, `tests/day14-presentation.test.mjs`. 관련 집중 검사·인접 회귀·전체 시뮬레이션 PASS. 다음 관문은 기술·육안 이미지 QA다.
+
+# 2026-08-27 DAY 14 기존 자산 이미지 품질 QA
+
+- 배경 5종의 1672×941 RGB PNG와 하은 DAY 8 생활복의 887×1774 RGBA PNG 규격·색상 유형·SHA-256을 원본 파일에서 고정했다.
+- 확대 육안 검사에서 알파·압축·블러·왜곡·크롭·고정 인물·로고·워터마크 결함이 없고, UI 안전 여백과 밝은 생활형 톤을 충족했다. 개인정보 가독 정보와 공포·감시 코딩도 없다.
+- 신규 자산 제작 0종, 기존·사용자 자산 변경 0건이다. `docs/day14/DAY14_IMAGE_QUALITY_QA.md`의 `NEEDS FIX: 0`을 기록하고 8 Scene을 `assetStatus: ready`로 전환했다.
+- 이미지 해시·규격·문서 표식을 `tests/day14-presentation.test.mjs`에 고정했다. 관련 문법·집중·인접·전체 회귀 PASS. 다음 관문은 DAY 14 런타임·선택 상태·저장 복원 구현 감사다.
