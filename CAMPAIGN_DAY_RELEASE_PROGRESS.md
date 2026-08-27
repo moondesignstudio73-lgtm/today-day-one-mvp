@@ -175,16 +175,25 @@
 - [x] 필요한 신규 자산 제작·이미지 QA (신규 필요 0종, 기존 5배경·하은 DAY 8 생활복 QA PASS)
 - [x] 다단계 런타임·선택 상태·저장 복원 구현 감사
 - [x] 집중 테스트·전체 회귀
-- [ ] 실제 브라우저 연속 플레이 QA
+- [x] 실제 브라우저 연속 플레이 QA
 - [ ] 커밋·origin push·gh-pages 배포·공개 페이지 확인
 
 기준 계약: `docs/day14/DAY14_CHAPTER_CONTRACT_V1.md`
 기준 시나리오: `docs/day14/DAY14_SCENARIO_DRAFT_V1.md`
 자체 QA: `docs/day14/DAY14_SCENARIO_QA_V1.md`
+실제 플레이 QA: `docs/day14/DAY14_PLAYTHROUGH_QA.md`
 
 ## 다음 작업
 
-실제 브라우저에서 DAY 13→14 연속 진입, 세 선택, 첫 선택 뒤 새로고침·이어하기, SKIP, 자유행동과 DAY 15 진입을 확인한다.
+DAY 14 브라우저 QA 증적을 커밋하고 origin에 안전하게 push한 뒤, `gh-pages` 분기 보호 파일을 보존하는 일반 통합 가능성을 재검사해 동일 검증 SHA를 공개 배포·확인한다.
+
+### 2026-08-27 DAY 14 실제 브라우저 연속 플레이 QA 관문
+
+- DAY 13 완료 격리 저장에서 DAY 14 세 선택을 실제 UI로 진행하고 첫 선택 직후 새로고침·`이어하기`로 stage 1 생활용품점 복원을 확인했다.
+- 일반 경로는 `spend14_lane_shared` → `spend14_purchase_wait_compare` → `spend14_consent_wishlist`, 별도 SKIP 경로는 세 기본 전략을 사용해 두 경로 모두 자유행동과 DAY 15 첫 장면에 도달했다.
+- SKIP은 선택과 자유행동을 자동 확정하지 않고 각 전략 카드와 5개 자유행동 카드를 정상 표시했다. 공용 저장 결제 이벤트 선택·결과·다음 DAY 저장도 통과했다.
+- 생활용품점·카페·현관/거실·집 배경과 하은 DAY 8 생활복을 육안 검사했다. 하은 원본 `887×1774`, 실제 약 `510×1018`, 깨진 알파·왜곡·화자 잔상·UI 가림이 없다.
+- 사운드 사용자 제스처 상태에서 console warning/error 0건, 7영역 전부 PASS, `NEEDS FIX: 0`이다. 산출물: `docs/day14/DAY14_PLAYTHROUGH_QA.md`; 다음 관문은 커밋·origin push·안전한 `gh-pages` 공개 배포 확인이다.
 
 ### 2026-08-27 DAY 14 집중 테스트·전체 회귀 관문
 
