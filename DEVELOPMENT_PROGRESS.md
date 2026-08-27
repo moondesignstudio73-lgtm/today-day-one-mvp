@@ -826,3 +826,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 출처 없는 추천은 첫 선택 뒤 `day14PastPreferenceRecommendation=unverified`로 저장하며 현재 구매와 분리한다. 완료 시 기본 쇼핑·선물 동의·DAY 15 훅만 해금하고 자동결제·고가 구매·투자는 잠근다.
 - `tests/day14-runtime.test.mjs`를 실제 SaveManager stage 1·2·3 왕복, 재개 프레젠테이션, 무효·순서 오류, 중복 적용, 관계·윤서진 두 축·이전 기억 불변, 자유 연애 격리와 DAY 15 도달성까지 확장했다.
 - 산출물: `docs/day14/DAY14_RUNTIME_SAVE_AUDIT.md`, `src/day14-campaign-runtime.mjs`, `tests/day14-runtime.test.mjs`, `game.js`. 다음 관문은 DAY 14 집중 테스트·전체 회귀다.
+
+# 2026-08-27 DAY 14 집중 테스트·전체 회귀
+
+- `tests/day14-regression.test.mjs`를 추가해 DAY 13→14→15 도달, 최종 선택 단일 기록, 레거시 stage 0 저장, 잠금 프로필·금융·윤서진 두 축 불변을 고정했다.
+- DAY 14 집중 6종과 자유행동, DAY 13 런타임/회귀, DAY 15 런타임, DAY 2~30 자유행동 감사, 90개 브라우저 엔트리와 전체 시뮬레이션이 PASS했다.
+- 필수 회귀의 `DAY 14 NEEDS FIX: 0`이다. 추가 109개 테스트 일괄 감사는 완료된 `tests/day1-hospital-night.test.mjs`의 캐시 기대값 `v=165`가 현재 `index.html`의 `v=166`보다 오래된 정적 불일치에서 중단됐으며 보호 범위 밖 파일은 수정하지 않았다.
+- 산출물: `docs/day14/DAY14_REGRESSION_QA.md`, `tests/day14-regression.test.mjs`. 다음 관문은 실제 브라우저 DAY 13→14 연속 플레이·저장 재개·SKIP·자유행동·DAY 15 진입 QA다.
