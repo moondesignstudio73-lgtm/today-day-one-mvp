@@ -62,7 +62,7 @@ import { DEFAULT_GIRLFRIEND_VISUAL_ID, getGirlfriendVisual, getGirlfriendVisualA
 import { completeWorldFastTravel, createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, isWorldLocationOpen, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
 import { GAME_MODES, getGameModeConfig, isContentAvailableForMode, validateScenarioState } from "../src/scenario-state.mjs";
 import { getMapLocationAsset, MAP_LOCATION_ASSETS, validateMapLocationAssets } from "../src/map-location-assets.mjs";
-import { JAEMIN_ENCOUNTER_CHANCE, JAEMIN_QUIZZES, JUNHO_ENCOUNTER_CHANCE, JUNHO_PARTNER_INSIGHTS, MINJUN_CONCERNS, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, validateWorldEncounterRoutes, WORLD_REPEAT_ENCOUNTER_CHANCE } from "../src/world-encounter-manager.mjs";
+import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JAEMIN_QUIZZES, JUNHO_ENCOUNTER_CHANCE, JUNHO_PARTNER_INSIGHTS, MINJUN_CONCERNS, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, validateWorldEncounterRoutes, WORLD_REPEAT_ENCOUNTER_CHANCE } from "../src/world-encounter-manager.mjs";
 import { appendYujinConversationTurn, completeYujinRooftopMeeting, getPendingYujinRooftopInvitation, isYujinRooftopInvitationReady, YUJIN_MESSAGE_CORPUS, YUJIN_ROOFTOP_EVENT_IMAGE, YUJIN_ROOFTOP_INVITATION, YUJIN_ROOFTOP_LOCATION_ID, YUJIN_ROOFTOP_START_MINUTES } from "../src/yujin-secret-route.mjs";
 
 const coreActionResultAssetIds=["coworker-lunch","dinner-date","early-sleep","focused-work","handsome-meet-female-friends","handsome-meet-friends","lunch-date","manager-feedback","morning-contact","morning-gym","overtime","sleep-in","stock-check","temptation-secret"];
@@ -354,6 +354,33 @@ const yujinEncounter=rollRepeatWorldEncounter(yuriState,{id:"night-food",categor
 assert.equal(yujinEncounter.npcId,"female-coworker");
 const yujinBefore=yuriState.npcs.find(npc=>npc.id==="female-coworker").affection;
 assert.equal(resolveRepeatWorldEncounter(yuriState,yujinEncounter,"coworker-talk").npc.affection,yujinBefore+5);
+assert.equal(EXTORTION_ENCOUNTER_CHANCE,.2);
+for(const [mapId,locationId] of [["jamsil","jamsil-station"],["myeongdong","myeongdong-station"]]){
+  const station=WORLD_MAPS[mapId].locations.find(location=>location.id===locationId);
+  assert.equal(rollRepeatWorldEncounter(yuriState,station,19*60,()=>.2001),null);
+  const threat=rollRepeatWorldEncounter(yuriState,station,19*60,()=>.2);
+  assert.equal(threat.npcId,"anonymous-extortionist");
+  assert.deepEqual(threat.choices.map(choice=>choice.label),["얻어 맞음.","곱게 돈줌"]);
+}
+const fightState=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.FREE_ROMANCE});
+Object.assign(fightState,{health:80,energy:80,trust:500,affection:500,stress:20,money:1000000});
+const jamsilStation=WORLD_MAPS.jamsil.locations.find(location=>location.id==="jamsil-station");
+const fightThreat=rollRepeatWorldEncounter(fightState,jamsilStation,19*60,()=>0);
+const fightResult=resolveRepeatWorldEncounter(fightState,fightThreat,"take-beating");
+assert.deepEqual(fightResult.playerEffects,{health:-20,energy:-20,trust:-20,affection:-20,stress:30});
+assert.deepEqual([fightState.health,fightState.energy,fightState.trust,fightState.affection,fightState.stress,fightState.money],[60,60,480,480,50,1000000]);
+assert.equal(fightState.npcHistory.length,0);
+const payState=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.FREE_ROMANCE});
+Object.assign(payState,{trust:500,affection:500,stress:20,money:1000000});
+const myeongdongStation=WORLD_MAPS.myeongdong.locations.find(location=>location.id==="myeongdong-station");
+const payThreat=rollRepeatWorldEncounter(payState,myeongdongStation,19*60,()=>0);
+const payResult=resolveRepeatWorldEncounter(payState,payThreat,"pay-quietly");
+assert.deepEqual(payResult.playerEffects,{trust:-30,affection:-30,stress:-10});
+assert.equal(payResult.moneyLoss,100000);
+assert.deepEqual([payState.trust,payState.affection,payState.stress,payState.money],[470,470,10,900000]);
+assert.deepEqual(payState.economyLedger.at(-1),{day:payState.day,category:"extortion",label:"명동역 협박 피해",amount:-100000});
+assert.equal(payState.worldEncounterHistory.at(-1).moneyLoss,100000);
+console.log("✓ 잠실역·명동역 20% 협박 조우 및 선택별 피해 검증 통과");
 assert.equal(MINJUN_ENCOUNTER_CHANCE,.5);
 assert.equal(JAEMIN_ENCOUNTER_CHANCE,.3);
 assert.equal(JUNHO_ENCOUNTER_CHANCE,.3);
@@ -1685,6 +1712,8 @@ shoppingState.money = getItem("solstice-ev").price;
 const carPurchase = purchaseItem(shoppingState, "solstice-ev", "player");
 assert.ok(carPurchase.ok && carPurchase.instance.equipped);
 assert.equal(shoppingState.equipment.car, carPurchase.instance.instanceId);
+assert.equal(isItemOwnedBy(shoppingState,"solstice-ev",["player","gift","girlfriend"]),true);
+assert.match(gameSource,/\["player","gift","girlfriend"\]\.includes\(entry\.owner\)&&getGiftVehicleAsset\(entry\.itemId\)/);
 const dealerState=createInitialState(generateGirlfriend(()=>0.5),()=>0.5);
 dealerState.job=structuredClone(JOBS.find(job=>job.id==="used-car-dealer"));
 const car=getItem("solstice-ev");

@@ -90,7 +90,7 @@ import { getMapLocationAsset } from "./src/map-location-assets.mjs";
 import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=31";
 import { getSharedEventById } from "./src/event-compatibility.mjs?v=30";
 import { STORY_UI_STATES, deriveStoryUiState, getStoryUiInvariantViolations, isStoryFreeActionResume, prepareCampaignDayAdvance, reconcileCompletedStoryFreeAction, shouldClaimStoryPending } from "./src/story-flow-guard.mjs?v=2";
-import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JUNHO_ENCOUNTER_CHANCE, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=5";
+import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JUNHO_ENCOUNTER_CHANCE, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=6";
 import { formatEventProbability, getEventProbabilitySummary } from "./src/event-display.mjs?v=1";
 import { appendYujinConversationTurn, completeYujinRooftopMeeting, getPendingYujinRooftopInvitation, getYujinMessageSuggestions, isYujinRooftopInvitationReady, migrateYujinSecretRouteState, YUJIN_MESSAGE_CORPUS, YUJIN_NPC_ID, YUJIN_ROOFTOP_EVENT_IMAGE, YUJIN_ROOFTOP_INVITATION, YUJIN_ROOFTOP_LOCATION_ID, YUJIN_ROOFTOP_START_MINUTES } from "./src/yujin-secret-route.mjs?v=1";
 
@@ -809,11 +809,12 @@ function syncOutfitCharacterMedia(forceImage=false,forcedVideo="") {
 function updateGiftVehicleLayer(characterId="girlfriend") {
   const layer=$("#vnGiftVehicleLayer");
   if(!layer||!state)return;
-  const giftedVehicle=[...(state.inventory??[])].reverse().find(entry=>entry.owner==="girlfriend"&&getGiftVehicleAsset(entry.itemId));
-  const asset=giftedVehicle?getGiftVehicleAsset(giftedVehicle.itemId):"";
+  // 쇼핑에서 내 것·선물용으로 구매했거나 여자친구에게 전달한 차량을 모두 표시한다.
+  const ownedVehicle=[...(state.inventory??[])].reverse().find(entry=>["player","gift","girlfriend"].includes(entry.owner)&&getGiftVehicleAsset(entry.itemId));
+  const asset=ownedVehicle?getGiftVehicleAsset(ownedVehicle.itemId):"";
   const show=Boolean(asset&&state.phase===2&&characterId==="girlfriend");
   layer.hidden=!show;
-  layer.dataset.item=giftedVehicle?.itemId??"";
+  layer.dataset.item=ownedVehicle?.itemId??"";
   if(show&&layer.getAttribute("src")!==asset)layer.src=asset;
 }
 
