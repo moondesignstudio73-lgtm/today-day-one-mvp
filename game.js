@@ -83,7 +83,7 @@ import { getGirlfriendVisual } from "./src/girlfriend-visual-data.mjs";
 import { createPlayerProfile, PLAYER_ARCHETYPES, sanitizePlayerNameInput } from "./src/player-profile-data.mjs?v=2";
 import { getRandomPlayerName } from "./src/player-names-data.mjs?v=1";
 import { GAME_MODES, getGameModeConfig, isContentAvailableForMode } from "./src/scenario-state.mjs?v=3";
-import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=14";
+import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEffects } from "./src/action-result-assets.mjs?v=15";
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
 import { completeWorldFastTravel, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=4";
 import { getMapLocationAsset } from "./src/map-location-assets.mjs";

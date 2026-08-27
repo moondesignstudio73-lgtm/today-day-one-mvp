@@ -13,6 +13,7 @@ export const ACTION_RESULT_ASSETS = Object.freeze({
   "dinner-date": "assets/action-results/dinner-date.png",
   "gift-shopping": "assets/action-results/generated/gift-shopping-01.png",
   "coworker-lunch": "assets/action-results/lunch-coworkers-02.png",
+  "coworker-drinks": "assets/action-results/generated/coworker-drinks-01.png",
   "stock-check": "assets/action-results/check-stocks.png",
   "manager-feedback": "assets/action-results/manager-feedback.png",
   "early-sleep": "assets/action-results/early-sleep.png",
