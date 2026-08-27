@@ -900,3 +900,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `docs/day15/DAY15_IMAGE_QUALITY_QA.md`를 `IMAGE QA PASS`, `NEEDS FIX: 0`으로 잠그고 `src/day15-presentation-data.mjs`의 8 Scene을 `assetStatus: ready`로 전환했다.
 - `tests/day15-presentation.test.mjs`가 7개 이미지의 규격·색상 유형·해시와 QA 표식을 검사한다. Node 문법, DAY 15 시나리오·프레젠테이션·런타임, DAY 14/16 인접 런타임, 전체 `tests/simulation.test.mjs`가 PASS했다.
 - 다음 관문은 DAY 15 잠금 시나리오·ready 프레젠테이션·기존 런타임의 선택 상태·DAY 14 콜백·중간 저장 복원·DAY 16 훅 구현 감사다.
+
+# 2026-08-27 DAY 15 다단계 런타임·선택 상태·저장 복원 구현 감사
+
+- `src/day15-campaign-runtime.mjs`를 잠금 시나리오와 `ready` 프레젠테이션에 맞춰 확장해 8 Scene·19개 생활 SFX·DAY 14 9콜백·DAY 15 27개 경로를 실제 런타임에 연결했다.
+- 첫 선택 뒤 예약 `첫 예약`/`재방문` 표기 불일치를 `day15LeisureReservationVisitLabel=unverified`와 `leisure-reservation-label-mismatch`로 저장하고 네 가지 생활적 설명을 보존한다.
+- 활동·변경·공개 전략별 게임 수치와 `haeunAffection`/`haeunTrust` 효과를 대본대로 한 번만 적용한다. 동일 선택 재적용, 순서 오류, 이미 확정한 축 교체는 효과·단서·행동·훅을 중복시키지 않는다.
+- 27개 경로를 각 stage에서 `SaveManager`로 왕복해 활동별 책방/전시 재개, 카페 재개, 두 현재 기억, 완료 플래그, DAY 16 훅을 확인했다. 윤서진 두 축과 DAY 11·14 미확인 단서, 금융·프로필 잠금은 불변이다.
+- `game.js`의 DAY 15 런타임 캐시를 `v=2`, `index.html`의 진입 캐시를 `v=172`로 갱신했다. Node 문법, DAY 15 계약·초안·시나리오·프레젠테이션·런타임, DAY 14/16 인접, DAY 15 및 DAY 2~30 자유행동, 브라우저 엔트리 94개와 전체 시뮬레이션이 PASS했다.
+- 산출물: `docs/day15/DAY15_RUNTIME_SAVE_AUDIT.md`, `src/day15-campaign-runtime.mjs`, `tests/day15-runtime.test.mjs`, `game.js`, `index.html`. 다음 관문은 DAY 15 전용 집중 테스트·전체 회귀다.
