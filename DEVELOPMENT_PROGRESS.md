@@ -778,3 +778,12 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - Node 문법, DAY 13 집중 검사, DAY 12/14 인접 도달성, DAY 2~30 자유행동 감사, 90개 브라우저 엔트리와 전체 시뮬레이션을 최종 재검증했다.
 - 브라우저 console warning/error 0건, 7영역 PASS, `NEEDS FIX: 0`인 검증 커밋을 origin과 동일 SHA `gh-pages`에 공개한다.
 - 사용자 원본 에셋 2종은 보존했다. DAY 13을 COMPLETE 처리하고 자동화 `30-day-5-30`을 PAUSED로 전환하며 DAY 14는 시작하지 않는다.
+
+# 2026-08-27 DAY 14 챕터 계약·Voice Profile·지식 장부
+
+- 크레딧 충전과 사용자 재개 지시에 따라 현재 대상을 DAY 14로 전환했다.
+- 두 필수 내러티브 스킬의 캐논·화자·챕터 밀도 규칙을 적용해 `docs/day14/DAY14_CHAPTER_CONTRACT_V1.md`를 작성했다.
+- DAY 13 기준·부담·검토 9개 전략을 소비 범위·결제 소유권·구매 기록/선물 동의에 고유하게 회수하고 DAY 14의 3단계 선택·저장 복원·DAY 15 훅을 고정했다.
+- 출처 불명 과거 선호 추천 한 건만 작은 위화감으로 허용하되 계정·기기·공동 장바구니라는 일상적 가능성을 남기고 `unverified`로 보존한다.
+- 하은의 밝고 생활적인 23세 톤, 주인공의 합리적 검증, 윤서진 AFFECTION/STATUS_INTEREST 분리, 자동결제·고가 구매·투자 잠금을 유지한다.
+- 산출물: `docs/day14/DAY14_CHAPTER_CONTRACT_V1.md`, `tests/day14-contract.test.mjs`. 다음 관문은 8 Beat 완전 플레이 시나리오 초안이다.
