@@ -98,7 +98,7 @@ export const BACKGROUND_ASSETS = {
   "day2-home-entry":"assets/backgrounds/day2/day2-home-entry-living-afternoon-v1.png",
   "day2-bedroom":"assets/backgrounds/day2/day2-protagonist-bedroom-afternoon-v2.png",
   "home-morning":"assets/backgrounds/morning-studio-2d.png",
-  "home-morning-skyline-studio":"assets/items/shop-products/skyline-studio.png",
+  "home-morning-skyline-studio":"assets/backgrounds/home/skyline-riverview-studio-morning-hd.png",
   "home-night":"assets/backgrounds/home/BG_HOME_NIGHT_001.webp",
   "office-day":"assets/backgrounds/office/BG_OFFICE_DAY_001.webp",
   "neighborhood-street-day":"assets/backgrounds/street/BG_RELATIONSHIP_STREET_DAY_001.png",

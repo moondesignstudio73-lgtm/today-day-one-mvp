@@ -141,7 +141,7 @@
           <img class="vn-character-accessory" id="vnAccessoryLayer" alt="" aria-hidden="true" hidden>
           <img class="vn-day1-event-cg" id="vnEventCg" alt="" aria-hidden="true" hidden>
           <div id="vnExpressionLayer" class="vn-expression-layer" aria-live="polite"></div>
-          <div id="studioThanksBubble" class="studio-thanks-bubble hidden" role="status" aria-live="polite">“리버뷰 스튜디오”에 살게 해줘서 고마워.</div>
+          <!-- 리버뷰 스튜디오·자동차 선물 감사 말풍선은 캐릭터를 가려 비활성화함. -->
           <div id="vnEquipmentLayer" class="vn-equipment-layer" aria-live="polite"></div>
           <div class="vn-scene-meta"><span class="eyebrow" id="phaseLabel">MORNING · 아침</span><span class="clock" id="clockLabel">08:00</span></div>
           <div class="action-selection-panel">
@@ -263,9 +263,9 @@
         <img id="actionResultImage" src="" alt="" hidden>
         <video id="actionResultVideo" muted autoplay loop playsinline preload="metadata" hidden></video>
         <div id="actionResultPending" class="action-result-pending" hidden>
-          <span aria-hidden="true">✦</span>
-          <strong>이미지 준비 중</strong>
-          <small>이 활동의 장면 일러스트는 곧 추가됩니다.</small>
+          <span id="actionResultPendingIcon" aria-hidden="true">✦</span>
+          <strong id="actionResultPendingTitle">이미지 준비 중</strong>
+          <small id="actionResultPendingText">이 활동의 장면 일러스트는 곧 추가됩니다.</small>
         </div>
       </div>
       <div class="action-result-copy">
@@ -278,6 +278,6 @@
     </article>
   </section>
   <div id="toast" class="toast"></div>
-  <script type="module" src="game.js?v=175"></script>
+  <script type="module" src="game.js?v=179"></script>
 </body>
 </html>

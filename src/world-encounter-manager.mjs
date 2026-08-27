@@ -116,8 +116,8 @@ const ENCOUNTERS = Object.freeze({
     Object.freeze({id:"late-snack",label:"야식을 함께 먹으며 개인적인 안부를 묻는다",response:"늦은 야식을 함께하며 서로의 일상에 대해 조금 더 알게 됐다.",npcEffects:Object.freeze({affection:8,trust:3,interestInPlayer:5})})
   ])}),
   stationExtortion:Object.freeze({id:"station-extortion",routeType:"extortion",chance:EXTORTION_ENCOUNTER_CHANCE,npcId:"anonymous-extortionist",npcName:"불특정 인원",title:"역 앞에서 벌어진 협박",message:"역 주변의 인적 드문 길목에서 험악한 남자가 앞을 막고 가진 돈을 내놓으라고 협박했다.",question:"낯선 남자가 길을 막아선 채 위협한다. 어떻게 대응할까?",choices:Object.freeze([
-    Object.freeze({id:"take-beating",label:"얻어맞을래?",response:"돈을 내놓지 않고 버티자 몸싸움 끝에 크게 다쳤다. 갑작스러운 사건은 연인과의 관계에도 깊은 상처로 남았다.",playerEffects:Object.freeze({health:-20,energy:-20,trust:-20,affection:-20,stress:30})}),
-    Object.freeze({id:"pay-quietly",label:"곱게 돈줄래?",response:"더 큰 충돌을 피하려고 돈을 건넸다. 가진 현금의 10%를 빼앗긴 뒤 가까스로 자리를 벗어났다.",playerEffects:Object.freeze({trust:-30,affection:-30,stress:-10}),cashLossRate:0.1})
+    Object.freeze({id:"take-beating",label:"얻어 맞음.",response:"돈을 내놓지 않고 버티자 몸싸움 끝에 크게 다쳤다. 갑작스러운 사건은 연인과의 관계에도 깊은 상처로 남았다.",playerEffects:Object.freeze({health:-20,energy:-20,trust:-20,affection:-20,stress:30})}),
+    Object.freeze({id:"pay-quietly",label:"곱게 돈줌",response:"더 큰 충돌을 피하려고 돈을 건넸다. 가진 현금의 10%를 빼앗긴 뒤 가까스로 자리를 벗어났다.",playerEffects:Object.freeze({trust:-30,affection:-30,stress:-10}),cashLossRate:0.1})
   ])})
 });
 
