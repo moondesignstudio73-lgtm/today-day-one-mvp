@@ -67,7 +67,7 @@ import { recordMemory } from "./src/memory-manager.mjs";
 import { maybeGenerateInitiatedMessage } from "./src/initiated-message-manager.mjs?v=6";
 import { getWrappedFocusIndex } from "./src/ui-manager.mjs";
 import { getHeroineEventVideo, renderCharacter, resolveCharacterAccessory, resolveCharacterExpression, resolveCharacterOutfit, resolveCharacterPose } from "./src/ui/character-renderer.mjs?v=11";
-import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=19";
+import { getBackgroundAsset, getGiftVehicleAsset, getNpcSprite } from "./src/assets/asset-manifest.mjs?v=20";
 import { getAvailableStoryChoices, getStoryScene, resolveStoryChoice, selectNextStoryScene } from "./src/story-manager.mjs?v=32";
 import { STORY_SCENES } from "./src/story-data.mjs?v=26";
 import { createDaySnapshot, ensureNightState, formatNightTime, getDailyReport, getLateSleepEffects, NIGHT_END_MINUTES, resetForNextDay, setNightStartTime, spendNightTime } from "./src/night-manager.mjs?v=3";
@@ -90,7 +90,7 @@ import { getMapLocationAsset } from "./src/map-location-assets.mjs";
 import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=31";
 import { getSharedEventById } from "./src/event-compatibility.mjs?v=30";
 import { STORY_UI_STATES, deriveStoryUiState, getStoryUiInvariantViolations, isStoryFreeActionResume, prepareCampaignDayAdvance, reconcileCompletedStoryFreeAction, shouldClaimStoryPending } from "./src/story-flow-guard.mjs?v=2";
-import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JUNHO_ENCOUNTER_CHANCE, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=5";
+import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JUNHO_ENCOUNTER_CHANCE, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=6";
 import { formatEventProbability, getEventProbabilitySummary } from "./src/event-display.mjs?v=1";
 import { appendYujinConversationTurn, completeYujinRooftopMeeting, getPendingYujinRooftopInvitation, getYujinMessageSuggestions, isYujinRooftopInvitationReady, migrateYujinSecretRouteState, YUJIN_MESSAGE_CORPUS, YUJIN_NPC_ID, YUJIN_ROOFTOP_EVENT_IMAGE, YUJIN_ROOFTOP_INVITATION, YUJIN_ROOFTOP_LOCATION_ID, YUJIN_ROOFTOP_START_MINUTES } from "./src/yujin-secret-route.mjs?v=1";
 
@@ -317,16 +317,55 @@ function openActionResultModal(action, message, effects, continuation, customAss
   $("#actionResultText").textContent = message;
   video.pause();
   video.hidden = true;
+  video.onerror = null;
+  video.onloadeddata = null;
+  video.oncanplay = null;
+  delete video.dataset.expectedSource;
   video.removeAttribute("src");
+  pending.className = "action-result-pending";
+  $("#actionResultPendingIcon").textContent = "✦";
+  $("#actionResultPendingTitle").textContent = "이미지 준비 중";
+  $("#actionResultPendingText").textContent = "이 활동의 장면 일러스트는 곧 추가됩니다.";
   if (videoAsset) {
     image.removeAttribute("src");
     image.alt = "";
     image.hidden = true;
-    video.src = videoAsset;
+    pending.className = "action-result-pending loading";
+    $("#actionResultPendingIcon").textContent = "";
+    $("#actionResultPendingTitle").textContent = "영상 로딩 중…";
+    $("#actionResultPendingText").textContent = "잠시만 기다려 주세요.";
+    pending.hidden = false;
     video.setAttribute("aria-label", `${action.title} 행동 결과 영상`);
-    video.hidden = false;
-    pending.hidden = true;
-    video.play().catch(() => {});
+    video.dataset.expectedSource = videoAsset;
+    const revealVideo=()=>{
+      if(video.dataset.expectedSource!==videoAsset)return;
+      pending.hidden=true;
+      pending.className="action-result-pending";
+      video.hidden=false;
+      video.play().catch(()=>{});
+    };
+    const showVideoFallback=()=>{
+      if(video.dataset.expectedSource!==videoAsset)return;
+      video.pause();
+      video.hidden=true;
+      if(asset){
+        image.src=asset;
+        image.alt=`${action.title} 활동 결과 장면`;
+        image.hidden=false;
+        pending.hidden=true;
+      }else{
+        pending.className="action-result-pending error";
+        $("#actionResultPendingIcon").textContent="!";
+        $("#actionResultPendingTitle").textContent="영상을 불러오지 못했어요";
+        $("#actionResultPendingText").textContent="결과 내용은 아래에서 정상적으로 확인할 수 있습니다.";
+        pending.hidden=false;
+      }
+    };
+    video.onerror=showVideoFallback;
+    video.onloadeddata=revealVideo;
+    video.oncanplay=revealVideo;
+    video.src=videoAsset;
+    video.load();
   } else if (asset) {
     image.src = asset;
     image.alt = `${action.title} 활동 결과 장면`;
@@ -354,6 +393,10 @@ function confirmActionResult() {
   video.pause();
   video.currentTime = 0;
   video.hidden = true;
+  video.onerror = null;
+  video.onloadeddata = null;
+  video.oncanplay = null;
+  delete video.dataset.expectedSource;
   video.removeAttribute("src");
   modal.classList.add("hidden");
   const continuation = actionResultContinuation;
@@ -672,7 +715,6 @@ function startImmersiveScene(session) {
   if(session.id===LOCKED_DAY30_SCENE_ID){const resumeVisual=getLockedDay30ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
   document.body.classList.remove("ui-classic-mode");
   document.body.classList.add("ui-story-mode");
-  $("#studioThanksBubble").classList.add("hidden");
   $(".story-toolbar").classList.remove("hidden");
   $("#gameScreen").classList.remove("classic-mode");
   $("#gameScreen").classList.add("story-mode");
@@ -767,11 +809,12 @@ function syncOutfitCharacterMedia(forceImage=false,forcedVideo="") {
 function updateGiftVehicleLayer(characterId="girlfriend") {
   const layer=$("#vnGiftVehicleLayer");
   if(!layer||!state)return;
-  const giftedVehicle=[...(state.inventory??[])].reverse().find(entry=>entry.owner==="girlfriend"&&getGiftVehicleAsset(entry.itemId));
-  const asset=giftedVehicle?getGiftVehicleAsset(giftedVehicle.itemId):"";
+  // 쇼핑에서 내 것·선물용으로 구매했거나 여자친구에게 전달한 차량을 모두 표시한다.
+  const ownedVehicle=[...(state.inventory??[])].reverse().find(entry=>["player","gift","girlfriend"].includes(entry.owner)&&getGiftVehicleAsset(entry.itemId));
+  const asset=ownedVehicle?getGiftVehicleAsset(ownedVehicle.itemId):"";
   const show=Boolean(asset&&state.phase===2&&characterId==="girlfriend");
   layer.hidden=!show;
-  layer.dataset.item=giftedVehicle?.itemId??"";
+  layer.dataset.item=ownedVehicle?.itemId??"";
   if(show&&layer.getAttribute("src")!==asset)layer.src=asset;
 }
 
@@ -1315,18 +1358,14 @@ function render() {
   $(".play-panel").classList.remove("hidden");
   $("#visualNovelStage").dataset.scene = phase.key;
   const phasePresentation=resolvePhasePresentation(state,phase.key);
-  const girlfriendHasSkylineStudio=isItemOwnedBy(state,"skyline-studio","girlfriend");
-  const girlfriendHasGiftedVehicle=(state.inventory??[]).some(entry=>entry.owner==="girlfriend"&&getGiftVehicleAsset(entry.itemId));
+  // 이전 저장 데이터는 선물용 구매 후 보관함(owner: gift)에 남아 있을 수 있다.
+  // 스튜디오는 구매 즉시 주거 선물로 취급해 두 상태를 모두 활성화한다.
+  const girlfriendHasSkylineStudio=isItemOwnedBy(state,"skyline-studio",["gift","girlfriend"]);
   const skylineStudioActive=isPlayerItemEquipped(state,"skyline-studio")||girlfriendHasSkylineStudio;
   const scenePresentation=phase.key==="morning"&&skylineStudioActive
     ? {...phasePresentation,backgroundId:"home-morning-skyline-studio",backgroundUrl:getBackgroundAsset("home-morning-skyline-studio")}
     : phasePresentation;
   applyScenePresentation(scenePresentation);
-  const giftThanksBubble=$("#studioThanksBubble");
-  const showStudioThanks=phase.key==="morning"&&girlfriendHasSkylineStudio;
-  const showVehicleThanks=phase.key==="evening"&&girlfriendHasGiftedVehicle;
-  giftThanksBubble.textContent=showVehicleThanks?"차 사줘서 고마워.":"“리버뷰 스튜디오”에 살게 해줘서 고마워.";
-  giftThanksBubble.classList.toggle("hidden",!showStudioThanks&&!showVehicleThanks);
   const sceneSoundKey = `${state.day}-${phase.key}`;
   if (sceneSoundKey !== lastSceneSoundKey) { lastSceneSoundKey = sceneSoundKey; sound.playScene(phase.key,state.day); }
   $("#phaseLabel").textContent = phase.label;
@@ -2185,7 +2224,20 @@ function openPurchaseConfirmation(itemId, owner) {
   $("#modalContent").innerHTML=`<span class="eyebrow">PURCHASE CONFIRM</span><h2>구매 확인</h2><div class="purchase-confirm-item">${visual}<div><small>${escapeHtml(item.brand)} · ${escapeHtml(target)}</small><b>${escapeHtml(item.name)}</b><strong>${money(quote.price)}</strong></div></div><p class="venue-visit-question">구매하시겠습니까?</p><div class="venue-confirm-actions"><button id="purchaseCancel" type="button">아니오</button><button id="purchaseConfirm" class="primary-button" type="button">예</button></div>`;
   openModal();
   $("#purchaseCancel").addEventListener("click",openShop);
-  $("#purchaseConfirm").addEventListener("click",()=>{const result=purchaseItem(state,itemId,owner);if(!result.ok){toast(result.reason);openShop();return;}const outfitGift=result.item.category==="heroine-outfit"?giveGift(state,result.instance.instanceId):null;if(outfitGift){state.logs.push({time:`DAY ${state.day} · OUTFIT`,text:`${outfitGift.item.name} 선물 · 바로 착용`});recordMemory(state,{type:"gift",summary:`${outfitGift.item.name} 의상 선물`,importance:4,tags:["선물","의상",outfitGift.item.id]});}SaveManager.save(state);render();openShop();toast(outfitGift?`${state.partner.name}에게 선물 완료 · 새 의상 착용`:`${result.item.name} 구매 완료`);});
+  $("#purchaseConfirm").addEventListener("click",()=>{
+    const result=purchaseItem(state,itemId,owner);
+    if(!result.ok){toast(result.reason);openShop();return;}
+    const autoGift=owner==="gift"&&(result.item.category==="heroine-outfit"||result.item.id==="skyline-studio")
+      ? giveGift(state,result.instance.instanceId)
+      : null;
+    if(autoGift){
+      const giftType=result.item.id==="skyline-studio"?"주거":"의상";
+      state.logs.push({time:`DAY ${state.day} · ${giftType==="주거"?"HOME":"OUTFIT"}`,text:`${autoGift.item.name} 선물 · 바로 전달`});
+      recordMemory(state,{type:"gift",summary:`${autoGift.item.name} ${giftType} 선물`,importance:4,tags:["선물",giftType,autoGift.item.id]});
+    }
+    SaveManager.save(state);render();openShop();
+    toast(autoGift?`${state.partner.name}에게 ${result.item.name} 선물 완료`:`${result.item.name} 구매 완료`);
+  });
 }
 
 function openFinance() {
