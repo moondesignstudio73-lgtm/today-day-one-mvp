@@ -804,3 +804,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 추천 기록은 복수 출처와 메타데이터 부재를 확인한 뒤 `unverified`로 남고 현재 구매 판단과 분리된다. 기존 미확인 단서·윤서진 독립 두 축·자동결제/고가구매/투자/프로필 잠금은 불변이다.
 - 산출물: `docs/day14/DAY14_SCENARIO_QA_V1.md`, `tests/day14-scenario.test.mjs`와 잠금본 갱신. Node 문법, DAY 14 계약/초안/시나리오/런타임, DAY 13/15 인접 회귀, 전체 시뮬레이션이 PASS했다.
 - 다음 관문은 DAY 14 기존 에셋 감사와 8 Scene 연출/오디오 매핑이다.
+
+# 2026-08-27 DAY 14 기존 에셋 감사·연출·오디오 매핑
+
+- 기존 집 아침·현관/거실·생활용품점·마트·카페 5배경과 하은 DAY 8 생활형 외출복을 8 Scene에 비파괴 재사용하도록 확정했다.
+- 신규 최종 아트는 0종이며 추천·가격·영수증·위시리스트 정보는 비가독 소품으로 처리한다. 기존·사용자 에셋 변경은 없다.
+- `src/day14-presentation-data.mjs`에 배경·표정·카메라·전환, `daily` BGM, 문서·연필·가방·컵·휴대폰 생활 SFX를 `audited` 상태로 매핑했다.
+- 작은 위화감에도 공포·충격·감시 연출을 금지해 하은의 밝고 생활적인 인상과 DAY 14 정보 예산을 보존했다.
+- 산출물: `docs/day14/DAY14_ASSET_DIRECTION_AUDIO_AUDIT.md`, `src/day14-presentation-data.mjs`, `tests/day14-presentation.test.mjs`. 관련 집중 검사·인접 회귀·전체 시뮬레이션 PASS. 다음 관문은 기술·육안 이미지 QA다.

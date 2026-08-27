@@ -171,7 +171,7 @@
 - [x] 챕터 계약·Voice Profile·지식 장부
 - [x] 완전한 플레이 가능 시나리오 초안
 - [x] 자체 내러티브 QA·정적 계약 검사
-- [ ] 기존 에셋 감사·연출/오디오 매핑
+- [x] 기존 에셋 감사·연출/오디오 매핑
 - [ ] 필요한 신규 자산 제작·이미지 QA
 - [ ] 다단계 런타임·선택 상태·저장 복원 구현 감사
 - [ ] 집중 테스트·전체 회귀
@@ -184,7 +184,15 @@
 
 ## 다음 작업
 
-DAY 14의 기존 에셋을 감사하고 8 Scene의 배경·의상·표정·카메라·전환·BGM·SFX를 연출/오디오 데이터에 매핑한다.
+DAY 14에서 재사용할 기존 배경 5종과 하은 DAY 8 생활복의 기술·육안 이미지 QA를 수행하고 8 Scene을 `ready`로 전환한다.
+
+### 2026-08-27 DAY 14 기존 에셋 감사·연출/오디오 매핑 관문
+
+- 기존 `home-morning`, `day2-home-entry`, `day8-household-store-day`, `neighborhood-market-day`, `neighborhood-cafe-day` 5배경과 하은 DAY 8 생활형 외출복을 감사해 8 Scene에 비파괴 재사용하도록 확정했다.
+- 신규 최종 아트 필요는 0종이며 추천 카드·가격표·영수증·위시리스트는 개인정보 비가독 소품으로 처리한다. 사용자 에셋과 기존 파일은 변경하지 않았다.
+- `src/day14-presentation-data.mjs`에 Scene별 배경·의상·표정·카메라·전환, `daily` BGM, 기존 생활 SFX를 `assetStatus: audited`로 매핑했다.
+- 작은 위화감 장면도 공포 줌·비네트·글리치·충격음·붉은 색보정·하은 단독 감시 구도를 쓰지 않고, 흐린 메타데이터 확인 뒤 현재 샘플로 돌아오는 생활 동선을 유지한다.
+- `docs/day14/DAY14_ASSET_DIRECTION_AUDIO_AUDIT.md`, `tests/day14-presentation.test.mjs`를 추가했다. Node 문법, DAY 14 프레젠테이션·시나리오·런타임, DAY 13/15 인접 회귀와 전체 시뮬레이션 PASS. 다음 관문은 기존 자산 이미지 품질 QA와 `ready` 전환이다.
 
 ### 2026-08-27 DAY 14 자체 내러티브 QA·정적 계약 검사 관문
 
