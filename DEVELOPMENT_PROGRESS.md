@@ -1,5 +1,13 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 V3 STATE RUNTIME / SAVE RESTORE PASS (2026-08-28)
+
+- V3 선택 10개의 순서·체크포인트·선택 ID 저장과 매 선택 직후 JSON 복원을 구현했다.
+- 오후 경로, 지각, 설명 진실성, 지훈 공개 깊이, 사적 작업 보호/공개 크레딧 상태를 독립적으로 파생한다.
+- 완료 시 `day8JihoonInvitationPending=false`, `day9ClothingColorInvitationPending=true`; 윤서진 두 축 변화 0을 검증했다.
+- 구 DAY 8 부분/완료 저장은 `V1_LEGACY`로 유지한다. 집중 테스트 4/4 PASS.
+- 다음 작업: 24 Scene 플레이어블 스크립트와 정상/휴식 배타 경로 렌더링. DAY 9는 시작하지 않는다.
+
 ## DAY 8 V3 NARRATIVE DATA CONTRACT PASS (2026-08-28)
 
 - V3 24 Scene·10선택·31전략, SCENE 15 배타 경로, 정보/관계 예산과 22개 저장 키를 코드 데이터로 구현했다.
