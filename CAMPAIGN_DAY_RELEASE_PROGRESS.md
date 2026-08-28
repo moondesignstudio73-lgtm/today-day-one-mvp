@@ -1881,6 +1881,12 @@ DAY 16 출시 전 관문을 완료했다. 다음 작업은 노션 사용자 원�
 - 전용 배경 4종과 이벤트 CG 4종, 총 8종의 제작 명세를 고정하고 8 Scene을 `needs-production`으로 표시했다. daily BGM과 기존 SFX 5종은 서사 의미를 침범하지 않는 조건으로 PASS했다.
 - 산출물: `docs/day5/DAY5_ASSET_DIRECTION_AUDIO_AUDIT.md`, 갱신된 `src/day5-presentation-data.mjs`, `tests/day5-presentation.test.mjs`; DAY 5 프레젠테이션·시나리오 정적 검사 PASS.
 - 다음 관문: 신규 이미지 8종 비파괴 제작과 원본/데스크톱/모바일 이미지 QA. DAY 6는 시작하지 않는다.
+
+### 2026-08-29 DAY 9 V3 하은 스프라이트 생성본 기술 QA 탈락
+
+- 최신 Notion 하위 V3 본문을 다시 조회하고 하은 정체성 참조 3종으로 회색/남색 셔츠 스프라이트를 생성했다.
+- 최초본과 알파 교정본 모두 `887×1774 Format24bppRgb`, 투명 샘플 0으로 확인되어 실제 알파 필수 기준에 미달했다.
+- 두 결과는 저장소 자산으로 채택하지 않았고 프로젝트 사본을 제거했다. 이미지 관문은 0/9 PENDING이며 다음 실행에서 RGBA 출력 경로를 확보해 재시도한다.
 ### 2026-08-28 DAY 6 V3 immersive 화면 어댑터 PASS
 
 - `AI해커톤 > DAY 6 — 처음 가는 길 | SCENARIO V3` 하위 페이지 본문을 새로 완전 조회했고, 상위 Markdown 첨부는 최신 규칙에 따라 제외했다.
