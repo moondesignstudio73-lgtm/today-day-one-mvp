@@ -1,5 +1,13 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 V3 FRESH SOURCE / IMPLEMENTATION GAP AUDIT PASS (2026-08-28)
+
+- 최신 Notion 하위 페이지를 다시 조회해 5 ACT·24 Scene·10선택·정상/휴식/SCENE 15 배타 경로 계약이 유지됨을 확인했다.
+- 현행 독립 심부름 8 Scene·3선택축 런타임은 지훈의 현재 삶을 듣는 V3와 핵심 사건·화자·장소·감정 중심·DAY 9 훅이 달라 전면 재구축이 필요하다.
+- 구 DAY 8 시나리오/런타임/프레젠테이션/회귀 테스트 4종은 PASS했지만 레거시 저장 기준선으로만 보존한다.
+- 산출물: `docs/day8/DAY8_V3_IMPLEMENTATION_GAP_AUDIT.md`.
+- 다음 작업: V3 챕터 계약·Voice Profile·지식 장부·정보 예산·24 Scene/10선택 데이터 계약 및 레거시 이행표. DAY 9는 시작하지 않는다.
+
 ## DAY 8 NOTION SOURCE PRECEDENCE RESOLVED / RESUME (2026-08-28)
 
 - 사용자가 DAY 8의 최우선 원본으로 Notion 하위 페이지 본문을 명시적으로 확정했다.

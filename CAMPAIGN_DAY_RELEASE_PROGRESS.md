@@ -8,6 +8,14 @@
 
 자동화 상태: `ACTIVE — Notion DAY 8 하위 페이지 본문 최우선 확정`
 
+### 2026-08-28 DAY 8 V3 최신 원고·구현 격차 감사 PASS
+
+- Notion `DAY 8 — 너 없는 오후 | SCENARIO V3` 하위 페이지 본문을 새로 조회해 ACT 1~5, SCENE 01~24, 선택 1~10과 분기 우선순위가 유지됨을 확인했다.
+- 현재 8 Scene·3선택축·27조합의 독립 심부름 구현은 지훈 중심 24 Scene·10선택 원고와 핵심 사건·화자·장소·감정선·종료 훅이 달라 `REBUILD REQUIRED`다.
+- 기존 DAY 8 집중 테스트 4/4는 PASS했으나 구 V1 계약의 레거시 기준선일 뿐 V3 완료 증거로 사용하지 않는다.
+- 산출물: `docs/day8/DAY8_V3_IMPLEMENTATION_GAP_AUDIT.md`.
+- 다음 관문: V3 챕터 계약·Voice Profile·지식 장부·정보/관계 예산·24 Scene/10선택 데이터 계약과 레거시 저장 이행표. DAY 9는 시작하지 않는다.
+
 ### 2026-08-28 DAY 8 SOURCE PRECEDENCE RESOLVED / RESUME
 
 - 사용자가 “노션이 우선”이라고 명시해 `DAY 8 — 너 없는 오후 | SCENARIO V3` 하위 페이지 본문을 DAY 8의 최우선 원본으로 확정했다.
