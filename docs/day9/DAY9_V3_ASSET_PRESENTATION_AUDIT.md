@@ -121,3 +121,10 @@
 - 원본은 `1672×941 Format24bppRgb`, SHA-256 `D1B16323E53061A56883F4620F2A8D4BFA5B0820A183DC4F5DF6BA70DBD13FD5`다.
 - 벤치의 물병·가방·지퍼·현재 소매와 두 손의 조심스러운 분리 동작이 중앙 `center-60`에 남는다. 힘으로 당기기·손상·문자·브랜드·인물 오표시가 없으며 DAY 2 대비 구도·선명도·행동성·UI 안전 영역을 PASS했다.
 - `day9V3RestRoute=true`인 SCENE 16에서만 노출한다. 피팅 경로의 플레이어 소매 CG는 별도 PENDING이며 전체 제작 진척은 5/9다.
+
+## 2026-08-29 SCENE 19 스카프 교환·녹색 셔츠 최종 인계 CG — PASS
+
+- 최신 Notion 하위 V3의 스카프 교환→기본 양말과 녹색 셔츠 구매가 함께 성립한 상태만 시각화했다.
+- 원본은 `1672×941 Format24bppRgb`, SHA-256 `5684F110385992357178DBC68BE1B5955EDF2155ABB85541DDAF0C76A45493E1`이다.
+- 한 봉투 안의 녹색 큰 포켓 셔츠·기본 양말, 무문자 영수증 정확히 한 장, 직원과 주인공의 인계 손동작이 중앙 `center-60`에 남는다. 가격·바코드·브랜드·복수 결제·스카프 착용은 없다.
+- `day9V3TransactionsSettled=true`, `day9V3ScarfState=EXCHANGED`, 녹색 셔츠가 `GIFT_ACCEPTED` 또는 `HAEUN_SELF_PURCHASED`일 때만 노출한다. 이미지 진척은 6/9다.
