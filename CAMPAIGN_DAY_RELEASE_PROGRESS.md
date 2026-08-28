@@ -8,6 +8,14 @@
 
 자동화 상태: `ACTIVE — Notion DAY 8 하위 페이지 본문 최우선 확정`
 
+### 2026-08-28 DAY 8 V3 챕터 계약 관문 PASS
+
+- Notion 24 Scene·10선택을 기준으로 `m30-day8-jihoon-present-afternoon-v3` 챕터 계약, 세 화자 Voice Profile, 9항목 지식 장부, 정보·관계·미스터리 예산을 고정했다.
+- 사적 클라이언트 작업/공개 크레딧 영상, 하은의 독립 일정, 지훈의 현재 삶, 지각·설명 진실성·휴식·개인정보 경계를 독립 상태로 계약했다.
+- 신규 V3 저장은 선택 10개를 각각 체크포인트화하고, 기존 독립 심부름 부분/완료 저장은 `V1_LEGACY`로 보존해 의미가 다른 선택을 자동 변환하지 않는다.
+- 산출물: `docs/day8/DAY8_V3_CHAPTER_CONTRACT.md`, `tests/day8-v3-contract.test.mjs`.
+- 다음 관문: 24 Scene·10선택 내러티브 데이터와 상태 런타임 구현. DAY 9는 시작하지 않는다.
+
 ### 2026-08-28 DAY 8 V3 최신 원고·구현 격차 감사 PASS
 
 - Notion `DAY 8 — 너 없는 오후 | SCENARIO V3` 하위 페이지 본문을 새로 조회해 ACT 1~5, SCENE 01~24, 선택 1~10과 분기 우선순위가 유지됨을 확인했다.

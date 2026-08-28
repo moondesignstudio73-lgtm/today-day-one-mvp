@@ -1,5 +1,13 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 V3 CHAPTER CONTRACT PASS (2026-08-28)
+
+- V3 ID, 24 Scene, 10선택, 정상/휴식/SCENE 15 배타 경로와 DAY 9 의상 색상 훅을 계약했다.
+- 주인공·지훈·하은 Voice Profile과 9항목 지식 장부, MUST/MAY/MUST NOT REVEAL, 감정·관계·미스터리 예산을 고정했다.
+- 선택 10개와 파생 상태를 독립 저장하고, 구 독립 심부름 부분/완료 저장은 `V1_LEGACY`로 보존한다.
+- 산출물: `docs/day8/DAY8_V3_CHAPTER_CONTRACT.md`, `tests/day8-v3-contract.test.mjs`.
+- 다음 작업: V3 내러티브 데이터·상태 런타임. DAY 9는 시작하지 않는다.
+
 ## DAY 8 V3 FRESH SOURCE / IMPLEMENTATION GAP AUDIT PASS (2026-08-28)
 
 - 최신 Notion 하위 페이지를 다시 조회해 5 ACT·24 Scene·10선택·정상/휴식/SCENE 15 배타 경로 계약이 유지됨을 확인했다.
