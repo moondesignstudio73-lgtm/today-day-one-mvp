@@ -1362,3 +1362,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 회사는 실제 지도 노드가 아닌 캠페인 전용 컨텍스트임을 명시하고, 직장 행동·NPC·하은 문자·퇴근 전 자유행동만 서사적으로 통합하도록 잠갔다.
 - 산출물: `docs/day5/DAY5_NARRATIVE_CONTENT_COVERAGE_AUDIT.md`. 코드·에셋·DAY 6 변경 없음.
 - 다음 작업: DAY 5 V2 원고 완전 전개와 기존 저장 호환 계약 작성.
+
+### 2026-08-28 DAY 5 SCENARIO REBUILD V2 PASS
+
+- Notion `AI해커톤 > day 5` 하위 페이지 본문을 새로 읽고, 사용자 지시대로 상위 Markdown 첨부를 무시했다.
+- `docs/day5/DAY5_SCENARIO_REBUILD_V2.md`에 V1 무손실 보존층과 추가 플레이층을 분리해 기록했다. 8 Scene·4선택·6저장, LOW/MID/HIGH 하은 대사, 자율성 신뢰 변화, 서진 양축, 선택 효과, 레거시 키/단계 호환을 잠갔다.
+- 실제 지도에 없는 회사를 허위 방문 처리하지 않고 캠페인 전용 맥락 및 선택 후속 자유행동으로만 유지한다.
+- 변경 파일: `docs/day5/DAY5_SCENARIO_REBUILD_V2.md`, `CAMPAIGN_DAY_RELEASE_PROGRESS.md`, `DEVELOPMENT_PROGRESS.md`. 런타임·에셋·DAY 6 변경 없음.
+- 다음 작업: V1+V2 합성 시나리오 내러티브 QA와 정적 계약 검사.
