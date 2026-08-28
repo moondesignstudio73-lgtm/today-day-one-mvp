@@ -1,5 +1,13 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 V3 BROWSER RUNTIME FIX / PARTIAL PLAYTHROUGH PASS (2026-08-28)
+
+- 현재 단계/대상: `2단계 — DAY 8 품질 재구축`; Notion 하위 페이지 본문이 최우선이며 상위 Markdown 첨부는 사용하지 않았다.
+- 변경 파일: `game.js`, `tests/day8-v3-game-integration.test.mjs`, 두 진행 문서.
+- 수정: 인물 없는 V3 장면의 `ambientHold` 처리, DAY 8 V1 레거시 복원 연출의 V3 덮어쓰기 차단.
+- 실제 브라우저: DAY 5→8 인접 도달, DAY 8 첫 내레이션·첫 선택, 1440×900 데스크톱, 390×844 모바일 무오버플로, 첫 선택 저장 후 새로고침 복원 및 두 번째 선택 도달 PASS.
+- 남은 문제/다음 작업: 선택 2~10·세 오후 경로·핵심 행동 CG·완료·DAY 9 도달을 실제 UI로 검증한 뒤 최종 배포 관문을 진행한다.
+
 ## DAY 8 V3 GAME CONTROLLER INTEGRATION PASS (2026-08-28)
 
 - 신규 DAY 8 시작, 관계/기존 손 접촉 고정, 10선택 처리, 선택 직후 저장·재개, 체크포인트 복원, 완료 후 레거시 이력·자유행동 합류를 `game.js`에 연결했다.

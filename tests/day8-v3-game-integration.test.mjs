@@ -16,4 +16,6 @@ test("game controller routes new DAY 8 saves through V3 and preserves V1 legacy"
 test("DAY 8 V3 resumes its authored route and direct asset URL",()=>{
   assert.match(source,/getDay8V3Presentation\(state\.storyFlags\?\.day8V3SceneCheckpoint\?\?1,state\)/);
   assert.match(source,/backgroundUrl:day8V3\?day8Resume\.backgroundUrl:getBackgroundAsset/);
+  assert.match(source,/session\.id===LOCKED_DAY8_SCENE_ID&&getDay8V3Compatibility\(state\)\.mode==="V1_LEGACY"/);
+  assert.match(source,/step\.type==="ambientHold"/);
 });

@@ -690,7 +690,7 @@ function startImmersiveScene(session) {
     immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
     immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl;
   }
-  if(session.id===LOCKED_DAY8_SCENE_ID){
+  if(session.id===LOCKED_DAY8_SCENE_ID&&getDay8V3Compatibility(state).mode==="V1_LEGACY"){
     const resumeVisual=getLockedDay8ResumePresentation(state);
     immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};
     immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;
@@ -906,6 +906,7 @@ function renderImmersiveStep() {
   // and every subsequent choice click is ignored while the runtime is ERROR.
   if(eventRuntime.state==="TRANSITIONING")eventRuntime.transition("PLAYING",{sceneId:step.label??immersiveScene.id});
   if (step.type === "characterEnter") { if(step.assetUrl){immersiveScene.activeCharacterAssetUrl=step.assetUrl;$("#vnCharacter").src=step.assetUrl;$("#vnCharacter").hidden=false;$("#vnCharacter").dataset.day1Pose=step.assetUrl;$("#vnCharacter").dataset.expression=step.expressionId??"calm-attentive";applyCharacterStage($("#vnCharacter"),step.stage,step.characterId??"haeun");syncOutfitCharacterMedia(true);}else updateImmersiveCharacter(step.expressionId??immersiveScene.presentation.expressionId);$("#vnCharacter").classList.add("scene-character-enter"); $("#vnCharacter").dataset.animation=step.animationId??"idle-breathe"; queueSceneStep(420); return; }
+  if(step.type==="ambientHold"){ $("#vnCharacter").hidden=true;$("#vnCharacterVideo").hidden=true;queueSceneStep(step.duration??420);return; }
   if(step.type==="sfx"){if(step.stopCueId)sound.stopCue(step.stopCueId);else if(step.sfxId)sound.playCue(step.sfxId);queueSceneStep(40);return;}
   if(step.type==="animation"){queueSceneStep(40);return;}
   if(step.type==="itemShow"){const layer=step.layer==="npcRear"?$("#vnNpcRear"):$("#vnNpcFront");layer.hidden=!step.source;if(step.source)layer.src=step.source;applyCharacterStage(layer,step.stage,step.characterId??(step.layer==="npcRear"?"nurse":"doctor"));queueSceneStep(120);return;}
