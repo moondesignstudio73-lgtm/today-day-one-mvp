@@ -8,6 +8,13 @@
 
 자동화 상태: `ACTIVE — Notion DAY 8 하위 페이지 본문 최우선 확정`
 
+### 2026-08-28 DAY 8 V3 내러티브 데이터 계약 PASS
+
+- 24 Scene, 선택 10개·전략 31개, SCENE 15 배타 오후 경로와 정상/휴식 상태를 `src/day8-v3-campaign-data.mjs`에 구현했다.
+- 주인공·지훈·하은 Voice Profile, 지식 장부, 사적 작업/공개 크레딧 분리, 하은 독립 일정, DAY 9 의상 색상 훅과 22개 저장 키를 코드 계약으로 고정했다.
+- 기존 `day8-campaign-runtime.mjs`는 변경하지 않아 V1 저장·완료 경로를 보존했다.
+- 신규 데이터 계약 테스트 PASS. 다음 관문: 10개 선택 순서·조건·체크포인트·V1_LEGACY 분기를 처리하는 V3 상태 런타임. DAY 9는 시작하지 않는다.
+
 ### 2026-08-28 DAY 8 V3 챕터 계약 관문 PASS
 
 - Notion 24 Scene·10선택을 기준으로 `m30-day8-jihoon-present-afternoon-v3` 챕터 계약, 세 화자 Voice Profile, 9항목 지식 장부, 정보·관계·미스터리 예산을 고정했다.
