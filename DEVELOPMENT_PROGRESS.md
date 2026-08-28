@@ -1,5 +1,11 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 5 품질 재구축 — 신규 이미지 제작 8/8 COMPLETE (2026-08-28)
+
+- `cg-day5-work-trial-timer-pov-v1.png`과 `cg-day5-bench-fried-rice-phone-pov-v1.png`을 제작해 S06·S08 `event-cg` 계약에 실제 경로로 연결했다.
+- 익명 업무 화면·원형 타이머·자발적 종료 손동작, 회사 앞 볶음밥 사진·무문자 말풍선·닫힌 폴더를 원본 해상도로 검사했다. 개인정보·정답·공포 연출은 없다.
+- 이미지 관문은 `8/8 COMPLETE`; 다음 작업은 V2 전체 런타임과 저장 복원 연결이다. DAY 6은 시작하지 않는다.
+
 ## DAY 5 품질 재구축 — 신규 이미지 제작 6/8 (2026-08-28)
 
 - `day5-office-pantry-day-v1.png`과 `day5-office-small-meeting-room-day-v1.png`을 신규 제작해 S05·S07의 반복 `office-day`를 전용 배경으로 교체했다.

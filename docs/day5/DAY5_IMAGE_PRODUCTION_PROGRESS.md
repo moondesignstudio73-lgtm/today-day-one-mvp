@@ -1,6 +1,6 @@
 # DAY 5 이미지 제작 진행
 
-상태: `6/8 PASS — 전용 배경 4종·사건 CG 2종 제작·원본 QA·매핑 완료`
+상태: `8/8 COMPLETE — 전용 배경 4종·사건 CG 4종 제작·원본 QA·매핑 완료`
 
 ## 확정 자산
 
@@ -12,12 +12,16 @@
 | S04 두 폴더 | `assets/events/day5/cg-day5-desk-two-folders-pov-v1.png` | 1672×941 RGB PNG | `009437411A5E8BC136D65DA682121BFD34764900D32EED6924A795130EF5C0DE` | PASS |
 | S05 탕비실 | `assets/backgrounds/day5/day5-office-pantry-day-v1.png` | 1672×941 RGB PNG | `1DDC5E704CF90FA1490B120035635F23A379B6EBB7EC4A7A3753703D61C9C485` | PASS |
 | S07 소회의실 | `assets/backgrounds/day5/day5-office-small-meeting-room-day-v1.png` | 1672×941 RGB PNG | `82DCE30B85088783F580CEBC65357E68292644697E4B4FEA9FA0EDEF8C449430` | PASS |
+| S06 업무 시험 | `assets/events/day5/cg-day5-work-trial-timer-pov-v1.png` | 1672×941 RGB PNG | `C79F036B96FBD77ABC19BF148E0DBA4D5C714CE971DDF7914700021003CC0BB6` | PASS |
+| S08 퇴근 문자 | `assets/events/day5/cg-day5-bench-fried-rice-phone-pov-v1.png` | 1672×941 RGB PNG | `71BF557D921BCAAFE15174186B444EBF4EE3524EC88B826A30033BF8A47850D5` | PASS |
 
 두 이미지는 내장 ImageGen으로 신규 제작했으며 원본 생성 파일을 보존하고 프로젝트에는 별도 파일로 복사했다. S02 생성 원본은 `exec-0b9c84b5-28bc-4d5c-a364-42fae7b865c3.png`, S03 생성 원본은 `exec-933e9fef-bf65-4451-99d7-c6613316a3d9.png`이다.
 
 S01은 첫 결과의 소품이 대화창 안전 영역에 몰려 기각하고 단일 구도 수정을 거친 `exec-5144ea97-2f17-42ce-98b0-118536300e70.png`을 채택했다. S04 채택 원본은 `exec-0dd62a6b-11c6-4b77-b266-571b85f5cc4d.png`이다. 두 원본 모두 내장 ImageGen 결과를 보존하고 프로젝트에 비파괴 복사했다.
 
 S05 채택 원본은 `exec-1bbe6906-db29-4b9b-bfe6-7652dec02d7e.png`, S07 채택 원본은 `exec-6a71ff53-faba-4b3f-ad56-eb2c9074930b.png`이다. 두 배경도 내장 ImageGen 원본을 보존하고 프로젝트에 비파괴 복사했다.
+
+S06 채택 원본은 `exec-82c6f4b0-07e4-4aa6-8287-e3670f98cf34.png`, S08 채택 원본은 `exec-23f1a825-1bca-4a86-8952-c566e5ab285b.png`이다. 내장 ImageGen 원본을 보존하고 프로젝트에 비파괴 복사했다.
 
 ## DAY 2 기준 비교 QA
 
@@ -30,7 +34,9 @@ S05 채택 원본은 `exec-1bbe6906-db29-4b9b-bfe6-7652dec02d7e.png`, S07 채택
 - S04 행동성: 동일색 두 폴더, 빈 명패, 뽑힌 네트워크 케이블과 주인공 두 손을 한 원근에 배치했다. 어느 폴더도 정답·위험으로 선확정하지 않으며 모니터는 꺼져 있다.
 - S05 장소성: 방문자 아이콘 버튼, 커피 머신·정수기·두 컵·물컵과 퇴장 동선을 같은 회사 광원에 배치했다. 서진·민호가 함께 서도 눈높이와 소품이 충돌하지 않는다.
 - S07 장소성: 무문자 3열 계획 화면, 빈 계획지, 네 좌석과 열린 출입문을 배치해 복귀 범위와 중단 동선을 한 화면에서 읽게 했다. 취조·로맨스 조명은 없다.
+- S06 행동성: 익명 블록·원형 카운트다운·멈춘 기록 손·종료 버튼을 누르는 손을 한 화면에 두어 피로를 자발적 중단 행동으로 표현했다. 정답·점수·고객정보는 없다.
+- S08 행동성: 회사 앞 벤치에서 두 손으로 든 휴대전화 안 볶음밥 사진과 무문자 말풍선을 보여 하은의 현재형 돌봄을 직접 전달한다. 닫힌 업무 폴더와 회사 출입구가 하루의 정리를 잇는다.
 
-## 남은 제작 2종
+## 후속 관문
 
-S06 업무 시험 타이머 POV, S08 볶음밥·휴대전화 벤치 POV. 실제 브라우저 데스크톱·모바일 QA는 8종 런타임 연결 후 수행한다.
+신규 이미지 8종은 모두 제작·원본 QA·프레젠테이션 경로 검증을 통과했다. 다음은 8 Scene V2 전체 런타임 연결, 저장 복원, 실제 브라우저 데스크톱·모바일 QA다.
