@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 7 QUALITY REBUILD / PUBLIC RELEASE COMPLETE (2026-08-28)
+
+- 검증 SHA `ccbb7d38aa865dc86cf75e119f3b2fff9c7f4cb2`가 기능 브랜치와 gh-pages에 동일하게 반영됐다.
+- Pages runs `33166624507`, `33166623794`: `completed/success`.
+- 공개 루트·게임 엔트리·DAY 7 V3 모듈·핵심 CG 3종 HTTP 200, 신규 모듈/CG SHA-256 일치, 공개 인앱 브라우저 타이틀 렌더 PASS.
+- DAY 7 전 관문 COMPLETE. 다음 대상은 DAY 8이며, 새 Notion 하위 페이지 조회·소스 잠금 전에는 구현하지 않는다.
+
 ## DAY 7 V3 FULL REGRESSION PASS (2026-08-28)
 
 - 전체 Node 테스트 149/149와 `game.js` 구문 검사가 PASS했다.
