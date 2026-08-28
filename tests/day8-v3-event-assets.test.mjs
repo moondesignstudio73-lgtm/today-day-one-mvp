@@ -15,7 +15,10 @@ assert.equal(getDay8V3EventCg(6,{storyFlags:{day8V3JihoonPreparation:"prepare-yo
 assert.equal(getDay8V3EventCg(6,{storyFlags:{day8V3JihoonPreparation:"prepare-one-photo",day8V3PhotoRequested:false}}),null);
 assert.equal(getDay8V3EventCg(12,{}),DAY8_V3_EVENT_CG_ASSETS.publicCreditPhone);
 assert.equal(getDay8V3EventCg(15,{storyFlags:{day8V3AfternoonRoute:"LIVE_HOUSE"}}),DAY8_V3_EVENT_CG_ASSETS.liveHouseOffbeatClap);
-assert.equal(getDay8V3EventCg(15,{storyFlags:{day8V3AfternoonRoute:"CAFE"}}),null);
+assert.equal(getDay8V3EventCg(15,{storyFlags:{day8V3AfternoonRoute:"CAFE"}}),DAY8_V3_EVENT_CG_ASSETS.cafeNapkinDrawing);
 assert.equal(getDay8V3EventCg(15,{storyFlags:{day8V3AfternoonRoute:"HOME"}}),null);
+assert.equal(getDay8V3EventCg(24,{storyFlags:{day8V3RestBoundary:false}}),DAY8_V3_EVENT_CG_ASSETS.existingClothesPhotoPhone);
+assert.equal(getDay8V3EventCg(24,{storyFlags:{day8V3ActualLate:true}}),DAY8_V3_EVENT_CG_ASSETS.existingClothesPhotoPhone);
+assert.equal(getDay8V3EventCg(24,{storyFlags:{day8V3RestBoundary:true}}),null);
 assert.equal(getDay8V3EventCg(7,{}),null);
-console.log("day8-v3-event-assets.test: S05-S06/S12/S15 CG dimensions and route boundaries passed");
+console.log("day8-v3-event-assets.test: all 6 CG dimensions and route/time boundaries passed");
