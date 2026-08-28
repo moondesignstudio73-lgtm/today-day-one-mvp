@@ -1,10 +1,15 @@
 import {DAY9_V3_CHOICES,DAY9_V3_VERSION} from "./day9-v3-campaign-data.mjs";
+import {DAY9_V3_PLAYABLE_SCRIPT_01_12} from "./day9-v3-playable-script-01-12.mjs";
+import {DAY9_V3_PLAYABLE_SCRIPT_13_24} from "./day9-v3-playable-script-13-24.mjs";
 
 const BANDS=new Set(["LOW","MID","HIGH","VERY_HIGH"]);
 const CHECKPOINTS=Object.freeze([2,3,5,7,9,11,14,16,19,21,24]);
 const choiceByOption=new Map(DAY9_V3_CHOICES.flatMap(choice=>choice.options.map(option=>[option.id,{choice,option}])));
 const flagsOf=state=>state?.storyFlags??{};
 const hasLegacy=flags=>flags.day9RuntimeComplete===true||flags.day9SecondOfficeAdaptationCompleted===true||flags.day9RuntimeStage!=null||flags.day9ScopeStrategy!=null||flags.day9PressureStrategy!=null||flags.day9DebriefStrategy!=null;
+const playableByNumber=new Map([...DAY9_V3_PLAYABLE_SCRIPT_01_12,...DAY9_V3_PLAYABLE_SCRIPT_13_24].map(item=>[item.number,item]));
+const selected=(scene,key)=>scene.branches.find(item=>item.key===key)?.steps??[];
+const selectedFrom=(scene,flags,choiceNumber)=>selected(scene,flags[`day9V3Choice${choiceNumber}`]);
 
 export function getDay9V3Compatibility(state){
   const flags=flagsOf(state);
@@ -83,6 +88,34 @@ export function resolveDay9V3GreenGift(state,{accepted=false}={}){
 export function resolveDay9V3PlayerPurchase(state,{purchased=false}={}){
   const flags=flagsOf(state);if(flags.day9V3PlayerClothingState!=="PURCHASE_CONFIRM_PENDING")return false;
   flags.day9V3PlayerClothingState=purchased?"BOUGHT":"TRIED_NOT_BOUGHT";return true;
+}
+
+export function resolveDay9V3HaeunSelfPurchase(state,{purchased=false}={}){
+  const flags=flagsOf(state);if(flags.day9V3GreenShirtState!=="HAEUN_SELF_PURCHASE_PENDING")return false;
+  flags.day9V3GreenShirtState=purchased?"HAEUN_SELF_PURCHASED":"UNPURCHASED";return true;
+}
+
+export function getDay9V3PlayableScene(state,sceneNumber){
+  const flags=flagsOf(state);if(flags.day9ScenarioVersion!==DAY9_V3_VERSION)throw new Error("DAY9_V3_NOT_STARTED");
+  const scene=playableByNumber.get(sceneNumber);if(!scene)throw new Error("DAY9_V3_UNKNOWN_SCENE");
+  const branches=[];
+  const add=key=>branches.push(...selected(scene,key));
+  if(sceneNumber===1){add(flags.day9V3UnresolvedKnownConflict?"unresolved":"comfortable");if(flags.day8V3RestBoundary===true)add("day8-rest");}
+  if([2,3,5,7,9,11,13,15,18,20,21,23].includes(sceneNumber))branches.push(...selectedFrom(scene,flags,{2:1,3:2,5:3,7:4,9:5,11:6,13:7,15:8,18:9,20:1,21:10,23:11}[sceneNumber]));
+  if(sceneNumber===12)add(flags.day9V3ScarfIntent==="ASK_FIRST"?"scarf-ask-first":flags.day9V3ScarfIntent==="BOUGHT_SECRET"?"scarf-bought-secret":"scarf-waited");
+  if(sceneNumber===14)add(flags.day9V3ScarfResponse==="EXCHANGE_OR_PUT_DOWN"?"scarf-exchange":flags.day9V3ScarfResponse==="ADMIT_EMBARRASSED"?"scarf-embarrassed":"scarf-distance");
+  if(sceneNumber===16)add(flags.day9V3RestRoute?"rest":"try-on");
+  if(sceneNumber===17)add(flags.day9V3DistanceRemaining?"distance":"comfortable");
+  if(sceneNumber===19){
+    const greenOwned=["GIFT_ACCEPTED","HAEUN_SELF_PURCHASED"].includes(flags.day9V3GreenShirtState);
+    if(flags.day9V3ScarfState==="EXCHANGED")add("scarf-exchanged");
+    else if(flags.day9V3ScarfState==="PROTAGONIST_OWNED")add("scarf-owned");
+    if(greenOwned)add("green-owned");
+    if(!greenOwned&&!['EXCHANGED','PROTAGONIST_OWNED'].includes(flags.day9V3ScarfState))add("nothing-bought");
+  }
+  if(sceneNumber===22)add(flags.day9V3DistanceRemaining?"distance":["GIFT_ACCEPTED","HAEUN_SELF_PURCHASED"].includes(flags.day9V3GreenShirtState)?"green-owned":"green-unpurchased");
+  if(sceneNumber===24)add(flags.day9V3DistanceRemaining?"distance":"comfortable");
+  return Object.freeze({sceneId:scene.id,sceneNumber:scene.number,title:scene.title,checkpoint:flags.day9V3SceneCheckpoint??1,steps:Object.freeze([...scene.steps,...branches])});
 }
 
 export function validateDay9V3Runtime(){const state={money:100000,storyFlags:{}};beginDay9V3(state,{relationshipBand:"HIGH",priorLightContact:true});for(const choice of DAY9_V3_CHOICES)applyDay9V3Choice(state,choice.options[0].id);return state.storyFlags.day9V3Complete===true&&state.storyFlags.day9V3ChoiceIndex===11&&state.storyFlags.day9V3SceneCheckpoint===24&&state.storyFlags.day9V3MenuStatus==="UNDECIDED";}
