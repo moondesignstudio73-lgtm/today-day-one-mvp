@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 V3 LIVE CG / EXCLUSIVE ROUTE BROWSER QA PASS (2026-08-28)
+
+- `tests/day8-v3-browser-harness.html`이 실제 이벤트 CG 매니페스트와 경로 선택 함수를 불러와 6개 행동 CG·6개 경계 판정을 실행한다.
+- 1280×720과 390×844에서 원본 1672×941, 무왜곡 16:9, 모바일 수평 오버플로 없음, HUD·대화창 사이 핵심 얼굴/손/소품 보존을 확인했다.
+- LIVE_HOUSE/CAFE 배타 CG, HOME 무CG, 휴식 후 S24 비노출, 정상 DAY 9 색상 훅이 모두 PASS했다.
+- 변경 파일: `tests/day8-v3-browser-harness.html`, 두 진행 문서. 다음은 전체 회귀와 동일 SHA 배포다.
+
 ## DAY 8 V3 NORMAL ROUTE / FREE ACTION / DAY 9 REACHABILITY PASS (2026-08-28)
 
 - 실제 UI에서 선택 2~10을 연속 완료해 정상 24 Scene 경로와 10개 선택 저장 흐름을 완주했다.
