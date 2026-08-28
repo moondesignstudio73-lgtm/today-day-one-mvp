@@ -1919,3 +1919,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `src/day9-v3-runtime.mjs`에 SCENE 01~24 상태 해석기를 추가해 11개 저장 선택, 관계 거리, DAY 8 휴식, 스카프 처리, 녹색 셔츠 실제 소유, 사진과 저녁 반응을 원문 스크립트로 재구성한다. 하은 자비 구매 확정 resolver도 추가했다.
 - `tests/day9-v3-scene-runtime.test.mjs`에서 편안한 구매·교환 경로 전 24 Scene, LOW 압박·휴식·거리 경로, JSON 저장 복원 동일성, 비활성/잘못된 Scene 차단을 검증했다. DAY 9 V3 집중 5 tests PASS.
 - 남은 문제/다음 작업: 거래 의도와 실제 잔액 차감, 선물 수락, 셔츠/스카프/플레이어 의류 소유·교환·장착을 게임 인벤토리와 연결하는 V3 거래 어댑터. DAY 10은 시작하지 않는다.
+
+# 2026-08-29 DAY 9 V3 TRANSACTION + INVENTORY ADAPTER PASS
+
+- 두 필수 내러티브 스킬과 최신 Notion 하위 V3 구현 주석을 적용해 의도→결제→수락→소유→교환→장착 경계를 코드로 고정했다. 상위 첨부와 과거 직장 DAY 9는 사용하지 않았다.
+- `src/day9-v3-transaction-adapter.mjs`는 스카프 선구매, 무추가금 양말 교환/주인공 보유, 녹색 셔츠 선물 수락/하은 자비 구매/미구매, 플레이어 상의 최종 구매를 실제 잔액·경제 원장·인벤토리에 연결한다. 재실행은 멱등이며 자동 장착은 금지했다.
+- `src/items-data.mjs`에 화면 자산과 분리된 DAY 9 캠페인 품목 4종을 등록했다. 기존 아이템 ID와 자유 연애 모드 구매 흐름은 변경하지 않았다.
+- 검증: `tests/day9-v3-transaction-adapter.test.mjs`와 Scene 복원 합계 7 tests PASS, 전체 `tests/simulation.test.mjs` PASS. 잔액 부족·중복 차감·하은 자비 구매의 플레이어 차감·거절 선물 장착은 모두 0건이다.
+- 남은 문제/다음 작업: 명동 3장소와 DAY 2 시각 기준을 사용한 DAY 9 V3 24 Scene 에셋·이미지·연출/오디오 프레젠테이션 감사. DAY 10은 시작하지 않는다.

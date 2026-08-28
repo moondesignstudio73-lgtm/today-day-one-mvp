@@ -17,7 +17,14 @@ const BASE_ITEMS = [
   { id:"skyline-studio", icon:"🏙️", name:"스카이라인 리버뷰 스튜디오", brand:"Skyline Living", category:"home", price:24000000, luxuryLevel:7, attractivenessBonus:12, fashionBonus:10, preferenceTags:["주거","안정","럭셔리"] }
 ].map(withShopProductImage);
 
-export const ITEMS = [...BASE_ITEMS,...YUNA_GIFT_ITEMS.map(withShopProductImage),...HEROINE_OUTFITS];
+const DAY9_CAMPAIGN_ITEMS = [
+  { id:"day9-green-pocket-shirt", icon:"👚", name:"넉넉한 녹색 포켓 셔츠", brand:"명동 스타일 몰", category:"campaign-clothes", price:55000, luxuryLevel:1, attractivenessBonus:0, fashionBonus:0, preferenceTags:["녹색","큰 주머니","편안한 착용감"] },
+  { id:"day9-pink-scarf", icon:"🧣", name:"옅은 분홍빛 스카프", brand:"명동 스타일 몰", category:"campaign-accessory", price:25000, luxuryLevel:1, attractivenessBonus:0, fashionBonus:0, preferenceTags:["분홍빛","목 장식"] },
+  { id:"day9-player-top", icon:"👕", name:"스타일 몰 상의", brand:"명동 스타일 몰", category:"campaign-player-clothes", price:55000, luxuryLevel:1, attractivenessBonus:0, fashionBonus:0, preferenceTags:["피팅","현재 취향"] },
+  { id:"day9-basic-socks", icon:"🧦", name:"교환한 기본 양말", brand:"명동 스타일 몰", category:"campaign-clothes", price:25000, luxuryLevel:1, attractivenessBonus:0, fashionBonus:0, preferenceTags:["기본","교환품"] }
+];
+
+export const ITEMS = [...BASE_ITEMS,...DAY9_CAMPAIGN_ITEMS,...YUNA_GIFT_ITEMS.map(withShopProductImage),...HEROINE_OUTFITS];
 
 export function getItem(itemId) {
   return ITEMS.find(item => item.id === itemId) ?? null;
