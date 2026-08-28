@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {DAY8_V3_PLAYABLE_SCRIPT_01_14,validateDay8V3PlayableScript01To14} from "../src/day8-v3-playable-script.mjs";
+import {DAY8_V3_PLAYABLE_SCRIPT_15_24,validateDay8V3PlayableScript15To24} from "../src/day8-v3-late-playable-script.mjs";
 
 assert.equal(validateDay8V3PlayableScript01To14(),true);
 assert.deepEqual(DAY8_V3_PLAYABLE_SCRIPT_01_14.map(scene=>scene.number),Array.from({length:14},(_,index)=>index+1));
@@ -11,4 +12,13 @@ assert.equal(scene6.branches.length,3);
 assert.equal(JSON.stringify(scene6.branches.find(branch=>branch.key==="prepare-your-present")).includes("책장 쓰러진 다음"),false);
 const scene12=DAY8_V3_PLAYABLE_SCRIPT_01_14.find(scene=>scene.number===12);
 assert.ok(JSON.stringify(scene12).includes("다른 작업"));
-console.log("day8-v3-playable-script.test: SCENE 01-14 assertions passed");
+assert.equal(validateDay8V3PlayableScript15To24(),true);
+assert.deepEqual(DAY8_V3_PLAYABLE_SCRIPT_15_24.map(scene=>scene.number),Array.from({length:10},(_,index)=>index+15));
+const late=JSON.stringify(DAY8_V3_PLAYABLE_SCRIPT_15_24);
+for(const signature of ["안 부순 책장 처음 봐서 모르겠다.","답은 나중에 해.","생각 속의 삼십 분은 실제 시계보다 가벼웠다.","근데 일곱 시에는 기다렸어.","내가 기다린 거랑은 따로.","자세한 건 그 친구 얘기니까.","왜 하나만 골라야 돼?","영상은 안 바뀌었는데.","사는 건 정하지 말고.","[DAY 8 END]"])assert.ok(late.includes(signature),signature);
+for(const forbidden of ["가짜 하은","사고 원인","차량 조작","키스","포옹"])assert.equal(late.includes(forbidden),false);
+const scene15=DAY8_V3_PLAYABLE_SCRIPT_15_24.find(scene=>scene.number===15);
+assert.deepEqual(scene15.branches.map(branch=>branch.key),["route-live-house","route-quiet-cafe","route-home-rest"]);
+const scene21=DAY8_V3_PLAYABLE_SCRIPT_15_24.find(scene=>scene.number===21);
+assert.equal(JSON.stringify(scene21.branches.find(branch=>branch.key==="debrief-public-credit")).includes("작업 파일은 말하지 않는다"),true);
+console.log("day8-v3-playable-script.test: SCENE 01-24 assertions passed");
