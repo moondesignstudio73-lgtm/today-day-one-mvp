@@ -1354,3 +1354,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `docs/day5/DAY5_NOTION_SOURCE_LOCK.md`에 URL, 조회 시각, 원고 상태·장면/선택/저장 범위와 두 스킬 기반 캐논·화자·정보 예산 검증을 기록했다.
 - 변경 파일: `docs/day5/DAY5_NOTION_SOURCE_LOCK.md`, `CAMPAIGN_DAY_RELEASE_PROGRESS.md`, `DEVELOPMENT_PROGRESS.md`. 코드·에셋·DAY 6 변경 없음.
 - 다음 작업: DAY 5 기존 구현·지도·프리모드 콘텐츠 커버리지 감사.
+
+### 2026-08-28 DAY 5 내러티브·콘텐츠 커버리지 AUDIT PASS / REBUILD REQUIRED
+
+- 잠금 원고와 `day5-campaign-runtime.mjs`, `story-data.mjs`, `story-free-action-manager.mjs`, NPC/행동 데이터, `WORLD_MAPS`를 대조했다.
+- 기존 런타임은 기술 골격과 서진 양축은 PASS지만 원고 대사·행동·상태 플래그·하은 관계 조건부 반응을 압축했다. 10문항 3개 FAIL로 완료본에서 제외했다.
+- 회사는 실제 지도 노드가 아닌 캠페인 전용 컨텍스트임을 명시하고, 직장 행동·NPC·하은 문자·퇴근 전 자유행동만 서사적으로 통합하도록 잠갔다.
+- 산출물: `docs/day5/DAY5_NARRATIVE_CONTENT_COVERAGE_AUDIT.md`. 코드·에셋·DAY 6 변경 없음.
+- 다음 작업: DAY 5 V2 원고 완전 전개와 기존 저장 호환 계약 작성.

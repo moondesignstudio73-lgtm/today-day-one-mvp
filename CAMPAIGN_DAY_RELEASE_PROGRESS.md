@@ -6,7 +6,7 @@
 
 현재 재감사 대상: `DAY 5`
 
-자동화 상태: `ACTIVE — DAY 5 하위 페이지 원고 SOURCE LOCK PASS, 콘텐츠 커버리지 감사 대기`
+자동화 상태: `ACTIVE — DAY 5 콘텐츠 커버리지 AUDIT PASS / REBUILD REQUIRED`
 
 ### 2026-08-28 DAY 4 V3 런타임 연결 1차
 
@@ -1323,3 +1323,11 @@ DAY 16 출시 전 관문을 완료했다. 다음 작업은 노션 사용자 원�
 - 두 내러티브 스킬로 하은·주인공·서진·민호·팀장의 화자/지식 경계, 미스터리 정보 예산, 12~16분 목표 밀도와 윤서진 AFFECTION/STATUS_INTEREST 독립 계약을 확인했다.
 - 산출물: `docs/day5/DAY5_NOTION_SOURCE_LOCK.md` (`SOURCE LOCK PASS`). 서사·런타임 구현은 변경하지 않았다.
 - 다음 관문: 현재 DAY 5 초안·런타임·지도·프리모드 이벤트·인물·기능의 내러티브/콘텐츠 커버리지 감사. DAY 6는 시작하지 않는다.
+
+### 2026-08-28 DAY 5 내러티브·콘텐츠 커버리지 감사
+
+- 두 필수 스킬로 Notion SCENE 01~08과 현재 초안·전용 런타임·스토리 자유행동·NPC·실제 WORLD_MAPS를 대조했다.
+- 현 구현은 8장면·4선택·서진 양축·회사 자유행동을 보존하지만 원고의 생활 행동과 대사, 선택별 계획표/퇴근 콜백을 축약했고 LOW/MID/HIGH 하은 반응과 명시 상태 플래그가 빠졌다.
+- 실제 지도에는 회사 노드가 없어 `office`는 캠페인 전용 위치로만 유지하며 지도 방문 완료로 허위 집계하지 않는다. 직장 행동·NPC·문자·후속 점심은 관계 사건으로 연결하고 투자·쇼핑 등 부적합 기능은 제외한다.
+- 10문항 검수는 연애 밀도·공통 관계 변화·조건부 대사 3개 FAIL이다. `docs/day5/DAY5_NARRATIVE_CONTENT_COVERAGE_AUDIT.md`를 `AUDIT PASS / REBUILD REQUIRED`로 기록했다.
+- 다음 관문: 기존 선택·저장·자유행동을 보존하는 `DAY5_SCENARIO_REBUILD_V2.md` 완전 전개. DAY 6는 시작하지 않는다.
