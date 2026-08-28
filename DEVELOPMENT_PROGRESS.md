@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 9 V3 11-CHOICE STATE RUNTIME / SAVE VERSION ROUTING PASS (2026-08-29)
+
+- 최신 Notion V3 하위 페이지 본문을 재조회해 11개 선택 33전략을 엄격한 순서·Scene 체크포인트·독립 선택 ID·JSON 복원 상태로 구현했다.
+- 쇼핑 경로, 관계 거리/접촉, 사진, 녹색 셔츠, 스카프, 플레이어 피팅/구매 확인, DAY 10 저녁 상태를 배타 필드로 유지한다. 의도만으로 구매·소유·장착을 만들지 않는다.
+- 기존 직장 DAY 9 저장은 `V1_LEGACY`, 신규 저장은 `NOTION_V3`로 분리하고 윤서진 AFFECTION/STATUS_INTEREST는 보존한다.
+- 집중 테스트와 구문 검사 PASS. 다음은 SCENE 01~24 원문 플레이 스크립트·즉시 반응 구현이며 DAY 10은 금지한다.
+
 ## NOTION SCENARIO PRECEDENCE CONFIRMED / DAY 9 RESUMED (2026-08-29)
 
 - 사용자가 모든 시나리오 관련 판단에서 최신 Notion 하위 페이지 본문을 최우선으로 확정했다.
