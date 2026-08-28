@@ -6,7 +6,14 @@
 
 현재 재감사 대상: `DAY 8`
 
-자동화 상태: `PAUSED — DAY 8 잠금 사건표 / Notion 하위 페이지 본문 충돌`
+자동화 상태: `ACTIVE — Notion DAY 8 하위 페이지 본문 최우선 확정`
+
+### 2026-08-28 DAY 8 SOURCE PRECEDENCE RESOLVED / RESUME
+
+- 사용자가 “노션이 우선”이라고 명시해 `DAY 8 — 너 없는 오후 | SCENARIO V3` 하위 페이지 본문을 DAY 8의 최우선 원본으로 확정했다.
+- DAY 8은 하은과 만나지 않고 지훈의 현재 삶을 듣는 24 Scene·10선택 구조로 구현한다. 기존 사건표의 쇼핑 데이트를 DAY 8에 임의 결합하지 않는다.
+- 쇼핑 관련 내용은 현재 원고가 규정한 DAY 9 의상 색상 보기 훅까지만 보존하며, DAY 9 구현은 DAY 8의 모든 관문이 PASS한 뒤 최신 DAY 9 Notion 본문을 새로 조회해 결정한다.
+- 충돌 대기 상태를 해제했다. 다음 관문은 DAY 8 최신 Notion 본문 재조회 후 챕터 계약·Voice Profile·지식 장부·정보 예산과 구현 격차 감사다.
 
 ### 2026-08-28 DAY 8 Notion SOURCE ACCESS PASS / CANON CONFLICT PAUSED
 

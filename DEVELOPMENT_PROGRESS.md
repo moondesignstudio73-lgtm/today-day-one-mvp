@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 NOTION SOURCE PRECEDENCE RESOLVED / RESUME (2026-08-28)
+
+- 사용자가 DAY 8의 최우선 원본으로 Notion 하위 페이지 본문을 명시적으로 확정했다.
+- `DAY 8 — 너 없는 오후 | SCENARIO V3`의 지훈 중심 24 Scene·10선택 구조를 축약·대체하지 않고 구현한다.
+- 잠금 사건표의 쇼핑 데이트는 DAY 8에 강제 결합하지 않는다. 현재 DAY 8 원고의 DAY 9 의상 보기 훅만 유지하고, 후속 배치는 DAY 8 완료 뒤 최신 DAY 9 Notion 본문을 조회해 판단한다.
+- 상태: `ACTIVE`; 다음 작업은 최신 본문 재조회, 챕터 계약·Voice Profile·지식 장부·정보 예산 및 구현 격차 감사다. DAY 9는 시작하지 않는다.
+
 ## DAY 8 NOTION SOURCE ACCESS PASS / CANON CONFLICT PAUSED (2026-08-28)
 
 - 새 Notion 하위 페이지 `DAY 8 — 너 없는 오후 | SCENARIO V3`의 24 Scene·10선택·경로/저장/분기 계약을 완전 열람하고 소스 잠금을 작성했다.

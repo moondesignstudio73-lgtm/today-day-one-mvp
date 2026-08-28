@@ -25,18 +25,19 @@
 - No new face-to-face intimacy occurs. Only sufficiently intimate routes with a real prior handholding record may use the phone callback.
 - The DAY 9 hook is Haeun's wish to look at different clothing colors, not a completed purchase or forced appointment.
 
-## Blocking canon conflict
+## Source precedence resolution
 
 - The user's locked DAY event table defines DAY 8 as a shopping date involving clothing, perfume, accessories, gifts, past/current taste conflict, and relationship-dependent sweetness.
 - The authoritative child-page body defines DAY 8 as a day when Haeun and the protagonist do not meet, centered on Jihoon's present life; shopping is deferred as the DAY 9 hook.
 - Merging both would contradict the page's premise, route timing, emotional curve, 24-scene structure, and explicit `하은과 만나지 않은 하루` ending. Replacing either would violate a user-locked source.
-- Therefore source access is PASS, but implementation is blocked pending an explicit precedence decision. No DAY 8 story/runtime/asset implementation was changed.
+- On 2026-08-28 the user explicitly decided: `노션이 우선`.
+- The DAY 8 child-page body is therefore authoritative for DAY 8. The 24-scene Jihoon-centered day must be implemented without inserting a same-day Haeun shopping date.
+- The earlier event-table shopping premise is not silently rewritten or moved by this lock. Only the child page's DAY 9 clothing-view hook is preserved; DAY 9 placement will be decided from a fresh DAY 9 child-page lookup after DAY 8 is fully complete.
+- Source access and precedence are PASS. DAY 8 implementation may resume; DAY 9 must not start early.
 
-## Required user decision
+## Active implementation rule
 
-Choose one authoritative sequence:
-
-1. Keep the current Notion DAY 8 V3 as DAY 8 and move the locked shopping-date event to DAY 9 or another explicitly approved day.
-2. Keep the locked DAY 8 shopping-date event and provide/update the DAY 8 Notion child body to match it.
-
-Until this is resolved, DAY 8 remains `PAUSED — locked event / Notion child-body conflict` and DAY 9 work must not start.
+- Status: `ACTIVE — Notion child-page body authoritative`.
+- Implement DAY 8 only from the complete child-page body and existing compatible continuity/state contracts.
+- Do not invent, merge, or relocate a shopping-date chapter during DAY 8 implementation.
+- Do not start DAY 9 until DAY 8 passes every required gate.
