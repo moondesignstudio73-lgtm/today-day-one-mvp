@@ -1927,3 +1927,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `src/items-data.mjs`에 화면 자산과 분리된 DAY 9 캠페인 품목 4종을 등록했다. 기존 아이템 ID와 자유 연애 모드 구매 흐름은 변경하지 않았다.
 - 검증: `tests/day9-v3-transaction-adapter.test.mjs`와 Scene 복원 합계 7 tests PASS, 전체 `tests/simulation.test.mjs` PASS. 잔액 부족·중복 차감·하은 자비 구매의 플레이어 차감·거절 선물 장착은 모두 0건이다.
 - 남은 문제/다음 작업: 명동 3장소와 DAY 2 시각 기준을 사용한 DAY 9 V3 24 Scene 에셋·이미지·연출/오디오 프레젠테이션 감사. DAY 10은 시작하지 않는다.
+
+# 2026-08-29 DAY 9 V3 ASSET + PRESENTATION AUDIT PASS / PRODUCTION REQUIRED
+
+- Notion 하위 V3 24 Scene과 DAY 2 화면 품질 기준을 새로 대조했다. 명동 3장소·집 2장소·DAY 8 두 벌 사진 POV는 1672×941 재사용 PASS다.
+- 기존 DAY 8 하은 스프라이트는 의상 불일치로 런타임 사용을 거부했다. DAY 9 회색/남색 셔츠 스프라이트 1종과 핵심 행동 CG 8종을 `needs-production`으로 고정했다.
+- `src/day9-v3-presentation-data.mjs`에 24 Scene의 배경·인물·CG·카메라·전환·오디오·center-60 안전 영역과 전체/짧게/각자, 스카프 구매, 휴식, 거래 정산 조건을 기록했다.
+- 산출물: `docs/day9/DAY9_V3_ASSET_PRESENTATION_AUDIT.md`, `tests/day9-v3-presentation-audit.test.mjs`. 프레젠테이션·거래·장면 복원 집중 9 tests PASS.
+- 남은 문제/다음 작업: 신규 9종 제작, 1672×941/RGBA 원본 육안 QA, 캐릭터 일관성·행동성·UI 안전 영역 검증. 제작 전에는 이미지 관문을 완료 처리하지 않는다.
