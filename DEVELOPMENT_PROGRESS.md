@@ -1,5 +1,13 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 V3 IMMERSIVE ADAPTER PASS (2026-08-28)
+
+- Notion 하위 페이지 24 Scene을 실제 renderer step으로 변환하고, 10개 행동 전략 선택의 정지·재개 지점을 원고 순서에 고정했다.
+- 세 오후 경로, 지훈/무인 장면, 메시지, 6개 CG, 휴식 시 S20~22 생략과 다음 아침 정보 경계를 저장 상태대로 재구성한다.
+- 변경 파일: `src/day8-v3-immersive-adapter.mjs`, `tests/day8-v3-immersive-adapter.test.mjs`, 두 진행 문서.
+- 검증: 어댑터·프레젠테이션·런타임·플레이 스크립트·CG 총 10 tests PASS.
+- 다음 작업: `game.js` 시작·선택·복원·완료 경로 연결 후 실제 데스크톱/모바일 브라우저 QA. DAY 9는 시작하지 않는다.
+
 ## DAY 8 V3 REQUIRED ACTION CG 6/6 PASS (2026-08-28)
 
 - S15 카페 냅킨 행동과 S24 기존 의상 두 벌 사진을 1672×941 RGB로 제작해 DAY 2 기준 원본 육안 QA와 조건부 연결을 통과했다.
