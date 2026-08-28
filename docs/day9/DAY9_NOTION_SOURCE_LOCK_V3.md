@@ -1,6 +1,6 @@
 # DAY 9 Notion source lock V3
 
-- Status: `PASS — child-page body read completely; implementation not authorized by this lock`
+- Status: `PASS — child-page body read completely; Notion precedence confirmed by user`
 - Queried at: `2026-08-28T14:43:15.449Z` (`2026-08-28 23:43:15 KST`)
 - Parent: `AI해커톤` — https://app.notion.com/p/3c7c31f029a680e3ac06c5e2373ce199
 - Canonical child page: `DAY 9 — 네가 고른 색 | SCENARIO V3`
@@ -23,12 +23,12 @@ The child-page body above is the primary manuscript. The parent-page Markdown at
 - Consent and relationship: no forced wearing, no automatic affection repair through spending, no new hand-hold/hug/kiss, and sleeve contact only when prior relationship state permits it.
 - Economy: intention, purchase, acceptance, exchange, ownership, and equipping are separate; insufficient funds cannot create a purchase.
 
-## Conflict gate
+## Precedence resolution
 
-`BLOCKED FOR IMPLEMENTATION — authoritative inputs conflict.`
+`RESOLVED — the user confirmed on 2026-08-29 KST that all scenario-related decisions follow Notion first.`
 
 1. This fresh Notion child body is a 24-scene shopping/choice-respect chapter.
 2. The user's locked DAY event table says DAY 9 must be the ex-girlfriend reunion ending with “결혼한다고? …너 진짜 아무것도 기억 안 나는구나.”
 3. The current runtime `src/day9-campaign-runtime.mjs` is a second office-adaptation chapter centered on Seojin, Minho, responsibility boundaries, and a 90-minute work return.
 
-The source lock does not choose among or merge these mutually different main events. No DAY 9 story/runtime modification may begin until the user resolves whether the fresh Notion child body supersedes the locked event table, or provides a revised child body that contains the locked ex-girlfriend event. DAY 10 work remains prohibited.
+The fresh Notion child body supersedes the older event table and current runtime wherever scenario content conflicts. The office adaptation must not be preserved as DAY 9 merely because it is already implemented, and the ex-girlfriend reunion must not be inserted unless a later Notion child body includes it. DAY 9 may proceed to implementation-gap and content-coverage audit against this locked V3 body. DAY 10 remains prohibited until DAY 9 passes every gate.

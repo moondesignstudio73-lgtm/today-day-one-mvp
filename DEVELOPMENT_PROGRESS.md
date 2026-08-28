@@ -1,10 +1,16 @@
 # 《결혼까지 30일!》 개발 진행표
 
-## DAY 9 NOTION SOURCE LOCK PASS / IMPLEMENTATION PAUSED (2026-08-28)
+## NOTION SCENARIO PRECEDENCE CONFIRMED / DAY 9 RESUMED (2026-08-29)
+
+- 사용자가 모든 시나리오 관련 판단에서 최신 Notion 하위 페이지 본문을 최우선으로 확정했다.
+- DAY 9의 기준은 `DAY 9 — 네가 고른 색 | SCENARIO V3`이며, 충돌하는 이전 사건표와 현재 직장 복귀 런타임은 대체 대상이다.
+- PAUSED를 해제했다. 다음은 DAY 9 구현 격차와 프리모드·지도·시스템 콘텐츠 커버리지 감사이며 DAY 10은 시작하지 않는다.
+
+## DAY 9 NOTION SOURCE LOCK PASS / CONFLICT RECORDED (2026-08-28)
 
 - 최신 `AI해커톤` 하위 페이지 `DAY 9 — 네가 고른 색 | SCENARIO V3` 본문 전체(ACT 1~5, SCENE 01~24, 주요 선택 11개)를 직접 읽고 `docs/day9/DAY9_NOTION_SOURCE_LOCK_V3.md`에 출처·범위·상태 계약을 잠갔다. 상위 페이지와 파일 블록의 Markdown 첨부는 사용하지 않았다.
 - Notion 본문은 쇼핑 데이트와 상대의 착용 선택 존중, 확정 사건표는 전 여자친구 재회, 현재 런타임은 직장 복귀를 각각 DAY 9 메인 사건으로 삼아 서로 충돌한다.
-- 원고를 임의 결합하지 않고 자동화를 PAUSED했다. 다음 작업은 사용자의 우선순위 확정 뒤 DAY 9 구현 격차·콘텐츠 커버리지 감사이며, DAY 10은 시작하지 않는다.
+- 원고를 임의 결합하지 않고 충돌을 기록했다. 2026-08-29 사용자의 Notion 최우선 확정으로 충돌이 해소됐으며, 다음 작업은 DAY 9 구현 격차·콘텐츠 커버리지 감사다. DAY 10은 시작하지 않는다.
 
 ## DAY 8 QUALITY REBUILD / PUBLIC DEPLOY COMPLETE (2026-08-28)
 
