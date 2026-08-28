@@ -28,6 +28,14 @@ assert.equal(state.storyFlags.day5ReturnPlanReady,true);
 assert.ok(state.scenario.profileUnlocks.includes("seojin-basic"));
 assert.ok(state.scenario.unlockedActions.includes("day5-work-trial"));
 assert.ok(state.scenario.followUpHooks.includes("day6-life-restart"));
+assert.equal(state.storyFlags.day5ScenarioVersion,2);
+assert.equal(state.storyFlags.day5_entry_strategy,"current_facts");
+assert.equal(state.storyFlags.day5_seojin_strategy,"role_history");
+assert.equal(state.storyFlags.day5_work_trial,"bounded_review");
+assert.equal(state.storyFlags.day5_return_strategy,"set-return-boundary");
+for(const flag of ["day5_haeun_boundary_respected","day5_current_authority_verified","day5_seojin_basic_unlocked","day5_pre_accident_work_habit_verified","day5_minho_provenance_respected","day5_work_return_plan_saved","day5_haeun_autonomy_trust","day6_life_restart_pending"])assert.equal(state.storyFlags[flag],true,flag);
+assert.deepEqual(state.storyFlags.day5ChoiceEffectsApplied,Object.fromEntries(path.map(id=>[id,true])));
+for(const action of ["planned-work-return","review-current-work"])assert.ok(state.scenario.unlockedActions.includes(action),action);
 
 const roleHistory=stateFor();
 applyLockedDay5ChoiceState(roleHistory,"seojin_role_history");
@@ -41,6 +49,22 @@ const presentBoundary=stateFor();
 applyLockedDay5ChoiceState(presentBoundary,"seojin_present_boundary");
 assert.equal(presentBoundary.scenario.seojinAffection,1);
 assert.equal(presentBoundary.scenario.seojinStatusInterest,1);
+
+const idempotent=stateFor();
+applyLockedDay5ChoiceState(idempotent,"seojin_current_intent");
+applyLockedDay5ChoiceState(idempotent,"seojin_current_intent");
+assert.equal(idempotent.scenario.seojinAffection,3,"restored choice effect must not be applied twice");
+
+const bounded=stateFor();bounded.work=5;bounded.energy=10;
+applyLockedDay5ChoiceState(bounded,"work_bounded_review");
+assert.deepEqual([bounded.work,bounded.energy],[8,8],"bounded review applies exact work/energy cost");
+
+const lowText=JSON.stringify(getLockedDay5Segment(stateFor(),0));
+const midState=stateFor();midState.scenario.haeunAffection=4;midState.scenario.haeunTrust=4;
+const highState=stateFor();highState.scenario.haeunAffection=8;highState.scenario.haeunTrust=8;
+assert.ok(lowText.includes("거울 오른쪽 봐"));
+assert.ok(JSON.stringify(getLockedDay5Segment(midState,0)).includes("합의안 통과"));
+assert.ok(JSON.stringify(getLockedDay5Segment(highState,0)).includes("고맙다는 말도 천천히"));
 
 for(const [choices,key] of [[DAY5_ENTRY_CHOICES,"day5EntryStrategy"],[DAY5_SEOJIN_CHOICES,"day5SeojinStrategy"],[DAY5_WORK_CHOICES,"day5WorkTrial"],[DAY5_RETURN_CHOICES,"day5ReturnStrategy"]]){
   for(const item of choices){const branch=stateFor();assert.ok(applyLockedDay5ChoiceState(branch,item.id),item.id);assert.equal(branch.storyFlags[key],item.id);}
@@ -63,7 +87,7 @@ assert.deepEqual([0,1,2,3,4].map(day5RuntimeStage=>getLockedDay5ResumePresentati
 assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:1}}).characterAssetUrl,undefined,"NPC resume must not reuse Haeun outfit");
 assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:4}}).cgAssetPath,expectedCg[3]);
 for(const forbidden of ["가짜 하은","D-29","트럭 충돌","하은이 사고에 동승"])assert.ok(!allText.includes(forbidden),forbidden);
-for(const required of ["확인된 사실","민호","윤서진","판단을 빌리는 연습","임시 예비폰"])assert.ok(allText.includes(required),required);
+for(const required of ["확인된 사실","민호","윤서진","판단을 빌리는 연습","임시 예비폰","연기가 먼저 증거를 제출","지훈은 사고 전 마지막 만남","출처 없이 제 감정","생활 안전 앱 업데이트: 오늘은 성공","서로 다른 세 폴더","DAY REPORT"])assert.ok(allText.includes(required),required);
 
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 assert.match(game,/LOCKED_DAY5_SCENE_ID/);
