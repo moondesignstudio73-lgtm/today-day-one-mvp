@@ -29,8 +29,9 @@ assert.equal(resolveStoryPresentation(day3,{day:3,phase:1}).characterAssetUrl,ST
 
 for(const stage of [0,1,2,3,4,10])assert.equal(getLockedDay4ResumePresentation({storyFlags:{day4RuntimeVersion:3,day4RuntimeStage:stage}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day4);
 for(const stage of [5,6,7,8,9])assert.match(getLockedDay4ResumePresentation({storyFlags:{day4RuntimeVersion:3,day4RuntimeStage:stage}}).characterAssetUrl,/assets\/characters\/day4\/jihoon-/);
-for(const stage of [0,1,2,3,4]){
-  assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:stage}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day5);
+assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:0}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day5);
+for(const stage of [1,2,3,4]){
+  assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:stage}}).characterAssetUrl,undefined);
 }
 for(const stage of [0,1,2,3]){
   assert.equal(getLockedDay6ResumePresentation({storyFlags:{day6RuntimeStage:stage}}).characterAssetUrl,STORY_OUTFIT_ASSETS.day6);

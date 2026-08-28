@@ -1,0 +1,23 @@
+import assert from "node:assert/strict";
+import {DAY7_V3_PLAYABLE_SCRIPT_01_07,DAY7_V3_PLAYABLE_SCRIPT_08_14,validateDay7V3PlayableScript01To07,validateDay7V3PlayableScript08To14} from "../src/day7-v3-playable-script.mjs";
+import {DAY7_V3_PLAYABLE_SCRIPT_15_24,validateDay7V3PlayableScript15To24} from "../src/day7-v3-late-playable-script.mjs";
+
+assert.equal(validateDay7V3PlayableScript01To07(),true);
+assert.deepEqual(DAY7_V3_PLAYABLE_SCRIPT_01_07.map(scene=>scene.number),[1,2,3,4,5,6,7]);
+const all=JSON.stringify(DAY7_V3_PLAYABLE_SCRIPT_01_07);
+for(const signature of ["카드가 인질이네.","게임에서 져서 왕관 고치는 중이었어요.","배터리 아껴 갈게.","오늘은 이유 없어. 그냥 걸었어.","오늘 옷. 직접 보니까 좋다고.","궁금해. 근데 지금 네가 안 하고 싶다며.","안 움직일 때는.","일단 오늘까지.","어제 노래로 배웠잖아."])assert.ok(all.includes(signature),signature);
+for(const scene of DAY7_V3_PLAYABLE_SCRIPT_01_07)assert.ok(scene.id===`D7V3_S${String(scene.number).padStart(2,"0")}`);
+assert.equal(all.includes("가짜 하은"),false);
+assert.equal(validateDay7V3PlayableScript08To14(),true);
+assert.deepEqual(DAY7_V3_PLAYABLE_SCRIPT_08_14.map(scene=>scene.number),[8,9,10,11,12,13,14]);
+const middle=JSON.stringify(DAY7_V3_PLAYABLE_SCRIPT_08_14);
+for(const signature of ["움직이는 집인 줄 알았어?","우리 구경 속도가 안 맞아.","오늘 끝까지 읽는 책 하나 있었으면 해서.","그럼 둘 중 하나 목 아프겠다.","사진 한 장인데 발표까지 시켰네.","양말 하나가 끝까지 안 나왔어. 그게 제일 큰 사건.","아까는 내가 먼저 겁먹었네.","카드 문장 너무 이상한가."])assert.ok(middle.includes(signature),signature);
+assert.equal(middle.includes("종이 왕관"),true);
+const scene13=DAY7_V3_PLAYABLE_SCRIPT_08_14.find(scene=>scene.number===13);
+assert.equal(JSON.stringify(scene13.branches.find(branch=>branch.key==="talk-my-confusion-no-photo")).includes("종이 왕관"),false);
+assert.equal(validateDay7V3PlayableScript15To24(),true);
+assert.deepEqual(DAY7_V3_PLAYABLE_SCRIPT_15_24.map(scene=>scene.number),[15,16,17,18,19,20,21,22,23,24]);
+const late=JSON.stringify(DAY7_V3_PLAYABLE_SCRIPT_15_24);
+for(const signature of ["그럼 매일 처음이겠다.","그건 너 얘기가 아니어서.","카드랑 묶음 상품 아니야.","사진보다 재미없을 수도 있는데요.","나 지금 아무렇지 않다고 하면 거짓말 같아.","이번에는 안 물어볼게.","이제 놓아야 되는데.","순서는 협의 가능.","DAY 7 END"])assert.ok(late.includes(signature),signature);
+for(const forbidden of ["가짜 하은","사고 원인","키스","포옹"])assert.equal(late.includes(forbidden),false);
+console.log("day7-v3-playable-script.test: all assertions passed");

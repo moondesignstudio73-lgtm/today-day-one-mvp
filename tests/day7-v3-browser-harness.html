@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DAY 7 V3 Browser QA</title>
+<style>body{margin:0;background:#14111a;color:#fff;font:15px system-ui}main{max-width:980px;margin:auto;padding:24px}button{padding:14px 20px;border:0;border-radius:12px;background:#e96391;color:#fff;font-weight:800}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.grid img{width:100%;aspect-ratio:16/9;object-fit:contain;background:#090a12;border-radius:12px}pre{white-space:pre-wrap;padding:16px;border-radius:12px;background:#24202d}.pass{color:#75e6ad}@media(max-width:600px){.grid{grid-template-columns:1fr}main{padding:14px}}</style></head>
+<body><main><h1>DAY 7 V3 Browser QA</h1><p>11개 선택 → 선택 5 직후 JSON 저장/복원 → 완료·DAY 8 훅 검증</p><button id="run">RUN DAY 7 V3</button><div class="grid"><img src="../assets/events/day7/cg-day7-company-photo-phone-pov-v1.png" alt="회사 사진 CG"><img src="../assets/events/day7/cg-day7-card-front-back-pov-v1.png" alt="카드 CG"><img src="../assets/events/day7/cg-day7-hand-offer-consent-pov-v1.png" alt="손 제안 CG"></div><pre id="result">대기</pre></main>
+<script type="module">
+import {DAY7_V3_CHOICES} from "../src/day7-v3-campaign-data.mjs";
+import {applyDay7V3Choice,beginDay7V3,getDay7V3Compatibility,getNextDay7V3Choice} from "../src/day7-v3-runtime.mjs";
+import {getDay7V3ChoiceContinuation,getDay7V3ImmersiveSegment} from "../src/day7-v3-immersive-adapter.mjs";
+const out=document.querySelector("#result");
+document.querySelector("#run").addEventListener("click",()=>{
+ let state={storyFlags:{day6V3HandContactEstablished:true}};beginDay7V3(state,{relationshipBand:"HIGH"});const trace=[];
+ for(const choice of DAY7_V3_CHOICES){const option=choice.options[0];const applied=applyDay7V3Choice(state,option.id);const continuation=getDay7V3ChoiceContinuation(state,applied.choiceNumber);trace.push(`C${choice.number} ${option.id} · checkpoint ${applied.checkpoint} · steps ${continuation.length}`);if(choice.number===5){state=JSON.parse(JSON.stringify(state));trace.push(`SAVE/RESTORE · ${getDay7V3Compatibility(state).mode} · next C${getNextDay7V3Choice(state).number}`);}}
+ const finalSegment=getDay7V3ImmersiveSegment(state);const end=finalSegment.steps.at(-1);const pass=state.storyFlags.day7V3Complete===true&&state.storyFlags.day8JihoonInvitationPending===true&&end?.type==="sceneEnd"&&end?.nextHook==="day8-jihoon-invitation";
+ out.className=pass?"pass":"";out.textContent=`${pass?"PASS":"FAIL"}\n${trace.join("\n")}\nEND ${end?.type} · ${end?.nextHook}\nDAY7_COMPLETE ${state.storyFlags.day7V3Complete}\nDAY8_REACHABLE ${state.storyFlags.day8JihoonInvitationPending}`;
+});
+</script></body></html>

@@ -97,7 +97,7 @@ assert.match(gameSource,/finishDialogueTyping\(\)\)\{scheduleAutoAdvance\(\);ret
 assert.match(gameSource,/replaceAll\("\[플레이어 이름\]",playerName\)/);
 assert.match(gameSource,/function advanceCampaignChapter\(completedSession\)/);
 assert.match(gameSource,/state\.scenario\?\.enabled!==true/);
-assert.match(gameSource,/else if\(nextCampaignScene\)setTimeout\(\(\)=>openStoryScene\(nextCampaignScene\),0\)/);
+assert.match(gameSource,/if\(nextCampaignScene\)\{[^}]*setTimeout\(\(\)=>openStoryScene\(nextCampaignScene\),0\);return;\}/);
 assert.match(gameSource,/storyChoiceLayer"\)\.addEventListener\("keydown"/);
 assert.match(htmlSource,/id="visualNovelStage" role="button" tabindex="0"/);
 assert.match(htmlSource,/id="storyChoiceLayer"[^>]*aria-label="스토리 선택지"/);

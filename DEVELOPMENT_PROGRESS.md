@@ -1,5 +1,122 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 7 V3 FULL REGRESSION PASS (2026-08-28)
+
+- 전체 Node 테스트 149/149와 `game.js` 구문 검사가 PASS했다.
+- DAY 1~6·자유모드·DAY 8 도달성·DAY 9~30 기존 계약을 보존했다.
+- 기존 정적 QA를 실제 캠페인 전환 및 Scene별 의상 계약과 일치하도록 수정했다.
+- 다음 작업: DAY 7 검증 커밋·origin 반영·동일 SHA gh-pages 배포/공개 확인. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 DESKTOP / MOBILE BROWSER QA PASS (2026-08-28)
+
+- 1440×900 및 390×844에서 11개 선택, 선택 5 직후 JSON 저장/복원, C6 재개, 완료·DAY 8 훅을 실제 브라우저로 검증했다.
+- `sceneEnd / day8-jihoon-invitation / day7V3Complete / day8JihoonInvitationPending` 모두 PASS, 핵심 CG 3종과 모바일 단일 열 안전 영역 PASS, 콘솔 오류 0.
+- 산출물: `tests/day7-v3-browser-harness.html`.
+- 다음 작업: 전체 회귀 및 DAY 7 검증 커밋·origin·동일 SHA 배포/공개 확인. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 BROWSER CG CONTRACT FIX PASS (2026-08-28)
+
+- 실제 인앱 브라우저 1440×900/390×844에서 핵심 CG 3종의 원본 비율·중앙 안전 영역·하은 정체성·행동성을 확인했다.
+- 미지원 `eventCg` 화면 단계를 실제 렌더러의 `cgShow/source` 계약으로 수정하고 캠페인 `contain` 표시를 고정했다.
+- 집중 회귀 11/11, `game.js` 구문, 브라우저 콘솔 오류 0 PASS.
+- 다음 작업: DAY 7 선택·저장 복원·완료·DAY 8 도달성 실제 브라우저 QA. DAY 8 구현은 시작하지 않는다.
+
+## DAY 7 V3 PUBLIC GAME ENTRYPOINT PASS (2026-08-28)
+
+- 신규 DAY 7은 V3, 기존 진행 저장은 V1으로 분기하고 체크포인트 배경·CG·11개 선택 연속 처리를 공개 `game.js`에 연결했다.
+- `day7V3Complete`를 기존 완료/자유행동 흐름과 호환하고 DAY 8 지훈 초대 훅을 보존한다.
+- 게임 통합 포함 집중 회귀 10/10 PASS.
+- 다음 작업: 실제 브라우저 데스크톱·모바일 시각/선택/복원 QA. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 IMMERSIVE SCREEN ADAPTER PASS (2026-08-28)
+
+- V3 24 Scene을 실제 화면 명령으로 변환하고 경로 건너뛰기·11선택·체크포인트·DAY 8 훅을 연결했다.
+- 사진/카드/손 CG의 정보·접촉 경계와 cover/중앙 안전 영역 계약을 유지한다.
+- 신규 어댑터 4케이스와 V3 회귀 PASS.
+- 다음 작업: 게임 진입점 연결 및 실제 브라우저 데스크톱·모바일 QA. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 24-SCENE PRESENTATION / AUDIO PASS (2026-08-28)
+
+- 24 Scene 전부에 실제 지도 배경, DAY 7 의상, 카메라·전환·BGM/SFX와 중앙 안전 영역 계약을 연결했다.
+- 회사 사진은 수신 상태에서만, 카드/접촉 전 손 제안은 원고 Scene에서만 표시한다.
+- 신규 프레젠테이션 집중 테스트와 V3/레거시 회귀 5종 PASS.
+- 다음 작업: 화면 어댑터와 실제 데스크톱·모바일 이미지 QA. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 CORE ACTION CG 3/3 SOURCE QA PASS (2026-08-28)
+
+- 회사 사진 수정본에서 뒤집힌 종이 왕관·테이프 수선·숙인 주인공·비식별 동료와 휴대전화 POV를 1672×941 원본으로 검증했다.
+- 카드 앞뒷면, 손 제안과 함께 핵심 행동 CG 3종의 해상도·정보 경계·중앙 안전 영역이 모두 PASS다.
+- 신규 자산: `assets/events/day7/cg-day7-company-photo-phone-pov-v1.png`.
+- 다음 작업: 24 Scene V3 프레젠테이션 데이터와 오디오 큐 연결. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 CORE ACTION CG 2/3 SOURCE QA PASS (2026-08-28)
+
+- 카드 앞·뒷면과 접촉 전 손 제안 CG를 각각 1672×941로 제작·원본 검사했다.
+- 카드 문장/손동작/UI 안전 영역과 하은의 보라색 단발·DAY 7 의상·접촉 동의를 PASS했다.
+- 회사 사진 초안은 왕관 방향이 원고와 달라 반입하지 않았다. 다음 작업은 회사 사진 수정본과 3종 프레젠테이션 연결이다.
+- DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 ASSET / PRESENTATION AUDIT PASS (2026-08-28)
+
+- 실제 지도 9종, 기존 DAY 7 배경 2종, 하은 DAY 7 의상과 DAY 2 행동 CG를 원본 해상도·구도·장면 의미·UI 안전 영역 기준으로 대조했다.
+- 세 경로 지도 배경과 의상은 재사용하고, 최신 원고와 장소가 다른 독립 서점/낮 강변 V1 배경은 제외한다.
+- 회사 사진·카드 앞뒷면·손 제안은 대사 설명으로 대체하지 않고 신규 16:9 행동 CG로 제작해야 한다.
+- 산출물: `docs/day7/DAY7_V3_ASSET_PRESENTATION_AUDIT.md`.
+- 다음 작업: 3종 행동 CG 제작·원본 QA와 프레젠테이션 연결. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 24-SCENE STATE PLAYBACK PASS (2026-08-28)
+
+- V3 선택·관계·사진·서진·거짓·접촉 상태에서 한 경로 22개 장면만 재생하는 상태 기반 해석기를 구현했다.
+- 세 경로 전용 장면, 미수신 사진 지식, 손 동의와 작별, 마지막 문자·지훈 훅을 저장 상태에서 정확히 복원한다.
+- 신규/V3/기존 DAY 7 집중 테스트 5종 PASS.
+- 다음 작업: 에셋·프레젠테이션 감사와 DAY 2 화면 기준 비교. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 PLAYABLE SCRIPT SCENE 15~24 PASS (2026-08-28)
+
+- 식사·카드·사진·서진 거리·설명·현재 접촉·작별·마지막 문자·지훈 초대까지 후반 10개 장면의 전체 선택 반응을 구현했다.
+- 개인 관심/업무 평가, 사생활 보류/거짓, 손 제안/접촉 성립을 독립 분기로 유지하고 최대 스킨십을 손잡기로 제한했다.
+- 신규/V3/기존 DAY 7 집중 테스트 5종 PASS.
+- 다음 작업: 전체 24 Scene 상태 기반 재생 시퀀스 해석. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 PLAYABLE SCRIPT SCENE 08~14 PASS (2026-08-28)
+
+- 세 경로 전용 장면과 관심 속도 3전략, 오전 선택 콜백, 사진 수신 상태별 S12, 대화 주도·회피 인정 S13, 카드 고민 S14를 구현했다.
+- 미수신 사진 경로에서 왕관·테이프를 알지 못하게 하고, 잠깐 따로 구경하기는 관계 벌점 없이 다시 합류한다.
+- 신규/V3/기존 DAY 7 집중 테스트 5종 PASS.
+- 다음 작업: SCENE 15~24 후반 플레이 스크립트. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 PLAYABLE SCRIPT SCENE 01~07 PASS (2026-08-28)
+
+- 최신 Notion 본문에서 ACT 1의 SCENE 01~07을 새로 대조하고 화자 대사·행동·선택별 즉시 반응으로 구현했다.
+- 사진 수신/미룸/거절, 야경/놀이공원/책 경로, 휴식/음악/지훈 통화, 관계별 만남과 공개/보류/얼버무림을 독립 분기로 보존했다.
+- 미수신 사진 지식과 사생활 경계가 새 사실 또는 거짓말로 섞이지 않도록 테스트했다.
+- 신규·V3·기존 DAY 7 집중 테스트 5종 PASS.
+- 다음 작업: SCENE 08~14 경로 체험·속도 대화·사진 지식 경계·선택 6 반응. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 STATE RUNTIME PASS (2026-08-28)
+
+- 11개 선택 순서, 11개 장면 체크포인트, 조건부 선택 6, 세 데이트 경로와 완료 훅을 저장 가능한 V3 런타임으로 구현했다.
+- 사진 수신/공개, 서진 AFFECTION/STATUS_INTEREST, 사생활 경계/거짓, 관계·신뢰·접촉 경계를 합치지 않고 각각 복원한다.
+- V1 완료·부분 저장은 레거시로 보존하며 신규 V3를 덮어쓰지 않는다.
+- 신규 V3 2종과 기존 DAY 7 런타임·시나리오·프레젠테이션·자유행동 4종 PASS.
+- 변경 파일: `src/day7-v3-runtime.mjs`, `tests/day7-v3-runtime.test.mjs`, 진행 문서.
+- 다음 작업: SCENE 01~24 원문 플레이 스크립트와 선택별 즉시 반응. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 NOTION SOURCE LOCK / GAP AUDIT PASS (2026-08-28)
+
+- 최신 하위 페이지 본문 `DAY 7 — 끝까지 듣는 사람 | SCENARIO V3`를 SCENE 01~24·선택 1~11·DAY END·내부 메모·Sources까지 완전 조회했다.
+- 현재 8 Scene·3선택 구현은 최신 원고 대비 압축·경로/상태 누락이 커 `REBUILD REQUIRED`다.
+- 신규 문서: `docs/day7/DAY7_NOTION_SOURCE_LOCK.md`, `docs/day7/DAY7_V3_IMPLEMENTATION_GAP_AUDIT.md`.
+- 다음 작업: V3 데이터 계약과 레거시 저장 호환 설계. DAY 8은 시작하지 않는다.
+
+## DAY 7 V3 NARRATIVE DATA CONTRACT PASS (2026-08-28)
+
+- 24 Scene·11선택/33전략·야경/놀이공원/서점+저녁 경로를 신규 데이터 모듈에 고정했다.
+- Voice Profiles, 지식 장부, 정보 공개 예산, 감정 곡선, 선택별 독립 상태와 18개 저장 키를 구현했다.
+- 서진 AFFECTION/STATUS_INTEREST, 사진 수신/공개, 개인 관심/업무 거리, 거짓 설명, 현재 손 접촉을 합치지 않는다.
+- 변경 파일: `src/day7-v3-campaign-data.mjs`, `tests/day7-v3-campaign-data.test.mjs`, 진행 문서.
+- 다음 작업: V3 런타임과 레거시 저장 이행. DAY 8은 시작하지 않는다.
+
 ## DAY 6 COMPLETE / PUBLIC DEPLOYMENT PASS (2026-08-28)
 
 - 검증 SHA: `657f38a002bbb294fd391b01c285801e83e491d5`.
