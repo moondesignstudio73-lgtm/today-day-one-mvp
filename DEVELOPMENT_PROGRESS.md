@@ -1,5 +1,13 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 V3 GAME CONTROLLER INTEGRATION PASS (2026-08-28)
+
+- 신규 DAY 8 시작, 관계/기존 손 접촉 고정, 10선택 처리, 선택 직후 저장·재개, 체크포인트 복원, 완료 후 레거시 이력·자유행동 합류를 `game.js`에 연결했다.
+- V3 프레젠테이션의 직접 배경/CG URL을 복원 화면에서도 유지하며 V1 저장은 기존 DAY 8 컨트롤러로 분리한다.
+- 변경 파일: `game.js`, `tests/day8-v3-game-integration.test.mjs`, 두 진행 문서.
+- 검증: 구문 PASS, 집중 12 tests PASS, 전체 `simulation.test.mjs` PASS.
+- 다음 작업: 실제 브라우저 신규/복원/완료 연속 플레이와 데스크톱·모바일 이미지 QA. DAY 9는 시작하지 않는다.
+
 ## DAY 8 V3 IMMERSIVE ADAPTER PASS (2026-08-28)
 
 - Notion 하위 페이지 24 Scene을 실제 renderer step으로 변환하고, 10개 행동 전략 선택의 정지·재개 지점을 원고 순서에 고정했다.
