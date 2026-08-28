@@ -1370,3 +1370,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 실제 지도에 없는 회사를 허위 방문 처리하지 않고 캠페인 전용 맥락 및 선택 후속 자유행동으로만 유지한다.
 - 변경 파일: `docs/day5/DAY5_SCENARIO_REBUILD_V2.md`, `CAMPAIGN_DAY_RELEASE_PROGRESS.md`, `DEVELOPMENT_PROGRESS.md`. 런타임·에셋·DAY 6 변경 없음.
 - 다음 작업: V1+V2 합성 시나리오 내러티브 QA와 정적 계약 검사.
+
+### 2026-08-28 DAY 5 V1+V2 NARRATIVE QA PASS
+
+- `docs/day5/DAY5_SCENARIO_QA_V2.md`에 원고 충실도, 화자·지식·인과, 표면/감정/의도, 정보 예산, 밀도·압축, 선택 기억·저장과 10문항 검수를 기록했다.
+- 8 Scene·4선택·12전략·6체크포인트, 하은 LOW/MID/HIGH 및 공통 관계 변화, 서진 독립 양축이 모두 PASS이며 `NEEDS FIX: 0`이다.
+- `tests/day5-scenario-v2.test.mjs`가 V1 Scene/전략 보존, V2 상태·체크포인트, 금지 표현·조기 공개 차단과 QA 표식을 검증해 PASS했다.
+- 변경 파일: QA 문서, 정적 검사, 두 진행 문서. 런타임·에셋·DAY 6 변경 없음.
+- 다음 작업: DAY 5 기존 에셋 전수 감사와 8 Scene 연출·오디오·이미지 명세.
