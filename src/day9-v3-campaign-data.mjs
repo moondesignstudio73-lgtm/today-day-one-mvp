@@ -28,22 +28,22 @@ export const DAY9_V3_CHOICES=Object.freeze([
     option("scarf9_ask_before_buy","하은이 나오면 스카프가 어떤지 먼저 묻는다",{scarfPurchase:"UNPURCHASED",scarfIntent:"ASK_FIRST"}),
     option("scarf9_buy_secret","작은 선물은 괜찮다고 판단해 먼저 산다",{scarfPurchase:"PURCHASED_GIFT",scarfIntent:"BOUGHT_SECRET"}),
     option("scarf9_wait_my_desire","내가 고르고 싶은 마음도 기다린다",{scarfPurchase:"UNPURCHASED",scarfIntent:"WAITED"})]),
-  choice(7,14,"스카프 거절 뒤 행동한다",[
-    option("scarf9_accept_no_wear","착용을 요구하지 않고 거절을 받아들인다",{scarfResponse:"ACCEPTED",distance:false}),
-    option("scarf9_ask_exchange","택과 영수증을 유지해 교환을 묻는다",{scarfResponse:"EXCHANGE"}),
-    option("scarf9_push_wear_once","내가 골랐다는 이유로 한 번만 착용을 요구한다",{scarfResponse:"PUSHED_WEAR",distance:true})]),
+  choice(7,13,"선물이 마음에 들지 않을 때 행동한다",[
+    option("scarf9_exchange_or_put_down","바꾸거나 내려놓고 내 기분도 스스로 다룬다",{scarfResponse:"EXCHANGE_OR_PUT_DOWN"}),
+    option("scarf9_admit_embarrassed","하은 탓 없이 내가 민망하다고 말한다",{scarfResponse:"ADMIT_EMBARRASSED"}),
+    option("scarf9_push_wear_once","아쉬움을 이유로 한 번 써 보라고 요구한다",{scarfResponse:"PUSHED_WEAR",distance:true})]),
   choice(8,16,"역할을 바꾼 뒤 다음 행동을 고른다",[
-    option("player9_try_top","하은이 고른 상의를 직접 입어 본다",{playerTryOn:"TOP"}),
-    option("player9_try_socks","양말을 골라 직접 착용감을 확인한다",{playerTryOn:"SOCKS"}),
+    option("player9_choose_my_top","내가 고른 무늬 없는 상의를 입어 본다",{playerTryOn:"OWN_TOP"}),
+    option("player9_try_her_top","하은이 고른 줄무늬 상의를 입어 본다",{playerTryOn:"HER_TOP"}),
     option("player9_rest_bench","더 입지 않고 벤치에서 쉰다",{playerTryOn:"REST",rest:true})]),
   choice(9,19,"최종 구매와 소유자를 정한다",[
-    option("checkout9_offer_green_gift","녹색 셔츠를 선물로 제안한다",{checkout:"OFFER_GREEN_GIFT"}),
-    option("checkout9_each_buys_own","각자 입어 본 자기 물건만 구매 여부를 정한다",{checkout:"EACH_BUYS_OWN"}),
-    option("checkout9_no_new_purchase","새 구매 없이 필요한 교환만 처리한다",{checkout:"NO_NEW_PURCHASE"})]),
+    option("checkout9_offer_green_gift","사고 싶다면 선물하되 오늘 안 사도 된다고 제안한다",{checkout:"OFFER_GREEN_GIFT"}),
+    option("checkout9_each_buys_own","각자 고르고 내 것도 한 번 더 생각한다",{checkout:"EACH_BUYS_OWN"}),
+    option("checkout9_leave_then_decide","둘 다 안 사고 나가 본 뒤 결정한다",{checkout:"NO_NEW_PURCHASE"})]),
   choice(10,21,"오늘의 기억을 남기는 범위를 정한다",[
-    option("memory9_photo_together","동의한 오늘 사진 한 장을 함께 남긴다",{memory:"TOGETHER_PHOTO"}),
-    option("memory9_keep_private_fitting","이미 찍은 피팅 사진만 사적으로 보관한다",{memory:"PRIVATE_FITTING"}),
-    option("memory9_words_only","새 사진 없이 오늘의 농담만 기억한다",{memory:"WORDS_ONLY"})]),
+    option("memory9_haeun_picks_photo","하은이 가장 마음에 드는 피팅 사진을 남긴다",{memory:"HAEUN_PICKS"}),
+    option("memory9_photo_together","옷 대신 지금의 둘을 함께 찍는다",{memory:"TOGETHER_PHOTO"}),
+    option("memory9_words_only","오늘은 새 사진 없이 기억한다",{memory:"WORDS_ONLY"})]),
   choice(11,23,"내일 저녁을 제안한다",[
     option("dinner9_set_time_together","시간과 메뉴를 같이 정하자고 제안한다",{dinner:"CONFIRMED_IF_COMFORTABLE"}),
     option("dinner9_contact_before_noon","준비한 뒤 낮 전에 연락하겠다고 한다",{dinner:"CONTACT_BEFORE_NOON"}),

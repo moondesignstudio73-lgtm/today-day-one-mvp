@@ -40,7 +40,7 @@ function updateDerived(state,choice,option){
   if(choice.number===4){flags.day9V3PinkResponse=effects.pinkResponse;if(effects.distance)flags.day9V3DistanceRemaining=true;}
   if(choice.number===5)flags.day9V3GreenPreferenceRead=effects.greenRead;
   if(choice.number===6){flags.day9V3ScarfPurchase=effects.scarfPurchase;flags.day9V3ScarfIntent=effects.scarfIntent;flags.day9V3GreenPhotoExists=true;flags.day9V3GreenPhotoScope="REQUESTED_BY_HAEUN";}
-  if(choice.number===7){flags.day9V3ScarfResponse=effects.scarfResponse;if(effects.distance)flags.day9V3DistanceRemaining=true;flags.day9V3ScarfState=flags.day9V3ScarfPurchase!=="PURCHASED_GIFT"?"UNPURCHASED":effects.scarfResponse==="EXCHANGE"?"EXCHANGE_PENDING":"PROTAGONIST_OWNED";}
+  if(choice.number===7){flags.day9V3ScarfResponse=effects.scarfResponse;if(effects.distance)flags.day9V3DistanceRemaining=true;flags.day9V3ScarfState=flags.day9V3ScarfPurchase!=="PURCHASED_GIFT"?"UNPURCHASED":effects.scarfResponse==="PUSHED_WEAR"?"PROTAGONIST_OWNED":"EXCHANGE_PENDING";}
   if(choice.number===8){flags.day9V3PlayerTryOn=effects.playerTryOn;flags.day9V3RestRoute=effects.rest===true;flags.day9V3SleeveContactAllowed=effects.rest!==true&&flags.day9V3PriorLightContact===true&&flags.day9V3RelationshipBand!=="LOW"&&flags.day9V3DistanceRemaining!==true;}
   if(choice.number===9){
     flags.day9V3Checkout=effects.checkout;
