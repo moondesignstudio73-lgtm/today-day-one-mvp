@@ -1346,3 +1346,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 사용자 확정에 따라 `AI해커톤` 하위 페이지 원고를 현재 DAY의 기준 원본으로 사용하고 Markdown 첨부 파일은 이후 조회·대조·차단 대상에서 제외한다.
 - DAY 5 하위 페이지 본문 전체 열람이 완료되어 접근 대기를 해제했다. 자동화는 `ACTIVE — DAY 5 하위 페이지 원고 소스 잠금 진행`이다.
 - 다음 작업: DAY 5 소스 잠금 기록 생성 후 기존 구현·프리모드·지도 커버리지 감사.
+
+### 2026-08-28 DAY 5 Notion 하위 페이지 SOURCE LOCK PASS
+
+- 기준/하위 페이지를 새로 조회하고 `day 5` 본문의 SCENE 01~08, 선택 4종, 6개 저장 복원 계약, DAY 4 콜백과 DAY 6 훅을 완전 확인했다.
+- 사용자 최신 규칙에 따라 상위 Markdown 첨부는 제외했으며 하위 페이지 본문 누락은 0건이다.
+- `docs/day5/DAY5_NOTION_SOURCE_LOCK.md`에 URL, 조회 시각, 원고 상태·장면/선택/저장 범위와 두 스킬 기반 캐논·화자·정보 예산 검증을 기록했다.
+- 변경 파일: `docs/day5/DAY5_NOTION_SOURCE_LOCK.md`, `CAMPAIGN_DAY_RELEASE_PROGRESS.md`, `DEVELOPMENT_PROGRESS.md`. 코드·에셋·DAY 6 변경 없음.
+- 다음 작업: DAY 5 기존 구현·지도·프리모드 콘텐츠 커버리지 감사.
