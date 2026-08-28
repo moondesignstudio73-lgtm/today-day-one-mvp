@@ -24,10 +24,12 @@ for(const [id,scene] of Object.entries(DAY5_PRESENTATION_SCENES)){
 }
 assert.equal(DAY5_PRESENTATION_SCENES.S05_SEOJIN_CONTEXT.characterId,"female-coworker");
 assert.equal(DAY5_PRESENTATION_SCENES.S03_COWORKER_REUNION.characterId,"office-best-male");
-assert.equal(Object.values(DAY5_PRESENTATION_SCENES).filter(scene=>scene.assetStatus==="ready").length,4);
-assert.equal(Object.values(DAY5_PRESENTATION_SCENES).filter(scene=>scene.assetStatus==="needs-production").length,4);
+assert.equal(Object.values(DAY5_PRESENTATION_SCENES).filter(scene=>scene.assetStatus==="ready").length,6);
+assert.equal(Object.values(DAY5_PRESENTATION_SCENES).filter(scene=>scene.assetStatus==="needs-production").length,2);
 assert.equal(DAY5_PRESENTATION_SCENES.S01_HOME_PREP.assetPath,"assets/events/day5/cg-day5-tie-boundary-pov-v1.png");
 assert.equal(DAY5_PRESENTATION_SCENES.S04_DESK_RETURN.assetPath,"assets/events/day5/cg-day5-desk-two-folders-pov-v1.png");
+assert.equal(DAY5_PRESENTATION_SCENES.S05_SEOJIN_CONTEXT.backgroundId,"day5-office-pantry-day");
+assert.equal(DAY5_PRESENTATION_SCENES.S07_RETURN_PLAN.backgroundId,"day5-office-small-meeting-room-day");
 assert.equal(DAY5_PRESENTATION_SCENES.S02_OFFICE_THRESHOLD.backgroundId,"day5-office-lobby-gate-day");
 assert.equal(DAY5_PRESENTATION_SCENES.S03_COWORKER_REUNION.backgroundId,"day5-office-elevator-lobby-day");
 assert.equal(new Set(Object.values(DAY5_PRESENTATION_SCENES).map(scene=>scene.plannedAssetId)).size,8);

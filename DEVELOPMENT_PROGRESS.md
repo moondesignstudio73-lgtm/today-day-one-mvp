@@ -1,5 +1,11 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 5 품질 재구축 — 신규 이미지 제작 6/8 (2026-08-28)
+
+- `day5-office-pantry-day-v1.png`과 `day5-office-small-meeting-room-day-v1.png`을 신규 제작해 S05·S07의 반복 `office-day`를 전용 배경으로 교체했다.
+- 같은 회사의 석재·유리·주광 연속성, 대화 인물 배치 폭, 방문자 버튼·물컵·계획 화면·열린 퇴장 동선, 중앙 크롭과 개인정보 부재를 원본에서 확인했다.
+- 현재 `6/8 PASS`; 다음 작업은 S06·S08 사건 CG 제작이다. DAY 6은 시작하지 않는다.
+
 ## DAY 5 품질 재구축 — 신규 이미지 제작 4/8 (2026-08-28)
 
 - `cg-day5-tie-boundary-pov-v1.png`과 `cg-day5-desk-two-folders-pov-v1.png`을 제작해 S01·S04 `event-cg` 계약에 실제 경로로 연결했다.
