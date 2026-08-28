@@ -128,3 +128,10 @@
 - 원본은 `1672×941 Format24bppRgb`, SHA-256 `5684F110385992357178DBC68BE1B5955EDF2155ABB85541DDAF0C76A45493E1`이다.
 - 한 봉투 안의 녹색 큰 포켓 셔츠·기본 양말, 무문자 영수증 정확히 한 장, 직원과 주인공의 인계 손동작이 중앙 `center-60`에 남는다. 가격·바코드·브랜드·복수 결제·스카프 착용은 없다.
 - `day9V3TransactionsSettled=true`, `day9V3ScarfState=EXCHANGED`, 녹색 셔츠가 `GIFT_ACCEPTED` 또는 `HAEUN_SELF_PURCHASED`일 때만 노출한다. 이미지 진척은 6/9다.
+
+## 2026-08-29 SCENE 16 플레이어 피팅·비접촉 소매 안내 CG — PASS
+
+- 최신 Notion 하위 V3의 조심스러운 관계 공통 경로를 기준으로 거울 속 플레이어 상의, 한 번 더 접힌 오른쪽 소매, 주인공의 직접 정리와 하은의 비접촉 가리킴을 구현했다.
+- 원본은 `1672×941 Format24bppRgb`, SHA-256 `E93DAB91BFF3EA6E8A26B8493EB8B7933C6FF253EDF02C8784DDEF7924CA8145`다.
+- 손·접힌 선·명확한 비접촉 간격이 중앙 `center-60`에 남고 주인공 얼굴은 고정하지 않았다. 손목 잡기·접촉 강제·문자·브랜드·거울 왜곡이 없다.
+- `day9V3RestRoute=false`에서는 이 CG, `true`에서는 완성된 지퍼 CG만 반환한다. SCENE 16의 두 배타 경로가 모두 PASS했고 전체 이미지 진척은 7/9다.
