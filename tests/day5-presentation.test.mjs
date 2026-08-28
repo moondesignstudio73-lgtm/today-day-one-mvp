@@ -20,4 +20,10 @@ for(const [id,scene] of Object.entries(DAY5_PRESENTATION_SCENES)){
 }
 assert.equal(DAY5_PRESENTATION_SCENES.S05_SEOJIN_CONTEXT.characterId,"female-coworker");
 assert.equal(DAY5_PRESENTATION_SCENES.S03_COWORKER_REUNION.characterId,"office-best-male");
+assert.equal(Object.values(DAY5_PRESENTATION_SCENES).filter(scene=>scene.assetStatus==="needs-production").length,8);
+assert.equal(new Set(Object.values(DAY5_PRESENTATION_SCENES).map(scene=>scene.plannedAssetId)).size,8);
+assert.deepEqual(
+  Object.values(DAY5_PRESENTATION_SCENES).map(scene=>scene.shotMode),
+  ["event-cg","dedicated-background","dedicated-background","event-cg","dedicated-background","event-cg","dedicated-background","event-cg"]
+);
 console.log("✓ DAY 5 기존 에셋 8 Scene·서진/민호/팀장·BGM/SFX 매핑 검증 통과");

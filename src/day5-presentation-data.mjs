@@ -1,12 +1,12 @@
 export const DAY5_PRESENTATION_SCENES=Object.freeze({
-  S01_HOME_PREP:Object.freeze({backgroundId:"home-morning",characterId:"girlfriend",bgm:{category:"daily",variant:0,volume:0.075},sfx:["SFX_CUP_SET_DOWN"]}),
-  S02_OFFICE_THRESHOLD:Object.freeze({backgroundId:"office-day",characterId:"girlfriend",bgm:{category:"daily",variant:0,volume:0.07},sfx:["SFX_AUTO_DOOR"]}),
-  S03_COWORKER_REUNION:Object.freeze({backgroundId:"office-day",characterId:"office-best-male",bgm:{category:"daily",variant:0,volume:0.065},sfx:[]}),
-  S04_DESK_RETURN:Object.freeze({backgroundId:"office-day",characterId:"team-lead",bgm:{category:"daily",variant:0,volume:0.055},sfx:["SFX_DOCUMENT_RECEIVE"]}),
-  S05_SEOJIN_CONTEXT:Object.freeze({backgroundId:"office-day",characterId:"female-coworker",bgm:{category:"daily",variant:0,volume:0.06},sfx:["SFX_CUP_SET_DOWN"]}),
-  S06_WORK_TRIAL:Object.freeze({backgroundId:"office-day",characterId:"female-coworker",bgm:{category:"daily",variant:0,volume:0.05},sfx:["SFX_PENCIL_NOTE"]}),
-  S07_RETURN_PLAN:Object.freeze({backgroundId:"office-day",characterId:"team-lead",bgm:{category:"daily",variant:0,volume:0.065},sfx:["SFX_DOCUMENT_RECEIVE"]}),
-  S08_DAY_END:Object.freeze({backgroundId:"office-day",characterId:"office-best-male",bgm:{category:"daily",variant:0,volume:0.075},sfx:["SFX_SPARE_PHONE_KEY"]})
+  S01_HOME_PREP:Object.freeze({backgroundId:"home-morning",characterId:"girlfriend",shotMode:"event-cg",assetStatus:"needs-production",plannedAssetId:"cg-day5-tie-boundary-pov",bgm:{category:"daily",variant:0,volume:0.075},sfx:["SFX_CUP_SET_DOWN"]}),
+  S02_OFFICE_THRESHOLD:Object.freeze({backgroundId:"office-day",characterId:"girlfriend",shotMode:"dedicated-background",assetStatus:"needs-production",plannedAssetId:"day5-office-lobby-gate-day",bgm:{category:"daily",variant:0,volume:0.07},sfx:["SFX_AUTO_DOOR"]}),
+  S03_COWORKER_REUNION:Object.freeze({backgroundId:"office-day",characterId:"office-best-male",shotMode:"dedicated-background",assetStatus:"needs-production",plannedAssetId:"day5-office-elevator-lobby-day",bgm:{category:"daily",variant:0,volume:0.065},sfx:[]}),
+  S04_DESK_RETURN:Object.freeze({backgroundId:"office-day",characterId:"team-lead",shotMode:"event-cg",assetStatus:"needs-production",plannedAssetId:"cg-day5-desk-two-folders-pov",bgm:{category:"daily",variant:0,volume:0.055},sfx:["SFX_DOCUMENT_RECEIVE"]}),
+  S05_SEOJIN_CONTEXT:Object.freeze({backgroundId:"office-day",characterId:"female-coworker",shotMode:"dedicated-background",assetStatus:"needs-production",plannedAssetId:"day5-office-pantry-day",bgm:{category:"daily",variant:0,volume:0.06},sfx:["SFX_CUP_SET_DOWN"]}),
+  S06_WORK_TRIAL:Object.freeze({backgroundId:"office-day",characterId:"female-coworker",shotMode:"event-cg",assetStatus:"needs-production",plannedAssetId:"cg-day5-work-trial-timer-pov",bgm:{category:"daily",variant:0,volume:0.05},sfx:["SFX_PENCIL_NOTE"]}),
+  S07_RETURN_PLAN:Object.freeze({backgroundId:"office-day",characterId:"team-lead",shotMode:"dedicated-background",assetStatus:"needs-production",plannedAssetId:"day5-office-small-meeting-room-day",bgm:{category:"daily",variant:0,volume:0.065},sfx:["SFX_DOCUMENT_RECEIVE"]}),
+  S08_DAY_END:Object.freeze({backgroundId:"office-day",characterId:"office-best-male",shotMode:"event-cg",assetStatus:"needs-production",plannedAssetId:"cg-day5-bench-fried-rice-phone-pov",bgm:{category:"daily",variant:0,volume:0.075},sfx:["SFX_SPARE_PHONE_KEY"]})
 });
 
 const ALLOWED_BACKGROUNDS=new Set(["home-morning","office-day"]);
@@ -18,6 +18,7 @@ export function validateDay5PresentationData(scenes=DAY5_PRESENTATION_SCENES){
   return values.length===8&&values.every(scene=>
     ALLOWED_BACKGROUNDS.has(scene.backgroundId)&&
     ALLOWED_CHARACTERS.has(scene.characterId)&&
+    ["event-cg","dedicated-background"].includes(scene.shotMode)&&scene.assetStatus==="needs-production"&&typeof scene.plannedAssetId==="string"&&
     scene.bgm?.category==="daily"&&Number.isInteger(scene.bgm.variant)&&scene.bgm.volume>=0.05&&scene.bgm.volume<=0.08&&
     Array.isArray(scene.sfx)&&scene.sfx.every(id=>ALLOWED_SFX.has(id))
   );

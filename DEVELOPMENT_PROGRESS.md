@@ -1378,3 +1378,11 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - `tests/day5-scenario-v2.test.mjs`가 V1 Scene/전략 보존, V2 상태·체크포인트, 금지 표현·조기 공개 차단과 QA 표식을 검증해 PASS했다.
 - 변경 파일: QA 문서, 정적 검사, 두 진행 문서. 런타임·에셋·DAY 6 변경 없음.
 - 다음 작업: DAY 5 기존 에셋 전수 감사와 8 Scene 연출·오디오·이미지 명세.
+
+### 2026-08-28 DAY 5 ASSET/DIRECTION/AUDIO AUDIT PASS
+
+- 기존 집·회사 배경, 하은 DAY 5 의상, 서진·민호·팀장 스프라이트와 오디오 큐를 DAY 2 시각 기준에 맞춰 육안 감사했다.
+- 단일 회사 배경 반복을 탈락시키고 S01·S04·S06·S08 이벤트 CG 4종, S02·S03·S05·S07 전용 배경 4종을 확정했다.
+- `src/day5-presentation-data.mjs`의 8 Scene에 `shotMode`, `plannedAssetId`, `assetStatus: needs-production`을 추가하고 집중 테스트로 8개 고유 자산 계약을 고정했다.
+- 산출물: `docs/day5/DAY5_ASSET_DIRECTION_AUDIO_AUDIT.md`; 프레젠테이션 및 V1+V2 시나리오 정적 검사 PASS.
+- 다음 작업: 신규 이미지 8종 제작 후 기술·육안·실제 화면 QA와 `ready` 전환.

@@ -6,7 +6,7 @@
 
 현재 재감사 대상: `DAY 5`
 
-자동화 상태: `ACTIVE — DAY 5 내러티브 QA PASS / 에셋·연출 감사 대기`
+자동화 상태: `ACTIVE — DAY 5 에셋·연출·오디오 AUDIT PASS / 이미지 제작 대기`
 
 ### 2026-08-28 DAY 4 V3 런타임 연결 1차
 
@@ -1347,3 +1347,11 @@ DAY 16 출시 전 관문을 완료했다. 다음 작업은 노션 사용자 원�
 - 원고 장면/대사/선택 누락 0, 추가층 리듬 훼손 0, 10문항 10 PASS, NEEDS FIX 0이다. 현재 압축 런타임은 승인하지 않았으며 후속 구현이 필요하다.
 - 산출물: `docs/day5/DAY5_SCENARIO_QA_V2.md`, `tests/day5-scenario-v2.test.mjs`; 정적 검사 PASS.
 - 다음 관문: DAY 2 화면 품질을 기준으로 기존 DAY 5 에셋 전수 감사와 8 Scene 연출·오디오·이미지 요구사항 고정. DAY 6는 시작하지 않는다.
+
+### 2026-08-28 DAY 5 에셋·연출·오디오 AUDIT PASS / PRODUCTION REQUIRED
+
+- DAY 2의 16:9·장면 전용 CG·행동 소품·중앙 9:16·UI 안전 영역 기준으로 기존 집/회사 배경과 하은·서진·민호·팀장 자산을 원본 해상도 육안 감사했다.
+- 인물 4종과 오픈 오피스 톤은 재사용 후보지만 `office-day` 7회 반복은 로비·엘리베이터·책상·탕비실·회의실·벤치 행동을 보여 주지 못해 완료 기준에 미달한다.
+- 전용 배경 4종과 이벤트 CG 4종, 총 8종의 제작 명세를 고정하고 8 Scene을 `needs-production`으로 표시했다. daily BGM과 기존 SFX 5종은 서사 의미를 침범하지 않는 조건으로 PASS했다.
+- 산출물: `docs/day5/DAY5_ASSET_DIRECTION_AUDIO_AUDIT.md`, 갱신된 `src/day5-presentation-data.mjs`, `tests/day5-presentation.test.mjs`; DAY 5 프레젠테이션·시나리오 정적 검사 PASS.
+- 다음 관문: 신규 이미지 8종 비파괴 제작과 원본/데스크톱/모바일 이미지 QA. DAY 6는 시작하지 않는다.
