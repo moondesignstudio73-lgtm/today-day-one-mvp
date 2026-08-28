@@ -6,6 +6,7 @@ const n=(text,extra={})=>({type:"narration",text,...extra});
 const d=(speaker,text,expressionId="calm",extra={})=>({type:"dialogue",speaker,text,expressionId,...extra});
 const choice=options=>({type:"choice",options});
 const enter=(characterId,expressionId="calm")=>({type:"characterEnter",characterId,expressionId,animationId:"idle-breathe"});
+const checkpoint=checkpointId=>({type:"checkpoint",checkpointId});
 const scene=(key,label)=>{const view=DAY5_PRESENTATION_SCENES[key];return [
   {type:"transition",style:"fade",label,backgroundId:view.backgroundId,characterId:view.characterId,bgmId:view.bgm.category,bgmVariant:view.bgm.variant,bgmVolume:view.bgm.volume},
   ...(view.shotMode==="event-cg"&&view.assetPath?[{type:"cgShow",source:view.assetPath,duration:3600}]:[]),
@@ -104,6 +105,7 @@ function segment1(state){return [
   d("윤서진","맞아요. 스물일곱, 같은 팀 서비스 전략. 기억 안 난다고 먼저 말해도 괜찮아요. 서운한 표정은 퇴근 뒤에 따로 연습할게요.","smile"),
   d("나","민호 씨보다 자연스럽네요."),
   d("윤서진","저는 연습했다는 말을 안 하니까요.","smile"),
+  checkpoint("after-introductions"),
   ...scene("S04_DESK_RETURN","SCENE 04 · 비어 있지 않은 자리"),
   enter("team-lead","calm"),
   d("팀장","오신 것만으로 충분합니다. 오늘은 두 시간, 자리 확인과 팀 변경 사항 설명까지만 하겠습니다."),
@@ -215,6 +217,7 @@ function segment4(state){return [
   ...haeunExitDialogue(state),
   d("나","점심 먹고 말할게. 오늘은 내가 정한 시간에 나왔어."),
   n("계획표, 동료 관계 지도, DAY 4 증언 장부를 서로 다른 세 폴더에 저장했다."),
+  checkpoint("before-day-report"),
   n("DAY REPORT · 윤서진—현재 동료/과거 관계 미확인 · 민호—직접 경험 범위를 구분하는 후배 · 새 원칙—과거 평판과 현재 능력을 분리한다."),
   n("회사에서 돌아온 것은 과거의 직함이 아니었다. 확인하고 멈추고 다시 약속할 수 있는 현재의 판단이었다."),
   d("나","내일은 오늘 기록부터 다시 확인하자."),
@@ -229,11 +232,21 @@ function addCollection(state,key,...ids){if(!state.scenario?.enabled||!Array.isA
 function remember(state,id){state.storyFlags??={};state.storyFlags[id]=true;}
 
 export function getLockedDay5Segment(state,stage=state.storyFlags?.day5RuntimeStage??0){
-  if(stage===0)return segment0(state);
-  if(stage===1)return segment1(state);
-  if(stage===2)return segment2(state);
-  if(stage===3)return segment3(state);
-  return segment4(state);
+  const segment=stage===0?segment0(state):stage===1?segment1(state):stage===2?segment2(state):stage===3?segment3(state):segment4(state);
+  const checkpointId=state.storyFlags?.day5SceneCheckpoint;
+  if((stage===1&&checkpointId==="after-introductions")||(stage===4&&checkpointId==="before-day-report")){
+    const index=segment.findIndex(step=>step.type==="checkpoint"&&step.checkpointId===checkpointId);
+    if(index>=0)return segment.slice(index+1);
+  }
+  return segment;
+}
+
+export function applyLockedDay5CheckpointState(state,checkpointId){
+  if(!["after-introductions","before-day-report"].includes(checkpointId))return false;
+  state.storyFlags??={};state.storyFlags.day5SceneCheckpoint=checkpointId;
+  if(checkpointId==="after-introductions"){state.storyFlags.day5_current_team_map=true;state.storyFlags.day5_minho_provenance_respected=true;}
+  if(checkpointId==="before-day-report"){state.storyFlags.day5_haeun_autonomy_trust=true;state.storyFlags.day6_life_restart_pending=true;}
+  return true;
 }
 
 export function getLockedDay5ResumePresentation(state){
@@ -273,11 +286,10 @@ export function applyLockedDay5ChoiceState(state,id){
     addCollection(state,"unlockedActions","day5-work-trial");return {stage:3};
   }
   if(DAY5_RETURN_CHOICES.some(item=>item.id===id)){
-    state.storyFlags.day5ReturnStrategy=id;state.storyFlags.day5_return_strategy=id;state.storyFlags.day5RuntimeStage=4;state.storyFlags.day5SceneCheckpoint="before-day-report";state.storyFlags.day5ReturnPlanReady=true;state.storyFlags.day5_work_return_plan_saved=true;remember(state,id);
+    state.storyFlags.day5ReturnStrategy=id;state.storyFlags.day5_return_strategy=id;state.storyFlags.day5RuntimeStage=4;state.storyFlags.day5SceneCheckpoint="after-return-choice";state.storyFlags.day5ReturnPlanReady=true;state.storyFlags.day5_work_return_plan_saved=true;remember(state,id);
     const unlocks=id==="request-current-briefing"?["review-current-work","office-briefing"]:id==="rebuild-social-context"?["coworker-lunch","ask-team-history"]:["planned-work-return","review-current-work"];
     applyOnce(()=>{if(id==="request-current-briefing")addMetric(state,"seojinStatusInterest",2);if(id==="rebuild-social-context"){addMetric(state,"seojinAffection",2);addMetric(state,"coworkerRelation",2);}if(id==="set-return-boundary"){addMetric(state,"seojinAffection",1);addMetric(state,"seojinStatusInterest",1);}});
     addCollection(state,"profileUnlocks","seojin-basic");addCollection(state,"unlockedActions","day5-team-map","day5-work-trial",...unlocks,"day6-life-restart");addCollection(state,"followUpHooks","day6-life-restart");addCollection(state,"introducedNpcIds","female-coworker","team-lead","office-best-male");
-    state.storyFlags.day5_haeun_autonomy_trust=true;state.storyFlags.day6_life_restart_pending=true;
     return {stage:4};
   }
   return null;

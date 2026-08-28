@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {existsSync,readFileSync} from "node:fs";
 import {
   DAY5_ENTRY_CHOICES,DAY5_RETURN_CHOICES,DAY5_SEOJIN_CHOICES,DAY5_WORK_CHOICES,
-  applyLockedDay5ChoiceState,getLockedDay5LegacyChoice,getLockedDay5ResumePresentation,getLockedDay5Segment,validateLockedDay5Runtime
+  applyLockedDay5CheckpointState,applyLockedDay5ChoiceState,getLockedDay5LegacyChoice,getLockedDay5ResumePresentation,getLockedDay5Segment,validateLockedDay5Runtime
 } from "../src/day5-campaign-runtime.mjs";
 import {createScenarioState,validateScenarioState} from "../src/scenario-state.mjs";
 
@@ -33,7 +33,7 @@ assert.equal(state.storyFlags.day5_entry_strategy,"current_facts");
 assert.equal(state.storyFlags.day5_seojin_strategy,"role_history");
 assert.equal(state.storyFlags.day5_work_trial,"bounded_review");
 assert.equal(state.storyFlags.day5_return_strategy,"set-return-boundary");
-for(const flag of ["day5_haeun_boundary_respected","day5_current_authority_verified","day5_seojin_basic_unlocked","day5_pre_accident_work_habit_verified","day5_minho_provenance_respected","day5_work_return_plan_saved","day5_haeun_autonomy_trust","day6_life_restart_pending"])assert.equal(state.storyFlags[flag],true,flag);
+for(const flag of ["day5_haeun_boundary_respected","day5_current_authority_verified","day5_seojin_basic_unlocked","day5_pre_accident_work_habit_verified","day5_minho_provenance_respected","day5_work_return_plan_saved"])assert.equal(state.storyFlags[flag],true,flag);
 assert.deepEqual(state.storyFlags.day5ChoiceEffectsApplied,Object.fromEntries(path.map(id=>[id,true])));
 for(const action of ["planned-work-return","review-current-work"])assert.ok(state.scenario.unlockedActions.includes(action),action);
 
@@ -86,6 +86,18 @@ for(const backgroundId of ["day5-office-lobby-gate-day","day5-office-elevator-lo
 assert.deepEqual([0,1,2,3,4].map(day5RuntimeStage=>getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage}}).sceneKey),["S01_HOME_PREP","S03_COWORKER_REUNION","S06_WORK_TRIAL","S07_RETURN_PLAN","S08_DAY_END"]);
 assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:1}}).characterAssetUrl,undefined,"NPC resume must not reuse Haeun outfit");
 assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:4}}).cgAssetPath,expectedCg[3]);
+
+const introRestore=stateFor();applyLockedDay5ChoiceState(introRestore,"entry_current_facts");
+const introFull=getLockedDay5Segment(introRestore,1),introMarker=introFull.findIndex(step=>step.checkpointId==="after-introductions");
+assert.ok(introMarker>0);assert.equal(applyLockedDay5CheckpointState(introRestore,"after-introductions"),true);
+const introResumed=getLockedDay5Segment(structuredClone(introRestore),1);
+assert.deepEqual(introResumed,introFull.slice(introMarker+1));assert.equal(introResumed[0].label,"SCENE 04 · 비어 있지 않은 자리");
+
+const reportRestore=structuredClone(state),reportFull=getLockedDay5Segment(reportRestore,4),reportMarker=reportFull.findIndex(step=>step.checkpointId==="before-day-report");
+assert.ok(reportMarker>0);assert.equal(applyLockedDay5CheckpointState(reportRestore,"before-day-report"),true);
+const reportResumed=getLockedDay5Segment(structuredClone(reportRestore),4);
+assert.deepEqual(reportResumed,reportFull.slice(reportMarker+1));assert.ok(reportResumed[0].text.startsWith("DAY REPORT"));
+assert.equal(reportRestore.storyFlags.day5_haeun_autonomy_trust,true);assert.equal(reportRestore.storyFlags.day6_life_restart_pending,true);
 for(const forbidden of ["가짜 하은","D-29","트럭 충돌","하은이 사고에 동승"])assert.ok(!allText.includes(forbidden),forbidden);
 for(const required of ["확인된 사실","민호","윤서진","판단을 빌리는 연습","임시 예비폰","연기가 먼저 증거를 제출","지훈은 내가 단 음료","출처 없이 제 감정","생활 안전 앱 업데이트: 오늘은 성공","서로 다른 세 폴더","DAY REPORT"])assert.ok(allText.includes(required),required);
 

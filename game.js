@@ -37,7 +37,7 @@ import { LOCKED_DAY1_SCENE_ID, applyLockedDay1ChoiceState, getLockedDay1Segment 
 import { DAY2_BGM_CUES } from "./src/day2-audio-data.mjs";
 import { LOCKED_DAY2_SCENE_ID, applyLockedDay2ChoiceState, getLockedDay2LegacyChoice, getLockedDay2ResumePresentation, getLockedDay2Segment } from "./src/day2-campaign-runtime.mjs?v=5";
 import { LOCKED_DAY4_SCENE_ID, applyLockedDay4ChoiceState, getLockedDay4LegacyChoice, getLockedDay4ResumePresentation, getLockedDay4Segment } from "./src/day4-campaign-runtime.mjs?v=3";
-import { LOCKED_DAY5_SCENE_ID, applyLockedDay5ChoiceState, getLockedDay5LegacyChoice, getLockedDay5ResumePresentation, getLockedDay5Segment } from "./src/day5-campaign-runtime.mjs?v=3";
+import { LOCKED_DAY5_SCENE_ID, applyLockedDay5CheckpointState, applyLockedDay5ChoiceState, getLockedDay5LegacyChoice, getLockedDay5ResumePresentation, getLockedDay5Segment } from "./src/day5-campaign-runtime.mjs?v=4";
 import { LOCKED_DAY6_SCENE_ID, applyLockedDay6ChoiceState, getLockedDay6LegacyChoice, getLockedDay6ResumePresentation, getLockedDay6Segment } from "./src/day6-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY7_SCENE_ID, applyLockedDay7ChoiceState, getLockedDay7LegacyChoice, getLockedDay7ResumePresentation, getLockedDay7Segment } from "./src/day7-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY8_SCENE_ID, applyLockedDay8ChoiceState, getLockedDay8LegacyChoice, getLockedDay8ResumePresentation, getLockedDay8Segment } from "./src/day8-campaign-runtime.mjs?v=2";
@@ -866,6 +866,7 @@ function renderImmersiveStep() {
   $("#storyChoiceLayer").innerHTML="";
   enforceModeExclusiveUi("story-step");
   if (!step || step.type === "sceneEnd") { sound.restoreBgm({duration:240});sound.stopTransientCues();if(step?.type==="sceneEnd")sound.play("dayEnd");finishImmersiveScene(); return; }
+  if(step.type==="checkpoint"){if(immersiveScene.id===LOCKED_DAY5_SCENE_ID)applyLockedDay5CheckpointState(state,step.checkpointId);persistEventRuntime(true);SaveManager.save(state);queueSceneStep(0);return;}
   if(step.bgmCue){const cue=DAY1_BGM_CUES[step.bgmCue]??DAY2_BGM_CUES[step.bgmCue];if(cue?.action==="stop"||cue?.action==="silence")sound.stopBgm({fadeOut:cue.action==="silence"?900:1200});else if(cue)sound.playBgm(cue.category,cue.variant,{volume:cue.volume,fadeIn:1000,crossFade:cue.action==="adjust"?1200:0});}
   if(step.backgroundId){
     const hasCharacter=Object.hasOwn(step,"characterId");
