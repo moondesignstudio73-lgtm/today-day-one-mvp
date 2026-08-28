@@ -184,6 +184,14 @@ export const DAY8_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"rest-after-independent-errand",icon:"☾",title:"오늘은 여기서 쉰다",description:"혼자 다녀온 결과를 더 평가하지 않고 회복을 우선한다.",effects:{energy:15,fatigue:-12,stress:-7,health:4},scenarioEffects:{},flag:"day8_recovery_rest",summary:"첫 독립 심부름 뒤 추가 확인을 멈추고 충분히 쉬었다."})
 ]);
 
+export const DAY8_V3_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"save-jihoon-present-boundary",icon:"◇",title:"지훈의 현재 이야기를 정리한다",description:"과거의 나를 단정하지 않고 오늘 직접 들은 일·취향·관계만 기록한다.",effects:{confidence:4,energy:-2,stress:-2},scenarioEffects:{investigation:2},flag:"day8_v3_free_present_boundary",summary:"지훈이 오늘 직접 말한 현재의 이야기와 아직 확인하지 못한 과거를 분리했다."}),
+  Object.freeze({id:"save-public-credit-only",icon:"▣",title:"공개된 작업 크레딧만 남긴다",description:"함께 본 공개 영상의 크레딧만 저장하고 비공개 클라이언트 작업은 기록하지 않는다.",effects:{trust:4,confidence:3,energy:-2},scenarioEffects:{investigation:1},flag:"day8_v3_free_public_credit",summary:"공개된 작업과 지훈이 공개하지 않은 일을 분리해 기록했다."}),
+  Object.freeze({id:"save-haeun-call-promise",icon:"♥",title:"하은과 나눈 저녁 연락을 남긴다",description:"서로 따로 보낸 오후와 직접 말한 약속 변경·귀가 연락만 현재의 기억으로 저장한다.",effects:{affection:4,trust:4,energy:-2,stress:-2},scenarioEffects:{haeunTrust:1},flag:"day8_v3_free_haeun_call",summary:"각자의 오후를 존중하며 나눈 저녁 연락을 현재의 관계 기록으로 남겼다."}),
+  Object.freeze({id:"prepare-day9-color-reply",icon:"▤",title:"내일 답할 옷 색을 메모한다",description:"사진 속 두 색만 적어 두고 구매·선물·과거 취향은 아직 추측하지 않는다.",effects:{confidence:3,energy:-1},scenarioEffects:{investigation:1},flag:"day8_v3_free_color_reply",summary:"DAY 9에 직접 답할 두 색만 메모하고 의미 판단은 보류했다."}),
+  Object.freeze({id:"rest-after-jihoon-afternoon",icon:"☾",title:"오늘 대화를 덮고 쉰다",description:"지훈과 하은의 말을 더 비교하지 않고 오늘 생긴 현재의 기억을 그대로 둔다.",effects:{energy:15,fatigue:-12,stress:-7,health:4},scenarioEffects:{},flag:"day8_v3_recovery_rest",summary:"서로 다른 오후를 결론 내리지 않고 충분히 쉬었다."})
+]);
+
 export const DAY9_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"archive-ninety-minute-boundary",icon:"≡",title:"90분 업무 경계를 기록한다",description:"오늘 열람한 범위·맡지 않은 승인·종료 시각을 현재 업무 기록으로 남긴다.",effects:{work:4,confidence:5,energy:-3,stress:-2},scenarioEffects:{investigation:2},flag:"day9_free_archive_boundary",requiresAction:"bounded-office-contribution",summary:"도움과 승인 권한을 분리한 90분 업무 경계를 기록했다."}),
   Object.freeze({id:"review-current-queue",icon:"▧",title:"현재 업무 지도를 다시 확인한다",description:"담당·마감·막힌 지점만 확인하고 닫힌 과거 자료는 열지 않는다.",effects:{work:4,confidence:4,energy:-3},scenarioEffects:{investigation:3},flag:"day9_free_review_queue",requiresAction:"review-current-queue",summary:"현재 담당과 막힌 지점만 업무 지도에 남겼다."}),
@@ -371,7 +379,7 @@ export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
 }
 
-export function getStoryFreeActions(state){return (ACTIONS_BY_DAY[state.day]??[]).filter(action=>(!action.requiresFlag||state.storyFlags?.[action.requiresFlag])&&(!action.requiresAction||state.scenario?.unlockedActions?.includes(action.requiresAction)));}
+export function getStoryFreeActions(state){const actions=state.day===8&&state.storyFlags?.day8V3Complete===true?DAY8_V3_HOME_ACTIONS:(ACTIONS_BY_DAY[state.day]??[]);return actions.filter(action=>(!action.requiresFlag||state.storyFlags?.[action.requiresFlag])&&(!action.requiresAction||state.scenario?.unlockedActions?.includes(action.requiresAction)));}
 
 export function ensureStoryFeatureUnlocks(state){
   state.scenario??={};

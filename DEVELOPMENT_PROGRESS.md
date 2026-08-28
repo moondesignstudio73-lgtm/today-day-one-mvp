@@ -1,5 +1,13 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 V3 NORMAL ROUTE / FREE ACTION / DAY 9 REACHABILITY PASS (2026-08-28)
+
+- 실제 UI에서 선택 2~10을 연속 완료해 정상 24 Scene 경로와 10개 선택 저장 흐름을 완주했다.
+- V3 완료 뒤 남아 있던 V1 독립 심부름 자유행동을 발견해 `DAY8_V3_HOME_ACTIONS` 5종과 V3 전용 설명·DAY 9 색상 질문 안내로 분리했다. V1 저장은 기존 행동을 그대로 유지한다.
+- 수정 후 자유행동 선택·결과·공용 이벤트·DAY 9 저장 버튼과 DAY 9 첫 화면 도달을 실제 브라우저에서 확인했다.
+- 변경 파일: `src/story-free-action-manager.mjs`, `game.js`, `tests/story-free-action-day8.test.mjs`, 두 진행 문서.
+- 남은 문제/다음 작업: 행동 CG 데스크톱·모바일 육안 QA와 카페/휴식 배타 경로를 완료한 뒤 전체 회귀·배포한다.
+
 ## DAY 8 V3 BROWSER RUNTIME FIX / PARTIAL PLAYTHROUGH PASS (2026-08-28)
 
 - 현재 단계/대상: `2단계 — DAY 8 품질 재구축`; Notion 하위 페이지 본문이 최우선이며 상위 Markdown 첨부는 사용하지 않았다.

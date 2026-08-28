@@ -5,7 +5,7 @@ import { createGirlfriendFromProfile } from "../src/girlfriend-manager.mjs";
 import { SaveManager } from "../src/save-manager.mjs";
 import { GAME_MODES } from "../src/scenario-state.mjs";
 import { resolveSituationEventChoice } from "../src/situation-event-manager.mjs";
-import { DAY8_HOME_ACTIONS, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActions, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "../src/story-free-action-manager.mjs";
+import { DAY8_HOME_ACTIONS, DAY8_V3_HOME_ACTIONS, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActions, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "../src/story-free-action-manager.mjs";
 import { FREE_MODE_EVENT_CATALOG, getCompatibleSharedEvents, getEventCompatibilityDiagnostics, getSharedEventById } from "../src/event-compatibility.mjs";
 
 const create=()=>{const state=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});state.day=8;state.storyFlags={day8RuntimeComplete:true,day8IndependentErrandCompleted:true,day8CurrentHouseholdChoiceSaved:true,day8ReturnDebriefSaved:true,day8OriginalPhoneAtHospital:true,day9SecondOfficeAdaptationPending:true,haeun_contact_unlocked:true};state.scenario.unlockedActions.push("smartphone-basic","day5-work-trial","past-contacts-index","current-life-map","independent-neighborhood-errand","review-current-mail","prepare-limited-office-return");state.storyHistory.push({sceneId:"m30-day8-independent-errand",arc:"첫 독립 심부름",choiceId:"day8_return_debrief",day:8,response:"독립 심부름 결과를 공유했다."});return state;};
@@ -32,4 +32,5 @@ const noCompletion=create();delete noCompletion.storyFlags.day8RuntimeComplete;b
 const free=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.FREE_ROMANCE});assert.equal(free.scenario.enabled,false);assert.equal(free.storyFreeAction,undefined);
 
 const gameSource=readFileSync(new URL("../game.js",import.meta.url),"utf8");assert.match(gameSource,/completedSession\?\.id===LOCKED_DAY8_SCENE_ID[\s\S]*?day8FreeActionComplete/);assert.match(gameSource,/fromStoryFreeAction/);assert.match(gameSource,/getSharedEventById\(saved\.activeEvent\)/);
+const v3=create();v3.storyFlags.day8V3Complete=true;assert.equal(DAY8_V3_HOME_ACTIONS.length,5);assert.deepEqual(getStoryFreeActions(v3).map(action=>action.id),DAY8_V3_HOME_ACTIONS.map(action=>action.id));assert.equal(getStoryFreeActions(v3).some(action=>/독립 심부름|세제|직장 방문/.test(`${action.title} ${action.description}`)),false);assert.match(gameSource,/지훈의 현재 삶을 듣고 하은과 서로 다른 오후/);assert.match(gameSource,/DAY 9, 하은이 보낸 두 가지 옷 색상 질문/);
 console.log("✓ DAY 8 집·저녁 자유행동·우편 기한 이벤트·저장·중첩·스토리 차단 PASS");

@@ -96,7 +96,7 @@ import { getActionResultAsset, getHighTrustActionResultAsset, getVisibleActionEf
 import { getActionResultVideo } from "./src/action-result-videos.mjs?v=2";
 import { completeWorldFastTravel, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isWorldLocationOpen, moveWorldPlayer, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, WORLD_ATLAS, WORLD_MAPS } from "./src/world-map-manager.mjs?v=4";
 import { getMapLocationAsset } from "./src/map-location-assets.mjs";
-import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=31";
+import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=32";
 import { getSharedEventById } from "./src/event-compatibility.mjs?v=30";
 import { STORY_UI_STATES, deriveStoryUiState, getStoryUiInvariantViolations, isStoryFreeActionResume, prepareCampaignDayAdvance, reconcileCompletedStoryFreeAction, shouldClaimStoryPending } from "./src/story-flow-guard.mjs?v=2";
 import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JUNHO_ENCOUNTER_CHANCE, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=6";
@@ -843,7 +843,8 @@ function updateGiftVehicleLayer(characterId="girlfriend") {
 }
 
 function renderStoryFreeAction(step){
-  const definition=getStoryFreeActionWindow(state.day,step.id);
+  const baseDefinition=getStoryFreeActionWindow(state.day,step.id);
+  const definition=state.day===8&&state.storyFlags?.day8V3Complete===true?{...baseDefinition,storySceneId:LOCKED_DAY8_SCENE_ID,description:"지훈의 현재 삶을 듣고 하은과 서로 다른 오후를 나눈 뒤다. 오늘 확인한 관계와 공개 경계 중 하나만 정리한다.",nextSchedule:"정리를 마치면 DAY 9, 하은이 보낸 두 가지 옷 색상 질문으로 넘어간다."}:baseDefinition;
   const progress=beginStoryFreeAction(state,step.id);
   if(!definition||!progress){renderImmersiveStep();return;}
   if(progress.status==="EVENT"){setTimeout(()=>launchStoryFreeActionEvent(progress),0);return;}
