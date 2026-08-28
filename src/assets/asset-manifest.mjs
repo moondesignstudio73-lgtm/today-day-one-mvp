@@ -104,6 +104,8 @@ export const BACKGROUND_ASSETS = {
   "home-morning-skyline-studio":"assets/backgrounds/home/skyline-riverview-studio-morning-hd.png",
   "home-night":"assets/backgrounds/home/BG_HOME_NIGHT_001.webp",
   "office-day":"assets/backgrounds/office/BG_OFFICE_DAY_001.webp",
+  "day5-office-lobby-gate-day":"assets/backgrounds/day5/day5-office-lobby-gate-day-v1.png",
+  "day5-office-elevator-lobby-day":"assets/backgrounds/day5/day5-office-elevator-lobby-day-v1.png",
   "neighborhood-street-day":"assets/backgrounds/street/BG_RELATIONSHIP_STREET_DAY_001.png",
   "neighborhood-pharmacy-day":"assets/backgrounds/day6/day6-neighborhood-pharmacy-day-v1.png",
   "neighborhood-market-day":"assets/backgrounds/day6/day6-neighborhood-market-day-v1.png",
