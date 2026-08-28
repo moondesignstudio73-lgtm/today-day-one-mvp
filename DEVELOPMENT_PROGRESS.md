@@ -1,5 +1,11 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 5 품질 재구축 — 8 Scene 런타임 프레젠테이션 연결 PASS (2026-08-28)
+
+- 이벤트 CG 4종과 전용 배경 4종을 실제 DAY 5 시퀀스에 연결하고 장면별 BGM/SFX 메타데이터를 함께 적용했다.
+- 레거시 `day5RuntimeStage` 0~4를 유지하면서 단계별 S01/S03/S06/S07/S08 복원 화면과 CG 경로를 고정했으며 NPC에 하은 의상이 섞이지 않도록 수정했다.
+- `docs/day5/DAY5_RUNTIME_PRESENTATION_INTEGRATION.md`에 계약과 검증 범위를 기록했다. 다음 작업은 V1+V2 원고 전체 대사·선택·콜백 구현이며 DAY 6은 시작하지 않는다.
+
 ## DAY 5 품질 재구축 — 신규 이미지 제작 8/8 COMPLETE (2026-08-28)
 
 - `cg-day5-work-trial-timer-pov-v1.png`과 `cg-day5-bench-fried-rice-phone-pov-v1.png`을 제작해 S06·S08 `event-cg` 계약에 실제 경로로 연결했다.

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {readFileSync} from "node:fs";
+import {existsSync,readFileSync} from "node:fs";
 import {
   DAY5_ENTRY_CHOICES,DAY5_RETURN_CHOICES,DAY5_SEOJIN_CHOICES,DAY5_WORK_CHOICES,
   applyLockedDay5ChoiceState,getLockedDay5LegacyChoice,getLockedDay5ResumePresentation,getLockedDay5Segment,validateLockedDay5Runtime
@@ -47,6 +47,21 @@ for(const [choices,key] of [[DAY5_ENTRY_CHOICES,"day5EntryStrategy"],[DAY5_SEOJI
 }
 
 const allText=JSON.stringify([0,1,2,3,4].flatMap(stage=>getLockedDay5Segment(state,stage)));
+const allSteps=[0,1,2,3,4].flatMap(stage=>getLockedDay5Segment(state,stage));
+const expectedCg=[
+  "assets/events/day5/cg-day5-tie-boundary-pov-v1.png",
+  "assets/events/day5/cg-day5-desk-two-folders-pov-v1.png",
+  "assets/events/day5/cg-day5-work-trial-timer-pov-v1.png",
+  "assets/events/day5/cg-day5-bench-fried-rice-phone-pov-v1.png"
+];
+assert.deepEqual(allSteps.filter(step=>step.type==="cgShow").map(step=>step.source),expectedCg,"four dedicated event CGs are wired in scene order");
+for(const source of expectedCg)assert.equal(existsSync(new URL(`../${source}`,import.meta.url)),true,source);
+for(const backgroundId of ["day5-office-lobby-gate-day","day5-office-elevator-lobby-day","day5-office-pantry-day","day5-office-small-meeting-room-day"]){
+  assert.ok(allSteps.some(step=>step.type==="transition"&&step.backgroundId===backgroundId),backgroundId);
+}
+assert.deepEqual([0,1,2,3,4].map(day5RuntimeStage=>getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage}}).sceneKey),["S01_HOME_PREP","S03_COWORKER_REUNION","S06_WORK_TRIAL","S07_RETURN_PLAN","S08_DAY_END"]);
+assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:1}}).characterAssetUrl,undefined,"NPC resume must not reuse Haeun outfit");
+assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:4}}).cgAssetPath,expectedCg[3]);
 for(const forbidden of ["가짜 하은","D-29","트럭 충돌","하은이 사고에 동승"])assert.ok(!allText.includes(forbidden),forbidden);
 for(const required of ["확인된 사실","민호","윤서진","판단을 빌리는 연습","임시 예비폰"])assert.ok(allText.includes(required),required);
 

@@ -6,7 +6,11 @@ const n=(text,extra={})=>({type:"narration",text,...extra});
 const d=(speaker,text,expressionId="calm",extra={})=>({type:"dialogue",speaker,text,expressionId,...extra});
 const choice=options=>({type:"choice",options});
 const enter=(characterId,expressionId="calm")=>({type:"characterEnter",characterId,expressionId,animationId:"idle-breathe"});
-const scene=(key,label)=>{const view=DAY5_PRESENTATION_SCENES[key];return [{type:"transition",style:"fade",label,backgroundId:view.backgroundId,characterId:view.characterId,bgmId:view.bgm.category},{type:"sfx",sfxId:view.sfx[0]}].filter(step=>step.type!=="sfx"||step.sfxId!==undefined);};
+const scene=(key,label)=>{const view=DAY5_PRESENTATION_SCENES[key];return [
+  {type:"transition",style:"fade",label,backgroundId:view.backgroundId,characterId:view.characterId,bgmId:view.bgm.category,bgmVariant:view.bgm.variant,bgmVolume:view.bgm.volume},
+  ...(view.shotMode==="event-cg"&&view.assetPath?[{type:"cgShow",source:view.assetPath,duration:3600}]:[]),
+  ...view.sfx.map(sfxId=>({type:"sfx",sfxId}))
+];};
 
 export const LOCKED_DAY5_SCENE_ID=ID;
 export const DAY5_ENTRY_CHOICES=Object.freeze([
@@ -155,7 +159,7 @@ function segment4(state){return [
   n("회사에서 돌아온 것은 과거의 직함이 아니었다. 확인하고 멈추고 다시 약속할 수 있는 현재의 판단이었다."),
   d("나","내일은 오늘 기록부터 다시 확인하자."),
   n("내일부터는 병원과 집과 회사 사이에, 지금의 생활을 다시 놓아 보기로 했다."),
-  {type:"transition",style:"fade",label:"DAY 5 END",backgroundId:"office-day",characterId:"office-best-male",bgmId:"daily"},
+  {type:"transition",style:"fade",label:"DAY 5 END",backgroundId:DAY5_PRESENTATION_SCENES.S08_DAY_END.backgroundId,characterId:DAY5_PRESENTATION_SCENES.S08_DAY_END.characterId,bgmId:"daily"},
   {type:"sceneEnd"}
 ];}
 
@@ -173,11 +177,15 @@ export function getLockedDay5Segment(state,stage=state.storyFlags?.day5RuntimeSt
 
 export function getLockedDay5ResumePresentation(state){
   const stage=state.storyFlags?.day5RuntimeStage??0;
-  if(stage===0)return {backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
-  if(stage===1)return {backgroundId:"office-day",characterId:"office-best-male",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
-  if(stage===2)return {backgroundId:"office-day",characterId:"female-coworker",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
-  if(stage===3)return {backgroundId:"office-day",characterId:"team-lead",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
-  return {backgroundId:"office-day",characterId:"office-best-male",characterAssetUrl:STORY_OUTFIT_ASSETS.day5};
+  const key=["S01_HOME_PREP","S03_COWORKER_REUNION","S06_WORK_TRIAL","S07_RETURN_PLAN","S08_DAY_END"][Math.min(4,Math.max(0,stage))];
+  const view=DAY5_PRESENTATION_SCENES[key];
+  return {
+    backgroundId:view.backgroundId,
+    characterId:view.characterId,
+    ...(view.characterId==="girlfriend"?{characterAssetUrl:STORY_OUTFIT_ASSETS.day5}:{}),
+    ...(view.shotMode==="event-cg"?{cgAssetPath:view.assetPath}:{}),
+    sceneKey:key
+  };
 }
 
 export function applyLockedDay5ChoiceState(state,id){
@@ -217,5 +225,5 @@ export function validateLockedDay5Runtime(){
   const sample={gameMode:"marriage-in-30-days",storyFlags:{day4SharingStrategy:"sharing_transparent",day5EntryStrategy:"entry_current_facts",day5SeojinStrategy:"seojin_role_history",day5WorkTrial:"work_bounded_review",day5ReturnStrategy:"set-return-boundary"}};
   const all=[...segment0(sample),...segment1(sample),...segment2(sample),...segment3(sample),...segment4(sample)];
   const text=JSON.stringify(all);
-  return all.filter(step=>step.type==="transition").length>=9&&all.filter(step=>["dialogue","narration"].includes(step.type)).length>=70&&all.filter(step=>step.type==="choice").length===4&&!text.includes("가짜 하은")&&!text.includes("D-29")&&!text.includes("트럭");
+  return all.filter(step=>step.type==="transition").length>=9&&all.filter(step=>["dialogue","narration"].includes(step.type)).length>=70&&all.filter(step=>step.type==="choice").length===4&&all.filter(step=>step.type==="cgShow").length===4&&!text.includes("가짜 하은")&&!text.includes("D-29")&&!text.includes("트럭");
 }
