@@ -1,5 +1,16 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 5 품질 재구축 — 원격 전송·배포 승인 확인 (2026-08-28)
+
+- 사용자가 `https://github.com/superstarman35/game.git`에 현재 브랜치의 코드·문서·에셋을 push하고 gh-pages에 배포하는 것을 명시적으로 승인했다.
+- 진행 기록을 포함한 최종 SHA를 재검증한 뒤 origin과 gh-pages에 같은 SHA로 반영하고 공개 상태를 확인한다.
+
+## DAY 5 품질 재구축 — GitHub origin 전송 승인 대기 (2026-08-28)
+
+- 검증 HEAD `9bfe5e1`, origin 대비 ahead 17 / behind 0을 확인했다.
+- `https://github.com/superstarman35/game.git` push는 외부 코드·문서·에셋 전송의 별도 명시 승인이 필요해 실행되지 않았다. 원격·gh-pages 변경 없음.
+- 다음 작업: 사용자의 해당 목적지 전송 승인 후 origin 반영, 동일 검증 SHA 배포·공개 확인.
+
 ## DAY 5 품질 재구축 — 실제 브라우저 연속 플레이 QA PASS (2026-08-28)
 
 - localhost 격리 저장에서 DAY 5 전체 4선택, 첫 선택 새로고침 복원, 회사 자유행동, DAY 6 도달을 실제 브라우저로 완료했다.

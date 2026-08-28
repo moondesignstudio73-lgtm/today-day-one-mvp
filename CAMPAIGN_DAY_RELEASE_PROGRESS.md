@@ -6,7 +6,18 @@
 
 현재 재감사 대상: `DAY 5`
 
-자동화 상태: `ACTIVE — DAY 5 실제 브라우저 QA PASS / origin 반영·동일 SHA 배포 대기`
+자동화 상태: `ACTIVE — DAY 5 실제 브라우저 QA PASS / origin 반영·동일 SHA 배포 진행`
+
+### 2026-08-28 DAY 5 원격 전송·배포 승인 확인
+
+- 사용자가 `https://github.com/superstarman35/game.git`에 현재 브랜치의 코드·문서·에셋을 push하고 gh-pages에 배포하는 것을 명시적으로 승인했다.
+- 다음 관문은 진행 기록을 포함한 최종 SHA 재검증, origin 반영, 동일 SHA gh-pages 배포와 공개 확인이다.
+
+### 2026-08-28 DAY 5 origin 반영 시도 차단
+
+- 로컬 검증 HEAD `9bfe5e1`은 origin 기능 브랜치보다 17커밋 앞서고 뒤처짐 0으로 확인됐다.
+- `https://github.com/superstarman35/game.git`으로 일반 push를 시도했으나 외부 GitHub로 코드·문서·에셋을 전송하는 작업에 대한 별도 명시 승인이 필요하다는 안전 판정으로 실행되지 않았다.
+- 원격 브랜치와 gh-pages에는 변경이 없다. 우회 push·PR·배포는 하지 않았으며 다음 작업은 사용자의 해당 GitHub 저장소 전송 승인 후 origin 반영이다.
 
 ### 2026-08-28 DAY 5 실제 브라우저 연속 플레이 QA PASS
 
