@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 NOTION SOURCE ACCESS PASS / CANON CONFLICT PAUSED (2026-08-28)
+
+- 새 Notion 하위 페이지 `DAY 8 — 너 없는 오후 | SCENARIO V3`의 24 Scene·10선택·경로/저장/분기 계약을 완전 열람하고 소스 잠금을 작성했다.
+- 상위 Markdown 첨부는 최신 규칙대로 제외했다.
+- 잠금 사건표의 DAY 8 쇼핑 데이트와 Notion의 ‘하은과 만나지 않는 지훈 중심 오후’가 구조적으로 충돌한다. Notion은 쇼핑을 DAY 9 훅으로 배치한다.
+- 구현을 임의 변경하지 않았다. 상태: `PAUSED — DAY 8 잠금 사건표 / Notion 본문 우선순위 결정 대기`; DAY 9는 시작하지 않는다.
+
 ## DAY 7 QUALITY REBUILD / PUBLIC RELEASE COMPLETE (2026-08-28)
 
 - 검증 SHA `ccbb7d38aa865dc86cf75e119f3b2fff9c7f4cb2`가 기능 브랜치와 gh-pages에 동일하게 반영됐다.

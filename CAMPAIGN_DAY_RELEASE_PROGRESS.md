@@ -6,7 +6,15 @@
 
 현재 재감사 대상: `DAY 8`
 
-자동화 상태: `ACTIVE — DAY 7 COMPLETE / DAY 8 Notion 소스 재조회 대기`
+자동화 상태: `PAUSED — DAY 8 잠금 사건표 / Notion 하위 페이지 본문 충돌`
+
+### 2026-08-28 DAY 8 Notion SOURCE ACCESS PASS / CANON CONFLICT PAUSED
+
+- `AI해커톤`에서 `DAY 8 — 너 없는 오후 | SCENARIO V3` 하위 페이지를 새로 조회해 ACT 1~5, SCENE 01~24, 선택 10개, 정상 24장면/휴식 21장면, 상태·저장 및 15개 분기 우선순위를 완전히 읽었다. 상위 Markdown 첨부는 무시했다.
+- 소스 잠금: `docs/day8/DAY8_NOTION_SOURCE_LOCK.md`.
+- 사용자 잠금 사건표의 DAY 8 ‘하은과 쇼핑 데이트’와 현재 Notion DAY 8 ‘하은과 만나지 않고 지훈의 현재 하루를 듣는 날’이 같은 날에 양립하지 않는다. Notion은 쇼핑을 DAY 9 훅으로 넘긴다.
+- 두 사건을 임의 결합·이동·대체하지 않았다. DAY 8 코드·런타임·에셋은 변경하지 않았고 DAY 9도 시작하지 않는다.
+- 남은 문제: Notion DAY 8을 유지하고 쇼핑을 이동할지, 잠금 DAY 8 쇼핑을 유지하도록 Notion 하위 페이지를 갱신할지 사용자 결정이 필요하다.
 
 ### 2026-08-28 DAY 7 품질 재구축·배포 COMPLETE
 
