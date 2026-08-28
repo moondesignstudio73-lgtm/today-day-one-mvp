@@ -4,9 +4,17 @@
 
 현재 단계: `2단계 — DAY 4~30 순차 품질 재구축`
 
-현재 재감사 대상: `DAY 8`
+현재 재감사 대상: `DAY 9`
 
-자동화 상태: `ACTIVE — Notion DAY 8 하위 페이지 본문 최우선 확정`
+자동화 상태: `ACTIVE — DAY 8 품질 재구축·공개 배포 완료 / DAY 9 Notion 하위 페이지 재조회 대기`
+
+### 2026-08-28 DAY 8 품질 재구축·공개 배포 COMPLETE
+
+- 검증 SHA `d230cdc`를 `origin/feature/today-day-one-mvp`와 `origin/gh-pages`에 동일하게 fast-forward 반영했다. force push·rebase는 사용하지 않았다.
+- 전체 `tests/*.test.mjs` 164/164와 `game.js` 구문 검사가 PASS했다.
+- 공개 `tests/day8-v3-browser-harness.html?sha=d230cdc`에서 CG 6종 로드와 사진·공연·카페·HOME·휴식·DAY 9 훅 경계 실행 결과가 PASS했다.
+- DAY 8의 Notion 원고 충실도, 내러티브·콘텐츠·에셋/이미지·연출/오디오·런타임·저장 복원·집중/전체 회귀·실제 브라우저·origin·동일 SHA 배포·공개 확인 관문을 모두 닫았다.
+- 다음 대상은 DAY 9다. 다음 실행에서 `AI해커톤` DAY 9 하위 페이지 본문을 새로 조회하기 전까지 DAY 9 구현을 시작하지 않는다.
 
 ### 2026-08-28 DAY 8 V3 6개 행동 CG·배타 경로 실제 브라우저 QA PASS
 

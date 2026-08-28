@@ -1,5 +1,11 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 8 QUALITY REBUILD / PUBLIC DEPLOY COMPLETE (2026-08-28)
+
+- 검증 SHA `d230cdc`가 기능 브랜치와 gh-pages에 동일하게 반영됐고 공개 DAY 8 브라우저 QA 화면이 HTTP 렌더 및 경로 실행 PASS했다.
+- 전체 회귀 164/164, 구문, 정상/휴식·배타 경로, 10선택, 저장 복원, V1 호환, 자유행동, DAY 9 인접 도달이 PASS했다.
+- 현재 대상은 DAY 9로 이동한다. 최신 Notion 하위 페이지 본문 재조회·소스 잠금 전에는 DAY 9 코드를 변경하지 않는다.
+
 ## DAY 8 V3 LIVE CG / EXCLUSIVE ROUTE BROWSER QA PASS (2026-08-28)
 
 - `tests/day8-v3-browser-harness.html`이 실제 이벤트 CG 매니페스트와 경로 선택 함수를 불러와 6개 행동 CG·6개 경계 판정을 실행한다.
