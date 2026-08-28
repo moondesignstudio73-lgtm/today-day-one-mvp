@@ -1,7 +1,7 @@
 import {DAY9_V3_CHOICES,DAY9_V3_VERSION} from "./day9-v3-campaign-data.mjs";
 
 const BANDS=new Set(["LOW","MID","HIGH","VERY_HIGH"]);
-const CHECKPOINTS=Object.freeze([2,4,7,9,10,12,14,16,19,21,24]);
+const CHECKPOINTS=Object.freeze([2,3,5,7,9,11,14,16,19,21,24]);
 const choiceByOption=new Map(DAY9_V3_CHOICES.flatMap(choice=>choice.options.map(option=>[option.id,{choice,option}])));
 const flagsOf=state=>state?.storyFlags??{};
 const hasLegacy=flags=>flags.day9RuntimeComplete===true||flags.day9SecondOfficeAdaptationCompleted===true||flags.day9RuntimeStage!=null||flags.day9ScopeStrategy!=null||flags.day9PressureStrategy!=null||flags.day9DebriefStrategy!=null;
@@ -36,10 +36,10 @@ function updateDerived(state,choice,option){
   const flags=state.storyFlags,effects=option.effects;
   if(choice.number===1){flags.day9V3ShoppingRoute=effects.route;flags.day9V3FoodHallEligible=effects.route==="TOGETHER_FULL";}
   if(choice.number===2)flags.day9V3GiftIntent=effects.giftIntent;
-  if(choice.number===3){flags.day9V3PinkResponse=effects.pinkResponse;if(effects.distance)flags.day9V3DistanceRemaining=true;}
-  if(choice.number===4)flags.day9V3GreenPreferenceRead=effects.greenRead;
-  if(choice.number===5){flags.day9V3GreenPhotoExists=effects.greenPhoto;flags.day9V3GreenPhotoScope=effects.photoScope;}
-  if(choice.number===6)flags.day9V3ScarfPurchase=effects.scarfPurchase;
+  if(choice.number===3)flags.day9V3PreFitStrategy=effects.preFit;
+  if(choice.number===4){flags.day9V3PinkResponse=effects.pinkResponse;if(effects.distance)flags.day9V3DistanceRemaining=true;}
+  if(choice.number===5)flags.day9V3GreenPreferenceRead=effects.greenRead;
+  if(choice.number===6){flags.day9V3ScarfPurchase=effects.scarfPurchase;flags.day9V3ScarfIntent=effects.scarfIntent;flags.day9V3GreenPhotoExists=true;flags.day9V3GreenPhotoScope="REQUESTED_BY_HAEUN";}
   if(choice.number===7){flags.day9V3ScarfResponse=effects.scarfResponse;if(effects.distance)flags.day9V3DistanceRemaining=true;flags.day9V3ScarfState=flags.day9V3ScarfPurchase!=="PURCHASED_GIFT"?"UNPURCHASED":effects.scarfResponse==="EXCHANGE"?"EXCHANGE_PENDING":"PROTAGONIST_OWNED";}
   if(choice.number===8){flags.day9V3PlayerTryOn=effects.playerTryOn;flags.day9V3RestRoute=effects.rest===true;flags.day9V3SleeveContactAllowed=effects.rest!==true&&flags.day9V3PriorLightContact===true&&flags.day9V3RelationshipBand!=="LOW"&&flags.day9V3DistanceRemaining!==true;}
   if(choice.number===9){

@@ -8,26 +8,26 @@ export const DAY9_V3_CHOICES=Object.freeze([
     option("shopping9_together_full","같이 천천히 보고 쉬는 곳까지 정한다",{route:"TOGETHER_FULL"}),
     option("shopping9_together_short","스타일 몰 한 곳만 짧게 같이 본다",{route:"TOGETHER_SHORT"}),
     option("shopping9_each_then_meet","각자 본 뒤 정한 곳에서 다시 만난다",{route:"EACH_THEN_MEET"})]),
-  choice(2,4,"선물 의도를 다루는 방법",[
+  choice(2,3,"선물을 생각하는 마음",[
     option("gift9_say_intent_first","사기 전에 선물하고 싶은 마음부터 말한다",{giftIntent:"DISCLOSED"}),
     option("gift9_observe_before_offer","입는 사람의 반응을 본 뒤 제안한다",{giftIntent:"OBSERVE_FIRST"}),
-    option("gift9_each_chooses_own","오늘은 각자 자기 물건을 고른다",{giftIntent:"EACH_OWN"})]),
-  choice(3,7,"불편한 분홍 셔츠에 반응한다",[
-    option("fit9_ask_move_shoulders","어깨와 팔을 움직여 보고 불편한 곳을 묻는다",{pinkResponse:"VERIFY_COMFORT"}),
-    option("fit9_photo_then_compare","사진과 실제 움직임을 나란히 확인한다",{pinkResponse:"COMPARE_PHOTO"}),
-    option("fit9_pretty_push_once","예쁘다는 이유로 한 번 더 입어 보라고 한다",{pinkResponse:"PUSHED_APPEARANCE",distance:true})]),
-  choice(4,9,"녹색 셔츠의 현재 장점을 확인한다",[
-    option("green9_ask_her_reasons","하은이 편한 이유를 직접 말하게 한다",{greenRead:"HER_REASONS"}),
-    option("green9_notice_pockets_motion","주머니와 움직임을 관찰해 확인한다",{greenRead:"POCKETS_AND_MOTION"}),
-    option("green9_compare_my_preference","내가 고른 색과 무엇이 다른지 비교한다",{greenRead:"COMPARE_PREFERENCE"})]),
-  choice(5,10,"녹색 셔츠 사진을 남긴다",[
-    option("photo9_take_when_asked","하은이 부탁한 사진만 찍는다",{greenPhoto:true,photoScope:"REQUESTED_ONLY"}),
-    option("photo9_take_and_show","찍은 뒤 바로 보여 주고 보관을 묻는다",{greenPhoto:true,photoScope:"SHOW_AND_ASK"}),
-    option("photo9_no_fitting_photo","피팅 사진은 남기지 않는다",{greenPhoto:false,photoScope:"NONE"})]),
-  choice(6,12,"스카프를 실제로 구매할지 정한다",[
-    option("scarf9_buy_as_gift","선물용으로 결제한다",{scarfPurchase:"PURCHASED_GIFT"}),
-    option("scarf9_hold_before_buy","착용감을 다시 물으며 결제를 보류한다",{scarfPurchase:"UNPURCHASED"}),
-    option("scarf9_do_not_buy","불편하다는 답을 듣고 사지 않는다",{scarfPurchase:"UNPURCHASED"})]),
+    option("gift9_secret_after_looking","보고 나서 작은 선물을 몰래 고른다",{giftIntent:"SECRET_AFTER_LOOKING"})]),
+  choice(3,5,"입어 보기 전 취향을 말한다",[
+    option("fit9_say_my_preference","내 취향을 말하되 둘 다 보고 싶다고 한다",{preFit:"MY_PREFERENCE"}),
+    option("fit9_ask_green_preference","하은이 고른 녹색이 마음에 드는지 묻는다",{preFit:"ASK_HER_PREFERENCE"}),
+    option("fit9_confident_recommendation","무조건 어울린다고 자신 있게 추천한다",{preFit:"CONFIDENT_RECOMMENDATION"})]),
+  choice(4,7,"사진과 다른 착용감을 확인한다",[
+    option("fit9_ask_wearing_comfort","입고 있는 몸은 어떤지 묻는다",{pinkResponse:"VERIFY_COMFORT"}),
+    option("fit9_push_special_day","특별한 날엔 조금 불편해도 괜찮지 않겠냐고 묻는다",{pinkResponse:"PUSHED_APPEARANCE",distance:true}),
+    option("fit9_admit_not_listening","내 취향 때문에 하은의 말을 덜 들었다고 인정한다",{pinkResponse:"ACKNOWLEDGED_MISSED"})]),
+  choice(5,9,"취향이 다르다는 것을 다룬다",[
+    option("green9_like_her_smile","하은이 웃어서 그 옷도 좋아졌다고 말한다",{greenRead:"SMILE_CHANGED_VIEW"}),
+    option("green9_keep_my_taste_understand","내 취향은 그대로지만 하은이 좋아하는 이유를 안다고 말한다",{greenRead:"DIFFERENT_BUT_UNDERSTOOD"}),
+    option("green9_decide_buy_now","좋다는 말을 구매 결정으로 바꿔 바로 사 주겠다고 한다",{greenRead:"RUSHED_PURCHASE"})]),
+  choice(6,11,"기다리는 동안 선물 욕구를 다룬다",[
+    option("scarf9_ask_before_buy","하은이 나오면 스카프가 어떤지 먼저 묻는다",{scarfPurchase:"UNPURCHASED",scarfIntent:"ASK_FIRST"}),
+    option("scarf9_buy_secret","작은 선물은 괜찮다고 판단해 먼저 산다",{scarfPurchase:"PURCHASED_GIFT",scarfIntent:"BOUGHT_SECRET"}),
+    option("scarf9_wait_my_desire","내가 고르고 싶은 마음도 기다린다",{scarfPurchase:"UNPURCHASED",scarfIntent:"WAITED"})]),
   choice(7,14,"스카프 거절 뒤 행동한다",[
     option("scarf9_accept_no_wear","착용을 요구하지 않고 거절을 받아들인다",{scarfResponse:"ACCEPTED",distance:false}),
     option("scarf9_ask_exchange","택과 영수증을 유지해 교환을 묻는다",{scarfResponse:"EXCHANGE"}),
