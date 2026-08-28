@@ -28,7 +28,7 @@
 3. `cg-day9-v3-pink-fit-discomfort-v1.png`: S06~07 분홍 셔츠가 팔을 들고 앉을 때 당기는 행동. 불편을 표정 과장이 아닌 어깨·소매·옷감으로 표시.
 4. `cg-day9-v3-green-pocket-fit-v1.png`: **제작·원본 QA PASS**. S08~09 녹색 셔츠의 큰 주머니에 휴대폰을 넣고 팔짱 면접 농담 뒤 웃는 하은.
 5. `cg-day9-v3-scarf-receipt-pov-v1.png`: **제작·원본 QA PASS**. S11 선구매 경로 전용. 미사용 택·접힌 영수증·봉투와 주인공 손, 하은 손/착용 없음.
-6. `cg-day9-v3-scarf-boundary-v1.png`: S12~14 스카프를 손에 올려 보되 목에 두르지 않고, 교환/내려놓기 결정을 보여 주는 투샷.
+6. `cg-day9-v3-scarf-boundary-v1.png`: **제작·원본 QA PASS**. S12~14 스카프를 손에 올려 보되 목에 두르지 않고, 교환/내려놓기 결정을 보여 주는 투샷.
 7. `cg-day9-v3-player-fitting-sleeve-v1.png`: S16 피팅 경로. 거울 속 주인공 상의와 하은의 가리키는 손 또는 허용된 관계에서만 소매 끝을 한 번 정리하는 대체 구도.
 8. `cg-day9-v3-rest-zipper-bench-v1.png`: S16 휴식 경로. 벤치의 물병·가방 지퍼에 걸린 현재 소매를 힘으로 당기지 않고 빼는 손동작.
 9. `cg-day9-v3-exchange-green-receipt-pov-v1.png`: S19 스카프 교환→양말, 녹색 셔츠 구매가 함께 성립할 때도 차액·최종 봉투·영수증이 한 번만 보이는 POV. 미구매 경로에는 노출 금지.
@@ -101,3 +101,10 @@
 - 원본은 1672×941 Format24bppRgb, SHA-256 A5E4E9BA7BD6C2D5B71FCFF25375C5583D9BFFDD65D742098110020F65F33710이다.
 - 중앙 center-60에 손·스카프·택·영수증·봉투 입구가 유지되고, 문자·가격·바코드·브랜드·로고가 없다. DAY 2 대비 소품 행동성·선명도·UI 안전 영역 PASS.
 - SCENE 11은 실제 PURCHASED_GIFT 상태에서만 이 CG를 노출한다. 제작 진척은 3/9다.
+
+## 2026-08-29 SCENE 12~14 스카프 경계 CG — PASS
+
+- 최신 Notion 하위 V3의 목에 닿는 것을 싫어한다는 말, 손 위에서만 확인, 교환/내려놓기를 받아들이는 주인공 행동을 구현했다.
+- 원본은 1672×941 Format24bppRgb, SHA-256 266D5B7BCA8A30F2329CADA3BDF0C02A8DDBCD65109E63A652C2B21D3A24CE17이다.
+- 하은 정체성·회색/남색 일상 셔츠, 스카프 비착용, 두 손·택·영수증·봉투·수용 손짓, 중앙 center-60과 무문자·무브랜드를 PASS했다.
+- SCENE 12~14를 ready-new로 전환했다. 제작 진척은 4/9다.
