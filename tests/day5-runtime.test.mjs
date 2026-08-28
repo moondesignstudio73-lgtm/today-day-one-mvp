@@ -87,7 +87,7 @@ assert.deepEqual([0,1,2,3,4].map(day5RuntimeStage=>getLockedDay5ResumePresentati
 assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:1}}).characterAssetUrl,undefined,"NPC resume must not reuse Haeun outfit");
 assert.equal(getLockedDay5ResumePresentation({storyFlags:{day5RuntimeStage:4}}).cgAssetPath,expectedCg[3]);
 for(const forbidden of ["가짜 하은","D-29","트럭 충돌","하은이 사고에 동승"])assert.ok(!allText.includes(forbidden),forbidden);
-for(const required of ["확인된 사실","민호","윤서진","판단을 빌리는 연습","임시 예비폰","연기가 먼저 증거를 제출","지훈은 사고 전 마지막 만남","출처 없이 제 감정","생활 안전 앱 업데이트: 오늘은 성공","서로 다른 세 폴더","DAY REPORT"])assert.ok(allText.includes(required),required);
+for(const required of ["확인된 사실","민호","윤서진","판단을 빌리는 연습","임시 예비폰","연기가 먼저 증거를 제출","지훈은 내가 단 음료","출처 없이 제 감정","생활 안전 앱 업데이트: 오늘은 성공","서로 다른 세 폴더","DAY REPORT"])assert.ok(allText.includes(required),required);
 
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 assert.match(game,/LOCKED_DAY5_SCENE_ID/);
