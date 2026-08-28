@@ -1822,3 +1822,10 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - DAY 7 인접 도달은 `m30-day7-first-present-date` pending ID와 첫 장면 렌더까지 PASS했으며 DAY 7 콘텐츠 변경은 없다.
 - 모바일 390×844 제목/버튼 안전 영역과 선택 저장·새로고침 복원까지 함께 PASS했다.
 - 남은 문제/다음 작업: 검증 커밋, origin 반영, 동일 SHA gh-pages 배포, 공개 확인.
+# 2026-08-28 DAY 8 V3 24 Scene 프레젠테이션 계약 PASS
+
+- 현재 단계/대상: `2단계 — DAY 8 품질 재구축`; Notion 하위 페이지 본문을 최우선 원고로 유지했고 상위 Markdown 첨부는 사용하지 않았다.
+- 변경 파일: `src/day8-v3-presentation-data.mjs`, `tests/day8-v3-presentation.test.mjs`, 두 진행 문서.
+- 완료 관문: 24 Scene 배경·지훈 표정·카메라·전환·BGM/SFX·UI 안전 영역, 세 오후 경로, 6개 행동 CG의 저장 상태 경계.
+- 검증: 프레젠테이션·CG·에셋 감사·런타임·플레이 스크립트 총 7 tests PASS. 하은 대면 오표시, 사진 조기 공개, 휴식 경계 야간 CG 노출 0건.
+- 남은 문제/다음 작업: immersive adapter 및 게임 컨트롤러 연결, 실제 브라우저 데스크톱·모바일 QA, 전체 회귀·커밋·배포.
