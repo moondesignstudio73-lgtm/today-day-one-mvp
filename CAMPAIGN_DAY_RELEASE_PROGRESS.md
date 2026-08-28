@@ -4,9 +4,17 @@
 
 현재 단계: `2단계 — DAY 4~16 품질 재구축`
 
-현재 재감사 대상: `DAY 5`
+현재 재감사 대상: `DAY 6`
 
-자동화 상태: `ACTIVE — DAY 5 실제 브라우저 QA PASS / origin 반영·동일 SHA 배포 진행`
+자동화 상태: `ACTIVE — DAY 5 품질 재구축·배포 COMPLETE / DAY 6 소스 조회 대기`
+
+### 2026-08-28 DAY 5 품질 재구축·배포 COMPLETE
+
+- 최종 검증 SHA `51703e9`를 `origin/feature/today-day-one-mvp`와 `origin/gh-pages`에 일반 fast-forward로 반영했고 두 원격 SHA 일치를 확인했다.
+- Pages workflow `33153995401`, `33153994211`은 모두 `completed/success`, head SHA `51703e9ca02b6af58bb104e97077af4899043c2f`다.
+- 공개 DAY 5 문서와 핵심 CG는 로컬 파일과 바이트·SHA-256이 일치했고, 공개 런타임은 동일 커밋 원본과 텍스트가 일치했다.
+- 실제 공개 브라우저에서 제목·시작 화면 렌더링과 console warning/error 0건을 확인했다. DAY 5의 모든 필수 관문은 PASS다.
+- 다음 대상은 DAY 6이며, 다음 실행에서 Notion `AI해커톤 > day 6` 하위 페이지 본문을 새로 조회하기 전에는 서사 수정을 시작하지 않는다.
 
 ### 2026-08-28 DAY 5 원격 전송·배포 승인 확인
 
