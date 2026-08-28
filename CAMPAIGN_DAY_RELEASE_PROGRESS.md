@@ -6,7 +6,14 @@
 
 현재 재감사 대상: `DAY 5`
 
-자동화 상태: `ACTIVE — DAY 5 인접 DAY 도달성·전체 런타임 PASS / 실제 브라우저 QA 대기`
+자동화 상태: `ACTIVE — DAY 5 실제 브라우저 QA PASS / origin 반영·동일 SHA 배포 대기`
+
+### 2026-08-28 DAY 5 실제 브라우저 연속 플레이 QA PASS
+
+- Codex in-app browser의 격리된 localhost 저장에서 DAY 5 진입, 4개 전략 선택, 첫 선택 직후 새로고침 복원, 회사 자유행동과 DAY 6 도달을 실제 클릭으로 완료했다.
+- 데스크톱 화면과 390×844 모바일 화면에서 선택·대화·HUD 안전 영역, 16:9 CG 원본 비율, 가로 넘침 0을 확인했다.
+- 브라우저 console warning/error 0건, NEEDS FIX 0이다. 임시 QA 진입 파일은 제거했고 DAY 6 콘텐츠는 수정하지 않았다.
+- 산출물: `docs/day5/DAY5_PLAYTHROUGH_QA.md`. 다음 관문은 증적 커밋·origin 반영·동일 검증 SHA gh-pages 배포·공개 확인이다.
 
 ### 2026-08-28 DAY 5 인접 DAY 도달성·전체 런타임 PASS
 
