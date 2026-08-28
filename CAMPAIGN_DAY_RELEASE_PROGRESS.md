@@ -4,9 +4,17 @@
 
 현재 단계: `2단계 — DAY 4~30 순차 품질 재구축`
 
-현재 재감사 대상: `DAY 6`
+현재 재감사 대상: `DAY 7`
 
-자동화 상태: `ACTIVE — DAY 6 V3 game.js 시작·선택·복원 연결 PASS / 실제 브라우저 QA 준비`
+자동화 상태: `ACTIVE — DAY 6 COMPLETE / DAY 7 최신 Notion 하위 페이지 조회 대기`
+
+### 2026-08-28 DAY 6 COMPLETE / PUBLIC PASS
+
+- 검증 커밋 `657f38a002bbb294fd391b01c285801e83e491d5`를 origin 기능 브랜치와 동일 SHA gh-pages에 반영했다.
+- GitHub Pages workflow run `33161779694`가 동일 SHA로 `completed/success`를 반환했다.
+- 공개 `https://superstarman35.github.io/game/game.js`에서 `getDay6V3Compatibility`, `day6-v3-immersive-adapter.mjs`, `getDay6V3ChoiceContinuation` 전파를 확인했다.
+- DAY 6 시나리오·내러티브·콘텐츠/시스템·에셋·이미지·연출/오디오·런타임·저장 복원·집중/전체 회귀·실제 브라우저·인접 DAY·커밋·origin·동일 SHA 배포·공개 관문 전부 PASS.
+- 현재 대상을 DAY 7로 전환한다. 사용자 승인에 따라 DAY 30까지 하루씩 순차 진행하며, DAY 7 구현 전 최신 Notion 하위 페이지 본문을 새로 조회한다.
 
 ### 2026-08-28 DAY 30까지 순차 작업 승인
 
