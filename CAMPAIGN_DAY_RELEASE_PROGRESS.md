@@ -1,5 +1,13 @@
 # DAY 5~30 순차 출시 진행표
 
+## 2026-08-29 23:38 KST — DAY 12 V3 PUBLIC RELEASE COMPLETE
+
+- 최신 Notion 하위 페이지 본문을 최우선으로 완전 구현한 DAY 12 V3 검증 커밋 `0609787c01cc8b5afab6c50ce1cfa11e401a04c9`를 force/rebase 없이 `origin/feature/today-day-one-mvp`와 `origin/gh-pages`에 동일하게 원자적 fast-forward 반영했다.
+- 동일 SHA의 `Deploy GitHub Pages` run `33257433720`이 `completed/success`로 끝났다. 원격 두 브랜치는 모두 정확히 `0609787c01cc8b5afab6c50ce1cfa11e401a04c9`를 가리킨다.
+- 공개 `https://superstarman35.github.io/game/?qa=day12-0609787`의 타이틀 렌더와 console warning/error 0건을 실제 인앱 브라우저로 확인했다. 공개 `game.js`, DAY 12 V3 런타임·어댑터·프레젠테이션 모듈은 HTTP 200이며 V3 라우팅·종료 방 배경 수정 표식이 전파됐다.
+- 신규 DAY 12 배경 1종과 행동/POV CG 7종은 공개 파일과 로컬 검증본의 SHA-256이 8/8 일치한다. 시나리오·내러티브·콘텐츠/시스템·에셋/이미지·연출/오디오·런타임·저장 복원·집중/전체 회귀·실제 브라우저·커밋·origin·동일 SHA 배포·공개 확인 관문은 모두 PASS다.
+- DAY 12 V3는 `COMPLETE`. 순차 재감사 현재 대상을 `DAY 13`으로 전환한다. 다음 실행에서 작업 직전 `AI해커톤`의 DAY 13 하위 페이지 본문을 새로 완전 조회하고 소스 잠금·격차 감사부터 시작하며 DAY 14는 시작하지 않는다.
+
 ## 2026-08-29 23:30 KST — DAY 12 V3 집중·전체 회귀 최종 PASS / 검증 커밋 준비
 
 - 커밋 직전 `AI해커톤`의 DAY 12 하위 페이지 `DAY 12 — 점심시간의 다른 얼굴 | SCENARIO V3` 본문을 새로 완전 조회해 SCENE 01~24, 표준 13개 선택과 조건부 후속 선택, 구현 메모가 유지됨을 확인했다. 최신 하위 페이지 본문을 최우선으로 적용했고 상위 Markdown 첨부는 무시했다.

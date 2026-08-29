@@ -1,5 +1,13 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 12 V3 PUBLIC RELEASE COMPLETE (2026-08-29 23:38 KST)
+
+- Atomically fast-forwarded verified commit `0609787c01cc8b5afab6c50ce1cfa11e401a04c9` to both `origin/feature/today-day-one-mvp` and `origin/gh-pages` without force or rebase; both remote refs resolve to that exact SHA.
+- GitHub Pages workflow `Deploy GitHub Pages` run `33257433720` completed successfully for the same SHA.
+- The cache-busted public page rendered in the in-app browser with zero console warnings/errors. Public `game.js` and DAY 12 V3 runtime/adapter/presentation modules returned HTTP 200 with the expected V3 routing and home-ending reset markers.
+- All eight new DAY 12 visual assets returned publicly and matched the local verified files byte-for-byte by SHA-256. Every DAY 12 release gate is PASS and DAY 12 V3 is COMPLETE.
+- Sequential rebuild target advances to DAY 13. The next run must freshly and fully read the current Notion DAY 13 child-page body before source lock and implementation-gap auditing; DAY 14 remains untouched.
+
 ## DAY 12 V3 FINAL FOCUSED / FULL REGRESSION PASS (2026-08-29 23:30 KST)
 
 - Refetched and fully read the current Notion DAY 12 child-page body immediately before the release commit gate. Its 24 scenes, 13 standard choices plus conditional follow-up, and implementation notes remain authoritative; parent-page Markdown attachments were ignored.
