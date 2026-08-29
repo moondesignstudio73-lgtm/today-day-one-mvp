@@ -1,0 +1,21 @@
+import assert from "node:assert/strict";
+import {DAY11_V3_CHAPTER_CONTRACT,DAY11_V3_CHOICES,DAY11_V3_KNOWLEDGE_LEDGER,DAY11_V3_ROUTE_CONTRACT,DAY11_V3_SAVE_KEYS,DAY11_V3_SCENARIO_ID,DAY11_V3_SCENES,DAY11_V3_VOICE_PROFILES,validateDay11V3CampaignData} from "../src/day11-v3-campaign-data.mjs";
+
+assert.equal(validateDay11V3CampaignData(),true);
+assert.equal(DAY11_V3_SCENARIO_ID,"m30-day11-haeun-before-her-friend-v3");
+assert.deepEqual(DAY11_V3_SCENES.map(scene=>scene.number),Array.from({length:24},(_,index)=>index+1));
+assert.deepEqual(DAY11_V3_SCENES.map(scene=>scene.title),["초대받은 사람, 남겨 둔 시간","누구 옷을 입고 갈까","내일의 시간","조금 일찍 도착한 사람","문 앞에서 듣는 웃음","메뉴를 대신 말하는 사람","끝을 모르는 두 사람","잘 부탁한다는 말","좋은 사람처럼 대답하기","소라가 꺼내지 않는 이야기","가지 못한 여행","고맙다는 말이 멈추는 곳","잘 나누지 못하는 케이크","소라의 제목","누가 맞는지 고르지 않고","잠깐 비운 자리","내가 고른 사람이라고 말할 때","오래 아는 친구의 말","시우라는 이름","헤어질 시간을 먼저 말하는 사람","조금 더 함께할까","내 쪽으로 기울어진 어깨","외우지 않는 밤","질문 하나를 챙긴 사람"]);
+assert.deepEqual(DAY11_V3_CHOICES.filter(choice=>choice.route==="ATTENDING").map(choice=>choice.number),[4,5]);
+assert.deepEqual(DAY11_V3_ROUTE_CONTRACT.attendingOnlyChoices,[4,5]);
+assert.match(DAY11_V3_ROUTE_CONTRACT.shoulderLean,/relationshipBand === HIGH/);
+assert.match(DAY11_V3_ROUTE_CONTRACT.shoulderLean,/priorNaturalContact/);
+assert.match(DAY11_V3_ROUTE_CONTRACT.shoulderLean,/!unresolvedConflict/);
+assert.ok(DAY11_V3_CHAPTER_CONTRACT.informationBudget.mustNotReveal.includes("시우와의 사적 관계 확정"));
+assert.equal(DAY11_V3_VOICE_PROFILES.sora.mustNot,"하은 대신 비밀을 설명");
+assert.ok(DAY11_V3_KNOWLEDGE_LEDGER.protagonist.doesNotKnow.includes("시우 동행 여부"));
+for(const key of ["day11V3AttendedSoraMeeting","day11V3TripDisclosed","day11V3HeardSiwooName","day11V3CompanionUndecided","day11V3ShoulderLeanOccurred","day11V3PreparedQuestion"])assert.ok(DAY11_V3_SAVE_KEYS.includes(key),key);
+const ids=new Set(DAY11_V3_CHOICES.flatMap(choice=>choice.options.map(option=>option.id)));
+for(const id of ["day11_leave_friends_alone","day11_wear_haeun_preference_if_owned","day11_ask_before_shared_bread","day11_promise_to_sora","day11_ask_her_current_wish","day11_ask_haeun_today","day11_ask_if_alone_with_siwoo","day11_end_and_prepare","day11_prepare_questions"])assert.ok(ids.has(id),id);
+const serialized=JSON.stringify({contract:DAY11_V3_CHAPTER_CONTRACT,voices:DAY11_V3_VOICE_PROFILES,ledger:DAY11_V3_KNOWLEDGE_LEDGER,choices:DAY11_V3_CHOICES});
+for(const forbidden of ["가짜 하은","사고 범인","시우와 둘이 간다","MBTI","재무기획자 공개"])assert.equal(serialized.includes(forbidden),false,forbidden);
+console.log("day11-v3-campaign-data.test: all assertions passed");

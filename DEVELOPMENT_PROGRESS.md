@@ -1,5 +1,170 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 11 V3 VERIFIED REGRESSION RERUN PASS (2026-08-29 21:05 KST)
+
+- 브라우저 증적 반영 후 전체 테스트를 다시 실행해 `171/171 PASS`, `0 FAIL`을 확인했다.
+- `game.js`·DAY 11 V3 모듈 6개 구문 검사와 정확한 저장소 work-tree 기준 `git diff --check`가 PASS했다.
+- DAY 1 사용자 미추적 원본과 개발 잠금은 커밋에서 제외한다. 다음은 DAY 11 검증 파일만 스테이징·커밋하는 관문이다.
+
+## DAY 11 V3 ACTUAL BROWSER QA PASS / WAIT RELEASED (2026-08-29 21:00 KST)
+
+- 사용자 지시에 따라 기존 webview 복구 대기를 해제하고 새 로컬 서버·새 in-app browser 탭·격리 저장으로 현재 work-tree를 직접 검증했다.
+- 참석 경로 11선택, 선택 4 직전 저장→`SCENE 04` 복원, 자유행동, `SAVE · DAY 12`, DAY 12 첫 장면 도달이 PASS했다. 별도 비참석 경로는 대면 전용 선택 4·5를 정상 생략하고 9선택을 완료했다.
+- `1280×720` 데스크톱과 Fullscreen 호출만 QA 응답에서 비활성화한 실제 `390×844` 모바일에서 수평 오버플로 0, 선택·대화창·HUD 안전 영역 PASS, console warning/error 0건을 확인했다. QA 우회는 저장소 파일을 변경하지 않았다.
+- 브라우저 관문은 더 이상 BLOCKED가 아니다. 다음은 전체 회귀 재실행 후 DAY 11 검증 커밋·origin·동일 SHA gh-pages·공개 확인이며 DAY 12 콘텐츠는 수정하지 않는다.
+
+## DAY 11 V3 BROWSER CONNECTION RECOVERY NOT YET OBSERVED (2026-08-29 20:10 KST)
+
+- 세션/사용자 탭 0개 상태에서 새 탭 attach timeout이 계속됐다. 제품 변경 없이 V3 실제 브라우저 QA를 BLOCKED/NOT PASS로 유지한다.
+- 다음은 브라우저 연결 상태 변화 후 동일 DAY 11 검증 재개이며 DAY 12·커밋·배포는 계속 금지한다.
+
+## DAY 11 V3 ACTUAL BROWSER QA ENVIRONMENT BLOCKED ×3 (2026-08-29)
+
+- 로컬 V3 리소스는 세 실행 연속 HTTP 200이지만, 사용 가능한 유일한 Codex in-app browser는 열린 탭 0개 상태에서 새 탭 attach timeout을 반복했다.
+- 브라우저 연결 실패가 세 번의 연속 자동화 실행에서 재현되어 제품 런타임과 분리된 검증 환경 차단으로 기록한다.
+- 실제 데스크톱·모바일 화면을 보지 못했으므로 PASS·커밋·배포로 이동하지 않는다. 기존 DAY 11 V1 브라우저 증적도 V3에 재사용하지 않는다.
+- 자동화는 ACTIVE를 유지하고 DAY 12 콘텐츠는 금지한다. 다음은 앱 브라우저 연결 복구 후 V3 실제 연속 플레이 전 항목 검증이다.
+
+## DAY 11 V3 ACTUAL BROWSER QA RETRY 2 (2026-08-29)
+
+- 진행 문서와 work-tree 상태를 재확인했고 로컬 V3 정적 리소스는 HTTP 200이다.
+- 동일 in-app browser 바인딩의 새 탭 복구를 재시도했으나 webview attach timeout이 반복됐다. 실제 화면 미확인으로 브라우저 QA는 계속 PENDING이다.
+- 두 내러티브 스킬의 24장면 밀도, 하은/주인공/소라 지식 경계, 행동 전략 선택과 후속 기억 기준은 실제 플레이 판정표에 유지한다.
+- 제품 코드·DAY 12·사용자 에셋 변경 0. 다음은 브라우저 연결 재시도이며 V3 실제 화면을 보기 전에는 커밋 관문으로 이동하지 않는다.
+
+## DAY 11 V3 ACTUAL BROWSER QA CONNECTION RETRY (2026-08-29)
+
+- 로컬 `127.0.0.1:4173`의 `index.html`, `game.js`, `src/day11-v3-runtime.mjs`는 HTTP 200이고 V3 연결 표식도 확인했다.
+- in-app browser의 새 탭 연결을 기본·1280×720 viewport·표시 모드에서 세 차례 시도했으나 webview attach timeout으로 탭이 만들어지지 않았다.
+- 임시 viewport/표시 설정은 초기화했다. 실제 화면 미검증이므로 V3 브라우저 PASS를 기록하지 않으며, 2026-08-26의 기존 QA 문서는 V1/구 SHA 증적으로만 유지한다.
+- `$marriage-30-narrative-director`의 인물 지식·말투·선택 기억 경계와 `$marriage-30-chapter-story-writer`의 24장면 밀도·분기·후속 훅 기준은 다음 실제 플레이 판정표에 그대로 적용한다.
+- 제품 코드·DAY 12·사용자 에셋 변경 0. 다음 작업은 브라우저 탭 연결 복구 후 데스크톱/모바일 V3 실제 연속 플레이 재시도다.
+
+## DAY 11 V3 FULL REGRESSION / CHANGE AUDIT PASS (2026-08-29)
+
+- 정확한 프로젝트 루트에서 전체 `tests/*.test.mjs` 171개를 개별 실행해 `171 PASS / 0 FAIL`을 확인했다.
+- `game.js`와 DAY 11 V3 모듈 6개의 `node --check`, 명시적 저장소 work-tree 기준 `git diff --check`가 모두 PASS했다.
+- 현재 `feature/today-day-one-mvp`와 origin의 차이는 `0/0`이며, 이 관문에서는 커밋·push·gh-pages 배포를 수행하지 않았다.
+- 미추적 DAY 12 자료는 2026-08-27의 선행 산출물로 확인해 수정하지 않았고, 사용자 DAY 1 원본 2개도 보존했다.
+- 다음 작업은 실제 브라우저에서 DAY 11 V3 데스크톱·모바일 전체 경로, 선택·중간 저장 복원·완료·DAY 12 도달성과 CG/스프라이트 UI 안전 영역을 검증하는 것이다. DAY 12 콘텐츠는 시작하지 않는다.
+
+## DAY 11 V3 IMAGE GATE 7/7 COMPLETE (2026-08-29)
+
+- 소라 최종 자산 `assets/characters/day11/sora-day11-cafe-casual-2d-v4.png`: `1024×1536 Format32bppArgb`, alpha `0..255`, SHA-256 `D763A011899203D88F57C97E967810E5D5330FF8D31425045E493F3ABAD834C7`.
+- 밤색 옆머리 땋은 머리·갈색 눈·카페 생활복·빈손 전신 정체성, 얼굴/손/발 여백, 투명 배경과 검은 배경 외곽을 육안 PASS했다. 체크 배경·불투명 사각형·업무 서류·심사 자세는 없다.
+- `asset-manifest`, DAY 11 V3 프레젠테이션과 immersive adapter는 대면 Scene 16–18에만 소라를 표시하고 불참/비대면 Scene에서 `npcFront`를 비운다.
+- 행동 CG 6종과 RGBA 스프라이트 1종이 모두 `ready-new`; 이미지 관문은 `7/7 COMPLETE`, 미제작 자산 0이다.
+- DAY 11 V3 집중 테스트 7종과 DAY 10 인접 통합 1종이 모두 PASS했다. 다음 작업은 전체 회귀와 변경 파일 감사이며 DAY 12는 수정하지 않는다.
+
+## DAY 11 V3 ENDING CAKE PHOTO POV CG 6/7 PASS (2026-08-29)
+
+- 신규 자산 `assets/events/day11-v3/cg-day11-v3-cake-photo-message-pov-v1.png`: `1672×941 RGB`, SHA-256 `C4935ECE9DE8F2F41E9B218EA6945F56CF82C5ED0903547489A72AD248BFE3C1`.
+- 첫 후보는 손목/휴대전화 하단이 하단 28% 대화창 영역에 걸려 거부했다. 교정본은 핵심 손가락·화면·케이크 사진을 `center-60`과 대화창 위에 남긴다.
+- 화면에는 한 개 크림 케이크의 불균등한 몫 사진만 두고 문자·숫자·이모지·인물·동행자를 배제했다. 메시지는 게임 UI 레이어로 분리한다.
+- Scene 24 편안한 관계에서만 표시하며 LOW·미해결 갈등 경로는 차단한다. 행동 CG 6/6 완료, 남은 이미지는 소라 실제 투명 RGBA 1종뿐이다.
+
+## DAY 11 V3 CONDITIONAL SHOULDER LEAN CG 5/7 PASS (2026-08-29)
+
+- 신규 자산 `assets/events/day11-v3/cg-day11-v3-shoulder-lean-bench-v1.png`: `1672×941 RGB`, SHA-256 `5523C6840544D40B9E92C274C0F874D63151D0DDE7F0B62443BBE2D79938DB94`.
+- 하은의 보라색 단발·회청색 셔츠·주체적 어깨 기대기, 바깥쪽 가방, 주인공의 분리된 양손을 연희역 벤치 원근·광원에 맞췄다. 강제 접촉·손목 잡기·허리 접촉·포옹은 없다.
+- Scene 22는 실제 `day11V3ShoulderLeanOccurred` 결과에서만 CG를 사용하며, 비대면 경로는 불일치 저장 플래그가 있어도 차단한다.
+- 이미지 진척 5/7. 남은 케이크 사진 POV 1종과 소라 RGBA 1종 외에는 DAY 12 및 사용자 미추적 DAY 1 원본을 변경하지 않는다.
+
+## DAY 11 V3 SIWOO EXHIBITION MESSAGE POV CG 4/7 PASS (2026-08-29)
+
+- 신규 자산 `assets/events/day11-v3/cg-day11-v3-siwoo-exhibition-message-pov-v1.png`: `1672×941 RGB`, SHA-256 `6AA5A557BDC2A256B86A170F19332BF0C9EDAEEB5C0527001A6C19290A54ED1A`.
+- 하은의 손·휴대전화·추상 전시/달력 UI만 두고 읽을 문자·이름·숫자·사적 사진·동행자를 배제했다. 시우는 전시 일정을 보낸 선배일 뿐 동행·사적 관계는 미확정인 원고 지식 경계를 유지한다.
+- Scene 19 대면 경로만 새 CG를 사용한다. 불참/통화 경로는 플레이어가 하은의 손과 화면을 볼 수 없으므로 CG를 제거했다.
+- 이미지 진척 4/7. 남은 행동 CG 2종과 소라 RGBA 1종이며 DAY 12와 사용자 미추적 DAY 1 원본은 변경하지 않는다.
+
+## DAY 11 V3 CAKE / TRIP BOUNDARY CG 3/7 PASS (2026-08-29)
+
+- 원본 `1672×941 RGB`, SHA-256 `6CF2752DB631938B2A44216932F14E53F151DAEC1E956D0EC6C35A8CAED4FCE2`.
+- 단일 케이크의 불균등한 세 몫, 하은의 컵을 감싼 손, 소라의 멈춘 손을 중앙 안전 영역에 두고 여행 취소를 공포·유죄 프레임 없이 표현했다.
+- 서로 다른 조각 케이크로 보인 첫 후보는 거부했다. 채택본만 프로젝트에 복사하고 `cakeBoundary`를 `ready-new`로 연결했다.
+- 이미지 진척 3/7. 남은 행동 CG 3종과 소라 RGBA 1종; 스프라이트는 `OPENAI_API_KEY` 설정 대기다.
+
+## DAY 11 V3 ACTION CG 2/7 ORIGINAL + RUNTIME PASS (2026-08-29)
+
+- 신규 자산: 빵집 선택 POV와 하은/소라 플로라 카페 대면 CG. 채택본은 모두 원본 `1672×941 RGB`이며 DAY 2 기준의 행동성·구도·선명도·중앙 모바일 안전 영역을 육안 PASS했다.
+- 빵집 CG SHA-256 `CCBEBB9B750871CFF9B6168BA0F86C5A0463E163CD83FF0923D003690B0F1204`; 카페 대면 CG SHA-256 `71D26F938DA0017E6AE8CBB7BA1B3DB1206966D649A84954EA0906042E85AE92`.
+- 1671×941로 출력된 첫 카페 후보는 기술 관문에서 거부했으며 프로젝트에 복사하지 않았다.
+- `src/day11-v3-presentation-data.mjs`가 두 자산을 실제 `eventCgUrl`로 반환한다. 참석하지 않은 경로는 작은 카페 배경을 유지하고 빵집/소라 대면 CG를 모두 제거한다.
+- 집중 검증 3종과 `git diff --check` PASS. 현재 이미지 진척은 2/7이며 행동 CG 4종과 소라 RGBA 1종이 남았다.
+- CLI fallback은 사용자 승인 완료 상태지만 User 환경의 `OPENAI_API_KEY`는 아직 `MISSING`이라 투명 스프라이트 생성만 대기한다.
+
+## DAY 11 V3 BUILT-IN TRANSPARENT OUTPUT BLOCKED (2026-08-29)
+
+- 기존 소라 정체성/하은 화풍 참조를 분리한 새 생성에서도 1024×1536 규격과 인물 품질은 통과했지만 PNG가 `RGB`로 저장되어 실제 투명 배경 요구를 충족하지 못했다.
+- 3차 후보 SHA-256은 `ff3421fce55ba5797deaabfa7cf1233d17d1fdc429741d81fe413f83f6182192`이며, 앞선 두 후보와 마찬가지로 프로젝트에는 복사하지 않았다.
+- 내장 ImageGen의 투명 출력 실패가 3회 반복됐다. 스킬 규칙상 CLI fallback은 `OPENAI_API_KEY`와 사용자 명시 승인이 필요하므로 자동 전환하지 않는다.
+- DAY 11 이미지 관문은 `PENDING`, 제작 필요는 7종 그대로다. DAY 12 구현과 사용자 에셋은 변경하지 않았다.
+
+## DAY 11 V3 SORA SPRITE GENERATION / ALPHA QA REJECTED (2026-08-29)
+
+- ImageGen으로 소라 카페 생활복 전신 후보와 배경 투명 교정본을 생성했으며, 인물 정체성·복장·빈손·전신 여백·1024×1536 규격은 모두 충족했다.
+- Pillow 원본 검사 결과 두 PNG가 모두 `RGB`이고 알파 채널이 없었다. 교정본의 체크무늬 또한 투명 표시가 아니라 실제 배경 픽셀이므로 DAY 2 기준의 투명 RGBA 스프라이트로 승인하지 않았다.
+- 탈락 파일은 생성 보관 위치에만 남기고 프로젝트 에셋·매니페스트·런타임에는 복사하거나 연결하지 않았다. 따라서 `production-required 7`과 이미지 `PENDING` 판정을 정직하게 유지한다.
+- 다음은 실제 알파 범위 `0..255`를 가진 소라 스프라이트 재생성이며, 통과 전에는 행동 CG 제작이나 DAY 11 완료 판정을 진행하지 않는다.
+
+## DAY 11 V3 ASSET / PRESENTATION / AUDIO AUDIT PASS (2026-08-29)
+
+- DAY 2의 1672×941 행동 CG·중앙 모바일 안전 영역·하은 정체성 기준으로 DAY 11 V3 24장면을 재감사했다.
+- 주인공 방·집 야간과 실제 지도 연희 베이커리·플로라 카페·카페 모퉁이·연희역, 하은 DAY 9 RGBA는 재사용 PASS다.
+- 기존 친구 이벤트 CG는 하은/소라 외형과 인원·역할이 다르고, 기존 소라 후보는 서류를 든 직장복이라 모두 런타임 재사용에서 제외했다.
+- `src/day11-v3-presentation-data.mjs`에 24장면 장소·카메라·전환·BGM·SFX·안전 영역과 초대/불참 배타 규칙을 연결했다. 실제 지도 ID 4종을 배경 매니페스트에도 등록했다.
+- 소라 생활복 RGBA 1종과 빵집 선택·카페 대면·케이크 여행·시우 메시지·조건부 어깨 기대기·케이크 사진 POV 6종을 `production-required`로 잠갔다. 미제작 파일은 아직 참조하지 않는다.
+- 프레젠테이션/어댑터/게임/저장 집중 테스트가 모두 PASS했다. 다음은 신규 7종의 제작과 원본 이미지 QA이며 이 전에는 DAY 11 이미지 관문을 완료 처리하지 않는다.
+
+## DAY 11 V3 STORY-DATA / GAME EXECUTION INTEGRATION PASS (2026-08-29)
+
+- `src/day11-v3-immersive-adapter.mjs`가 Notion V3 24장면을 게임 실행 스텝으로 변환하고, 선택 직후 원고 반응과 다음 미해결 선택까지의 연속 구간을 제공한다.
+- 초대 대면은 연희 베이커리·플로라 카페, 불참 경로는 카페 모퉁이·집/통화로 분리했다. 불참에서는 대면 전용 선택 4·5를 노출하지 않고 조건을 충족하지 않은 SCENE 22도 실행 목록에서 제외한다.
+- `game.js`는 새 DAY 11 저장만 V3로 시작하며 V1 플래그가 있는 저장은 기존 런타임·표현·선택을 그대로 재개한다. 완료 시 기존 스토리 ID를 기록하므로 DAY 12의 인접 도달 계약을 깨지 않는다.
+- `src/story-data.mjs`에는 기존 ID/레거시 선택을 유지한 채 V3 ID·제목·장르·25–35분·참여 인물 메타데이터만 확장했다. DAY 12 구현은 수정하지 않았다.
+- 신규 어댑터/게임 통합, DAY 10 인접 통합, DAY 11 데이터·전/후반 원고·런타임/저장 테스트와 `game.js` 구문 검사가 모두 PASS했다.
+- 다음은 DAY 2 화면 기준으로 DAY 11 장면별 프레젠테이션과 기존 에셋을 감사하고, 필요한 행동 CG/POV·안전 영역 명세 및 오디오 큐를 연결하는 관문이다.
+
+## DAY 11 V3 RUNTIME / SAVE COMPATIBILITY PASS (2026-08-29)
+
+- `src/day11-v3-runtime.mjs`에 초대/불참 경로를 포함한 11개 선택의 순차 상태 전이, 관계 효과, 클루/후속 훅, 접촉 자격, 완료 계약을 구현했다.
+- 불참 경로는 대면 전용 선택 4·5를 자동 생략한다. 시우 선택은 관심/불안 전략을 기억하지만 동행과 사적 관계는 끝까지 미정으로 유지한다.
+- 조건부 어깨 기대기는 대면·HIGH·자연 접촉 이력·미해결 갈등 없음·추가 시간의 교집합으로만 실제 이력을 저장한다.
+- `tests/day11-v3-runtime-save.test.mjs`에서 초대/불참 중간 저장과 완료 저장을 SaveManager로 왕복했고 다음 선택, 26개 계약 필드, 회사 훅, 관계 수치, 윤서진 독립 축이 보존됐다.
+- 기존 V1 완료 저장은 `V1_LEGACY`로 감지하고 원래 플래그를 한 글자도 덮어쓰지 않는다. 기존 V1 런타임 파일도 수정하지 않았다.
+- 다음은 V3를 story-data와 게임 실행 어댑터에 연결하되 레거시 저장이 계속 V1을 재개하도록 공존시키는 통합이다.
+
+## DAY 11 V3 PLAYABLE SCRIPT SCENE 13–24 PASS (2026-08-29)
+
+- `src/day11-v3-playable-script-13-24.mjs`에 최신 Notion 본문 후반 12장면 원문과 선택 7–11 반응, 대면/통화 경로, 시우 메시지, 작별/추가 시간, 회사 준비 훅을 인코딩했다.
+- 조건부 어깨 기대기는 대면·HIGH·기존 자연 접촉·미해결 갈등 없음·추가 시간 선택을 모두 요구하며, MID/LOW·갈등·불참·즉시 작별에서는 접촉을 반환하지 않는다.
+- `tests/day11-v3-playable-script-13-24.test.mjs`와 앞선 데이터/전반 스크립트 테스트 2종이 모두 PASS했다. 시우 동행 미정, 소라 미대면 지식 범위, 작별 시 SCENE 22 생략, 갈등별 DAY 24 메시지, DAY 12 시간 훅을 검증했다.
+- 이로써 SCENE 01–24 원문은 두 스크립트 모듈에 모두 보존됐다. 다음은 V3 런타임 상태 전이와 기존 V1 저장의 호환 마이그레이션/복원이다.
+
+## DAY 11 V3 PLAYABLE SCRIPT SCENE 01–12 PASS (2026-08-29)
+
+- `src/day11-v3-playable-script-01-12.mjs`에 최신 Notion 하위 본문 SCENE 01–12 원문을 보존하고 대사·메시지·무대 지시·서술 스텝으로 파싱했다.
+- DAY 10 하은/소라 동의 초대, 선택 1 불참, 연희 베이커리 대기, 카페 모퉁이 자기 일정, 플로라 카페 합류, 대면 전용 선택 4·5 생략, 하은이 직접 고른 여행 공개를 분리 반환한다.
+- `tests/day11-v3-playable-script-01-12.test.mjs`가 12장면 순서, 선택 1–6 반응 키, 초대/불참/미초대 경로, 소라 미대면 지식 차단, 핵심 원문 표식, 금지 공개를 검증해 PASS했다. 캠페인 데이터 계약 테스트도 함께 PASS했다.
+- 다음은 SCENE 13–24 원문 스크립트와 시우·관계 단계·미해결 갈등·조건부 어깨 기대기·DAY 12 회사 방문 훅 선택기다.
+
+## DAY 11 V3 CAMPAIGN DATA CONTRACT PASS (2026-08-29)
+
+- `src/day11-v3-campaign-data.mjs`에 새 V3 시나리오 ID, 24장면/5 ACT 메타데이터, 11개 선택·33개 행동 전략과 효과, 챕터 계약, Voice Profile, 지식 장부, 정보 공개 예산, 초대/불참·어깨 기대기 분기 계약, 26개 저장 키를 인코딩했다.
+- 소라를 심사위원/폭로자로 만들지 않고, 하은의 여행 공개·시우 전시 일정·동행 미정·DAY 12 회사 방문을 서로 다른 사실로 잠갔다.
+- `tests/day11-v3-campaign-data.test.mjs`가 장면/선택 완전성, 대면 전용 선택, 저장 필수 필드, 시우 정보 경계, 조건부 접촉, 금지 공개를 검증해 PASS했다.
+- 기존 DAY 11 V1과 DAY 12 구현은 수정하지 않았다. 다음은 Notion 원고 SCENE 01–12의 전체 플레이 스크립트 및 초대/불참 분기 선택기다.
+
+## DAY 11 V3 NOTION SOURCE/GAP AUDIT PASS (2026-08-29)
+
+- DAY 11만 현재 대상이며 DAY 12 구현은 잠금 상태다.
+- 최신 Notion 하위 페이지 본문 SCENE 01–24를 완독하고 V3 소스 잠금, V1 대비 구현 격차, 월드/프리모드 커버리지, 예비 이미지, 저장 계약, 내러티브 10문항 감사를 완료했다.
+- 신규 문서: `docs/day11/DAY11_NOTION_SOURCE_LOCK_V3.md`, `docs/day11/DAY11_V3_IMPLEMENTATION_GAP_CONTENT_COVERAGE_AUDIT.md`.
+- 상위 Markdown 첨부는 최신 사용자 규칙에 따라 무시했고, 완전히 읽힌 하위 본문 기준 누락·충돌은 0이다.
+- 기존 지원: 소라/시우 NPC, 플로라 카페·연희 베이커리·카페 코너, 소라 친구 이벤트, DAY 10 소라 동의 준비, 의상/자연 접촉 이력.
+- 남은 관문: V3 ID/데이터/스크립트, 동의·불참 분기, LOW/MID/HIGH 반응, DAY 9–10 콜백, 독립 플래그/저장 마이그레이션, 집중/전체 테스트, 전용 이미지, 브라우저 QA, 커밋·push·동일 SHA 배포·공개 확인.
+- 다음 작업: DAY 12 수정 없이 DAY 11 V3 플레이 가능 데이터/스크립트와 집중 테스트 구현.
+
 ## DAY 10 V3 PUBLIC RELEASE COMPLETE (2026-08-29)
 
 - 검증 SHA `d6d94e00225e44e8c6e541214854e3b203e2e4f2`가 기능 브랜치와 `gh-pages`에 동일하게 반영됐고 원격 차이는 0/0이다.

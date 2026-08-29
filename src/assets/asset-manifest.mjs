@@ -37,6 +37,7 @@ export const NPC_ASSETS = {
   "asset-advisor":"assets/npcs/asset-advisor.png",
   "gym-trainer":"assets/npcs/gym-trainer.png",
   "heroine-best-friend":"assets/npcs/heroine-best-friend.png",
+  "sora-day11":"assets/characters/day11/sora-day11-cafe-casual-2d-v4.png",
   "female-friend":"assets/npcs/female-friend.png",
   "male-friend":"assets/npcs/male-friend.png",
   "college-friend":"assets/npcs/college-friend.png",
@@ -71,7 +72,7 @@ export const GIFT_VEHICLE_ASSETS = Object.freeze({
 
 const FEMALE_NPC_IDS = new Set([
   "female-coworker","office-rookie","client-manager","office-gossip",
-  "heroine-best-friend","female-friend","investor-friend","love-advisor",
+  "heroine-best-friend","sora-day11","female-friend","investor-friend","love-advisor",
   "player-ex","ambitious-admirer","cafe-staff","edit-shop-staff",
   "hospital-nurse","asset-advisor"
 ]);
@@ -113,6 +114,10 @@ export const BACKGROUND_ASSETS = {
   "neighborhood-market-day":"assets/backgrounds/day6/day6-neighborhood-market-day-v1.png",
   "neighborhood-cafe-day":"assets/backgrounds/day6/day6-neighborhood-cafe-day-v1.png",
   "neighborhood-park-day":"assets/backgrounds/map-locations/035_running-park.png",
+  "small-cafe":"assets/backgrounds/map-locations/004_small-cafe.png",
+  "yeonhui-station":"assets/backgrounds/map-locations/018_yeonhui-station.png",
+  "flower-cafe":"assets/backgrounds/map-locations/020_flower-cafe.png",
+  "yeonhui-bakery":"assets/backgrounds/map-locations/021_yeonhui-bakery.png",
   "day7-gallery-day":"assets/backgrounds/map-locations/016_gallery.png",
   "day9-office-project-room-day":"assets/backgrounds/day9/day9-office-project-room-day-v1.png",
   "day7-bookshop-day":"assets/backgrounds/day7/day7-small-bookshop-day-v1.png",

@@ -13,5 +13,5 @@ assert.match(source,/applyDay10V3FollowUpChoice\(state,choiceId\):applyDay10V3Ch
 assert.match(source,/getDay10V3ChoiceContinuation\(state,followUp\?"FOLLOW_UP":result\.choiceNumber\)/);
 assert.match(source,/session\.id===LOCKED_DAY10_SCENE_ID&&getDay10V3Compatibility\(state\)\.mode==="V1_LEGACY"/);
 assert.match(source,/day10DebriefStrategy\|\|state\.storyFlags\?\.day10V3Complete/);
-assert.doesNotMatch(source,/beginDay11V3|applyDay11V3/);
+assert.match(source,/getDay10V3Compatibility\(currentState\)\.mode==="V1_LEGACY"\?getLegacyDay10Segment/);
 console.log("day10-v3-game-integration.test: all assertions passed");

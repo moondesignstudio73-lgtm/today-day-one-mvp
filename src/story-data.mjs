@@ -354,9 +354,9 @@ export const MARRIAGE_30_STORY_SCENES = [{
     {id:"work10_debrief_separate_scores",label:"업무 결과·회복 상태·동료 관계를 서로 다른 점수로 남긴다",response:"같은 하루의 업무·몸·사람을 서로 덮지 않는 세 기록으로 저장했다.",memory:"DAY 10의 업무 결과, 회복 상태, 동료 관계를 분리해 기록함"}
   ]
 },{
-  id:"m30-day11-current-life-plan",arc:"현재 생활표",window:[11,11],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day10-three-hour-work-rhythm"},
+  id:"m30-day11-current-life-plan",arc:"현재 생활표",window:[11,11],priority:1000,bgm:"daily",modes:["marriage-in-30-days"],heroineIds:["haeun"],requires:{sceneId:"m30-day10-three-hour-work-rhythm"},scenarioVersion:"NOTION_V3",v3ScenarioId:"m30-day11-haeun-before-her-friend-v3",v3Title:"하은의 친구 앞에서",
   title:"현재 생활표",speaker:"하은",message:"병원·근무·개인 시간·공동 약속을 출처와 소유권이 있는 한 주 생활표로 만들고 충돌·공유 규칙을 정한다.",
-  chapterType:"daily-life/recovery/relationship-hybrid",targetPlaytimeMinutes:[8,12],timeWindow:"morning-to-late-afternoon",participants:["protagonist","haeun"],previousChoiceReferences:["m30-day10-three-hour-work-rhythm"],
+  chapterType:"romance/friend-boundary/jealousy-pressure",targetPlaytimeMinutes:[25,35],timeWindow:"morning-to-evening",participants:["protagonist","haeun","sora","minho","siwoo-message"],previousChoiceReferences:["m30-day9-current-shopping-boundary","m30-day10-three-hour-work-rhythm"],
   presentation:{backgroundId:"home-morning",characterId:"girlfriend",characterAssetUrl:STORY_OUTFIT_ASSETS.day8,expressionId:"smile",poseId:"standing"},
   choices:[
     {id:"life11_share_changes_only",label:"하은과는 변경된 시간과 필요한 도움만 공유한다",response:"연락을 하루 전체 보고가 아니라 합의가 달라질 때 쓰는 도구로 정했다.",memory:"생활표의 변경 사항과 필요한 도움만 하은과 공유하기로 함"},
