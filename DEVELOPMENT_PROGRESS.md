@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 11 V3 PUBLIC RELEASE COMPLETE (2026-08-29 21:15 KST)
+
+- 검증 커밋 `ae3b546002a4eb6e44c6c535e8fa00f031410e9a`를 `origin/feature/today-day-one-mvp`와 `origin/gh-pages`에 같은 SHA로 반영했다.
+- Pages run `33251732680`, `33251732100`은 모두 success다. 공개 타이틀·DAY 11 V3 코드 3종은 HTTP 200, console warning/error 0건이다.
+- 공개 소라 V4·어깨 기대기 CG·시우 메시지 POV는 로컬 검증 파일과 SHA-256이 일치한다. DAY 11 V3 전 관문을 COMPLETE로 닫는다.
+- 현재 순차 재감사 대상은 DAY 12다. 다음은 최신 Notion DAY 12 하위 페이지 본문을 새로 읽고 소스 잠금·현행 구현 격차·프리모드/지도 통합 감사를 시작하는 것이다.
+
 ## DAY 11 V3 VERIFIED REGRESSION RERUN PASS (2026-08-29 21:05 KST)
 
 - 브라우저 증적 반영 후 전체 테스트를 다시 실행해 `171/171 PASS`, `0 FAIL`을 확인했다.

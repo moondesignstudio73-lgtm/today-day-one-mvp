@@ -1,5 +1,13 @@
 # DAY 5~30 순차 출시 진행표
 
+## 2026-08-29 21:15 KST — DAY 11 V3 PUBLIC RELEASE COMPLETE
+
+- DAY 11 V3 제품·에셋·문서·테스트 검증 커밋 `ae3b546002a4eb6e44c6c535e8fa00f031410e9a`를 force/rebase 없이 `origin/feature/today-day-one-mvp`와 `origin/gh-pages`에 동일하게 fast-forward 반영했다.
+- 동일 SHA의 `Deploy GitHub Pages` run `33251732680`과 `pages build and deployment` run `33251732100`이 모두 `completed/success`로 끝났다.
+- 공개 `https://superstarman35.github.io/game/?qa=day11-ae3b546`의 타이틀 렌더와 console warning/error 0건을 실제 브라우저로 확인했다. 공개 `game.js`, `src/day11-v3-runtime.mjs`, `src/day11-v3-presentation-data.mjs`는 HTTP 200이며 V3 import·완료 플래그·소라 V4 연결 표식이 전파됐다.
+- 공개 소라 V4, 어깨 기대기 CG, 시우 메시지 POV는 HTTP 200이고 로컬 검증본과 SHA-256이 각각 일치했다. DAY 11의 시나리오·내러티브·콘텐츠/시스템·에셋/이미지·연출/오디오·런타임·저장 복원·집중/전체 회귀·실제 브라우저·커밋·origin·동일 SHA 배포·공개 확인 관문은 모두 PASS다.
+- DAY 11 V3는 `COMPLETE`. 순차 재감사 현재 대상을 `DAY 12`로 전환한다. DAY 12 수정 전 `AI해커톤`의 DAY 12 하위 페이지 본문을 새로 완전 조회하고 소스 잠금·격차 감사부터 시작한다.
+
 ## 2026-08-29 21:05 KST — DAY 11 V3 검증본 회귀 재실행 PASS
 
 - 실제 브라우저 QA 문서 반영 뒤 프로젝트 `tests/*.test.mjs` 171개를 번들 Node로 다시 개별 실행해 `171 PASS / 0 FAIL`을 확인했다.
@@ -197,13 +205,13 @@
 
 현재 단계: `2단계 — DAY 4~16 순차 품질 재구축`
 
-현재 재감사 대상: `DAY 11`
+현재 재감사 대상: `DAY 12`
 
-자동화 상태: `ACTIVE — DAY 11 V3 실제 브라우저 QA PASS / 검증 커밋 대기`
+자동화 상태: `ACTIVE — DAY 11 V3 PUBLIC RELEASE COMPLETE / DAY 12 소스 재조회 대기`
 
-최근 완료 관문: `DAY 11 V3 데스크톱·모바일 실제 브라우저·저장 복원·DAY 12 도달 PASS`
+최근 완료 관문: `DAY 11 V3 동일 SHA origin·gh-pages 배포·공개 코드/이미지 확인 PASS`
 
-다음 작업: `DAY 11 V3 전체 회귀 재실행 → 검증 커밋 → origin 반영 → 동일 SHA gh-pages 배포·공개 확인 — DAY 12 콘텐츠 수정 금지`
+다음 작업: `DAY 12 Notion 하위 페이지 본문 새 조회 → 소스 잠금 → V1/V3 구현 격차·콘텐츠/장소/시스템 커버리지 감사`
 
 ### 2026-08-29 DAY 10 V3 PUBLIC RELEASE COMPLETE
 

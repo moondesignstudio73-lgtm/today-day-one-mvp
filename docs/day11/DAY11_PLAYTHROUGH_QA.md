@@ -33,7 +33,9 @@
 - NEEDS FIX: 0
 - 실제 브라우저 관문: PASS
 - 인접 DAY 도달성: PASS (`DAY 12 · 금요일`, `STORY · D-19`)
-- 다음 관문: 전체 회귀 재실행, 검증 커밋, origin 반영, 동일 SHA gh-pages 배포·공개 확인
+- 공개 배포: 검증 SHA `ae3b546002a4eb6e44c6c535e8fa00f031410e9a`, Pages run `33251732680`·`33251732100` success
+- 공개 확인: 타이틀·V3 코드 3종 HTTP 200, console warning/error 0, 핵심 이미지 3종 로컬 SHA-256 일치
+- 최종 판정: `DAY 11 V3 PUBLIC RELEASE COMPLETE`
 
 ## 2026-08-26 DAY 11 V1 보존 기록
 
