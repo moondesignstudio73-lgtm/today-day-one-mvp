@@ -1,6 +1,6 @@
 import { applyEffects } from "./game-core.mjs?v=9";
 import { createDaySnapshot, getDailyReport } from "./night-manager.mjs?v=2";
-import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=14";
+import { rollSharedFreeActionEvent } from "./event-compatibility.mjs?v=15";
 
 export const STORY_FREE_ACTION_WINDOWS=Object.freeze({
   1:Object.freeze([Object.freeze({
@@ -200,6 +200,14 @@ export const DAY9_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"rest-after-second-office",icon:"☾",title:"업무 기록을 덮고 쉰다",description:"두 번째 출근을 더 평가하지 않고 회복을 우선한다.",effects:{energy:15,fatigue:-12,stress:-8,health:4},scenarioEffects:{},flag:"day9_recovery_rest",summary:"두 번째 직장 적응 뒤 추가 판단을 멈추고 충분히 쉬었다."})
 ]);
 
+export const DAY9_V3_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"save-day9-fit-memory",icon:"▣",title:"오늘의 피팅 사진을 정리한다",description:"하은이 편하다고 말한 옷과 직접 남긴 사진만 저장하고 과거 취향은 추측하지 않는다.",effects:{affection:3,confidence:4,energy:-2},scenarioEffects:{haeunAffection:1,investigation:1},flag:"day9_v3_free_fit_memory",summary:"오늘 직접 확인한 착용감과 피팅 사진을 현재의 기억으로 남겼다."}),
+  Object.freeze({id:"record-day9-gift-boundary",icon:"♥",title:"선물의 거절권을 기록한다",description:"선물 의도·구매·수락·소유·착용은 서로 다른 선택이라는 오늘의 경계를 남긴다.",effects:{trust:5,affection:2,confidence:3,energy:-2,stress:-2},scenarioEffects:{haeunTrust:2},flag:"day9_v3_free_gift_boundary",summary:"선물하고 싶은 마음과 하은이 받거나 거절할 권리를 분리해 기록했다."}),
+  Object.freeze({id:"save-day9-purchase-ownership",icon:"▧",title:"오늘 산 물건의 소유를 확인한다",description:"영수증과 실제 소유자만 확인하고 구매하지 않은 물건이나 착용 상태를 만들어 내지 않는다.",effects:{confidence:5,energy:-2,stress:-1},scenarioEffects:{investigation:1},flag:"day9_v3_free_purchase_ownership",summary:"오늘 결제된 물건의 영수증·소유자·미장착 상태를 현재 기록으로 확인했다."}),
+  Object.freeze({id:"prepare-day10-contact-note",icon:"▤",title:"내일 연락할 시간을 메모한다",description:"장보기 전에 연락하겠다는 약속과 아직 정하지 않은 메뉴만 적어 둔다.",effects:{trust:3,confidence:4,energy:-1},scenarioEffects:{haeunTrust:1},flag:"day9_v3_free_day10_contact",summary:"DAY 10 장보기 전 연락 약속과 메뉴 미정 상태를 그대로 메모했다."}),
+  Object.freeze({id:"rest-after-day9-shopping",icon:"☾",title:"쇼핑 기록을 닫고 쉰다",description:"오늘의 선택을 과거 취향의 정답으로 만들지 않고 현재의 기억으로 둔 채 쉰다.",effects:{energy:15,fatigue:-12,stress:-8,health:4},scenarioEffects:{},flag:"day9_v3_recovery_rest",summary:"오늘 함께 고른 것들을 더 해석하지 않고 충분히 쉬었다."})
+]);
+
 export const DAY10_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"file-three-hour-rhythm",icon:"⌛",title:"세 시간 근무 리듬을 저장한다",description:"업무 블록·휴식·종료 시각을 실제 실행 기록과 대조한다.",effects:{work:4,health:2,confidence:4,energy:-3},scenarioEffects:{investigation:2},flag:"day10_free_file_rhythm",requiresAction:"three-hour-work-rhythm",summary:"세 시간 근무의 업무와 휴식 리듬을 현재 기록으로 저장했다."}),
   Object.freeze({id:"archive-current-coworker-lunch",icon:"◇",title:"현재 동료 점심 기록을 남긴다",description:"과거 평판 대신 오늘 직접 들은 역할·변화·경계만 기록한다.",effects:{social:5,confidence:3,energy:-2},scenarioEffects:{coworkerRelation:2},flag:"day10_free_archive_lunch",requiresAction:"current-coworker-lunch-record",summary:"현재 동료에게 직접 확인한 정보만 점심 기록으로 남겼다."}),
@@ -379,7 +387,7 @@ export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
 }
 
-export function getStoryFreeActions(state){const actions=state.day===8&&state.storyFlags?.day8V3Complete===true?DAY8_V3_HOME_ACTIONS:(ACTIONS_BY_DAY[state.day]??[]);return actions.filter(action=>(!action.requiresFlag||state.storyFlags?.[action.requiresFlag])&&(!action.requiresAction||state.scenario?.unlockedActions?.includes(action.requiresAction)));}
+export function getStoryFreeActions(state){const actions=state.day===8&&state.storyFlags?.day8V3Complete===true?DAY8_V3_HOME_ACTIONS:state.day===9&&state.storyFlags?.day9V3Complete===true?DAY9_V3_HOME_ACTIONS:(ACTIONS_BY_DAY[state.day]??[]);return actions.filter(action=>(!action.requiresFlag||state.storyFlags?.[action.requiresFlag])&&(!action.requiresAction||state.scenario?.unlockedActions?.includes(action.requiresAction)));}
 
 export function ensureStoryFeatureUnlocks(state){
   state.scenario??={};
@@ -442,5 +450,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS,DAY17_HOME_ACTIONS,DAY18_HOME_ACTIONS,DAY19_HOME_ACTIONS,DAY20_HOME_ACTIONS,DAY21_OFFICE_ACTIONS,DAY22_HOME_ACTIONS,DAY23_HOME_ACTIONS,DAY24_HOME_ACTIONS,DAY25_HOME_ACTIONS,DAY26_HOME_ACTIONS,DAY27_HOME_ACTIONS,DAY28_HOME_ACTIONS,DAY29_HOME_ACTIONS,DAY30_HOME_ACTIONS],actions=groups.flat();return Array.from({length:30},(_,i)=>i+1).every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS,DAY17_HOME_ACTIONS,DAY18_HOME_ACTIONS,DAY19_HOME_ACTIONS,DAY20_HOME_ACTIONS,DAY21_OFFICE_ACTIONS,DAY22_HOME_ACTIONS,DAY23_HOME_ACTIONS,DAY24_HOME_ACTIONS,DAY25_HOME_ACTIONS,DAY26_HOME_ACTIONS,DAY27_HOME_ACTIONS,DAY28_HOME_ACTIONS,DAY29_HOME_ACTIONS,DAY30_HOME_ACTIONS],actions=[...groups.flat(),...DAY8_V3_HOME_ACTIONS,...DAY9_V3_HOME_ACTIONS];return Array.from({length:30},(_,i)=>i+1).every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&DAY8_V3_HOME_ACTIONS.length===5&&DAY9_V3_HOME_ACTIONS.length===5&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }

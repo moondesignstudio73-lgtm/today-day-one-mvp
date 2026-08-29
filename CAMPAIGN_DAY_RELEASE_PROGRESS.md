@@ -6,7 +6,51 @@
 
 현재 재감사 대상: `DAY 9`
 
-자동화 상태: `ACTIVE — DAY 9 V3 신규 이미지 8/9 PASS / 하은 RGBA 스프라이트 1종 제작 대기`
+자동화 상태: `ACTIVE — DAY 9 전체 tests 158/158·실제 브라우저·변경 범위 감사 PASS / 검증 SHA origin 반영 대기`
+
+최근 완료 관문: `DAY 9 V3 전체 158/158 회귀·V1 저장 호환·DAY 1~3·자유모드·후속 DAY 회귀 PASS`
+
+다음 작업: `DAY 9 검증 SHA를 origin에 반영하고 동일 SHA gh-pages 배포·공개 확인 — DAY 10 콘텐츠 수정 시작 금지`
+
+### 2026-08-29 DAY 9 V3 FULL REGRESSION 158/158 / COMMIT GATE PASS
+
+- 프로젝트의 `tests/*.test.mjs` 158개를 번들 Node로 순차 실행해 158/158 PASS했다. DAY 9 V3 집중·브라우저 통합뿐 아니라 DAY 1~3, 기존 DAY 9 V1 저장, 자유 연애 모드, 전체 simulation, 인접·후속 DAY 회귀를 모두 포함한다.
+- 앞선 관문의 `node --check game.js`, DAY 9 V3+자유행동 집중 20/20, 실제 브라우저 데스크톱 1936×1048·모바일 390×844, 11선택 완주·저장 재개·DAY 10 인접 도달 결과를 함께 검증 기준으로 고정했다.
+- 변경 범위 감사에서 DAY 9 V3 프레젠테이션·immersive 런타임·게임 연결·V3 전용 자유행동·호환 차단·테스트·진행 문서만 커밋 대상으로 분리했다. 미추적 DAY 1 사용자 원본 `assets/source-sheets/day1/1.png`, `haeun-day1-poses-clean-v2.png`와 개발 잠금은 제외한다.
+- 다음 관문은 이 검증 SHA의 origin 반영, 동일 SHA gh-pages 배포와 공개 확인이다. DAY 10 콘텐츠는 시작하거나 수정하지 않는다.
+
+### 2026-08-29 DAY 9 V3 ACTUAL BROWSER PLAYTHROUGH / FREE ACTION PASS
+
+- 두 내러티브 스킬의 선택 기억·관계 경계·후속 훅 계약을 적용하고 실제 브라우저에서 DAY 9 V3 첫 장면 복원, 선택 1 저장, 새로고침·이어하기 후 선택 2 체크포인트 복원을 확인했다.
+- 실제 UI로 선택 1~11을 순서대로 완주했다. 각 관문은 3개 행동 전략을 표시했고, 완료 후 DAY 10의 `장보기 전에 연락` 약속을 보존했다.
+- 기본 데스크톱 1936×1048과 390×844 모바일에서 장면·선택 UI의 수평 오버플로 0, 전체 스테이지 너비, HUD·대화창·3선택 안전 영역을 확인했다.
+- 완주 직후 V3와 무관한 기존 `두 번째 직장 적응` 자유행동이 노출되는 결함을 실제 화면에서 발견했다. V1의 직장 후속 행동은 보존하고 DAY 9 V3에 피팅 사진·선물 거절권·구매 소유권·DAY 10 연락 메모·휴식 5종을 별도 연결했다.
+- V3에서는 서진·동료 피드백 공용 이벤트가 발생하지 않게 버전 경계를 추가했다. 수정 후 실제 브라우저에서 V3 설명·5개 행동·연락 훅·결과 저장과 `SAVE · DAY 10` 인접 도달을 PASS했다. DAY 10 콘텐츠는 수정하지 않았다.
+- 변경 파일: `game.js`, `src/story-free-action-manager.mjs`, `src/event-compatibility.mjs`, `tests/story-free-action-day9.test.mjs`, 두 진행 문서. DAY 9 V3+자유행동 집중 20/20, `node --check`, 전체 `simulation.test.mjs`, diff 검사 PASS.
+- 다음 관문은 전체 `tests/*.test.mjs` 회귀와 변경 범위 감사 후 검증 커밋 준비다. DAY 10은 시작하지 않는다.
+
+### 2026-08-29 DAY 9 V3 GAME CONTROLLER INTEGRATION / REGRESSION PASS
+
+- `$marriage-30-narrative-director`와 `$marriage-30-chapter-story-writer`의 관계 조건, 선택 기억, 지식 장부, 저장 호환 계약을 적용했다. 신규 DAY 9는 Notion V3로 시작하고 기존 DAY 9 저장은 `V1_LEGACY`로 그대로 복원한다.
+- `game.js`에 24 Scene immersive 재생, 11개 선택 적용·즉시 반응·체크포인트 복원, V3 프레젠테이션과 완료 판정을 연결했다. 기존 V1 컨트롤러 경로와 저장 이력은 제거하거나 자동 변환하지 않았다.
+- 선택 9에서만 녹색 셔츠 선물 수락·하은 자비 구매·각자 구매를 상태대로 실제 정산한다. 소유와 장착을 분리해 구매 직후 자동 장착하지 않으며 재개 시 중복 결제하지 않는다.
+- 전환 step이 `backgroundId` 없이 직접 `backgroundUrl`만 제공하는 DAY 9 CG도 실제 렌더러와 건너뛰기 복원에서 보존하도록 공용 전환 처리를 보강했다.
+- 검증: `node --check game.js`, DAY 9 V3 및 DAY 8 인접 컨트롤러 집중 21/21, 전체 `tests/simulation.test.mjs` PASS.
+- 변경 파일: `game.js`, `tests/day9-v3-game-integration.test.mjs`, 두 진행 문서. 다음 관문은 실제 브라우저 데스크톱·모바일 신규/복원/완주와 자유행동·DAY 10 인접 도달성 확인이며 DAY 10 콘텐츠는 수정하지 않는다.
+
+### 2026-08-29 DAY 9 V3 IMMERSIVE 런타임·저장 복원 집중 검증 PASS
+
+- `$marriage-30-narrative-director`와 `$marriage-30-chapter-story-writer`의 화자·지식·관계 조건·선택 기억·저장 계약을 다시 적용했다. DAY 9에서 가짜 하은 진실, MBTI, 전 여자친구, 윤서진을 새로 노출하지 않는다.
+- `src/day9-v3-immersive-adapter.mjs`가 24 Scene의 프레젠테이션과 플레이 스크립트를 transition·SFX·CG/인물/ambient·대화·메시지·선택·DAY 10 훅으로 변환한다. 11개 선택은 실제 원고의 결정 직전에 정지하고 저장 체크포인트부터 재개한다.
+- 선택 반응 Scene과 체크포인트가 같은 선택 1~10은 반응을 정확히 한 번만 재생한다. 마지막 선택 11은 SCENE 23 반응을 보존한 뒤 SCENE 24로 이어진다.
+- HIGH 경로의 조건부 소매 접촉, LOW·거리/휴식 경로의 비접촉, 스카프·녹색 셔츠 거래 CG, 전체 동행 푸드홀을 상태대로 재구성했다. JSON 저장 복원 동일성과 DAY 10 `장보기 전에 연락` 훅을 검증했다.
+- 신규 집중 테스트를 포함한 DAY 9 V3 전종 17/17 및 구문 검사 PASS. 다음은 실제 `game.js` 신규 시작·선택·거래 해결·복원 컨트롤러 연결이며 DAY 10은 시작하지 않는다.
+
+### 2026-08-29 DAY 9 V3 실제 브라우저 이미지 QA PASS
+
+- 전용 `tests/day9-v3-browser-harness.html`에서 실제 프레젠테이션 모듈의 하은 RGBA·행동 CG 8종·스타일 몰 배경을 로드했다. 자동 판정은 이미지 10/10 로드, CG 8/8 16:9, 하은 1024×1536 portrait, 프레젠테이션 감사 true로 PASS했다.
+- 데스크톱 기본 뷰와 390×844 모바일에서 하은 얼굴·손·신발과 CG의 핵심 손동작·의상·소품이 HUD/대화창 사이에 남았다. 투명 합성, 무왜곡, 무수평 오버플로, center-60 안전 영역을 육안 PASS했다.
+- 변경 파일: DAY 9 브라우저 하네스, 에셋·프레젠테이션 감사 문서, 두 진행 문서. 다음 관문은 상태 기반 런타임·저장 복원·집중 검증이며 DAY 10은 시작하지 않는다.
 
 ### 2026-08-29 DAY 9 V3 하은 원본 알파 보존 재편집 QA 탈락
 
