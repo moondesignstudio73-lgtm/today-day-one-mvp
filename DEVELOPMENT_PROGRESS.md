@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 10 V3 PUBLIC RELEASE COMPLETE (2026-08-29)
+
+- 검증 SHA `d6d94e00225e44e8c6e541214854e3b203e2e4f2`가 기능 브랜치와 `gh-pages`에 동일하게 반영됐고 원격 차이는 0/0이다.
+- GitHub Pages run `33237735353`, `33237734819`가 모두 `completed/success`다.
+- 공개 캐시 우회 URL의 실제 브라우저 QA에서 1280×720·390×844 수평 오버플로 없음, 타이틀/게임 시작 렌더, 사용 이미지 로드, console warning/error 0을 확인했다.
+- 공개 DAY 10 V3 런타임과 `game.js`는 HTTP 200이며 V3 표식·import가 전파됐다. DAY 10은 COMPLETE, 다음 작업은 DAY 11 Notion 하위 페이지 본문 신규 조회와 소스 잠금/현행 감사다.
+
 ## DAY 10 V3 ORIGIN REFLECTION PASS (2026-08-29)
 
 - 원격 갱신 후 기능 브랜치의 원격 선행 변경이 0건임을 확인하고 DAY 10 V3 검증 커밋을 `origin/feature/today-day-one-mvp`에 반영했다.

@@ -4,13 +4,20 @@
 
 현재 단계: `2단계 — DAY 4~30 순차 품질 재구축`
 
-현재 재감사 대상: `DAY 10`
+현재 재감사 대상: `DAY 11`
 
-자동화 상태: `ACTIVE — DAY 10 V3 origin 반영 PASS / 동일 검증 SHA gh-pages 배포 대기`
+자동화 상태: `ACTIVE — DAY 10 V3 품질 재구축·공개 배포 COMPLETE / DAY 11 원고 재조회 대기`
 
-최근 완료 관문: `DAY 10 V3 검증 커밋 origin/feature/today-day-one-mvp 반영 PASS`
+최근 완료 관문: `DAY 10 V3 동일 검증 SHA gh-pages 배포·Actions·공개 브라우저 확인 PASS`
 
-다음 작업: `DAY 10 V3 동일 검증 SHA gh-pages 배포·공개 확인 — DAY 11 수정 금지`
+다음 작업: `DAY 11 Notion 하위 페이지 본문 신규 조회·소스 잠금·현행 구현 감사 — 조회 전 DAY 11 수정 금지`
+
+### 2026-08-29 DAY 10 V3 PUBLIC RELEASE COMPLETE
+
+- 검증 SHA `d6d94e00225e44e8c6e541214854e3b203e2e4f2`를 force/rebase 없이 `origin/feature/today-day-one-mvp`와 `origin/gh-pages`에 동일하게 fast-forward 반영했고 원격 차이 0/0을 확인했다.
+- 동일 SHA의 `Deploy GitHub Pages` run `33237735353`과 `pages build and deployment` run `33237734819`가 모두 `completed/success`로 끝났다.
+- 공개 `https://superstarman35.github.io/game/?qa=day10-d6d94e0`을 실제 브라우저로 열어 1280×720·390×844 수평 오버플로 없음, 타이틀/게임 시작 렌더, 사용 이미지 로드, console warning/error 0을 확인했다.
+- 공개 `src/day10-v3-runtime.mjs`와 `game.js`가 HTTP 200이고 DAY 10 V3 런타임 표식·모듈 import가 전파됐다. DAY 10 V3는 COMPLETE이며 다음 재감사 대상은 DAY 11이다.
 
 ### 2026-08-29 DAY 10 V3 ORIGIN REFLECTION PASS
 
