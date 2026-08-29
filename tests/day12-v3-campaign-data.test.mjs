@@ -1,0 +1,22 @@
+import assert from "node:assert/strict";
+import {DAY12_V3_CHAPTER_CONTRACT,DAY12_V3_CHOICES,DAY12_V3_KNOWLEDGE_LEDGER,DAY12_V3_ROUTE_CONTRACT,DAY12_V3_SAVE_KEYS,DAY12_V3_SCENARIO_ID,DAY12_V3_SCENES,DAY12_V3_VOICE_PROFILES,validateDay12V3CampaignData} from "../src/day12-v3-campaign-data.mjs";
+
+assert.equal(validateDay12V3CampaignData(),true);
+assert.equal(DAY12_V3_SCENARIO_ID,"m30-day12-lunchtime-other-face-v3");
+assert.deepEqual(DAY12_V3_SCENES.map(item=>item.number),Array.from({length:24},(_,index)=>index+1));
+assert.deepEqual(DAY12_V3_SCENES.map(item=>item.title),["질문을 넣은 가방","전에 한 번 열었던 문","서진의 두 번째 인사","빈 의자가 아니라 오늘의 자리","한 장이 더 있다","익숙한 척하기 쉬운 말","내가 누른 버튼","메모 뒤에 남은 문장","작은 일이 남는 자리","여기까지라는 말","자판기 앞의 두 사람","점심을 고르는 질문","밥 먹을 때는 다른 사람","점심에는 무슨 이야기를 하나","다시 일하고 싶냐는 질문","조금 남은 점심시간","친절과 다른 마음","팀장 앞의 한 문장","한 시 전에 나가는 사람","점심 먹었다는 말","말하지 않은 것과 다른 말","오늘은 네 차례","내일은 화면 밖으로","정답이 아니어도 남는 것"]);
+assert.equal(DAY12_V3_CHOICES[12].conditional,"choice9 === day12_invite_outside_work && choice12 === day12_disclose_remaining_conversation");
+assert.match(DAY12_V3_ROUTE_CONTRACT.explicitContradiction,/day12_tell_seojin_lunch/);
+assert.match(DAY12_V3_ROUTE_CONTRACT.concealedMismatch,/day12_claim_only_work/);
+assert.equal(DAY12_V3_ROUTE_CONTRACT.nextDayEncounter,"UNSET; DAY13 plan is not an encounter");
+assert.ok(DAY12_V3_CHAPTER_CONTRACT.informationBudget.mustNotReveal.includes("서진과 과거 연애 확정"));
+assert.ok(DAY12_V3_KNOWLEDGE_LEDGER.seojin.doesNotKnow.includes("주인공과 하은의 사적 대화"));
+assert.match(DAY12_V3_VOICE_PROFILES.protagonist.reasoning,/관찰→가능성→확인→판단→행동/);
+for(const key of ["day12V3ObservedCompletionGap","day12V3MinhoOwnedCorrection","day12V3PersonalInvitation","day12V3DisclosureMismatch","day12V3Day13Plan","day12V3Choice14"])assert.ok(DAY12_V3_SAVE_KEYS.includes(key),key);
+const options=DAY12_V3_CHOICES.flatMap(item=>item.options);
+assert.equal(options.some(item=>"seojinAffectionDelta" in item.effects&&"seojinStatusInterestDelta" in item.effects),false);
+const ids=new Set(options.map(item=>item.id));
+for(const id of ["day12_ask_user_reason","day12_offer_to_cover_minho","day12_ask_to_continue","day12_ask_seojin_day_off","day12_invite_outside_work","day12_claim_only_work","day12_intent_spark","day12_plan_seoul_forest_photo"])assert.ok(ids.has(id),id);
+const serialized=JSON.stringify({contract:DAY12_V3_CHAPTER_CONTRACT,voices:DAY12_V3_VOICE_PROFILES,ledger:DAY12_V3_KNOWLEDGE_LEDGER,choices:DAY12_V3_CHOICES});
+for(const forbidden of ["가짜 하은","사고 범인","정식 복귀 확정","서진과 과거에 사귀었다","DAY13에서 아라를 만난다"])assert.equal(serialized.includes(forbidden),false,forbidden);
+console.log("day12-v3-campaign-data.test: all assertions passed");

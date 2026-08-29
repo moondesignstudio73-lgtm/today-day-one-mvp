@@ -1,5 +1,116 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 12 V3 FINAL FOCUSED / FULL REGRESSION PASS (2026-08-29 23:30 KST)
+
+- Refetched and fully read the current Notion DAY 12 child-page body immediately before the release commit gate. Its 24 scenes, 13 standard choices plus conditional follow-up, and implementation notes remain authoritative; parent-page Markdown attachments were ignored.
+- Ran every `tests/*.test.mjs` file with the bundled Node runtime in isolated processes: `177 PASS / 0 FAIL`. Coverage includes DAY 12 V3 data/scripts/presentation/adapter/runtime-save, DAY 12 V1 compatibility, adjacent DAY 11/13 reachability, immutable DAY 1–3 regressions, and free-mode isolation.
+- The verified bundle contains the browser scene-reset fix, eight DAY 12 V3 visual assets, source/contract/audit/browser evidence, implementation modules, and focused tests. User-owned DAY 1 sources and DAY 11 Sora candidates remain excluded.
+- Next: create the DAY 12 verified commit, then push and deploy that identical SHA to gh-pages and perform public verification. DAY 13 remains untouched.
+
+## DAY 12 V3 REAL BROWSER QA / SCENE RESET FIX PASS (2026-08-29 23:24 KST)
+
+- Fresh Notion child-body fetch reconfirmed SCENE 01–24 and implementation notes as the authority; parent Markdown attachments were ignored.
+- A fresh local server and in-app browser ran the DAY 12 V3 standard path at 1440×900 and 390×844. All 13 standard prompts appeared in source order with three actionable strategies and reached the ending clue CG while DAY 12 remained active.
+- Browser QA exposed stale office-lobby and coworker layers under the home-night ending. Background IDs now reflect the real location change, transition steps carry the character contract, and post-CG steps restore the current character or explicitly hide it.
+- Recheck: correct protagonist-room background, no stale character, 390×844 document overflow 0, three safe-area choice buttons, and zero desktop/mobile console warnings or errors. Focused/legacy/adjacent tests remain 11/11 PASS.
+- Evidence: `docs/day12/DAY12_V3_BROWSER_QA.md`. Next: final focused/full regression and verified commit; DAY 13 remains untouched.
+
+## DAY 12 V3 GAME CONTROLLER / LEGACY ROUTING PASS (2026-08-29 23:02 KST)
+
+- A fresh 22:55 KST fetch fully reconfirmed the authoritative 23,413-character Notion child body, SCENE 01–24, choices 1–14, and implementation notes; parent Markdown attachments remained ignored.
+- Added `src/day12-v3-immersive-adapter.mjs` and wired `game.js` to route new DAY 12 sessions through V3 while preserving legacy V1 saves. All 24 scenes emit immersive background/character/CG/audio/text/choice steps; conditional choice 13 continues inside SCENE 21 and Haeun stays phone-only.
+- V3 completion records `day12V3Completed` and the DAY 13 plan hook. Legacy finance state remains unmigrated and its finance free action is V1-only, preventing the superseded scenario from leaking into Notion V3.
+- Syntax plus six V3 focused tests, four DAY 12 legacy regressions, and the adjacent DAY 11 adapter test PASS (`11/11`, `0 FAIL`).
+- Next: launch a fresh browser environment for complete desktop/mobile path, crop, and console QA. DAY 12 remains incomplete and DAY 13 remains untouched.
+
+## DAY 12 V3 IMAGE PRODUCTION 8/8 PASS (2026-08-29 22:53 KST)
+
+- Fresh 22:47 KST Notion child-body fetch reconfirmed the latest complete source including SCENE 20–24 and implementation notes; the child body remained authoritative and parent attachments were ignored.
+- Built-in ImageGen independently produced the Haeun disclosure-call phone POV and ending-desk clues POV as exact 1672×941 RGB workspace assets.
+- The phone CG keeps Haeun physically absent and leaves all disclose/defer/mismatch branch copy to runtime UI. The ending CG shows exactly one verified sheet, the washed bottle drying, the crumpled question note, and a generic photo list without pre-creating a DAY 13 place, person, or meeting.
+- All eight required assets are now `ready-new`. Original-resolution visual QA, PNG binary assertions, and the five DAY 12 V3 presentation/data/script/runtime-save tests PASS.
+- Next: wire all eight assets into the game controller and run real desktop/mobile browser crop QA. DAY 12 remains incomplete; DAY 13 remains untouched.
+
+## DAY 12 V3 IMAGE PRODUCTION 6/8 PARTIAL PASS (2026-08-29 22:44 KST)
+
+- Fresh 22:36 KST Notion child-body fetch reconfirmed all 22,391 characters, SCENE 13 and 19, and implementation notes; the latest child body remained authoritative and parent attachments were ignored.
+- Built-in ImageGen independently produced the scallion-lunch three-shot and verified-sheet handoff POV as exact 1672×941 RGB workspace assets.
+- The lunch CG preserves Seojin's chestnut ponytail/burgundy-blazer identity, her self-directed action over her own bowl, Minho's response, and the protagonist POV hand without romance or feeding. The handoff CG passes exactly one verified example sheet while Minho retains a closed internal notebook, keeping its meaning and composition distinct from DAY 5's two-folder CG.
+- Both assets are now `ready-new`; production is 6/8. Binary format assertions and five DAY 12 V3 focused/regression tests PASS.
+- Next: Haeun phone POV and ending-desk clue POV. DAY 12 remains incomplete and DAY 13 remains untouched.
+
+## DAY 12 V3 IMAGE PRODUCTION 4/8 PARTIAL PASS (2026-08-29 22:36 KST)
+
+- Fresh 22:29 KST Notion fetch reconfirmed all 22,391 characters, SCENE 08–11, and implementation notes; parent attachments remained ignored.
+- Built-in ImageGen independently produced the mixed-note/circle POV and wrong-can vending POV as exact 1672×941 RGB workspace assets.
+- The note CG preserves three distinct hand roles, old/current drafts, the protagonist's crooked circle, and Seojin's retained side note without implying blame or completed deployment. The vending CG preserves the selected button, empty tray, unbranded can, and two-hand joke callback.
+- Both assets are now `ready-new`; production is 4/8. Binary format assertions and five DAY 12 V3 focused/regression tests PASS.
+- Next: scallion lunch three-shot and verified-sheet handoff POV. DAY 13 remains untouched.
+
+## DAY 12 V3 IMAGE PRODUCTION 2/8 PARTIAL PASS (2026-08-29 22:27 KST)
+
+- Fresh 22:20 KST Notion child-body fetch reconfirmed the complete SCENE 01–24 source and implementation notes; parent attachments remained ignored.
+- Built-in ImageGen produced the training-completion POV and building-internal lunch background. Both workspace files are exact 1672×941 RGB PNGs.
+- The training CG keeps the laptop, both hands, dominant completion impression, and small remaining action in the central mobile-safe composition; exact Korean copy remains runtime UI. The lunch background preserves the office-building setting, central three-seat staging, and clean HUD/dialogue zones.
+- Updated the presentation contract to `ready-new`, added binary dimension/color-type assertions, and recorded original-resolution visual QA plus final prompt summaries in `docs/day12/DAY12_V3_IMAGE_PRODUCTION_QA.md`.
+- Five DAY 12 V3 focused/regression tests PASS. Six new assets remain; next is mixed-note/circle and wrong-can vending action CG production. DAY 13 remains untouched.
+
+## DAY 12 V3 ASSET / PRESENTATION AUDIT PASS (2026-08-29 22:17 KST)
+
+- Fresh 22:10 KST Notion child-page fetch reconfirmed all 22,391 characters, SCENE 01–24, and production notes; parent attachments remained ignored.
+- Added `src/day12-v3-presentation-data.mjs`, `tests/day12-v3-presentation-audit.test.mjs`, and `docs/day12/DAY12_V3_ASSET_PRESENTATION_AUDIT.md`.
+- Audited DAY 2's 16:9 action-CG/mobile-safe-area grammar against the actual DAY 5 office assets. Nine office/home/character assets are reusable; eight source-specific action/background assets are explicitly production-required.
+- The 24-scene contract keeps Haeun phone-only in the disclosure sequence, separates Seojin work-interest staging from personal curiosity, and does not repurpose the DAY 5 two-folder CG as a different event.
+- Presentation audit plus campaign-data, both script halves, and runtime/save regressions PASS (5/5). Next: produce the eight assets and run original-resolution visual QA; DAY 13 remains untouched.
+
+## DAY 12 V3 STATE RUNTIME / SAVE RESTORE PASS (2026-08-29 22:12 KST)
+
+- Fresh 22:03 KST Notion fetch reconfirmed the complete 24-scene source and implementation contract; parent attachments remained ignored.
+- Added `src/day12-v3-runtime.mjs` and `tests/day12-v3-runtime-save.test.mjs`: ordered 14-choice progression, conditional intent choice, 24-scene resolver, derived disclosure/work states, checkpoints, completion, and DAY 13 plan handoff.
+- Legacy finance flags route to `V1_LEGACY` without mutation or migration. New V3 choices and derived state survive SaveManager JSON round trips at every checkpoint.
+- Seojin affection and status interest change on separate choices. Haeun disclosure, deferral, explicit contradiction, concealed mismatch, need-for-space, and next-day plan remain independently restorable.
+- New runtime/save test, both script halves, campaign data, syntax checks, and existing DAY 12 V1 27-path runtime test PASS.
+- Next: V3 presentation/asset audit and game-controller integration. DAY 12 remains incomplete; DAY 13 remains untouched.
+
+## DAY 12 V3 PLAYABLE SCRIPT SCENE 13–24 PASS (2026-08-29 22:03 KST)
+
+- Refetched the complete Notion DAY 12 child body at 21:54 KST and used its SCENE 13–24 text and implementation notes as the sole narrative authority; parent attachments remained ignored.
+- Added `src/day12-v3-playable-script-13-24.mjs` and `tests/day12-v3-playable-script-13-24.test.mjs` for lunch texture, work-versus-personal Seojin routing, choices 7–14, invitation acceptance/deferral, Haeun disclosure/defer/contradiction outcomes, and the three DAY 13 plans.
+- Branch playback is exclusive: unchosen reactions, comfortable calls, unresolved calls, and ending messages cannot overlap. Haeun only detects facts the protagonist already told her; Seojin affection/status remain separate.
+- Back-half focused test, front-half regression, campaign-data regression, and syntax checks PASS. The 24-scene script data gate is complete, but DAY 12 release remains incomplete.
+- Next: build the 24-scene state runtime plus V3-new/legacy-V1 save routing and restoration. DAY 13 remains untouched.
+
+## DAY 12 V3 PLAYABLE SCRIPT SCENE 01–12 PASS (2026-08-29 21:50 KST)
+
+- Fresh Notion child-page fetch at 21:46 KST reconfirmed the authoritative DAY 12 V3 body; parent attachments remained ignored.
+- Added `src/day12-v3-playable-script-01-12.mjs` and `tests/day12-v3-playable-script-01-12.test.mjs` with 12 source-ordered scenes, choices 1–6, all 18 strategy reactions, prior-photo routing, and independently gated Seojin personal-interest dialogue.
+- Preserved the protagonist's observation-to-action reasoning, Minho's ownership of his document mistake, Haeun's independent day, the three-hour work boundary, and all premature-reveal prohibitions.
+- Focused script test, campaign-data regression, syntax check, and diff check PASS. Legacy DAY 12 finance runtime/save keys and untracked user assets remain untouched.
+- DAY 12 is not complete. Next: refetch Notion, implement SCENE 13–24 plus choices 7–14, then build runtime/save compatibility. DAY 13 remains untouched.
+
+## DAY 12 V3 CHAPTER CONTRACT / CAMPAIGN DATA PASS (2026-08-29 21:35 KST)
+
+- Fresh Notion child-page fetch confirmed the unchanged 24-scene DAY 12 V3 source; parent attachments remained ignored.
+- Added `src/day12-v3-campaign-data.mjs`, `tests/day12-v3-campaign-data.test.mjs`, and `docs/day12/DAY12_V3_CHAPTER_CONTRACT.md`.
+- Encoded 24 scenes, 14 three-strategy choices, conditional intent follow-up, voice/knowledge/information contracts, independent Seojin affection/status effects, disclosure consistency routes, DAY 13 plan hook, and 35 save keys.
+- Verification: campaign-data test PASS, syntax PASS, diff check PASS. Legacy finance V1 and user assets remain untouched.
+- Next: implement the full source-faithful playable script for SCENE 01–24, then runtime/save compatibility.
+
+## NOTION-FIRST AUTHORITY RESOLVED (2026-08-29)
+
+- User decision: the latest `AI해커톤` DAY child-page body outranks earlier event tables and the shipped implementation for all remaining rebuilds.
+- DAY 12 authority is now the 24-scene `점심시간의 다른 얼굴 | SCENARIO V3` body; the earlier dinner/drinking event is superseded and will not be merged into it.
+- Automation `30-day-5-30` is ACTIVE. Next: DAY 12 V3 chapter contract and playable-data rebuild with legacy-save compatibility.
+
+## DAY 12 V3 SOURCE LOCK / IMPLEMENTATION GAP AUDIT (2026-08-29 21:16 KST)
+
+- Current phase/target: phase 2 sequential quality rebuild, DAY 12.
+- Fresh source: Notion `AI해커톤` child page `DAY 12 — 점심시간의 다른 얼굴 | SCENARIO V3`, fully read; parent attachments ignored.
+- Artifacts: `docs/day12/DAY12_NOTION_SOURCE_LOCK_V3.md`, `docs/day12/DAY12_V3_IMPLEMENTATION_GAP_CONTENT_COVERAGE_AUDIT.md`.
+- Baseline verification: five existing DAY 12 tests PASS, confirming only the shipped eight-scene finance V1 remains internally consistent.
+- Blocker: the current 24-scene office-training/lunch source conflicts with the explicitly locked DAY 12 dinner/drinking event. No narrative merge, runtime rewrite, asset production, commit, push, or deployment was performed.
+- Next: resolve the authoritative DAY 12 event, refetch the child-page body, then implement V3 with legacy-save migration. DAY 13 remains untouched.
+
 ## DAY 11 V3 PUBLIC RELEASE COMPLETE (2026-08-29 21:15 KST)
 
 - 검증 커밋 `ae3b546002a4eb6e44c6c535e8fa00f031410e9a`를 `origin/feature/today-day-one-mvp`와 `origin/gh-pages`에 같은 SHA로 반영했다.

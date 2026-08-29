@@ -1,0 +1,35 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {DAY12_V3_CHOICES} from "../src/day12-v3-campaign-data.mjs";
+import {getDay12V3ChoiceContinuation,getDay12V3ImmersiveScene,getDay12V3ImmersiveSegment,getDay12V3ResumePresentation,validateDay12V3ImmersiveAdapter} from "../src/day12-v3-immersive-adapter.mjs";
+import {applyDay12V3Choice,beginDay12V3,getNextDay12V3Choice} from "../src/day12-v3-runtime.mjs";
+
+const makeState=()=>({affection:40,trust:40,storyFlags:{day11V3Complete:true,day12CompanyAdaptationVisitPending:true},scenario:{enabled:true,seojinAffection:7,seojinStatusInterest:13,clues:[],unlockedActions:[],followUpHooks:[]}});
+const state=makeState();beginDay12V3(state,{relationshipBand:"HIGH",priorSeojinPhoto:true,priorSeojinPersonalInterest:true});
+assert.equal(validateDay12V3ImmersiveAdapter(state),true);
+assert.equal(getDay12V3ImmersiveSegment(state).stopScene,1);
+assert.equal(getDay12V3ImmersiveSegment(state).steps.at(-1).type,"choice");
+while(getNextDay12V3Choice(state)){const choice=getNextDay12V3Choice(state),result=applyDay12V3Choice(state,choice.options[0].id),continuation=getDay12V3ChoiceContinuation(state,result.choiceNumber);assert.ok(continuation.length>0,`choice ${choice.number} continuation`);}
+const ending=getDay12V3ImmersiveSegment(state,{startScene:24});
+assert.equal(ending.steps.at(-1).type,"sceneEnd");assert.equal(ending.steps.at(-1).complete,true);assert.equal(ending.steps.at(-1).nextHook,"day13-outside-view-plan");
+assert.equal(getDay12V3ResumePresentation(state).backgroundId,"day12-home-bedroom");
+assert.match(getDay12V3ImmersiveScene(state,7).steps.find(step=>step.type==="cgShow").source,/training-completion-pov/);
+assert.match(getDay12V3ImmersiveScene(state,13).steps.find(step=>step.type==="cgShow").source,/scallion-lunch-three-shot/);
+assert.match(getDay12V3ImmersiveScene(state,21).steps.find(step=>step.type==="cgShow").source,/haeun-disclosure-phone-pov/);
+assert.match(getDay12V3ImmersiveScene(state,24).steps.find(step=>step.type==="cgShow").source,/ending-desk-clues-pov/);
+assert.equal(getDay12V3ImmersiveScene(state,20).steps.some(step=>step.type==="characterEnter"&&step.characterId==="girlfriend"),false);
+assert.equal(getDay12V3ImmersiveScene(state,20).backgroundId,"office-lobby");
+assert.equal(getDay12V3ImmersiveScene(state,24).backgroundId,"day12-home-bedroom");
+assert.equal(getDay12V3ImmersiveScene(state,24).steps[0].characterId,null);
+assert.equal(getDay12V3ImmersiveScene(state,19).steps.some(step=>step.type==="characterEnter"&&step.characterId==="office-best-male"),true);
+const invitation=makeState();beginDay12V3(invitation,{relationshipBand:"HIGH",priorSeojinPhoto:true,priorSeojinPersonalInterest:true});
+for(let number=1;number<=7;number+=1)applyDay12V3Choice(invitation,DAY12_V3_CHOICES[number-1].options[0].id);
+applyDay12V3Choice(invitation,"day12_ask_seojin_day_off");applyDay12V3Choice(invitation,"day12_invite_outside_work");applyDay12V3Choice(invitation,"day12_report_stop_point");applyDay12V3Choice(invitation,"day12_tell_seojin_lunch");
+const disclosure=applyDay12V3Choice(invitation,"day12_disclose_remaining_conversation"),sameSceneContinuation=getDay12V3ChoiceContinuation(invitation,disclosure.choiceNumber);
+assert.equal(getNextDay12V3Choice(invitation).number,13);assert.equal(sameSceneContinuation.at(-1).type,"choice");assert.equal(sameSceneContinuation.at(-1).choiceNumber,13);
+const legacy={storyFlags:{day12RuntimeStage:1,day12VerifyStrategy:"account12_verify_owner_statement"}};
+assert.equal(legacy.storyFlags.day12RuntimeStage,1);
+const gameSource=readFileSync(new URL("../game.js",import.meta.url),"utf8");
+assert.match(gameSource,/getDay12V3Compatibility/);assert.match(gameSource,/beginDay12V3/);assert.match(gameSource,/getDay12V3ChoiceContinuation/);assert.match(gameSource,/day12V3Completed/);
+assert.equal(DAY12_V3_CHOICES.length,14);
+console.log("day12-v3-immersive-adapter.test: all assertions passed");
