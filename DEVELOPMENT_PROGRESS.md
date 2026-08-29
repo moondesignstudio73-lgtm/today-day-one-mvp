@@ -1,5 +1,144 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 13 V3 ACTUAL-BROWSER GATE CLOSED / RELEASE CANDIDATE VERIFIED (2026-08-30 03:04 KST)
+
+- Freshly fetched and fully read the authoritative Notion DAY 13 child body again; all 24 scenes and 12 choices remain the primary source, and parent Markdown attachments were ignored.
+- The connected Ara sprite passed visual desktop inspection at `1920×1080`. A real `390×844` in-app-browser render also passed original asset loading, zero broken images, sprite/stage bounds, and zero horizontal overflow.
+- The browser did not return a small-viewport screenshot file. This is recorded as an evidence-format limitation, not a runtime defect, because the actual mobile render and objective layout/asset checks completed successfully. No existing browser session or screenshot response will be awaited.
+- Image production is `11/11 PASS`. The six focused DAY 13 V3 tests, all 183 repository tests, `game.js` syntax, and diff hygiene are rerun on the release candidate before pushing the same verified commit to origin and gh-pages. DAY 14 remains untouched until public confirmation.
+
+## DAY 13 V3 EXISTING IMAGE PIPELINE RESTORED / SPRITE CONNECTED (2026-08-30 02:45 KST)
+
+- Re-audited Git history, DAY 1–12 asset evidence, and existing scripts before production. The established path is built-in ImageGen followed by deterministic local sprite processing, not direct OpenAI API SDK calls and not a new `OPENAI_API_KEY` requirement.
+- Freshly fetched and fully read the authoritative Notion DAY 13 child body with all 24 scenes and 12 choices; parent Markdown attachments were ignored.
+- Preserved the approved built-in ImageGen source non-destructively and added `scripts/process-day13-sprite.py`, which directly reuses DAY 2 checker removal and component filtering. Two runs produced the same `887×1774 RGBA` SHA-256: `0CEA93C8DAF4238699ACF061C59071157AB79572BF511AA46842278F9DC686DB`.
+- Connected the sprite as `ready-new`; the presentation audit is now `11 ready-new / 0 pending`. All six DAY 13 V3 focused tests, all 183 repository tests, and `game.js` syntax pass.
+- Fresh in-app-browser QA passed the connected sprite visually at `1920×1080`. At `390×844`, the original sprite loaded with zero broken images and zero horizontal overflow; mobile DOM safe-area checks passed, while the small-viewport screenshot itself remains explicitly deferred because the browser did not return it.
+- Next: capture the connected mobile frame in a fresh supported environment, then commit, push, and deploy the identical verified SHA. DAY 14 remains untouched.
+
+## DAY 13 V3 SPRITE RETRY DEFERRED / FULL REGRESSION 183 PASS (2026-08-30 01:39 KST)
+
+- Freshly fetched and fully read the authoritative Notion DAY 13 child body before production; parent Markdown attachments were ignored.
+- A reference-guided built-in ImageGen pass matched Ara's approved identity, outfit, camera, full-body framing, and exact `887×1774` dimensions, but the PNG was RGB with a baked checkerboard rather than genuine transparency.
+- A single-change background-extraction edit preserved the sprite yet again returned `887×1774 RGB`. Both candidates were rejected and never copied into the repository; no user or existing asset was overwritten, moved, or deleted.
+- Image production remains honestly deferred at `10 ready-new / 1 pending`. All 183 repository test files pass (`183 PASS / 0 FAIL`).
+- No commit, deployment, or DAY 13 completion is allowed until a genuine clean RGBA Ara sprite passes original-resolution and browser QA. DAY 14 implementation remains untouched.
+
+## DAY 13 V3 ACTUAL DESKTOP / MOBILE BROWSER QA PASS (2026-08-30 01:29 KST)
+
+- Freshly refetched and fully read the authoritative 22,074-character Notion DAY 13 child body with all 24 scenes and 12 choices; parent Markdown attachments were ignored.
+- Started a new local server and new in-app browser tabs instead of waiting for the former DAY 11 V3 session. A temporary localhost-only DAY 13 entry bootstrap changed only test setup and was removed immediately after QA.
+- Desktop `1920×1080` completed the full 12-choice Seoul Forest/Ara route and reached DAY 14. Mobile `390×844` completed the home/no-Ara route, correctly skipped choices 3, 8, 9, and 12 plus the Ara report option, and also reached DAY 14.
+- Both routes had zero console warnings/errors. Mobile had no horizontal overflow (`390 === 390`), no visible broken images, and safe HUD, choice, background, and dialogue framing. Evidence: `docs/day13/DAY13_V3_BROWSER_QA.md`.
+- Browser QA is PASS, but DAY 13 remains incomplete because Ara's transparent sprite is still `10/11 PARTIAL PASS`. Next: produce and visually verify that final native high-resolution RGBA sprite, then run full regression, commit, and deploy the same SHA. DAY 14 implementation remains untouched.
+
+## DAY 13 V3 GAME CONTROLLER / SAVE RE-ENTRY PASS (2026-08-30 01:17 KST)
+
+- Freshly refetched and fully read the authoritative 22,074-character Notion child body with all 24 scenes and 12 choices; parent Markdown attachments were ignored.
+- Connected `game.js` to distinguish DAY 13 V3-new/in-progress saves from household-budget V1 legacy saves. New saves initialize V3, restore its branch presentation and segment, persist each choice, and continue from the saved checkpoint.
+- Legacy V1 saves retain the existing controller, presentation, and evening free-action path. V3 completion records normal story completion without incorrectly launching that V1-only free action.
+- Added controller-source assertions to the immersive adapter test. `game.js` syntax, per-choice SaveManager round trips, V3 controller contracts, all DAY 13 V3 tests, and six V1 regressions pass (`12 PASS / 0 FAIL`); `git diff --check` passes.
+- The Ara transparent sprite remains deferred at `10/11 PARTIAL PASS` and no rejected candidate can enter runtime. Next: run the complete DAY 13 V3 path in a fresh desktop/mobile browser environment and inspect transitions, crops, and console output. DAY 14 remains untouched.
+
+## DAY 13 V3 RUNTIME / SAVE / IMMERSIVE ADAPTER PASS (2026-08-30 01:09 KST)
+
+- Freshly refetched and fully read the 22,074-character authoritative Notion DAY 13 child body before the gate; parent Markdown attachments were ignored.
+- A reference-free Ara regeneration still produced `1024×1536 RGBA` with alpha `0–254`, zero fully opaque pixels, and a broad dark aura. It was rejected and never entered the project; image production remains honestly deferred at `10/11 PARTIAL PASS`.
+- Added `src/day13-v3-runtime.mjs` and `src/day13-v3-immersive-adapter.mjs`. They separate V3-new and V1-legacy saves, skip conditional Ara choices correctly, persist portrait/contact/publication/report state, preserve Seojin affection and status interest independently, and translate all 24 scenes into branch-aware immersive steps.
+- No-Ara routes create no Ara encounter, report option, CG, or contact state. The pending sprite cannot enter runtime before it becomes `ready-new`; Scene 24 selects the current-face or scenery CG from actual portrait state.
+- Added runtime/save and adapter tests plus `docs/day13/DAY13_V3_RUNTIME_SAVE_ADAPTER_QA.md`. All six V3 and six V1 DAY 13 focused files pass (`12 PASS / 0 FAIL`); syntax and `git diff --check` pass.
+- Next: refetch Notion, connect the game controller to V3-new versus V1-legacy routing, and verify real save re-entry. DAY 14 remains untouched.
+
+## DAY 13 V3 ARA SPRITE VALIDATION DEFERRED / IMAGE PRODUCTION REMAINS 10/11 (2026-08-30 00:58 KST)
+
+- Freshly refetched and fully read the complete 22,074-character authoritative Notion DAY 13 child body before this gate. Its 24 scenes, Ara's photographer identity, and consent boundaries remain authoritative; parent Markdown attachments were ignored.
+- A built-in ImageGen candidate matched Ara's identity, outfit, camera, and full-body crop, but its `1024×1536 RGBA` alpha ranged only from 0 to 254, contained zero fully opaque pixels, and retained a broad translucent aura. It was rejected.
+- A targeted background/aura-removal correction baked the transparency checkerboard into a `1024×1536 RGB` image with no alpha channel and was also rejected. Neither candidate entered the project; no user or existing asset was overwritten, moved, or deleted.
+- The current built-in generation environment did not produce both genuine clean alpha and the contracted minimum `887×1774` size. This validation is recorded as deferred, while the image gate remains `10/11 PARTIAL PASS` rather than being falsely completed.
+- Next: refetch Notion and retry Ara as a native high-resolution RGBA sprite. DAY 14 remains untouched.
+
+## DAY 13 V3 IMAGE PRODUCTION 10/11 PARTIAL PASS (2026-08-30 00:56 KST)
+
+- Freshly refetched the complete 22,074-character authoritative Notion DAY 13 child body and separately extracted SCENE 24 plus implementation note 21. The face and no-face endings remain mutually conditional and neither implies memory recovery or superior healing; parent Markdown attachments were ignored.
+- Built-in ImageGen produced `endingCurrentFacePov` and `endingSceneryPov`. The first shows today's consented portrait only; the second shows only the empty Seoul Forest path for the no-portrait forest route. The home no-face route retains its existing window-cup presentation.
+- Both selected files are exact `1672×941 RGB` originals and pass hand/device perspective, coherent night lighting, central mobile-safe framing, lower dialogue-safe spacing, and portrait/non-portrait branch separation.
+- Presentation data, audit evidence, and focused assertions now report `10 ready-new / 1 pending`. PNG checks, syntax, `git diff --check`, and all DAY 13 V3/V1 tests pass (`10 PASS / 0 FAIL`). No user or existing asset was overwritten.
+- Next: refetch Notion and resolve the final full-resolution transparent Ara sprite without lowering alpha or minimum-height requirements. DAY 14 remains untouched.
+
+## DAY 13 V3 IMAGE PRODUCTION 8/11 PARTIAL PASS (2026-08-30 00:49 KST)
+
+- Freshly refetched the complete 22,074-character authoritative Notion DAY 13 child body and separately extracted SCENE 21–23. Haeun cannot infer unreported Ara/contact details, and the warm desk-photo call remains conditional; parent Markdown attachments were ignored.
+- Built-in ImageGen produced `haeunDebriefPhonePov` and `haeunDeskPhotoPov`. The first shows the actually shared empty-park photo with blank chat shapes only; the second shows Haeun's ordinary desk photo with an unreadable memo, empty cup, and window light, without pre-creating flowers or hidden clues.
+- Accepted originals are `1672×941 RGB` and generator-native `1671×941 RGB`; the established non-resampled 16:9 one-pixel tolerance applies. Both pass hand/device perspective, coherent lighting, central mobile-safe framing, and lower dialogue-safe spacing.
+- Presentation data, audit evidence, and focused assertions now report `8 ready-new / 3 pending`. PNG checks, syntax, `git diff --check`, and all DAY 13 V3/V1 tests pass (`10 PASS / 0 FAIL`). No user or existing asset was overwritten.
+- Next: refetch Notion, produce the current-face and scenery ending CGs, then resolve Ara's transparent sprite without lowering alpha or minimum-height requirements. DAY 14 remains untouched.
+
+## DAY 13 V3 IMAGE PRODUCTION 6/11 PARTIAL PASS (2026-08-30 00:42 KST)
+
+- Freshly refetched the complete authoritative Notion DAY 13 child body and separately extracted SCENE 14–19 before production. Portrait recheck requires prior consent, and one-file transfer remains distinct from publication permission or ongoing contact; parent Markdown attachments were ignored.
+- Built-in ImageGen produced `portraitReviewPov` and `photoTransferConsentPov`. The review CG shows the consented closed-eye first portrait and restrained-smile second portrait on Ara's camera; the transfer CG shows one matching tree photo on camera and phone without contacts, social media, or publication UI.
+- Both selected files are generator-native `1671×941 RGB`. The established non-resampled 16:9 one-pixel tolerance applies, and original-resolution visual QA passes perspective, lighting, hand/camera anatomy, central mobile-safe framing, and lower dialogue-safe spacing.
+- Presentation data, audit evidence, and focused assertions now report `6 ready-new / 5 pending`. PNG checks, syntax, `git diff --check`, and all DAY 13 V3/V1 tests pass (`10 PASS / 0 FAIL`). No user or existing asset was overwritten.
+- Next: refetch Notion, create the Haeun debrief and desk-photo CGs, and retry Ara's transparent sprite without lowering alpha or minimum-height requirements. DAY 14 remains untouched.
+
+## DAY 13 V3 IMAGE PRODUCTION 4/11 PARTIAL PASS (2026-08-30 00:35 KST)
+
+- Freshly refetched and fully read the authoritative Notion DAY 13 child body before this batch. SCENE 01–24 and all implementation notes remained the top source; parent Markdown attachments were ignored.
+- Built-in ImageGen produced `missedBirdPov` and `portraitConsentPov`. The first shows an empty path both in the real park and phone preview after the bird has gone; the second exists only for the explicit-consent branch and keeps Ara at a respectful framing distance.
+- Accepted originals are `1671×941 RGB` and `1672×941 RGB`. The generator-native one-pixel width variance is recorded as a non-resampled 16:9 tolerance. Both pass perspective, lighting, hand/camera anatomy, central mobile-safe composition, and dialogue-safe lower-area visual QA.
+- A new pure-green Ara sprite and transparency extraction were rejected because the result retained a black matte/translucent halo and was below the minimum sprite height. No rejected candidate entered the project, and no user/existing asset was overwritten.
+- Presentation data, audit evidence, and focused assertions now report `4 ready-new / 7 pending`. PNG checks, syntax, `git diff --check`, and all DAY 13 V3/V1 tests pass (`10 PASS / 0 FAIL`).
+- Next: refetch Notion, retry a genuinely clean full-resolution transparent Ara sprite, and produce `portraitReviewPov` plus the next action-CG bundle. DAY 14 remains untouched.
+
+## DAY 13 V3 IMAGE PRODUCTION 2/11 PARTIAL PASS (2026-08-30 00:21 KST)
+
+- Freshly refetched and fully read the authoritative Notion DAY 13 child body before production. Its 24 scenes and implementation notes remained the top source; parent Markdown attachments were ignored.
+- Built-in ImageGen produced `imperfectPhotoPov` and `araFirstMeetingWide`. Both selected assets are original `1672×941 RGB` files and inherit DAY 2's integrated action, perspective, lighting, central mobile-safe composition, and dialogue-safe lower area.
+- Rejected the first meeting's initial result because its lens pointed toward the protagonist; the accepted correction points the camera clearly toward overhead leaves while Ara indicates a path with an open hand. Ara sprite attempts were also rejected: the first baked checkerboard into RGB and later RGBA extractions retained colored translucent aura/fringe.
+- Updated presentation data, the asset audit, and focused assertions to `2 ready-new / 9 pending`. PNG binary checks plus all DAY 13 V3/V1 tests pass (`10 PASS / 0 FAIL`). No user or existing asset was overwritten.
+- Next: refetch Notion, regenerate a genuinely clean transparent Ara sprite, and continue with `missedBirdPov` plus the next action-CG bundle. DAY 14 remains untouched.
+
+## DAY 13 V3 PRESENTATION / AUDIO / ASSET AUDIT PASS (2026-08-30 00:03 KST)
+
+- Freshly refetched and fully read the authoritative Notion DAY 13 child body immediately before this gate, including SCENE 01–24 and implementation notes. The child body outranked prior plans, scenarios, and code; parent Markdown attachments were ignored.
+- Added `src/day13-v3-presentation-data.mjs` with presentation contracts for all 24 scenes: backgrounds, character visibility, action CG/POV requirements, BGM/SFX, and DAY 2-derived desktop/mobile safe areas. Seven existing station, forest, cafe, and home backgrounds are approved for reuse.
+- Existing individual Ara art is reference-only because it is low resolution and has an opaque background. Eleven new production assets are required: Ara's transparent sprite, imperfect-photo POV, first-meeting wide CG, missed-bird/portrait-consent/portrait-review/photo-transfer POVs, Haeun debrief and desk-photo POVs, and separate present-face/scenery ending CGs.
+- Added `docs/day13/DAY13_V3_ASSET_PRESENTATION_AUDIO_AUDIT.md` and a focused audit test. The audit records DAY 2 comparison, 24-scene direction, audio transitions, safe-area rules, and non-destructive asset handling. Removed the nonexistent `SFX_CHAIR_MOVE` reference so only registered cues remain.
+- Bundled-Node syntax and all DAY 13 V3/V1 tests pass (`10 PASS / 0 FAIL`). Next: refetch Notion, then produce and visually verify the eleven required assets at original resolution. DAY 14 remains untouched.
+
+## DAY 13 V3 PLAYABLE SCENE 13–24 PASS (2026-08-30 00:00 KST)
+
+- Freshly refetched the complete authoritative Notion DAY 13 child body immediately before this gate and re-read ACT 3–4, SCENE 13–24, plus all implementation notes. The child body outranked prior plans and code; parent Markdown attachments were ignored.
+- Added `src/day13-v3-playable-script-13-24.mjs` with the complete portrait-consent, current-self introduction, Haeun lunch callback, bounded Ara continuation, relationship description, transfer/public-permission separation, Haeun debrief, space/mismatch, desk-photo warmth, flower-plan, and present-face ending routes.
+- No-meet/early-exit paths omit choices 8, 9, and 12 where required and never create Ara data. Portrait refusal forbids covert capture, Haeun never infers unreported contact, and uncomfortable routes suppress the warm photo call and Flora Cafe invitation.
+- Added focused route/source-marker tests. Bundled-Node syntax and all nine DAY 13 V3/V1 tests pass (`9 PASS / 0 FAIL`).
+- Next: refetch Notion, then build the DAY 13 V3 presentation/audio contract and complete the asset audit. DAY 14 remains untouched.
+
+## DAY 13 V3 PLAYABLE SCENE 01–12 PASS (2026-08-29 23:52 KST)
+
+- Freshly refetched the complete Notion DAY 13 child body and separately re-read SCENE 01–12 before implementation; parent Markdown attachments were ignored.
+- Added `src/day13-v3-playable-script-01-12.mjs`: morning camera play and Haeun messages, route selection, preserved work/Seojin state, actual Seoul Forest/neighborhood/home photo actions, Ara's consent-aware introduction, choices 1–5, the missed bird, rest/early exit, bench reunion, and travel-photographer conversation.
+- Ara and choice 3 exist only on the actual Seoul Forest route. Neighborhood/home paths omit her and use the manuscript's solo variants; early exit blocks the reunion and later Ara conversation.
+- Added route/choice/source-marker tests. Both V3 tests and six V1 legacy tests pass (`8 PASS / 0 FAIL`), with syntax validation also PASS.
+- Next: refetch Notion, then implement the complete SCENE 13–24 portrait/self-introduction/lunch/relationship-description/photo-contact/Haeun-debrief/ending script. DAY 14 remains untouched.
+
+## DAY 13 V3 CHAPTER CONTRACT / CAMPAIGN DATA PASS (2026-08-29 23:46 KST)
+
+- Freshly refetched and fully read the authoritative Notion DAY 13 child body, including all 24 scenes, 12 choices, the SCENE 17–19 lunch/relationship-description/photo-transfer conditions, and implementation notes. Parent Markdown attachments were ignored.
+- Added `src/day13-v3-campaign-data.mjs` with 24 scenes, twelve three-strategy choices, actual-Seoul-Forest/no-meet/early-exit route contracts, portrait consent, transfer-versus-public-permission separation, disclosure mismatch, DAY 22 callbacks, and 40 V3 save keys.
+- Added `docs/day13/DAY13_V3_CHAPTER_CONTRACT.md` and `tests/day13-v3-campaign-data.test.mjs`. Voice, knowledge, reveal budget, emotional curve, route conditions, save scope, and V1 legacy preservation are explicit.
+- Syntax and all seven DAY 13 V3/V1 focused tests pass (`7 PASS / 0 FAIL`). Existing household-budget V1 fields remain unchanged.
+- Next: refetch Notion, then implement the complete playable SCENE 01–12 script for Seoul Forest, neighborhood, home, and early-exit paths. DAY 14 remains untouched.
+
+## DAY 13 V3 NOTION SOURCE LOCK / IMPLEMENTATION GAP AUDIT PASS (2026-08-29 23:44 KST)
+
+- Freshly and fully read the current Notion child page `DAY 13 — 모르는 사람에게는 | SCENARIO V3`: ACT 1–4, SCENE 01–24, choices 1–12, and all implementation notes. It is the top authority; parent-page Markdown attachments were ignored.
+- The current eight-scene household-budget DAY 13 V1 is superseded for new play. Its existing save fields remain a legacy route; V3 will use separate state and compatibility routing rather than migration or deletion.
+- Audited the real Seongsu station, Seoul Forest running course, protein cafe, Ara profile, and photo/contact systems. Locked conditional Ara appearance, early exit, portrait consent, relationship disclosure, Haeun report, contact scope, and DAY 22 callback requirements.
+- Added `docs/day13/DAY13_NOTION_SOURCE_LOCK_V3.md` and `docs/day13/DAY13_V3_IMPLEMENTATION_GAP_CONTENT_COVERAGE_AUDIT.md`; preliminary narrative checklist is 10/10 PASS.
+- All six existing DAY 13 V1 focused tests pass (`6 PASS / 0 FAIL`), establishing a legacy compatibility baseline rather than validating V1 against the new source.
+- Next: refetch the Notion child body, then build the DAY 13 V3 chapter contract/campaign data and focused tests. DAY 14 remains untouched.
+
 ## DAY 12 V3 PUBLIC RELEASE COMPLETE (2026-08-29 23:38 KST)
 
 - Atomically fast-forwarded verified commit `0609787c01cc8b5afab6c50ce1cfa11e401a04c9` to both `origin/feature/today-day-one-mvp` and `origin/gh-pages` without force or rebase; both remote refs resolve to that exact SHA.
@@ -2448,3 +2587,9 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - 보라색 턱선 단발·보라색 눈·하은의 성인 체형과 따뜻한 표정, 회색에 가까운 남색 셔츠·짙은 바지·흰 신발을 확인했다. 체크무늬 픽셀 합성·불투명 사각형·머리/손/양발의 시각적 절단이 없다.
 - `src/day9-v3-presentation-data.mjs`에서 S04를 `ready-new`로 전환하고 남은 `needs-production`을 0으로 만들었다. 집중 테스트는 `tests/day9-v3-presentation-audit.test.mjs`, `tests/day9-v3-runtime.test.mjs` 3/3 PASS다.
 - DAY 9 신규 이미지 원본 관문은 9/9 PASS다. 다음 관문은 실제 브라우저 데스크톱·모바일 이미지 안전 영역 QA이며 DAY 10은 시작하지 않는다.
+## 2026-08-30 01:47 KST — DAY 13 V3 transparent extraction attempt 3 deferred
+
+- Freshly fetched the complete Notion DAY 13 child page `DAY 13 — 모르는 사람에게는 | SCENARIO V3` before work and re-confirmed all 24 scenes, 12 choices, capture consent, transfer consent, and publication boundaries as the highest-priority source. The parent Markdown attachment was ignored.
+- Ran a single-change built-in ImageGen background extraction against the previously approved full-body Ara candidate. The result retained the target `887×1774` framing but was again `Format24bppRgb`, with fully opaque checkerboard pixels (`A=255`) at the corners.
+- Rejected the false-transparency result without copying it into the project or modifying any existing/user asset. The DAY 13 image gate remains `10/11 PARTIAL PASS`.
+- Native RGBA output remains unavailable in the current generation path, so the final sprite verification is deferred. No verification commit, origin update, gh-pages deployment, or DAY 14 work was started.

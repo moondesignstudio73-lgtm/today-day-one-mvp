@@ -1,0 +1,24 @@
+import assert from "node:assert/strict";
+import {DAY13_V3_CHAPTER_CONTRACT,DAY13_V3_CHOICES,DAY13_V3_KNOWLEDGE_LEDGER,DAY13_V3_ROUTE_CONTRACT,DAY13_V3_SAVE_KEYS,DAY13_V3_SCENARIO_ID,DAY13_V3_SCENES,DAY13_V3_VOICE_PROFILES,validateDay13V3CampaignData} from "../src/day13-v3-campaign-data.mjs";
+
+assert.equal(validateDay13V3CampaignData(),true);
+assert.equal(DAY13_V3_SCENARIO_ID,"m30-day13-to-someone-who-does-not-know-v3");
+assert.deepEqual(DAY13_V3_SCENES.map(item=>item.number),Array.from({length:24},(_,index)=>index+1));
+assert.equal(DAY13_V3_CHOICES.length,12);
+assert.equal(DAY13_V3_CHOICES[2].conditional,"outingRoute === SEOUL_FOREST && araMet");
+assert.match(DAY13_V3_CHOICES[7].conditional,/!araEarlyExit/);
+assert.match(DAY13_V3_CHOICES[8].conditional,/araSawProtagonistSmileAtMessage/);
+assert.match(DAY13_V3_CHOICES[11].conditional,/haeunReport === TELL_ARA/);
+assert.equal(DAY13_V3_ROUTE_CONTRACT.noAra,"outingRoute !== SEOUL_FOREST");
+assert.match(DAY13_V3_ROUTE_CONTRACT.portraitDeclineBoundary,/no covert portrait/);
+assert.equal(DAY13_V3_ROUTE_CONTRACT.day22Callback,"ARA_MET | ARA_EARLY_EXIT | NO_ARA");
+assert.ok(DAY13_V3_CHAPTER_CONTRACT.informationBudget.mustNotReveal.includes("새 만남을 외도로 자동 확정"));
+assert.ok(DAY13_V3_KNOWLEDGE_LEDGER.ara.doesNotKnow.includes("윤서진 관련 상태"));
+assert.match(DAY13_V3_VOICE_PROFILES.protagonist.reasoning,/관찰→가능성→확인→판단→행동/);
+for(const key of ["day13V3AraMet","day13V3AraEarlyExit","day13V3PortraitConsent","day13V3HaeunIntroductionToAra","day13V3HaeunDisclosureMismatch","day13V3Day22Callback","day13V3PreservedSeojinAffection","day13V3Choice12"])assert.ok(DAY13_V3_SAVE_KEYS.includes(key),key);
+const ids=new Set(DAY13_V3_CHOICES.flatMap(item=>item.options.map(entry=>entry.id)));
+for(const id of ["day13_go_seoul_forest","day13_leave_now","day13_stay_photographer","day13_work_relearning","day13_name_girlfriend","day13_minimize_message","day13_exchange_photos","day13_tell_ara_meeting","day13_admit_personal_interest"])assert.ok(ids.has(id),id);
+for(const entry of DAY13_V3_CHOICES[9].options)assert.equal(entry.effects.publicPostPermission,false);
+const serialized=JSON.stringify({contract:DAY13_V3_CHAPTER_CONTRACT,voices:DAY13_V3_VOICE_PROFILES,ledger:DAY13_V3_KNOWLEDGE_LEDGER,choices:DAY13_V3_CHOICES});
+for(const forbidden of ["가짜 하은","사고 범인","아라가 운명","윤서진 관심 삭제","DAY14에 꽃 선물"])assert.equal(serialized.includes(forbidden),false,forbidden);
+console.log("day13-v3-campaign-data.test: all assertions passed");

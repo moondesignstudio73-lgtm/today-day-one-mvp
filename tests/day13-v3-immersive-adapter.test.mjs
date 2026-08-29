@@ -1,0 +1,22 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {applyDay13V3Choice,beginDay13V3,getNextDay13V3Choice} from "../src/day13-v3-runtime.mjs";
+import {getDay13V3ChoiceContinuation,getDay13V3ImmersiveScene,getDay13V3ImmersiveSegment,getDay13V3ResumePresentation,validateDay13V3ImmersiveAdapter} from "../src/day13-v3-immersive-adapter.mjs";
+
+const makeState=()=>({affection:40,trust:40,storyFlags:{day12V3Completed:true,day13OutsideViewPlanPending:true},scenario:{enabled:true,seojinAffection:7,seojinStatusInterest:13,clues:[],unlockedActions:[],followUpHooks:[]}});
+const state=makeState();beginDay13V3(state,{relationshipBand:"HIGH"});assert.equal(validateDay13V3ImmersiveAdapter(state),true);assert.equal(getDay13V3ImmersiveSegment(state).steps.at(-1).type,"choice");
+const route=applyDay13V3Choice(state,"day13_go_seoul_forest");assert.ok(getDay13V3ChoiceContinuation(state,route.choiceNumber).length>0);
+while(getNextDay13V3Choice(state))applyDay13V3Choice(state,getNextDay13V3Choice(state).options[0].id);
+const ending=getDay13V3ImmersiveSegment(state,{startScene:24});assert.equal(ending.steps.at(-1).type,"sceneEnd");assert.equal(ending.steps.at(-1).complete,true);assert.match(getDay13V3ImmersiveScene(state,24).eventCgUrl,/ending-current-face-phone-pov/);
+assert.equal(getDay13V3ResumePresentation(state).sceneNumber,24);
+const noAra=makeState();beginDay13V3(noAra);applyDay13V3Choice(noAra,"day13_photo_at_home");applyDay13V3Choice(noAra,"day13_photo_for_self");assert.equal(getDay13V3ImmersiveScene(noAra,6).omitted,true);assert.equal(getDay13V3ImmersiveScene(noAra,5).eventCgUrl,null);assert.match(getDay13V3ImmersiveScene(noAra,24).eventCgUrl,/ending-scenery-phone-pov/);
+const araEnter=getDay13V3ImmersiveScene(state,6).steps.find(step=>step.type==="characterEnter");
+assert.ok(araEnter,"ready DAY 13 Ara sprite enters the first-meeting scene");
+assert.match(araEnter.assetUrl,/ara-day13-photo-walk-casual-2d-v1\.png$/);
+assert.equal(getDay13V3ImmersiveScene(noAra,6).steps.some(step=>step.type==="characterEnter"),false,"omitted Ara route never enters the character");
+const gameSource=readFileSync(new URL("../game.js",import.meta.url),"utf8");
+for(const marker of ["getDay13V3Compatibility","beginDay13V3","getDay13V3ImmersiveSegment","getDay13V3ChoiceContinuation","day13V3Completed"])assert.ok(gameSource.includes(marker),marker);
+assert.match(gameSource,/lockedDay13\?\{\.\.\.presentation,\.\.\.day13Resume,backgroundUrl:day13V3\?day13Resume\.backgroundUrl:getBackgroundAsset\(day13Resume\.backgroundId\)\}/);
+assert.match(gameSource,/if\(lockedDay13\)\{if\(day13V3\)\{const result=applyDay13V3Choice/);
+assert.match(gameSource,/LOCKED_DAY13_SCENE_ID&&getDay13V3Compatibility\(state\)\.mode==="V1_LEGACY"/);
+console.log("day13-v3-immersive-adapter.test: all assertions passed");
