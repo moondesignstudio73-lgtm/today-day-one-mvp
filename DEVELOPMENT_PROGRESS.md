@@ -1,5 +1,100 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 10 V3 ORIGIN REFLECTION PASS (2026-08-29)
+
+- 원격 갱신 후 기능 브랜치의 원격 선행 변경이 0건임을 확인하고 DAY 10 V3 검증 커밋을 `origin/feature/today-day-one-mvp`에 반영했다.
+- DAY 1 사용자 미추적 원본 두 장은 스테이징·수정하지 않고 보존했다.
+- 다음 작업은 동일 검증 SHA의 gh-pages 배포·공개 확인이며 DAY 11은 수정하지 않는다.
+
+## DAY 10 V3 VERIFIED COMMIT PASS (2026-08-29)
+
+- 전체 164/164 회귀와 실제 브라우저 QA를 통과한 DAY 10 V3 변경 19개 파일을 `Rebuild DAY 10 dinner chapter` 단일 커밋으로 고정했다.
+- DAY 1 사용자 미추적 원본 두 장과 `.codex-development-lock.json`은 제외했다.
+- 다음 작업은 동일 검증 커밋의 origin 반영이며 DAY 11은 수정하지 않는다.
+
+## DAY 10 V3 FULL REGRESSION / CHANGE AUDIT PASS (2026-08-29)
+
+- 번들 Node로 프로젝트 `tests/*.test.mjs` 164개를 순차 실행해 164/164 PASS했다.
+- `git diff --check` PASS, 기능 브랜치와 origin 기준점 0/0, DAY 11 신규 구현 0건을 확인했다.
+- 사용자 DAY 1 미추적 원본 두 장은 보존했으며 커밋 대상에서 제외한다.
+- 다음 작업은 DAY 10 V3 검증 파일만 스테이징해 단일 커밋을 만들고 origin에 반영하는 것이다.
+
+## DAY 10 V3 ACTUAL BROWSER QA PASS (2026-08-29)
+
+- 실제 제품 UI에서 11개 본 선택+갈등 후속 선택, 선택 1 새로고침 복원, V3 자유행동, `SAVE · DAY 11` 인접 도달을 PASS했다.
+- 1280×720 및 390×844에서 수평 오버플로 0, 모바일 선택 레이어 좌우 12px 안전 여백, console error/warning 0을 확인했다.
+- 브라우저에서 V3 직접 배경이 범용 배경으로 덮이는 결함을 발견해 `day10Resume.backgroundUrl` 보존 분기를 추가하고 실제 DAY 2 계승 배경 URL로 재검증했다.
+- 변경 파일: `game.js`, `tests/day10-v3-browser-entry.html`, `tests/day10-v3-game-integration.test.mjs`, 두 진행 문서, DAY 10 감사/소스 잠금 문서.
+- 집중 구문/컨트롤러/어댑터/상태/자유행동/V1 저장/DAY 9 인접 회귀 6종 PASS. 다음은 전체 회귀·변경 감사·검증 커밋이며 DAY 11은 수정하지 않는다.
+
+## DAY 10 V3 BROWSER QA HARNESS CHECK (2026-08-29)
+
+- 로컬 QA 서버 `127.0.0.1:4173`의 HTTP 200 응답과 인앱 브라우저 런타임·로컬 웹·뷰포트 검증 절차를 확인했다.
+- 새 QA 탭의 webview 연결이 두 차례 시간 초과되어 실제 화면 완주·재개·모바일 검증은 미완료다. 코드와 DAY 11 콘텐츠는 수정하지 않았다.
+- 다음 작업은 인앱 브라우저 연결 재시도 후 DAY 10 V3 11+1 선택 완주, 새로고침 복원, 데스크톱·390×844 모바일 안전 영역 QA다.
+
+## DAY 10 V3 FREE ACTION INTEGRATION PASS (2026-08-29)
+
+- `DAY10_V3_HOME_ACTIONS` 5종과 V3 전용 안내를 추가해 기존 직장/서진/세 시간 근무 후속 노출을 차단했다.
+- 시간 합의, 현재 요리 시도, 하은 독립 일정, 하은·소라 이중 동의, 휴식을 관계 사건의 후속 행동으로 저장하며 기존 V1 자유행동은 V1 저장에서 유지한다.
+- 변경 파일: `src/story-free-action-manager.mjs`, `game.js`, `tests/story-free-action-day10-v3.test.mjs`, 두 진행 문서, 소스 잠금 기록.
+- 검증: V3/V1 자유행동·컨트롤러·immersive 4/4 PASS. 다음은 실제 브라우저 전체 완주·새로고침·모바일 QA이며 DAY 11은 수정하지 않는다.
+
+## DAY 10 V3 GAME CONTROLLER INTEGRATION PASS (2026-08-29)
+
+- 신규 DAY 10을 `NOTION_V3`, 기존 8 Scene 직장 저장을 `V1_LEGACY`로 분리하고 DAY 9 저녁/거리/의상/피팅/손잡기 콜백을 시작 상태에 연결했다.
+- `game.js`에 V3 presentation·immersive sequence·11개 본 선택·SCENE 16 후속 선택·즉시 반응·저장 체크포인트·완료 판정을 연결했다. 선택 전 공통 대사는 continuation에서 반복하지 않는다.
+- 변경 파일: `game.js`, `src/day10-v3-immersive-adapter.mjs`, `tests/day10-v3-game-integration.test.mjs`, `tests/day10-v3-immersive-adapter.test.mjs`, 두 진행 문서, DAY 10 소스 잠금 기록.
+- 검증: `node --check game.js`, V3 컨트롤러/어댑터/상태, 기존 V1 저장, DAY 9 컨트롤러 회귀 5/5 PASS. 다음은 DAY 10 V3 전용 자유행동과 실제 브라우저 완주/재개 QA이며 DAY 11은 수정하지 않는다.
+
+## DAY 10 V3 PRESENTATION / IMMERSIVE SCENE RUNTIME PASS (2026-08-29)
+
+- `src/day10-v3-presentation-data.mjs`에 24 Scene 배경·하은 스프라이트·조건부 식사 CG·전환·카메라·BGM·SFX·16:9/UI 안전 영역 계약을 추가했다.
+- `src/day10-v3-immersive-adapter.mjs`는 전반/후반 원문을 통합하고 11개 본 선택 및 SCENE 16 후속 선택에서 재생을 멈춘다. JSON 복원 체크포인트, 갈등 중도 귀가 시 인물/CG 제거, DAY 11 소라 약속 훅을 검증했다.
+- 변경 파일: `src/day10-v3-presentation-data.mjs`, `src/day10-v3-immersive-adapter.mjs`, `tests/day10-v3-immersive-adapter.test.mjs`, 두 진행 문서, DAY 10 소스 잠금 기록.
+- 검증: 신규 어댑터, 후반 원문, V3 상태 집중 테스트 3/3 PASS. 다음은 `game.js` 신규 V3/기존 V1 경계와 실제 캠페인 선택·완주 연결이며 DAY 11은 수정하지 않는다.
+
+## DAY 10 V3 PLAYABLE SCRIPT SCENE 13~24 PASS (2026-08-29)
+
+- 최신 Notion 원고를 재조회한 뒤 SCENE 13~24 원문 8,772자를 보존하고 252개 플레이 단계·40개 조건 분기로 구현했다.
+- 공유/각자 식사, 제시간/사전 합의 변경/실제 대기 갈등, SCENE 16 후속 선택과 중도 귀가, 동석/혼자 식사, 감정 진술, 정리/휴식, 소라의 독립 일정, 조건부 초대와 작별을 서로 배타적으로 재생한다.
+- 하은이 먼저 귀가한 경로에서 이후 식탁 대화를 자동 재생하지 않는다. 준비 완료 경로의 정확한 진행 보고를 시간 변경으로 오판하던 상태식도 실제 미완성 조건으로 제한했다.
+- 전·후반 V3/상태 집중과 기존 DAY 10 V1·DAY 9 V3 회귀를 합쳐 8/8 PASS. 다음은 24 Scene 프레젠테이션·장면 런타임·완주/저장 재개 연결이며 DAY 11은 수정하지 않는다.
+
+## DAY 10 V3 PLAYABLE SCRIPT SCENE 01~12 PASS (2026-08-29)
+
+- 최신 Notion 하위 페이지를 다시 조회한 뒤 SCENE 01~12 전체 원문을 `sourceMarkdown`으로 보존하고 메시지·대사·행동·선택 반응 데이터로 변환했다.
+- DAY 9 저녁 콜백 3종, 하은의 거절/각자 식사, 지훈의 과거 요리 농담, 메뉴/장보기/접시 지출, 비긴급 민호 폴더, 준비 보고, 조리·포장·재조리, 실제 완성 시각 전달을 원고 순서대로 유지한다.
+- 선택 1~7의 21개 행동 옵션에 즉시 반응을 모두 연결했고 SCENE 07·09·11에서 합의·메뉴 선택을 재호출한다. 원문 핵심 문장·조건 분기·금지 공개 집중 검증과 기존 V1 회귀를 합쳐 7/7 PASS했다.
+- 다음은 SCENE 13~24 플레이어블 원문, 갈등 후속 선택, 대면/중도 귀가/소라/작별 조건 분기다. DAY 11은 수정하지 않는다.
+
+## DAY 10 V3 CAMPAIGN DATA / SAVE-STATE FOUNDATION PASS (2026-08-29)
+
+- 코드 수정 직전 최신 Notion DAY 10 하위 페이지를 재조회해 24 Scene·11개 주요 선택+SCENE 16 후속 선택·세부 연결 규칙의 변경 없음을 확인했다.
+- `src/day10-v3-campaign-data.mjs`에 24 Scene, 33개 행동 옵션, 갈등 후속 행동 2개를 원고 순서대로 고정했다. `src/day10-v3-runtime.mjs`는 신규 `NOTION_V3`와 기존 직장 V1 저장을 독립 복원한다.
+- 공유 저녁 거절 강제 금지, 각자 식사와 사전 변경의 비갈등 처리, 실제 미완성+허위 안심+실제 대기의 갈등 조건, 지출 잔액, 하은 중도 귀가, 소라 이중 동의, DAY 9 셔츠/피팅/손잡기 콜백을 독립 플래그로 구현했다.
+- 신규 집중 테스트와 기존 DAY 10 V1 시나리오·런타임·프레젠테이션·자유행동, DAY 9 V3 런타임 회귀 6/6 PASS. 다음은 SCENE 01~12 플레이어블 원문과 조건부 분기이며 DAY 11은 수정하지 않는다.
+
+## DAY 10 NOTION V3 SOURCE LOCK / IMPLEMENTATION GAP PASS (2026-08-29)
+
+- 최신 `AI해커톤` 하위 페이지 `DAY 10 — 기다린 사람의 저녁 | SCENARIO V3` 본문 전체(ACT 1~4, SCENE 01~24, 11개 주요 선택+후속 선택, 구현 노트, DAY 7~9 대조)를 직접 읽었다. 상위/하위 Markdown 첨부는 무시했다.
+- 신규 DAY 10은 요리·장보기·포장·휴식·연락·지출을 하은의 시간·배고픔·거절·독립 친구 일정과 결합한다. 기존 8 Scene 직장 V1은 신규 시작에서 교체하되 기존 저장 복원용으로 보존한다.
+- 구현 격차, 실제 지도/프리모드 통합, 최근 3 DAY 반복, 선택/지식/관계/저장 계약과 예비 10문항 QA를 문서화했다.
+- 다음은 V3 24 Scene·11선택+후속선택 데이터, DAY 9 상태 콜백, V1/V3 저장 버전 라우팅과 집중 테스트다. DAY 11은 수정하지 않는다.
+
+## DAY 9 V3 QUALITY REBUILD / PUBLIC DEPLOY COMPLETE (2026-08-29)
+
+- 검증 SHA `b428188921d71eba590e17a549983658833c9dcd`이 기능 브랜치와 `gh-pages`에 동일하게 반영됐다. force push·rebase는 사용하지 않았다.
+- 공개 게임을 실제 브라우저에서 열어 정상 타이틀 렌더, 이미지 로드, 1280×720 수평 오버플로 0을 확인했다. 캐시 우회 공개 메인 HTML, DAY 9 immersive·프레젠테이션 모듈, 하은 PNG도 모두 HTTP 200이다.
+- DAY 9 V3 11선택·저장 재개·V1 호환·자유행동·DAY 10 인접 도달·전체 158/158·동일 SHA 배포·공개 확인을 COMPLETE 처리한다.
+- 현재 품질 재감사 대상은 DAY 10이다. 다음은 최신 Notion DAY 10 하위 페이지 본문 재조회와 소스 잠금이며, 확인 전 DAY 10 코드는 수정하지 않는다.
+
+## DAY 9 V3 ORIGIN PUSH PASS (2026-08-29)
+
+- 검증 커밋 `b428188921d71eba590e17a549983658833c9dcd`을 `origin/feature/today-day-one-mvp`에 fast-forward push했다. force push와 rebase는 사용하지 않았다.
+- 보호 규칙의 승인된 직접 push 우회 후 `git ls-remote`로 원격 브랜치와 검증 SHA의 완전 일치를 확인했다.
+- 다음은 `b428188` 동일 SHA의 gh-pages 배포와 공개 브라우저 확인이다. DAY 10 콘텐츠는 시작하거나 수정하지 않는다.
+
 ## DAY 9 V3 FULL REGRESSION 158/158 / COMMIT GATE PASS (2026-08-29)
 
 - 전체 `tests/*.test.mjs` 158개를 순차 실행해 158/158 PASS했다. DAY 9 V3·V1 저장 호환, DAY 1~3, 자유 연애 모드, simulation, 인접·후속 DAY 회귀를 모두 포함한다.

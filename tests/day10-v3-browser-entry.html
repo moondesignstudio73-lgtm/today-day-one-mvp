@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DAY 10 V3 Actual UI QA Entry</title>
+  <style>body{font:16px system-ui;background:#151322;color:#fff;display:grid;min-height:100vh;place-items:center;margin:0}main{max-width:620px;padding:28px;background:#242033;border-radius:18px}button{padding:14px 20px;border:0;border-radius:10px;background:#df5f91;color:#fff;font-weight:800}</style>
+</head>
+<body><main><h1>DAY 10 V3 실제 UI QA</h1><p>DAY 9 완료 직후의 캠페인 저장을 만들고 제품 진입점으로 이동합니다.</p><button id="prepare" type="button">DAY 10 저장 준비 후 게임 열기</button><p id="status" role="status"></p></main>
+<script type="module">
+import {createInitialState} from "../src/game-core.mjs";
+import {createGirlfriendFromProfile} from "../src/girlfriend-manager.mjs";
+import {SaveManager} from "../src/save-manager.mjs";
+import {GAME_MODES} from "../src/scenario-state.mjs";
+
+document.querySelector("#prepare").addEventListener("click",()=>{
+  const state=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});
+  state.day=10;
+  state.phase=0;
+  state.affection=720;
+  state.trust=620;
+  state.pendingStoryId="m30-day10-three-hour-work-rhythm";
+  state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};
+  state.storyHistory.push({day:9,sceneId:"m30-day9-second-office-adaptation",choiceId:"checkout9_each_buys_own",response:"DAY 9 V3 QA 완료"});
+  Object.assign(state.storyFlags,{day7V3HandContactEstablished:true,day9V3Complete:true,day9RuntimeComplete:true,day9V3GreenShirtState:"GIFT_ACCEPTED",day9V3PlayerClothingState:"TRIED_GREEN",day9V3DistanceRemaining:false,day9V3UnresolvedKnownConflict:false});
+  SaveManager.save(state);
+  document.querySelector("#status").textContent="저장 준비 완료";
+  location.href="../index.html?qa=day10-v3";
+});
+</script></body></html>

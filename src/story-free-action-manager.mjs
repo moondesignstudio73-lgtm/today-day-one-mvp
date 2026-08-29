@@ -216,6 +216,14 @@ export const DAY10_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"rest-after-three-hour-work",icon:"☾",title:"세 칸 기록을 덮고 쉰다",description:"첫 세 시간 근무를 더 평가하지 않고 회복을 우선한다.",effects:{energy:16,fatigue:-13,stress:-8,health:4},scenarioEffects:{},flag:"day10_recovery_rest",summary:"세 시간 근무 뒤 추가 판단을 멈추고 충분히 쉬었다."})
 ]);
 
+export const DAY10_V3_HOME_ACTIONS=Object.freeze([
+  Object.freeze({id:"save-day10-meal-timing",icon:"◷",title:"저녁 약속의 시간을 기록한다",description:"맛과 완성도보다 먼저 말했어야 할 도착 시각·배고픔·변경 합의만 현재 기록으로 남긴다.",effects:{trust:5,confidence:4,energy:-2,stress:-2},scenarioEffects:{haeunTrust:2},flag:"day10_v3_free_meal_timing",summary:"저녁의 성공 여부와 별개로 시간 약속과 변경 합의를 현재 기록으로 남겼다."}),
+  Object.freeze({id:"save-day10-cooking-attempt",icon:"▣",title:"오늘 만든 음식의 과정을 적는다",description:"과거에 잘했던 요리의 증거로 만들지 않고 오늘 고른 메뉴·실패·마무리한 방법만 적는다.",effects:{confidence:5,energy:-2,stress:-1},scenarioEffects:{investigation:1},flag:"day10_v3_free_cooking_attempt",summary:"오늘 직접 만든 과정과 아직 모르는 과거의 요리 실력을 분리했다."}),
+  Object.freeze({id:"record-day10-haeun-schedule",icon:"♥",title:"하은의 독립 일정을 존중해 남긴다",description:"저녁 초대와 하은의 외출·친구 약속은 별개라는 오늘의 경계를 기록한다.",effects:{affection:3,trust:5,confidence:3,energy:-2},scenarioEffects:{haeunTrust:2},flag:"day10_v3_free_haeun_schedule",summary:"함께 먹는 시간과 하은이 스스로 정한 일정을 같은 무게로 기록했다."}),
+  Object.freeze({id:"prepare-day11-sora-consent",icon:"◇",title:"소라에게 인사할 조건을 메모한다",description:"하은의 동의만으로 약속을 확정하지 않고 소라가 직접 괜찮다고 할 때만 인사한다.",effects:{trust:4,confidence:4,energy:-1},scenarioEffects:{haeunTrust:1},flag:"day10_v3_free_sora_consent",summary:"DAY 11 만남은 하은과 소라 두 사람의 동의가 있어야 한다고 메모했다."}),
+  Object.freeze({id:"rest-after-day10-dinner",icon:"☾",title:"식탁을 더 평가하지 않고 쉰다",description:"잘한 점과 어긋난 점을 다시 판정하지 않고 오늘 저녁을 끝낸다.",effects:{energy:16,fatigue:-13,stress:-9,health:4},scenarioEffects:{},flag:"day10_v3_recovery_rest",summary:"저녁의 의미를 더 늘리지 않고 충분히 쉬었다."})
+]);
+
 export const DAY11_HOME_ACTIONS=Object.freeze([
   Object.freeze({id:"save-current-week-anchor",icon:"▦",title:"한 주의 기준 일정을 저장한다",description:"회복·근무·공동 약속 중 오늘 선택한 첫 기준과 출처를 남긴다.",effects:{confidence:5,health:2,energy:-2,stress:-2},scenarioEffects:{investigation:2},flag:"day11_free_save_anchor",requiresAction:"current-week-anchor",summary:"출처와 소유권이 있는 한 주의 첫 기준을 저장했다."}),
   Object.freeze({id:"record-schedule-conflict-rule",icon:"⇄",title:"일정 충돌 규칙을 기록한다",description:"겹친 일정의 이동·축소·유지 권한과 우선순위를 한 문장으로 남긴다.",effects:{confidence:5,energy:-2,stress:-2},scenarioEffects:{},flag:"day11_free_conflict_rule",requiresAction:"schedule-conflict-rule",summary:"일정이 겹칠 때 선택권을 보존하는 공통 규칙을 기록했다."}),
@@ -387,7 +395,7 @@ export function getStoryFreeActionWindow(day=1,id=""){
   return (STORY_FREE_ACTION_WINDOWS[day]??[]).find(window=>!id||window.id===id)??null;
 }
 
-export function getStoryFreeActions(state){const actions=state.day===8&&state.storyFlags?.day8V3Complete===true?DAY8_V3_HOME_ACTIONS:state.day===9&&state.storyFlags?.day9V3Complete===true?DAY9_V3_HOME_ACTIONS:(ACTIONS_BY_DAY[state.day]??[]);return actions.filter(action=>(!action.requiresFlag||state.storyFlags?.[action.requiresFlag])&&(!action.requiresAction||state.scenario?.unlockedActions?.includes(action.requiresAction)));}
+export function getStoryFreeActions(state){const actions=state.day===8&&state.storyFlags?.day8V3Complete===true?DAY8_V3_HOME_ACTIONS:state.day===9&&state.storyFlags?.day9V3Complete===true?DAY9_V3_HOME_ACTIONS:state.day===10&&state.storyFlags?.day10V3Complete===true?DAY10_V3_HOME_ACTIONS:(ACTIONS_BY_DAY[state.day]??[]);return actions.filter(action=>(!action.requiresFlag||state.storyFlags?.[action.requiresFlag])&&(!action.requiresAction||state.scenario?.unlockedActions?.includes(action.requiresAction)));}
 
 export function ensureStoryFeatureUnlocks(state){
   state.scenario??={};
@@ -450,5 +458,5 @@ export function completeStoryFreeAction(state){
 }
 
 export function validateStoryFreeActionData(){
-  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS,DAY17_HOME_ACTIONS,DAY18_HOME_ACTIONS,DAY19_HOME_ACTIONS,DAY20_HOME_ACTIONS,DAY21_OFFICE_ACTIONS,DAY22_HOME_ACTIONS,DAY23_HOME_ACTIONS,DAY24_HOME_ACTIONS,DAY25_HOME_ACTIONS,DAY26_HOME_ACTIONS,DAY27_HOME_ACTIONS,DAY28_HOME_ACTIONS,DAY29_HOME_ACTIONS,DAY30_HOME_ACTIONS],actions=[...groups.flat(),...DAY8_V3_HOME_ACTIONS,...DAY9_V3_HOME_ACTIONS];return Array.from({length:30},(_,i)=>i+1).every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&DAY8_V3_HOME_ACTIONS.length===5&&DAY9_V3_HOME_ACTIONS.length===5&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
+  const groups=[DAY1_HOSPITAL_ACTIONS,DAY2_HOME_ACTIONS,DAY3_DISCHARGE_ACTIONS,DAY4_HOME_ACTIONS,DAY5_OFFICE_ACTIONS,DAY6_HOME_ACTIONS,DAY7_HOME_ACTIONS,DAY8_HOME_ACTIONS,DAY9_HOME_ACTIONS,DAY10_HOME_ACTIONS,DAY11_HOME_ACTIONS,DAY12_HOME_ACTIONS,DAY13_HOME_ACTIONS,DAY14_HOME_ACTIONS,DAY15_CAFE_ACTIONS,DAY16_HOME_ACTIONS,DAY17_HOME_ACTIONS,DAY18_HOME_ACTIONS,DAY19_HOME_ACTIONS,DAY20_HOME_ACTIONS,DAY21_OFFICE_ACTIONS,DAY22_HOME_ACTIONS,DAY23_HOME_ACTIONS,DAY24_HOME_ACTIONS,DAY25_HOME_ACTIONS,DAY26_HOME_ACTIONS,DAY27_HOME_ACTIONS,DAY28_HOME_ACTIONS,DAY29_HOME_ACTIONS,DAY30_HOME_ACTIONS],actions=[...groups.flat(),...DAY8_V3_HOME_ACTIONS,...DAY9_V3_HOME_ACTIONS,...DAY10_V3_HOME_ACTIONS];return Array.from({length:30},(_,i)=>i+1).every(day=>STORY_FREE_ACTION_WINDOWS[day].length===1)&&groups.every(items=>items.length===5)&&DAY8_V3_HOME_ACTIONS.length===5&&DAY9_V3_HOME_ACTIONS.length===5&&DAY10_V3_HOME_ACTIONS.length===5&&new Set(actions.map(action=>`${action.id}`)).size===actions.length&&STORY_FEATURES.length===6;
 }
