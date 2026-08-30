@@ -1,5 +1,105 @@
 # DAY 5~30 순차 출시 진행표
 
+## 2026-08-31 02:40 KST — DAY 14 V4 실제 데스크톱/모바일 브라우저 QA PASS
+
+- 기존 브라우저 세션을 기다리지 않고 현재 작업 트리로 새 로컬 서버와 새 상태를 시작했다. 데스크톱은 꽃 외출→선물 구매→대면→하은 선제 손잡기, 모바일 390×844는 집→완전휴식→미대면→비접촉→무연락 경로를 실제로 플레이했고 두 경로 모두 DAY 15 첫 선택까지 도달했다.
+- 실제 브라우저에서 잘못된 `beginDay14V4` 모듈 import, 누락된 DAY 14 저장 재진입 라우터, 선택 직후 SCENE 08/17 CG 유실, `cgShow`의 `fit/objectPosition` 미적용을 발견해 코드와 집중 테스트를 교정했다. SCENE 08과 17은 이제 선택 직후 각각 한 번 렌더되고, CG는 1672×941 원본 비율을 유지한 `contain`과 `50% 42%`로 표시된다.
+- 데스크톱의 SCENE 04/07/08/10/15/17 및 꽃 책상, 모바일의 빈 책상과 선택 UI를 검사했다. 모바일 첫 선택층은 x=12, 폭 366 px로 390 px 뷰포트 안에 완전히 들어왔고, 두 대표 경로에서 콘솔 경고/오류 0, 수평 오버플로 0, 보이는 깨진 이미지 0을 확인했다. 완전휴식 경로는 나리·선물·대면·접촉·밤 메시지를 발명하지 않았다.
+- 증거는 `docs/day14/DAY14_V4_BROWSER_QA.md`에 기록했다. 테스트 전용 쿼리 부트스트랩을 제거한 뒤 구문, DAY 14 V4 계약/플레이 런타임/몰입 어댑터, DAY 13 V3 저장/어댑터, 기존 DAY 14 회귀/프레젠테이션, 전체 시뮬레이션을 다시 실행해 모두 PASS했다. 다음 관문은 최종 작업 트리 검토다. 아직 커밋·origin·동일 SHA 배포·공개 확인은 진행하지 않았고 DAY 15는 시작하지 않는다.
+
+## 2026-08-31 02:20 KST — DAY 14 V4 이미지 제작 8/8 / 정적 QA PASS
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문 23,093자를 새로 조회해 SCENE 01~22, 선택 1~10과 모든 대체 경로·내부 구현 메모를 완독했다. SCENE 18/20/22는 실제 구매한 자기 꽃·선물용 꽃만 방의 작은 병으로 돌아오며, 사진만·미구매·자금 부족 경로는 꽃을 발명하지 않고 비어 있는 책상 공간을 그대로 보여 준다. 상위 Markdown 첨부와 파일 블록은 무시했다.
+- Codex 내장 ImageGen으로 `assets/events/day14-v4/cg-day14-v4-desk-flower-bottle-pov-v1.png`과 `assets/events/day14-v4/cg-day14-v4-desk-empty-space-pov-v1.png`을 제작했다. 두 채택본은 1672×941 RGB이며 SHA-256은 각각 `617C36B24D0E3F89879C99A52856BE6792668F652A910C6BD628C5F9E17F19C8`, `3B689A0A4574DBDB16E03DE8B077E748A5A04CFD9989FA90995FBB451D52B3CC`다. 같은 방·카메라·저녁빛에서 컵을 가장자리에서 안쪽으로 옮기고, 꽃 경로는 한 송이를 작은 병에 두며 빈 경로는 종이를 치워 중앙 공간을 비워 둔다. 원본 육안 QA와 DAY 2의 행동성·원근·선명도·16:9·모바일 핵심영역 비교가 PASS했다.
+- SCENE 18/20/22 동적 선택기는 `storyFlags.day14V4PurchaseOutcome`의 `SELF_FLOWER|GIFT_FLOWER`를 꽃 변형으로, `PHOTO_ONLY|NO_PURCHASE|INSUFFICIENT_FUNDS`를 빈 책상 변형으로 정확히 연결한다. 상태가 없거나 알 수 없으면 기존 방 `ambientHold`와 SFX를 유지해 구매·사진·메시지를 추정하지 않는다. 집중 테스트가 모든 선언된 상태, 미정 폴백, 단일 `cgShow`, 두 파일의 PNG 서명·크기·RGB·SHA를 고정한다.
+- SIP 무맥락 냉독이 상태 결합과 알 수 없는 저장 폴백의 명시성, 모든 선언 상태의 테스트 범위를 지적해 코드·테스트·감사 문서를 보강했다. 구문, DAY 14 계약/플레이 런타임/몰입 어댑터, DAY 13 저장/어댑터 회귀, 전체 시뮬레이션이 모두 PASS했다.
+- 변경 산출물은 두 신규 CG, 프레젠테이션 데이터, 몰입 어댑터, 집중 테스트, DAY 14 소스 잠금/이미지 감사, 두 진행 문서다. 이미지 상태는 `8/8 READY`, 정적 이미지 QA는 PASS다. 다음 관문은 꽃/빈 책상·대면/통화/완전휴식·접촉/비접촉을 아우르는 실제 브라우저 데스크톱/모바일 QA이며, 아직 커밋·origin·동일 SHA 배포는 진행하지 않았고 DAY 15는 시작하지 않는다.
+
+## 2026-08-31 01:50 KST — DAY 14 V4 이미지 제작 7/8
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문 23,093자를 새로 조회해 SCENE 01~22, 선택 1~10, 모든 대체 경로와 내부 구현 메모를 다시 완독했다. SCENE 17은 대면 귀가 중 이전 손 접촉이 성립하고 미해결 경계가 없으며 하은이 먼저 손을 내민 경우에만 성립하고 꽃 구매 보상이 아니다. 상위 Markdown 첨부와 파일 블록은 무시했다.
+- Codex 내장 ImageGen으로 `assets/events/day14-v4/cg-day14-v4-yeonhui-hand-contact-wide-v1.png`을 제작했다. 채택본은 1672×941 RGB, SHA-256 `98819FCB30B75E5200D4432950CB13E8AF66E3BB539388C8602345495A7E05DD`이며 잠금된 하은 외형, 하은이 먼저 내민 한 손의 맞잡음, 주인공의 다른 손에 남은 한 송이 꽃을 한 역 장면에 보존한다. 최초 생성 뒤 세 차례 단일 안전영역 교정을 거쳐 맞잡은 손과 꽃을 중단으로 올렸고 모든 내장 생성 원본을 보존했다.
+- 정적 프레젠테이션과 런타임은 `IN_PERSON + WALK_TO_STATION|MORE_TOGETHER + prior contact + no unresolved boundary + Haeun initiated + contact established`에서만 SCENE 17 CG를 노출한다. PHONE, 이전 접촉 없음, 미해결 경계, 하은 선제 없음, 즉시 작별은 무노출이며 `PHOTO_ONLY`에서도 유효해 꽃 구매와 독립임을 검증한다.
+- SIP 무맥락 냉독이 `after SFX` 표현의 기준점을 좁히라고 지적해, 집중 테스트를 SCENE 17의 `SFX_FOOTSTEP_APPROACH` 직후 단 하나의 `cgShow`가 오는 계약으로 명시했다. 원본 육안 QA는 구도·비율·선명도·캐릭터 일관성·행동성에서 DAY 2 기준을 통과했으며, 하단 양옆 소매는 핵심 행동을 가리지 않지만 실제 대화창/모바일 크롭은 공통 브라우저 관문에 남겼다.
+- 구문, DAY 14 계약/플레이 런타임/몰입 어댑터, DAY 13 저장/어댑터 회귀, 전체 시뮬레이션과 작업 트리 `diff --check`가 모두 PASS했다. 읽기 전용 SSOT 이중 검색에서 경로·SHA·접촉 조건·`7/8 READY / 1 PENDING` 상태의 충돌은 없었고, 갱신한 소스 잠금과 이미지 감사도 처음부터 끝까지 다시 읽어 오래된 다음 작업 표현을 제거했다.
+- 변경 산출물은 새 CG, 프레젠테이션 데이터, 몰입 어댑터, 집중 테스트, DAY 14 소스 잠금/이미지 감사, 두 진행 문서다. 현재 `7 ready / 1 pending`이며 다음은 SCENE 18/20/22 책상 마감 패키지다. 이미지 전체 완료 전 실제 브라우저 QA·커밋·origin·동일 SHA 배포는 진행하지 않고 DAY 15는 시작하지 않는다.
+
+## 2026-08-31 01:22 KST — DAY 14 V4 이미지 제작 6/8
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문 23,093자를 새로 조회해 SCENE 01~22, 선택 1~10, 모든 대체 경로와 내부 구현 메모를 다시 완독했다. SCENE 15는 나리와 하은이 실제 Flora 현장에 함께 있을 때만 소개·웃음·기울어진 병 행동이 성립하며, 상위 Markdown 첨부와 파일 블록은 무시했다.
+- Codex 내장 ImageGen으로 `assets/events/day14-v4/cg-day14-v4-nari-haeun-tilted-bottle-wide-v1.png`을 제작했다. 1672×941 RGB, SHA-256 `6449A9F616CFB062EF36573158DFB98E0C5D690493CA0516D1D4EB70ABFEF54B`이며 잠금된 나리·하은 외형, 한 병·한 송이, 창가로 기운 꽃, 병을 바로 두는 나리의 손, 빈손으로 웃는 하은을 한 장면에 보존했다. 병·손 행동이 대화창 안전선 위에 남도록 두 차례 단일 안전영역 교정을 적용했고 프로젝트의 중간본은 제거했으며 내장 생성 원본들은 보존했다.
+- SCENE 15 CG를 정적 프레젠테이션 목록에 등록하고 정확히 `FLORA + NARI_MET + IN_PERSON`일 때만 `cgShow`하도록 연결했다. SIP 냉독 후 원본 PNG 서명·1672×941 크기·RGB 색상형·SHA를 집중 테스트에 고정하고, `NARI_MET=false`, `PHONE`, malformed HOME 무노출과 꽃 구매와 무관한 `SELF_FLOWER + FLORA + IN_PERSON + NARI_MET` 노출을 명시적으로 검증했다.
+- 구문, DAY 14 계약/런타임/어댑터, DAY 13 저장/어댑터 회귀, 전체 시뮬레이션과 `git diff --check`가 모두 PASS했다. 읽기 전용 SSOT 이중 검색에서도 SCENE 15 경로·조건·`6/8 READY / 2 PENDING`의 충돌은 없었다. 실제 브라우저 크롭은 전체 이미지 완료 후 공통 관문으로 유지한다.
+- 변경 산출물은 새 CG, `src/day14-v4-presentation-data.mjs`, `src/day14-v4-immersive-adapter.mjs`, `tests/day14-v4-immersive-adapter.test.mjs`, DAY 14 소스 잠금/이미지 감사, 두 진행 문서다. 현재 `6 ready / 2 pending`이며 다음은 SCENE 17의 하은 선제 손잡기 장면이다. 실제 브라우저 QA·커밋·origin·동일 SHA 배포는 전체 이미지 완료 후 진행하고 DAY 15는 시작하지 않는다.
+
+## 2026-08-31 01:05 KST — DAY 14 V4 이미지 제작 5/8
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문 23,093자를 새로 조회해 SCENE 01~22, 선택 1~10, 대면·통화·완전휴식 등 모든 대체 경로와 내부 구현 메모를 다시 완독했다. SCENE 10에서 하은의 늦은 감사는 꽃이 아니라 ‘받지 않아도 되는 허락’에 대한 것이며, 상위 Markdown 첨부와 파일 블록은 무시했다.
+- Codex 내장 ImageGen으로 `assets/events/day14-v4/cg-day14-v4-haeun-flower-not-received-wide-v1.png`을 제작했다. 1672×941 RGB, SHA-256 `70EA28EEC5B8468337F7E831F709147D0314E44210785FC64022A732CCEB96E0`이며 하은의 잠금 외형·빈 양손·지친 인사와 주인공 쪽에 남은 한 송이 사이의 물리적 간격이 원본 육안 QA와 DAY 2 행동 구도 기준을 PASS했다. 첫 출력의 손·꽃이 대화창 안전선보다 낮아 전체 묶음만 위로 옮기는 단일 교정을 적용했고 탈락본은 프로젝트에 복사하지 않았다.
+- SCENE 10 CG를 정적 프레젠테이션 목록에 등록하고 정확히 `FLORA + IN_PERSON + GIFT_FLOWER`일 때만 `cgShow`하도록 연결했다. HOME은 잘못 주입된 후속 플래그가 있어도 무노출이며 `SELF_FLOWER`·사진·미구매·PHONE·FULL_REST도 배경만 유지한다.
+- SIP 독립 냉독이 정적 요구조건 문자열에서 `FLORA`가 빠진 표현 불일치를 찾아 런타임과 동일한 3중 조건으로 정렬하고 집중 테스트로 고정했다. 구문, DAY 14 계약/런타임/어댑터, DAY 13 저장/어댑터 회귀, 전체 시뮬레이션, 파일 SHA와 `git diff --check`가 모두 PASS했다. 읽기 전용 SSOT 이중 검색에서 SCENE 10 경로·조건·`5/8 READY / 3 PENDING` 상태의 추가 충돌은 없었고, 실제 브라우저 크롭은 전체 이미지 완료 후 공통 관문으로 유지한다.
+- 변경 산출물은 새 CG, `src/day14-v4-presentation-data.mjs`, `src/day14-v4-immersive-adapter.mjs`, `tests/day14-v4-immersive-adapter.test.mjs`, DAY 14 소스 잠금/이미지 감사, 두 진행 문서다. 현재 `5 ready / 3 pending`이며 다음은 SCENE 15의 나리·하은 기울어진 병 장면이다. 실제 브라우저 QA·커밋·origin·동일 SHA 배포는 전체 이미지 완료 후 진행하고 DAY 15는 시작하지 않는다.
+
+## 2026-08-31 00:46 KST — DAY 14 V4 이미지 제작 4/8
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문 23,093자를 새로 조회해 SCENE 01~22, 선택 1~10, 전 대체 경로와 내부 구현 메모를 다시 완독했다. SCENE 08의 자기 꽃·사진만·실제 선물 구매를 분리했고 상위 Markdown 첨부와 파일 블록은 무시했다.
+- Codex 내장 ImageGen으로 실제 `GIFT_FLOWER` 구매 전용 `assets/events/day14-v4/cg-day14-v4-flower-ribbon-handoff-pov-v1.png`을 제작했다. 1672×941 RGB, SHA-256 `E0C23AE0DC3C2186C86EB2DF39C635A6C2FF2D6CE4D83EFE0B781E9EB4A1937B`이며 나리의 잠금 외형, 한 송이·한 줄기, 작은 크림 포장, 분홍 리본, 주인공 POV 인계가 원본 육안 QA와 DAY 2 행동 구도 기준을 PASS했다. 첫 출력의 보조 꽃은 단일 교정으로 제거했고 탈락본은 프로젝트에 복사하지 않았다.
+- SCENE 08 CG를 정적 프레젠테이션 목록에 등록하고 `day14V4OutingRoute === "FLORA" && day14V4PurchaseOutcome === "GIFT_FLOWER"`에서만 `cgShow`하도록 연결했다. HOME은 잘못 주입된 선물 플래그가 있어도 무노출이며 `SELF_FLOWER`·사진·미구매도 배경만 유지한다.
+- SIP 독립 냉독이 FLORA 조건의 암묵성, 장면 번호/배열 인덱스, `ready-new` 의미를 지적해 조건·집중 테스트·감사 문서를 보강했다. 구문, DAY 14 계약/런타임/어댑터, DAY 13 저장/어댑터 회귀, 전체 시뮬레이션과 파일 SHA가 모두 PASS했다.
+- 변경 산출물은 새 CG, `src/day14-v4-presentation-data.mjs`, `src/day14-v4-immersive-adapter.mjs`, `tests/day14-v4-immersive-adapter.test.mjs`, DAY 14 소스 잠금/이미지 감사, 두 진행 문서다. 현재 `4 ready / 4 pending`이며 다음은 SCENE 10의 하은이 꽃을 보지만 받지 않는 대면 전용 CG다. 실제 브라우저 QA·커밋·origin·동일 SHA 배포는 전체 이미지 완료 후 진행하고 DAY 15는 시작하지 않는다.
+
+## 2026-08-31 00:28 KST — DAY 14 V4 이미지 제작 3/8
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문 23,093자를 새로 조회해 SCENE 01~22, 선택 1~10, 전 대체 경로와 내부 구현 메모를 다시 완독했다. 상위 Markdown 첨부와 파일 블록은 원고 판정에서 무시했다.
+- Codex 내장 ImageGen으로 `assets/events/day14-v4/cg-day14-v4-nari-broken-stem-bottle-v1.png`을 제작했다. 1672×941 RGB, SHA-256 `756740FDC96BD7FF2E1E9CF1FE60C0DB424EF8C40642BE2DE9ADECFF2784449E`이며 나리의 한 송이 손질, 빈 작은 병, 주인공의 빈 카드·집게 준비 동작을 하나의 POV로 보여 준다. 두 번째 꽃과 줄기 잔상은 두 차례 단일 교정으로 제거했고 탈락본은 프로젝트에 복사하지 않았다.
+- SCENE 07 CG를 정적 프레젠테이션 목록에 등록하고 `day14V4OutingRoute === "FLORA"`에서만 `cgShow`하도록 연결했다. HOME·미정·기타 경로는 CG 없이 배경만 유지한다.
+- `sip` 냉독 결과 정적 목록과 분기 해석 계층, `ambientHold` 교체 순서, 실제 파일 일치 증거가 불충분해 보강했다. 집중 테스트는 CG 1회·SFX 뒤 순서·2400 ms·contain·`50% 42%`·원본 SHA-256과 HOME 무노출을 검증하며, DAY14 계약/런타임/어댑터·DAY13 저장/어댑터·전체 시뮬레이션이 모두 PASS했다.
+- 현재 `3 ready / 5 pending`이다. 실제 브라우저 데스크톱·모바일 UI 중첩은 전체 이미지 제작 후 관문으로 남아 있고, 다음 대상은 SCENE 08의 실제 선물 구매 전용 작은 꽃·리본 인계 POV다. DAY 14는 아직 커밋·배포 전이며 DAY 15는 시작하지 않는다.
+
+## 2026-08-31 00:08 KST — DAY 14 V4 에셋 감사 PASS / 이미지 제작 2/8
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문 23,093자를 새로 완독해 SCENE 01~22, 선택 1~10, 외출/구매/대면/통화/완전휴식/접촉 대체 경로를 최우선으로 재잠금했다. 상위 Markdown 첨부는 무시했다.
+- DAY 2 실제 이미지·모바일 접촉면, DAY 13 내장 ImageGen+결정적 후처리 이력, 플로라 카페·연희역·나리 기준 시트와 기존 꽃 CG를 원본 육안 감사했다. DAY 13의 하은 책상 휴대전화 POV는 SCENE 01에 재사용 PASS이고, 하은이 대형 꽃다발을 포장·수령하는 자유모드 이미지는 DAY 14의 나리 정체성·작은 꽃·미수령 조건과 충돌해 제외했다.
+- Codex 내장 ImageGen으로 `assets/events/day14-v4/cg-day14-v4-nari-first-meeting-wide-v1.png`을 제작했다. 1672×941 RGB 원본이며 나리가 뒤집힌 빈 카드에 손을 대고 주인공의 빈 종이를 받는 행동, 양손·종이·집게와 정적 중앙 모바일 폭이 DAY 2 기준을 PASS했다. 하단 대화창 회피 교정본은 행동이 더 아래로 내려가 폐기했으며, 실제 브라우저 UI 중첩은 후속 관문으로 남겼다.
+- `docs/day14/DAY14_V4_ASSET_IMAGE_AUDIT.md`와 `DAY14_V4_IMAGE_REQUIREMENTS`에 8개 시각 패키지를 고정했다. 현재 `2 ready / 6 production-required`이며 다음 대상은 SCENE 07의 꺾인 줄기·작은 병·가격표 집게 행동 CG다.
+- OpenAI API SDK, Responses/Images API, 외부 API, `OPENAI_API_KEY` 경로는 사용하지 않았다. DAY 14는 아직 이미지·브라우저·커밋·배포 완료가 아니며 DAY 15는 시작하지 않는다.
+- SIP 냉독에서 패키지당 변형 수와 분기 조건이 불명확함을 확인해 8개 패키지의 정확한 상태 플래그·예정 파일명, 마무리 꽃/빈 책상 2변형, 인물/소품 기준, 매 묶음 Notion 재조회 의무를 문서와 데이터에 추가했다. CG는 해당 분기에서만 `cgShow`되며 HOME·사진 미수신 경로에는 나타나지 않는 집중 테스트와 전체 시뮬레이션이 PASS했다.
+
+## 2026-08-30 23:59 KST — DAY 14 V4 컨트롤러·저장 재진입·재사용 배경 연출 PASS
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문 23,093자를 새로 완독해 SCENE 01~22, 선택 1~10과 모든 대체 경로를 다시 최우선으로 잠갔다. 상위 Markdown 첨부는 무시했다.
+- `game.js`에 DAY14 V4 신규 시작·V1 레거시 저장·불완전 선행 상태 차단, 선택 직후 저장, 체크포인트 재진입, V4 완료 기록을 연결했다. 연락 휴식 자동 무메시지는 SCENE 20, 명시적 밤 선택은 SCENE 21부터 복원되어 중단 뒤에도 결말과 `sceneEnd`를 재생한다.
+- `src/day14-v4-presentation-data.mjs`, `src/day14-v4-immersive-adapter.mjs`, `tests/day14-v4-immersive-adapter.test.mjs`, `docs/day14/DAY14_V4_CONTROLLER_SAVE_PRESENTATION_QA.md`를 추가했다. 집·플로라 카페·연희역의 기존 검증 배경과 기존 오디오 ID만 사용하고 모든 장면에 모바일 안전 영역을 기록했다.
+- 구문, DAY14 집중 3개, 선택별 JSON 저장 복원, DAY13 V3 저장/어댑터 회귀, 전체 `simulation.test.mjs`, `git diff --check`가 PASS했다. SIP 냉독의 선행 조건 차단 결함을 수정했고, 완료 선택 저장 후 재진입이 결말을 다시 제공함을 테스트로 고정했다.
+- 장면 전용 CG·인물 합성과 꽃 가격/거래 정산은 완료로 표시하지 않았다. 다음 관문은 기존 ImageGen 경로와 결정적 로컬 후처리만 사용하는 DAY14 V4 에셋·이미지 감사/제작이며 DAY15는 시작하지 않는다.
+
+## 2026-08-30 23:33 KST — DAY 14 V4 SCENE 01~22 플레이 데이터·선택 런타임 PASS
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문을 새로 조회해 24,091자 전체, SCENE 01~22, 선택 1~10, 외출/미외출·구매/사진/미구매·대면/통화/완전휴식·접촉/비접촉 대체 경로와 내부 구현 메모를 다시 완독했다. 상위 Markdown 첨부는 계속 무시했다.
+- `src/day14-v4-playable-script-01-11.mjs`, `src/day14-v4-playable-script-12-22.mjs`에 원문 순서와 조건부 대사·행동을 플레이 데이터로 구현했다. 원고의 집 경로는 SCENE 05~08을 생략하고, 완전휴식은 업무 상세·대면·손·웃음·귀가 동행을 생성하지 않는다.
+- `src/day14-v4-runtime.mjs`에 10개 선택의 순차 적용, 조건부 대체 선택, 자금 부족 무금액 판정, 꽃 소유·사진·나리 만남, 하은의 만남 동의와 통화/휴식, 접촉 3조건, 무연락, DAY 15 전시 초대 미수락 훅을 구현했다. 기존 DAY14 V1 저장은 레거시로 유지하고 윤서진 두 축·아라 상태는 변경하지 않는다.
+- `tests/day14-v4-playable-runtime.test.mjs`가 대면·손잡기 경로, 집·완전휴식·무연락 경로, 자금 부족 경로를 선택마다 JSON 저장·복원해 검증한다. DAY14 V4 계약/런타임, DAY13 V3 저장 회귀, 전체 시뮬레이션과 구문 검사가 모두 PASS했다.
+- `sip` 독립 냉독에서 비연속 선택 스킵이 체크포인트를 22로 앞당기고 대면 수락 뒤 연락 휴식이 남는 결함을 발견했다. 스킵을 바로 다음 선택에만 적용하고, 대면/통화 시 휴식을 해제하며, 자동 무연락도 선택 이력에 저장하도록 교정한 뒤 전 검증을 재통과했다. 현실 세계 주장을 추가하지 않아 외부 `factchk`는 대상이 아니었고, SSOT 읽기 감사에서는 코드의 선택/상태 정의와 문서의 역할 구분 외 새 충돌이 없었다.
+- 현재 대상은 DAY 14 V4다. 다음 관문은 플레이 데이터를 게임 컨트롤러·저장 재진입·몰입형 연출에 연결하는 작업이며 DAY 15는 시작하지 않는다.
+
+## 2026-08-30 23:10 KST — DAY 14 V4 챕터·상태·레거시 라우팅 계약 PASS
+
+- 작업 직전 `AI해커톤 > DAY 14 — 받지 않은 꽃 | SCENARIO V4` 하위 본문을 다시 완전 조회해 SCENE 01~22, 선택 지점 10개, 외출/미외출·대면/통화/완전휴식 대체 경로와 내부 구현 메모를 최우선으로 적용했다. 상위 Markdown 첨부와 하위 파일 블록은 무시했다.
+- 두 내러티브 스킬의 챕터 계약·Voice Profile·지식 장부·MUST/MAY/MUST NOT REVEAL·감정 곡선·10문항 검수를 `docs/day14/DAY14_CHAPTER_CONTRACT_V4.md`와 실행 데이터에 고정했다.
+- `src/day14-v4-campaign-data.mjs`에 22장면, 선택 10개와 조건부 대체 선택, 필드 타입을 추가했다. `src/day14-v4-state-contract.mjs`는 DAY13 V3 완료+꽃 훅 신규 시작, 기존 DAY14 V1 저장 복원, 불완전 선행 저장 차단, `null/false/true` 사실 구분과 접촉 3조건을 실행 가능하게 판정한다.
+- `tests/day14-v4-contract.test.mjs`와 DAY13 V3 저장 회귀가 PASS했고 `git diff --check` 오류는 0건이다. 최초 회귀 명령의 잘못된 파일명은 실제 `tests/day13-v3-runtime-save.test.mjs`로 교정해 PASS했다.
+- `sip` 냉독 결과 계약 개요만으로 정확한 분기 구현을 추측할 수 있다는 위험을 확인해 원문 선택·필드의 코드 SSOT, 핵심 경로 합류표, 소유권, 카드·레거시·불완전 저장 규칙을 명시했다. 현실 주장 없이 게임 내 의도와 저장소 사실만 다루므로 외부 `factchk`는 적용 대상이 아니었다. SSOT 읽기 감사에서 V4 Notion의 하은 29세 메타데이터와 기존 23세 캐논 문서의 충돌을 확인했으며, 최신 Notion 우선으로 DAY14 V4만 해석하고 과거 DAY 문서는 순차 범위 밖이라 변경하지 않았다.
+- 현재 대상은 DAY 14 V4다. 다음 관문은 원문 SCENE 01~22 플레이 데이터와 선택 적용 런타임 구현이며 DAY 15는 시작하지 않는다.
+
+## 2026-08-30 22:53 KST — DAY 14 V4 Notion 소스 잠금·구현 격차 감사 PASS
+
+- `AI해커톤` 하위 페이지 `DAY 14 — 받지 않은 꽃 | SCENARIO V4` (`3c9c31f0-29a6-8102-af32-fd7f3e26e90f`)를 새로 조회해 ACT 1~3, SCENE 01~22, 선택 1~10, 모든 외출/미외출·대면/통화/완전휴식 대체 경로와 구현 메모를 완전히 읽었다. 상위 페이지 Markdown 첨부와 파일 블록은 원고 판정에서 무시했다.
+- 최신 Notion V4가 기존 8장면 소비/예산 DAY 14 V1을 신규 진행에서 대체한다. 현재 런타임의 직접 대응은 `0/22`이며 V1은 기존 저장 복원 전용 레거시 경로로 보존한다.
+- 산출물: `docs/day14/DAY14_NOTION_SOURCE_LOCK_V4.md`, `docs/day14/DAY14_V4_IMPLEMENTATION_GAP_CONTENT_COVERAGE_AUDIT.md`.
+- 플로라 카페·연희역·나의 방, 나리 플로리스트 표면, 선물/실제 지출, 연락/사진, 하은 관계/접촉을 원고의 감정 사건으로 통합할 후보를 확정했다. 방문만 하는 장소나 꽃 관리 튜토리얼은 만들지 않는다.
+- `sip` 검증으로 콜드리드·사실 대조·SSOT 감사·문서 정리를 수행했다. 소스 잠금은 대본 복제가 아닌 메타 계약임을 명시하고, 모호했던 `10축` 표현과 연락/사진 필수 범위를 교정했다. Notion 페이지 정보, 인물 나이/직업, 지도 자산, 플로리스트 이벤트 근거와 `git diff --check`는 PASS다.
+- 현재 단계/대상은 `DAY 14 V4 품질 재구축`이다. 다음 관문은 V4 챕터 계약과 실행 가능한 `day14V4*` 상태·라우팅 명세이며 DAY 15는 시작하지 않는다.
+
 ## 2026-08-30 22:42 KST — DAY 13 V3 공개 출시 COMPLETE / 현재 재감사 DAY 14
 
 - Notion 하위 페이지 최신 본문을 최우선으로 구현한 DAY 13 V3 검증 커밋 `9d1c8cc980ec6816ead1fadda38887e4dbb64e3c`를 `feature/today-day-one-mvp`와 `gh-pages`에 동일하게 반영했다.

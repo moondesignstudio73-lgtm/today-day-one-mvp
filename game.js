@@ -68,7 +68,10 @@ import { getDay12V3ChoiceContinuation, getDay12V3ImmersiveSegment, getDay12V3Res
 import { LOCKED_DAY13_SCENE_ID, applyLockedDay13ChoiceState, getLockedDay13LegacyChoice, getLockedDay13ResumePresentation as getLegacyDay13ResumePresentation, getLockedDay13Segment as getLegacyDay13Segment } from "./src/day13-campaign-runtime.mjs?v=2";
 import { applyDay13V3Choice, beginDay13V3, getDay13V3Compatibility } from "./src/day13-v3-runtime.mjs?v=1";
 import { getDay13V3ChoiceContinuation, getDay13V3ImmersiveSegment, getDay13V3ResumePresentation } from "./src/day13-v3-immersive-adapter.mjs?v=1";
-import { LOCKED_DAY14_SCENE_ID, applyLockedDay14ChoiceState, getLockedDay14LegacyChoice, getLockedDay14ResumePresentation, getLockedDay14Segment } from "./src/day14-campaign-runtime.mjs?v=2";
+import { LOCKED_DAY14_SCENE_ID, applyLockedDay14ChoiceState as applyLegacyDay14ChoiceState, getLockedDay14LegacyChoice, getLockedDay14ResumePresentation as getLegacyDay14ResumePresentation, getLockedDay14Segment as getLegacyDay14Segment } from "./src/day14-campaign-runtime.mjs?v=2";
+import { beginDay14V4, getDay14V4Compatibility } from "./src/day14-v4-state-contract.mjs?v=1";
+import { applyDay14V4Choice } from "./src/day14-v4-runtime.mjs?v=1";
+import { getDay14V4ChoiceContinuation, getDay14V4ImmersiveSegment, getDay14V4ResumePresentation } from "./src/day14-v4-immersive-adapter.mjs?v=1";
 import { LOCKED_DAY15_SCENE_ID, applyLockedDay15ChoiceState, getLockedDay15LegacyChoice, getLockedDay15ResumePresentation, getLockedDay15Segment } from "./src/day15-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY16_SCENE_ID, applyLockedDay16ChoiceState, getLockedDay16LegacyChoice, getLockedDay16ResumePresentation, getLockedDay16Segment } from "./src/day16-campaign-runtime.mjs?v=2";
 import { LOCKED_DAY17_SCENE_ID, applyLockedDay17ChoiceState, getLockedDay17LegacyChoice, getLockedDay17ResumePresentation, getLockedDay17Segment } from "./src/day17-campaign-runtime.mjs?v=1";
@@ -115,6 +118,8 @@ import { STORY_UI_STATES, deriveStoryUiState, getStoryUiInvariantViolations, isS
 import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JUNHO_ENCOUNTER_CHANCE, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=6";
 import { formatEventProbability, getEventProbabilitySummary } from "./src/event-display.mjs?v=1";
 import { appendYujinConversationTurn, completeYujinRooftopMeeting, getPendingYujinRooftopInvitation, getYujinMessageSuggestions, isYujinRooftopInvitationReady, migrateYujinSecretRouteState, YUJIN_MESSAGE_CORPUS, YUJIN_NPC_ID, YUJIN_ROOFTOP_EVENT_IMAGE, YUJIN_ROOFTOP_INVITATION, YUJIN_ROOFTOP_LOCATION_ID, YUJIN_ROOFTOP_START_MINUTES } from "./src/yujin-secret-route.mjs?v=1";
+
+const getLockedDay14Segment=state=>["V4","V4_NEW"].includes(getDay14V4Compatibility(state).mode)?getDay14V4ImmersiveSegment(state).steps:getLegacyDay14Segment(state);
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -577,6 +582,8 @@ function getLockedDay13ResumePresentation(currentState){return getDay13V3Compati
 
 function getLockedDay13Segment(currentState){return getDay13V3Compatibility(currentState).mode==="V1_LEGACY"?getLegacyDay13Segment(currentState):getDay13V3ImmersiveSegment(currentState).steps;}
 
+function getLockedDay14ResumePresentation(currentState){return getDay14V4Compatibility(currentState).mode==="V1_LEGACY"?getLegacyDay14ResumePresentation(currentState):getDay14V4ResumePresentation(currentState);}
+
 function openStoryScene(scene) {
   if (!scene) return;
   const lockedDay1=scene.id===LOCKED_DAY1_SCENE_ID;
@@ -616,6 +623,10 @@ function openStoryScene(scene) {
   const day11V3=lockedDay11&&getDay11V3Compatibility(state).mode!=="V1_LEGACY";
   const day12V3=lockedDay12&&getDay12V3Compatibility(state).mode!=="V1_LEGACY";
   const day13V3=lockedDay13&&getDay13V3Compatibility(state).mode!=="V1_LEGACY";
+  const day14Compatibility=lockedDay14?getDay14V4Compatibility(state):null;
+  const day14Blocked=day14Compatibility?.mode==="BLOCKED_PREREQUISITE";
+  const day14V4=lockedDay14&&!['V1_LEGACY','BLOCKED_PREREQUISITE'].includes(day14Compatibility?.mode);
+  if(day14Blocked){toast("DAY 13 V3 완료 기록과 꽃 계획을 확인한 뒤 DAY 14를 시작할 수 있습니다.");return;}
   if(day6V3&&getDay6V3Compatibility(state).mode==="V3_NEW")beginDay6V3(state,{relationshipBand:getDay6V3RelationshipBand(state),touchBoundary:state.storyFlags?.day1ContactStrategy==="contact_boundary"});
   if(day7V3&&getDay7V3Compatibility(state).mode==="V3_NEW")beginDay7V3(state,{relationshipBand:getDay6V3RelationshipBand(state),touchBoundary:state.storyFlags?.day1ContactStrategy==="contact_boundary"});
   if(day8V3&&getDay8V3Compatibility(state).mode==="V3_NEW")beginDay8V3(state,{relationshipBand:getDay6V3RelationshipBand(state),priorHandContact:state.storyFlags?.day7V3HandContactEstablished===true});
@@ -624,6 +635,7 @@ function openStoryScene(scene) {
   if(day11V3&&getDay11V3Compatibility(state).mode==="V3_NEW")beginDay11V3(state,{relationshipBand:getDay6V3RelationshipBand(state)});
   if(day12V3&&getDay12V3Compatibility(state).mode==="V3_NEW")beginDay12V3(state,{relationshipBand:getDay6V3RelationshipBand(state)});
   if(day13V3&&getDay13V3Compatibility(state).mode==="V3_NEW")beginDay13V3(state,{relationshipBand:getDay6V3RelationshipBand(state)});
+  if(day14V4&&getDay14V4Compatibility(state).mode==="V4_NEW")beginDay14V4(state,{relationshipBand:getDay6V3RelationshipBand(state),priorHandContact:state.storyFlags?.day7V3HandContactEstablished===true,unresolvedContactBoundary:state.storyFlags?.day13V3HaeunDisclosureMismatch===true||state.storyFlags?.day13V3HaeunNeedsSpace===true,day13DeskPhotoReceived:state.storyFlags?.day13V3Day22Callback??null,day13FlowerMessageReceived:state.storyFlags?.day13V3FlowerInterest===true,canAffordFlower:state.money>=25000,haeunMeetingAvailability:state.storyFlags?.day13V3HaeunNeedsSpace===true?"UNAVAILABLE":"AVAILABLE",haeunCallsLater:state.storyFlags?.day13V3HaeunNeedsSpace!==true,exhibitionInviteEligible:state.storyFlags?.day13V3HaeunDisclosureMismatch!==true&&state.storyFlags?.day13V3HaeunNeedsSpace!==true});
   const presentation=resolveStoryPresentation(scene,state);
   const freeResume=isStoryFreeActionResume(state,scene.id);
   if(shouldClaimStoryPending(state,scene.id)&&!(lockedDay1&&state.storyFlags?.day1QuestionStrategy))state.pendingStoryId=scene.id;
@@ -642,7 +654,7 @@ function openStoryScene(scene) {
   const day11Resume=lockedDay11?getLockedDay11ResumePresentation(state):null;
   const day12Resume=lockedDay12?getLockedDay12ResumePresentation(state):null;
   const day13Resume=lockedDay13?getLockedDay13ResumePresentation(state):null;
-  const day14Resume=lockedDay14?getLockedDay14ResumePresentation(state):null;
+  const day14Resume=lockedDay14?(day14V4?getDay14V4ResumePresentation(state):getLegacyDay14ResumePresentation(state)):null;
   const day15Resume=lockedDay15?getLockedDay15ResumePresentation(state):null;
   const day16Resume=lockedDay16?getLockedDay16ResumePresentation(state):null;
   const day17Resume=lockedDay17?getLockedDay17ResumePresentation(state):null;
@@ -674,7 +686,7 @@ function openStoryScene(scene) {
     if(lockedDay11){if(day11V3){const result=applyDay11V3Choice(state,choiceId);SaveManager.save(state);return getDay11V3ChoiceContinuation(state,result.choiceNumber);}const result=applyLockedDay11ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay11Segment(state,result.stage);}
     if(lockedDay12){if(day12V3){const result=applyDay12V3Choice(state,choiceId);SaveManager.save(state);return getDay12V3ChoiceContinuation(state,result.choiceNumber);}const result=applyLockedDay12ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay12Segment(state,result.stage);}
     if(lockedDay13){if(day13V3){const result=applyDay13V3Choice(state,choiceId);SaveManager.save(state);return getDay13V3ChoiceContinuation(state,result.choiceNumber);}const result=applyLockedDay13ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay13Segment(state,result.stage);}
-    if(lockedDay14){const result=applyLockedDay14ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay14Segment(state,result.stage);}
+    if(lockedDay14){if(day14V4){const result=applyDay14V4Choice(state,choiceId);SaveManager.save(state);return getDay14V4ChoiceContinuation(state,result.choiceNumber);}const result=applyLegacyDay14ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLegacyDay14Segment(state,result.stage);}
     if(lockedDay15){const result=applyLockedDay15ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay15Segment(state,result.stage);}
     if(lockedDay16){const result=applyLockedDay16ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay16Segment(state,result.stage);}
     if(lockedDay17){const result=applyLockedDay17ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay17Segment(state,result.stage);}
@@ -958,7 +970,7 @@ function renderImmersiveStep() {
   if(step.type==="cgShow"){
     const layer=$("#vnEventCg");
     const owner=immersiveScene.id;
-    layer.src=step.source;layer.hidden=false;
+    layer.src=step.source;layer.style.objectFit=step.fit??"contain";layer.style.objectPosition=step.objectPosition??"50% 50%";layer.hidden=false;
     eventRuntime.input.lock(owner,"StoryCg");
     if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);
     sceneAdvanceTimer=setTimeout(()=>{layer.hidden=true;sceneAdvanceTimer=null;eventRuntime.input.unlock(owner);if(immersiveScene?.id===owner)renderImmersiveStep();},step.duration??1800);
@@ -1110,8 +1122,8 @@ function finishImmersiveScene() {
   if(completedSession?.id===LOCKED_DAY12_SCENE_ID&&getDay12V3Compatibility(state).mode==="V1_LEGACY"&&state.storyFlags?.day12RuntimeComplete&&!state.storyFlags?.day12FreeActionComplete){const freeAction={type:"freeAction",id:"day12-home-evening",phase:"evening",location:"home",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(completedSession?.id===LOCKED_DAY13_SCENE_ID&&(state.storyFlags?.day13ReviewStrategy||state.storyFlags?.day13V3Completed)&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY13_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY13_SCENE_ID,getLockedDay13LegacyChoice(state));state.storyFlags.day13RuntimeComplete=true;state.pendingStoryId=null;}
   if(completedSession?.id===LOCKED_DAY13_SCENE_ID&&getDay13V3Compatibility(state).mode==="V1_LEGACY"&&state.storyFlags?.day13RuntimeComplete&&!state.storyFlags?.day13FreeActionComplete){const freeAction={type:"freeAction",id:"day13-home-evening",phase:"evening",location:"home",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
-  if(completedSession?.id===LOCKED_DAY14_SCENE_ID&&state.storyFlags?.day14ConsentStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY14_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY14_SCENE_ID,getLockedDay14LegacyChoice(state));state.storyFlags.day14RuntimeComplete=true;state.pendingStoryId=null;}
-  if(completedSession?.id===LOCKED_DAY14_SCENE_ID&&state.storyFlags?.day14RuntimeComplete&&!state.storyFlags?.day14FreeActionComplete){const freeAction={type:"freeAction",id:"day14-home-evening",phase:"evening",location:"home",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
+  if(completedSession?.id===LOCKED_DAY14_SCENE_ID&&(state.storyFlags?.day14ConsentStrategy||state.storyFlags?.day14V4Completed)&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY14_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY14_SCENE_ID,getLockedDay14LegacyChoice(state));state.storyFlags.day14RuntimeComplete=true;state.pendingStoryId=null;}
+  if(completedSession?.id===LOCKED_DAY14_SCENE_ID&&getDay14V4Compatibility(state).mode==="V1_LEGACY"&&state.storyFlags?.day14RuntimeComplete&&!state.storyFlags?.day14FreeActionComplete){const freeAction={type:"freeAction",id:"day14-home-evening",phase:"evening",location:"home",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(completedSession?.id===LOCKED_DAY15_SCENE_ID&&state.storyFlags?.day15PrivacyStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY15_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY15_SCENE_ID,getLockedDay15LegacyChoice(state));state.storyFlags.day15RuntimeComplete=true;state.pendingStoryId=null;}
   if(completedSession?.id===LOCKED_DAY15_SCENE_ID&&state.storyFlags?.day15RuntimeComplete&&!state.storyFlags?.day15FreeActionComplete){const freeAction={type:"freeAction",id:"day15-cafe-evening",phase:"evening",location:"cafe",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(completedSession?.id===LOCKED_DAY16_SCENE_ID&&state.storyFlags?.day16SharingStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY16_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY16_SCENE_ID,getLockedDay16LegacyChoice(state));state.storyFlags.day16RuntimeComplete=true;state.pendingStoryId=null;}
