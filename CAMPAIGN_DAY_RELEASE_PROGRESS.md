@@ -1,5 +1,13 @@
 # DAY 5~30 순차 출시 진행표
 
+## 2026-08-30 22:42 KST — DAY 13 V3 공개 출시 COMPLETE / 현재 재감사 DAY 14
+
+- Notion 하위 페이지 최신 본문을 최우선으로 구현한 DAY 13 V3 검증 커밋 `9d1c8cc980ec6816ead1fadda38887e4dbb64e3c`를 `feature/today-day-one-mvp`와 `gh-pages`에 동일하게 반영했다.
+- GitHub 보호 규칙은 사용자가 승인한 우회 권한으로 통과했으며 두 원격 브랜치가 같은 검증 SHA를 가리킨다. force push와 rebase는 사용하지 않았다.
+- 공개 `https://superstarman35.github.io/game/`은 제목·시작 화면·`game.js?v=179`를 정상 로드했고 브라우저 warning/error 0건이었다. 공개 아라 자산도 `887×1774` 원본으로 정상 로드했다.
+- DAY 13의 Notion 원고 누락 0, 이미지 제작 11/11, 내러티브·콘텐츠·런타임·저장 복원·집중 6/6·전체 183/183·인접 DAY 도달성·실제 브라우저·origin·동일 SHA 배포·공개 확인을 모두 PASS로 종결한다.
+- 단계: DAY 4~16 품질 재구축. 현재 대상은 `DAY 14`다. DAY 14 작업 직전 Notion 하위 페이지 본문을 새로 완전 조회하며 DAY 15 이후를 건너뛰지 않는다.
+
 ## 2026-08-30 03:04 KST — DAY 13 V3 실제 브라우저 관문 종결 / 출시 후보 검증 PASS
 
 - 최신 Notion DAY 13 하위 페이지 본문을 다시 완전 조회해 SCENE 01~24와 선택 1~12를 최우선 원고로 재확인했고, 상위 Markdown 첨부는 무시했다.

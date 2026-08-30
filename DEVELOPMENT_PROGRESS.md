@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 13 V3 PUBLIC RELEASE COMPLETE / CURRENT REBUILD TARGET DAY 14 (2026-08-30 22:42 KST)
+
+- Pushed the Notion-first DAY 13 V3 verification commit `9d1c8cc980ec6816ead1fadda38887e4dbb64e3c` to both `feature/today-day-one-mvp` and `gh-pages`; both remote branches reference the identical verified SHA. No force push or rebase was used.
+- The public root `https://superstarman35.github.io/game/` loaded the expected title, start screen, and `game.js?v=179` with zero browser warnings/errors. The deployed Ara sprite also loaded at its original `887×1774` dimensions.
+- DAY 13 closes with zero Notion omissions, image production 11/11, narrative/content/runtime/save/focused 6/6/full 183/183/adjacent-day/browser/origin/same-SHA/public gates all PASS.
+- Phase remains DAY 4–16 quality rebuilding. The current target is `DAY 14`; its Notion child body must be freshly and fully fetched before any implementation, and later days remain untouched.
+
 ## DAY 13 V3 ACTUAL-BROWSER GATE CLOSED / RELEASE CANDIDATE VERIFIED (2026-08-30 03:04 KST)
 
 - Freshly fetched and fully read the authoritative Notion DAY 13 child body again; all 24 scenes and 12 choices remain the primary source, and parent Markdown attachments were ignored.
