@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 14 V4 PUBLIC RELEASE COMPLETE / CURRENT REBUILD TARGET DAY 15 (2026-08-31 03:03 KST)
+
+- Pushed the Notion-first DAY 14 V4 verification commit `8dda7bb1fd29c9db9974522a0c76336b6959fc9c` normally to both `feature/today-day-one-mvp` and `gh-pages`; both remote branches reference the identical SHA. Only the approved protection-rule bypass was used, with no force push or rebase.
+- A fresh public tab at `https://superstarman35.github.io/game/` loaded `game.js?v=180`. The title screen rendered normally with zero console warnings/errors, zero visible broken images, and zero horizontal overflow. Public `index.html` and `game.js` matched the GitHub source bytes at commit `8dda7bb`; all four DAY 14 V4 modules and all eight new CGs also returned HTTP 200 and matched their verified SHA-256 bytes.
+- Syntax; DAY 14 V4 contract, playable-runtime, and immersive-adapter tests; DAY 13 save/adapter regressions; legacy DAY 14 regression/presentation; DAY 1/16 cache compatibility; 120-entry browser module coverage; DAY 15 adjacency; and the full simulation all pass. The real desktop and 390×844 mobile representative routes both reached DAY 15.
+- DAY 14 is COMPLETE across source, zero Notion omissions, content/system, 8/8 asset/image, direction/audio, runtime, save restore, focused/full/adjacent regression, actual browser, origin, identical-SHA gh-pages, and public verification gates. The sequential rebuild target is now `DAY 15`; no DAY 15 source fetch or implementation started in this run.
+
 ## DAY 14 V4 ACTUAL DESKTOP/MOBILE BROWSER QA PASS (2026-08-31 02:40 KST)
 
 - Started a fresh local server and fresh route states from the current working tree instead of waiting for an earlier browser session. The desktop flower→gift→in-person→Haeun-initiated-contact route and explicit 390×844 mobile home→full-rest→no-meeting→no-contact→no-message route both reached the first DAY 15 choice.
