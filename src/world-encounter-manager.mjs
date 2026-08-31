@@ -127,6 +127,12 @@ export function validateWorldEncounterRoutes(value){return Boolean(value&&value.
 function ensureRoutes(state){state.worldEncounterRoutes=migrateWorldEncounterRoutes(state.worldEncounterRoutes);return state.worldEncounterRoutes;}
 
 export function hasCompletedYuriReunion(state){const saved=state?.situationEventStates?.[YURI_REUNION_EVENT_ID];return saved?.status==="COMPLETED"||Boolean(state?.storyFlags?.[`${YURI_REUNION_EVENT_ID}:COMPLETED`]);}
+export function isYuriCafeEncounterAvailable(state,location){
+  if(state?.gameMode!=="free-romance"||location?.id!=="small-cafe")return false;
+  if(hasCompletedYuriReunion(state))return true;
+  const day=Number(state.day);
+  return day>=7&&day<=23;
+}
 export function getNightOutingContext(minutes,partnerName="여자친구"){const alone=Number(minutes)>=WORLD_LATE_NIGHT_MINUTES;const name=String(partnerName),last=name.charCodeAt(name.length-1),hasBatchim=last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28!==0;return {alone,message:alone?"나혼자 외출 나왔다.":`${name}${hasBatchim?"이와":"와"} 같이 데이트/외출을 나왔다.`};}
 export function shouldShowPartnerAtWorldLocation(minutes){return Number(minutes)>=19*60&&Number(minutes)<WORLD_LATE_NIGHT_MINUTES;}
 
@@ -134,7 +140,26 @@ function createMinjunEncounter(state,location){if(state.partner?.heroineId!=="ha
 function createJaeminEncounter(state,location,random){const route=ensureRoutes(state).jaemin,questions=JAEMIN_QUIZZES[location.id]??[],answered=new Set(route.answered[location.id]??[]),remaining=questions.filter(item=>!answered.has(item.id));if(!remaining.length)return null;const quiz=remaining[Math.floor((Number(random())||0)*remaining.length)%remaining.length],quizNames={"prime-gym":"헬스","boxing-studio":"복싱","protein-cafe":"단백질","running-park":"러닝","climbing-lab":"클라이밍"};return {id:`jaemin-quiz-${quiz.id}`,routeType:"jaemin",chance:JAEMIN_ENCOUNTER_CHANCE,locationId:location.id,npcId:"gym-trainer",npcName:"재민",title:`재민의 ${quizNames[location.id]??"운동"} 퀴즈`,message:`재민이 ${location.name}에서 운동 팁을 알려 주겠다며 문제를 냈다.`,question:quiz.question,questionId:quiz.id,choices:quiz.choices.map((label,index)=>({id:`answer-${index}`,label,response:index===quiz.answer?`정답이야. ${quiz.explanation}`:`아쉽지만 정답은 “${quiz.choices[quiz.answer]}”야. ${quiz.explanation}`,correct:index===quiz.answer,npcEffects:{affection:1,trust:1}}))};}
 function createJunhoEncounter(state,location){const route=ensureRoutes(state).junho,insight=JUNHO_PARTNER_INSIGHTS.find(item=>!route.seen.includes(item.id));if(!insight)return null;return {id:`junho-insight-${insight.id}`,routeType:"junho",chance:JUNHO_ENCOUNTER_CHANCE,locationId:location.id,npcId:"drinking-friend",npcName:"준호",title:"클럽 네온에서 만난 준호",message:"바를 정리하던 준호가 음악 소리 사이로 여자친구에 대해 알아 둬야 할 이야기가 있다며 가까이 불렀다.",question:insight.text(state),questionId:insight.id,choices:[{id:"thanks",label:"고마워.",response:"준호는 도움이 됐다면 됐다며 다음에도 솔직한 이야기를 전해 주겠다고 했다.",npcEffects:{affection:4,trust:3}},{id:"decline",label:"안 알려줘도 돼.",response:"준호는 연인에 관한 일은 직접 알아 가고 싶다는 뜻을 존중했지만 조금 머쓱한 표정을 지었다.",npcEffects:{affection:-2,trust:1}}]};}
 
-export function rollRepeatWorldEncounter(state,location,minutes,random=Math.random){if(state?.gameMode!=="free-romance"||!location)return null;const time=Number(minutes),evening=time>=WORLD_EVENING_START_MINUTES;let encounter=null;if(EXTORTION_LOCATIONS.has(location.id))encounter={...structuredClone(ENCOUNTERS.stationExtortion),locationId:location.id};else if(location.id==="small-cafe"&&hasCompletedYuriReunion(state))encounter={...structuredClone(ENCOUNTERS.yuriCafe),locationId:location.id};else if(location.id==="night-food"&&time>=WORLD_LATE_NIGHT_MINUTES)encounter={...structuredClone(ENCOUNTERS.yujinNightFood),locationId:location.id};else if(evening&&MINJUN_LOCATIONS.has(location.id))encounter=createMinjunEncounter(state,location);else if(evening&&JAEMIN_LOCATIONS.has(location.id))encounter=createJaeminEncounter(state,location,random);else if(evening&&location.id==="neon-club")encounter=createJunhoEncounter(state,location);if(!encounter||random()>encounter.chance)return null;return structuredClone(encounter);}
+export function rollRepeatWorldEncounter(state,location,minutes,random=Math.random){
+  if(state?.gameMode!=="free-romance"||!location)return null;
+  const time=Number(minutes),evening=time>=WORLD_EVENING_START_MINUTES;
+  let encounter=null;
+  if(EXTORTION_LOCATIONS.has(location.id))encounter={...structuredClone(ENCOUNTERS.stationExtortion),locationId:location.id};
+  else if(location.id==="small-cafe"&&hasCompletedYuriReunion(state)){
+    encounter={...structuredClone(ENCOUNTERS.yuriCafe),locationId:location.id};
+    if(time>=WORLD_LATE_NIGHT_MINUTES){
+      encounter.title="문 닫은 카페 모퉁이에서 다시 만난 유리";
+      encounter.message="영업이 끝난 카페 앞 모퉁이에서 귀가하던 유리가 나를 발견하고 조용히 걸음을 멈췄다.";
+      encounter.question="늦은 시간에 마주친 유리와 잠시 어떤 시간을 보낼까?";
+      encounter.choices=encounter.choices.map(choice=>choice.id==="coffee"?{...choice,label:"근처를 함께 걸으며 조금 더 이야기한다",response:"문 닫은 카페를 지나 천천히 걷는 동안 예전보다 솔직한 대화가 이어졌다."}:choice);
+    }
+  }else if(location.id==="night-food"&&time>=WORLD_LATE_NIGHT_MINUTES)encounter={...structuredClone(ENCOUNTERS.yujinNightFood),locationId:location.id};
+  else if(evening&&MINJUN_LOCATIONS.has(location.id))encounter=createMinjunEncounter(state,location);
+  else if(evening&&JAEMIN_LOCATIONS.has(location.id))encounter=createJaeminEncounter(state,location,random);
+  else if(evening&&location.id==="neon-club")encounter=createJunhoEncounter(state,location);
+  if(!encounter||random()>encounter.chance)return null;
+  return structuredClone(encounter);
+}
 
 function applyWorldPlayerEffects(state,effects={}){const applied={};for(const [key,amount] of Object.entries(effects)){if(!(key in state))continue;const before=Number(state[key])||0,max=["affection","trust"].includes(key)?1000:100;state[key]=Math.max(0,Math.min(max,before+(Number(amount)||0)));applied[key]=state[key]-before;}return applied;}
 

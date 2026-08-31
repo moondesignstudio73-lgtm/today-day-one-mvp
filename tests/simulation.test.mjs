@@ -62,7 +62,7 @@ import { DEFAULT_GIRLFRIEND_VISUAL_ID, getGirlfriendVisual, getGirlfriendVisualA
 import { completeWorldFastTravel, createWorldState, discoverLocation, getNearbyLocation, getPlayerHomeProfile, getRoadCells, isRoadCell, isWorldLocationOpen, migrateWorldState, moveWorldPlayer, PLAYER_HOME_PROFILES, selectWorldTransport, TRANSPORT_OPTIONS, travelToCity, validateWorldState, WORLD_ATLAS, WORLD_MAPS } from "../src/world-map-manager.mjs";
 import { GAME_MODES, getGameModeConfig, isContentAvailableForMode, validateScenarioState } from "../src/scenario-state.mjs";
 import { getMapLocationAsset, MAP_LOCATION_ASSETS, validateMapLocationAssets } from "../src/map-location-assets.mjs";
-import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JAEMIN_QUIZZES, JUNHO_ENCOUNTER_CHANCE, JUNHO_PARTNER_INSIGHTS, MINJUN_CONCERNS, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, validateWorldEncounterRoutes, WORLD_REPEAT_ENCOUNTER_CHANCE } from "../src/world-encounter-manager.mjs";
+import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JAEMIN_QUIZZES, JUNHO_ENCOUNTER_CHANCE, JUNHO_PARTNER_INSIGHTS, MINJUN_CONCERNS, MINJUN_ENCOUNTER_CHANCE, getNightOutingContext, hasCompletedYuriReunion, isYuriCafeEncounterAvailable, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, validateWorldEncounterRoutes, WORLD_REPEAT_ENCOUNTER_CHANCE } from "../src/world-encounter-manager.mjs";
 import { appendYujinConversationTurn, completeYujinRooftopMeeting, getPendingYujinRooftopInvitation, isYujinRooftopInvitationReady, YUJIN_MESSAGE_CORPUS, YUJIN_ROOFTOP_EVENT_IMAGE, YUJIN_ROOFTOP_INVITATION, YUJIN_ROOFTOP_LOCATION_ID, YUJIN_ROOFTOP_START_MINUTES } from "../src/yujin-secret-route.mjs";
 
 const coreActionResultAssetIds=["coworker-drinks","coworker-lunch","dinner-date","early-sleep","focused-work","handsome-meet-female-friends","handsome-meet-friends","lunch-date","manager-feedback","morning-contact","morning-gym","overtime","sleep-in","stock-check","temptation-secret"];
@@ -332,6 +332,7 @@ assert.equal(resolvedRichEvent.status,"COMPLETED");
 assert.equal(richEventState.storyFlags[richEvent.storyFlag],true);
 const yuriState=createInitialState(generateGirlfriend(()=>.5),()=>.5);yuriState.day=7;yuriState.phase=1;
 const yuriBefore=yuriState.npcs.find(npc=>npc.id==="player-ex").affection;
+assert.equal(isYuriCafeEncounterAvailable(yuriState,{id:"small-cafe"}),true);
 const yuriEvent=rollLocationSituationEvent(yuriState,{id:"small-cafe",category:"cafe"},()=>.4,[SITUATION_EVENTS.find(event=>event.id==="situation-ex-girlfriend-reunion")]);
 assert.equal(yuriEvent.id,"situation-ex-girlfriend-reunion");
 yuriState.day=8;
@@ -341,6 +342,10 @@ resolveSituationEventChoice(yuriState,yuriEvent,"accept");
 assert.equal(yuriState.npcs.find(npc=>npc.id==="player-ex").affection,yuriBefore+15);
 assert.equal(WORLD_REPEAT_ENCOUNTER_CHANCE,.5);
 assert.equal(hasCompletedYuriReunion(yuriState),true);
+const lateYuri=rollRepeatWorldEncounter(yuriState,{id:"small-cafe",category:"cafe"},22*60,()=>.5);
+assert.match(lateYuri.title,/문 닫은 카페 모퉁이/);
+assert.match(lateYuri.message,/카페 앞 모퉁이/);
+assert.match(lateYuri.choices.find(choice=>choice.id==="coffee").label,/함께 걸으며/);
 assert.equal(rollRepeatWorldEncounter(yuriState,{id:"small-cafe",category:"cafe"},19*60,()=>.5001),null);
 const repeatYuri=rollRepeatWorldEncounter(yuriState,{id:"small-cafe",category:"cafe"},19*60,()=>.5);
 assert.equal(repeatYuri.npcId,"player-ex");
