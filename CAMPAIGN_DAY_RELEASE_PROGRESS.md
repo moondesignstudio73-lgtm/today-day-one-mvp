@@ -1,5 +1,84 @@
 # DAY 5~30 순차 출시 진행표
 
+## DAY 16 V4 RELEASE GATE ACTIVE (2026-08-31 22:24 KST)
+
+- Latest DAY 16 V4 child source remains locked at 24 scenes and 12 choices; parent Markdown/file attachments are excluded.
+- Exact V4 registry, state/knowledge/legacy contract, resolver, atomic runtime, reaction/continuation projection, immersive adapter, presentation mapping, game bridge, and actual `game.js` entry are complete.
+- One source omission remains: the ended-relationship replacement for choice 6 has a button label but no Yuri reaction. Only that option is hidden/rejected at the game surface with user authorization; no reaction was invented and the registry still exposes the omission for audit.
+- Actual browser QA completed solo-cafe and home routes to the DAY 16 ending with empty warning/error logs. Focused tests pass `66/66`; full tests pass `358/358`.
+- Status: `QA PASS · COMMIT/PUSH/SAME-SHA DEPLOY/PUBLIC VERIFY PENDING`. DAY 17 work has not started.
+
+## 2026-08-31 11:41 KST — DAY 16 V4 SCENE 10 현재 대화 exact-note 변형 PASS
+
+- 이 관문 직전 권위 Notion DAY 16 하위 본문을 다시 완전 조회했다. 페이지 `3c9c31f0-29a6-81a9-a067-d92edc10b353`, 스냅샷 `2026-08-27T19:49:09.165Z`, fetch 본문 20,572자, 명시 플레이 본문 16,646자, SCENE 01~24, 선택 1~12, 구현 메모가 그대로였고 `<file>` 블록 두 개는 제외했다.
+- `src/day16-v4-source-variants.mjs`에 구현 메모가 정확히 제공한 SCENE 10 현재 대화 두 줄을 별도 정본으로 추가했다. `PRESENT_ONLY`에서 주인공의 `네가 내 이름 부른 게 낯설었어요`와 유리의 `나는 익숙해서 불렀어`만 표시하며, 과거 대화 preamble이나 원문에 없는 연결 문장을 보충하지 않는다.
+- SIP 독립 냉독은 알 수 없는 대화 깊이가 현재 변형으로 흘러갈 수 있는 fail-open을 찾았다. 이제 SCENE 10은 `PAST_LIMITED`와 `PRESENT_ONLY`만 허용하고 그 밖의 값은 명시적으로 실패하며, null 문맥도 안전하게 정규화한다. 변형 옆에는 권위 구현 메모 발췌를 함께 두어 출처를 추적할 수 있다.
+- DAY 16 V4 전체 집중 회귀 `61/61 PASS`다. 남은 소스 공백은 끝난 관계 선택 6 첫 옵션의 완전한 유리 반응 한 건뿐이다. 본문에는 대체 버튼만 있으므로 허위 현재 연인 반응을 재사용하지 않고 계속 닫힌 실패로 둔다.
+- Mandela의 동일 설계자 검증 결합은 새 Notion 하위 본문, 원문 대사 음성 검사, 독립 냉독으로 완화했다. 외부 사실 주장이 없는 의도적 픽션이라 `factchk`, 이식성 주장이 없어 `detool`은 적용하지 않았다. 대사 정본은 exact registry, 예외 구현 메모 변형은 전용 모듈 한 곳에 유지했다. 이미지·`game.js`·브라우저·커밋·push·배포·DAY 17은 시작하지 않았다.
+
+## 2026-08-31 11:25 KST — DAY 16 V4 경로별 플레이 표시 step PASS
+
+- 이 관문 직전 권위 Notion DAY 16 하위 본문을 다시 완전 조회했다. 페이지 ID와 스냅샷 `2026-08-27T19:49:09.165Z`, fetch payload 20,572자, 명시 본문 16,646자, SCENE 01~24, 선택 1~12, 구현 메모가 그대로였고 `<file>` 블록 두 개는 제외했다.
+- `src/day16-v4-scene-steps.mjs`를 추가하고 모든 표현 봉투에 연결했다. 지훈/혼자/HOME, 과거/현재, 공개, 의도, 연락, 초대, 종결의 실제 경로에 속한 registry step 객체만 반환하며 선택 반응은 별도로 유지한다. 공개하지 않은 카페 저녁은 SCENE 21을 건너 SCENE 22로 이어져 하은이 유리를 아는 대화를 만들지 않는다.
+- SCENE 13은 구현 메모대로 새 문장을 만들지 않고 성립하지 않는 기존 step만 뺐다. 무연락이면 알림이 없고, 끝난 관계면 현재 연인이라는 문장을 표시하지 않는다. 다만 끝난 관계에서 선택 6 첫 옵션의 완전한 유리 반응은 본문에 없으므로 계속 닫힌 실패다. SCENE 10의 현재 대화 대체도 아직 player-facing registry에 없어서 과거 대사를 재사용하지 않는다.
+- SIP 독립 냉독은 선택 제목이 사라졌을 때 모든 분기 반응을 하나의 preamble로 합치는 fail-open을 찾았다. 선택 장면은 정확 제목 누락 시 `SOURCE_MISSING`으로 실패하고, 반환 step이 registry 객체 자체임을 참조 동일성으로 검사한다. 집중 회귀 `61/61 PASS`다.
+- 새 Notion 조회·불변 registry·객체 동일성·음성 분기 검사·독립 냉독으로 Mandela의 동일 설계자 검증 결합을 완화했다. SSOT 감사상 대사 정본은 registry이며 section 제목은 읽기 선택자라 통합 변경하지 않았다. 다음 관문은 구현 메모의 명시적 SCENE 10 현재 대체를 정본 변형으로 만들고, 끝난 관계 선택 6의 원고 공백은 게임 진입 전에 계속 가시화하는 것이다. 이미지·`game.js`·브라우저·커밋·push·배포·DAY 17은 시작하지 않았다.
+
+## 2026-08-31 11:15 KST — DAY 16 V4 선택 직후 연속 출력 계약 PASS
+
+- 이 관문 직전 권위 Notion DAY 16 하위 본문을 다시 완전 조회했다. 페이지 `3c9c31f0-29a6-81a9-a067-d92edc10b353`, 스냅샷 `2026-08-27T19:49:09.165Z`, 전체 20,130자, SCENE 01~24, 선택 1~12, 구현 메모가 그대로였고 `<file>` 블록 두 개는 제외했다.
+- `src/day16-v4-continuation.mjs`와 runtime 소유 체크포인트 조회를 추가했다. 가장 최근에 실제 선택한 항목만 받아 그 선택의 정확 원문 반응을 먼저 내고, 검증된 선택 직후 체크포인트부터 활성 장면 봉투만 잇는다. 과거 선택 재생, 손상 상태, 위조 체크포인트, 비활성 경로, 선택 6 원고 공백은 닫힌 실패다.
+- SIP 독립 냉독에서 호출자 문맥의 `startScene`이 검증한 체크포인트를 덮어쓸 수 있는 우회를 찾았다. 이제 체크포인트가 마지막에 강제되며, 악성 `startScene: 5`를 넘겨도 선택 1은 SCENE 02로 이어지는 회귀가 이를 잠근다. 반환 계약은 장면 봉투가 직접 렌더 가능한 대본이 아님을 명시한다.
+- 소스·상태·resolver·runtime·표현 계획·반응·연속 출력 집중 검사 `52/52 PASS`다. 새 Notion 조회, 불변 exact registry, 원문 동일성, 상태 불변식, 독립 냉독으로 Mandela의 동일 설계자 검증 결합을 완화했다. 대사 정본과 체크포인트 정본은 각각 registry와 runtime에 유지했고 SSOT 통합 변경은 하지 않았다.
+- 다음 관문은 경로에 맞는 무선택 장면의 정확 step 투영과 현재 sequence 결합이다. 이미지·`game.js`·브라우저·커밋·push·배포·DAY 17은 시작하지 않았다.
+
+## 2026-08-31 11:10 KST — DAY 16 V4 선택별 정확 반응 projector PASS
+
+- 이 관문 직전 권위 Notion DAY 16 하위 본문을 다시 완전 조회했다. 제목·페이지 ID·스냅샷 `2026-08-27T19:49:09.165Z`, 전체 20,130자, 24장면·12선택·구현 메모가 그대로였고 `<file>` 첨부 두 개는 원고에서 제외했다.
+- `src/day16-v4-choice-reactions.mjs`를 추가해 선택 1~12에서 실제 저장된 한 선택의 원문 후속만 투영한다. 순번형 반응, 제목형 분기 블록, 유리 연락 수락/거절, 카페/HOME 선택 8, 경로 사실에 맞는 선택 9, 조건부 선택 10~12가 다른 선택 문장을 함께 노출하지 않는다.
+- SIP 독립 냉독은 알 수 없는 ID가 suffix 기본 분기로 흘러 그럴듯한 거짓 반응을 만들 위험을 찾았다. 이제 canonical ID의 선택 번호 소유권을 먼저 확인하며, 미등록·다른 선택 ID는 V4 손상으로 차단한다. 선택 1~12 집중 검사 `43/43 PASS`다.
+- 이미 끝난 하은 관계의 선택 6은 구현 메모에 버튼 대체 문구만 있고 완전한 플레이어 반응 블록은 없다. 허위 `연인의 이름` 반응을 재사용하지 않고 `SOURCE_VARIANT_UNAVAILABLE`로 닫았다. 이후 최신 Notion 하위 본문이 권위 반응을 제공하거나 해당 옵션을 제외하기 전까지 이 소스 격차를 숨기지 않는다.
+- SSOT 읽기 감사에서 대사 정본은 registry이며 projector의 정확 텍스트 anchor는 fail-fast 선택자용 부분 복사임을 확인했다. 안정 source-step ID 통합은 `ssotize` 별도 승인 전까지 보류한다. 새 Notion 조회·registry hash·상태 불변식·독립 냉독으로 동일 설계자 검증 결합을 완화했고, Re0 뒤 diff hygiene가 줄바꿈 경고 외 PASS다.
+- projector는 아직 연속 플레이 출력에 연결하지 않았다. 다음 관문은 선택 전 장면·선택 반응·다음 체크포인트와 경로 전용 무선택 블록을 중복·누락 없이 결합하는 것이다. 이미지·`game.js`·브라우저·커밋·push·배포·DAY 17은 시작하지 않았다.
+
+## 2026-08-31 11:02 KST — DAY 16 V4 안전한 정확 원문 표현 계획 PASS
+
+- 이 관문 직전 권위 Notion DAY 16 하위 본문을 다시 완전 조회했다. 제목·페이지 ID·스냅샷 `2026-08-27T19:49:09.165Z`, `<content>` 20,130자, 명시 본문 16,646자, SCENE 01~24, 선택 1~12가 그대로였고 `<file>` 첨부 두 개는 원고에서 제외했다.
+- `src/day16-v4-presentation-plan.mjs`를 exact registry·분기 resolver·원자적 runtime 위의 순회 전용 계층으로 추가했다. 정확한 저장 체크포인트부터 활성 장면만 진행하고 첫 미해결 원문 선택에서 멈추며, SCENE 24에서만 완료 신호를 낸다. 경로 전체를 함께 담은 원문 Markdown은 직접 렌더 금지 권위 소스로 표시하고 플레이어 표시용 `steps`는 아직 만들지 않는다.
+- SIP 독립 냉독에서 집 경로 체크포인트를 비활성 SCENE 3으로 위조하면 SCENE 18로 조용히 정규화되는 복원 결함을 재현했다. 이제 저장 체크포인트 자체가 활성 경로에 포함되지 않으면 `CHECKPOINT_UNREACHABLE`로 닫히며 회귀 검사가 이를 잠근다.
+- 대사 정본은 exact registry에만 남고 표현 계획은 분기 사실을 resolver/runtime에 위임한다. 새 Notion 재조회·불변 registry 일치·상태 불변식·독립 냉독 재현으로 동일 설계자 검증 결합을 완화했다. Re0 정리 후 집중 검사 `34/34 PASS`다.
+- 이번 관문은 안전한 표현 계획이며 완성된 플레이 어댑터가 아니다. 정확한 분기별 반응·대사 투영 뒤에야 `game.js`, 실제 브라우저 QA, 커밋, push, 동일 SHA 배포, 공개 확인으로 이동한다. 이미지·API 이미지 경로·배포·DAY 17은 시작하지 않았다.
+
+## 2026-08-31 10:45 KST — DAY 16 V4 선택·체크포인트 런타임 PASS
+
+- 런타임 변경 직전 권위 Notion DAY 16 하위 본문을 다시 완전 조회했다. 제목·페이지 ID·스냅샷, `<content>` 20,130자, 명시 본문 16,646자, SCENE 01~24, 선택 1~12가 그대로였고 `<file>` 첨부 두 개는 원고에서 제외했다.
+- `src/day16-v4-runtime.mjs`에 원문 선택 ID 기반 원자적 상태 변경, 경로별 다음 선택, 체크포인트, 유리의 별도 연락 수락/거절, 유리·하은·지훈 지식 범위, 현재 관계를 허위 선언하지 않는 선택 6, 최종 장면 완료 관문과 DAY 17 몸 훅을 구현했다. DAY 18 식사 확정은 쓰지 않는다.
+- 집 경로 선택 9는 실제 `오늘 집에서 쉬었어.` 한 개만 노출하도록 resolver를 닫았다. 유리를 만나지 않은 경로에서 만남이나 공개 유예를 선택할 수 없다.
+- SIP 냉독에서 선택 2부터 시작한 불완전 저장이 유효 판정 뒤 재개 불능이 되는 결함을 재현했다. 이제 선택 이력은 실제 활성 선택의 도달 가능한 prefix여야 하며 건너뛴 저장은 `BLOCKED_CORRUPT`다. `DISCLOSED_YURI`도 제한된 하은 지식 없이 성립하지 않는다.
+- Mandela 감사는 동일 설계자가 경로 기대값을 검증하는 결합을 표시했고, 새 Notion 재조회·exact registry 일치·상태 불변식·독립 냉독 재현을 외부 근거로 추가했다. SSOT 읽기 감사에서 상태 validator와 runtime의 활성 선택 투영 중복을 확인했지만 별도 승인 없는 통합 변경은 하지 않았다. 집중 검사 `29/29 PASS`, diff hygiene PASS. 다음 관문은 exact-source 플레이 표현 어댑터이며 이미지·게임 진입·커밋·push·배포·DAY 17은 시작하지 않았다.
+
+## 2026-08-31 10:33 KST — DAY 16 V4 정확 원문 분기 resolver PASS
+
+- 이 관문 직전 권위 Notion DAY 16 하위 본문을 다시 완전 조회했다. 제목·페이지 ID·스냅샷 `2026-08-27T19:49:09.165Z`, `<content>` 20,130자, 명시 본문 16,646자, SCENE 01~24, 선택 1~12가 그대로였고 상위/하위 `<file>` 첨부는 원고에서 제외했다.
+- 불변 exact-source registry를 입력으로만 쓰는 `src/day16-v4-branch-resolver.mjs`를 추가했다. 지훈 동석·혼자 카페·집 합류, 선택 8의 카페/집 대체 위치, 선택 9 경로별 세 번째 버튼, DAY 15 무연락·현재 관계 문맥, 선택 10~12 조건부 활성화를 원문 변경 없이 닫힌 방식으로 판정한다.
+- SIP 냉독에서 유리 공개가 없는데도 SCENE 20이 활성화되는 결함을 발견해 수정했다. 이제 실제 `DISCLOSED_YURI`와 제한된 하은 지식이 함께 있을 때만 SCENE 20/선택 10이 열린다. 원고 작성 버튼은 registry와 바이트 단위 동일성 검사를 추가했다.
+- SSOT 읽기 감사는 `sourceMarkdown`을 대사 정본으로 유지했고 resolver의 표기는 검증된 투영으로 분류했다. 집중 소스·상태·resolver 검사 `22/22 PASS`, diff hygiene PASS. 다음 관문은 이 resolver 위의 선택 상태 변경·체크포인트 런타임이며 이미지·실제 진입·커밋·push·배포·DAY 17은 시작하지 않았다.
+
+## 2026-08-31 10:11 KST — DAY 16 V4 챕터·상태·지식·V1 레거시 라우팅 계약 PASS
+
+- 계약 직전 권위 Notion 하위 본문을 다시 완독했고 페이지 ID, 스냅샷, `<content>` 20,130자, 명시 본문 16,646자, 24장면·12선택이 소스 잠금과 같았다. 상위 Markdown과 `<file>` 블록은 계속 제외했다.
+- 신규 `m30-day16-forgotten-name-v4`의 24장면 실행 비트, 동적 선택 1~12, 인물별 지식 예산, DAY 15 콜백, DAY 17 몸 훅, V1 무추정 복원을 계약했다. 기존 V1 흔적은 그대로 `V1_LEGACY`, 혼합·부분 V4는 `BLOCKED_CORRUPT`, 전제 미충족은 `BLOCKED_PREREQUISITE`로 닫힌다.
+- `src/day16-v4-state-contract.mjs`에 초기화·호환 판정·복원 계약과 정확 선택 ID, 집/카페·유리/지훈 지식·연락/초대·하은 공개·인접 DAY 훅 불변식을 추가했다. 완료 상태는 경로에서 실제 활성인 모든 선택을 요구한다.
+- SIP 냉독 결과를 반영해 경로별 `MUST REVEAL`, 저녁 합류의 의미, 하은 관계 자동 복구 금지, 선택 10의 의도와 선택 11 초대 응답을 분리했다. SSOT 읽기 감사에서는 V1 기록은 의도적 레거시로 보존하고 V4 상수·enum의 실행 정본은 신규 상태 모듈로 유지했다. 공용 유리 재회 이벤트 격리는 이후 실제 진입 연결 관문이다.
+- DAY 16·DAY 15 상태 계약 집중 검증 `28/28 PASS`. 플레이 대본·이미지·실제 진입은 아직 변경하지 않았다. 다음 관문은 최신 본문 기반 SCENE 01~24·선택 1~12 정확 원문 레지스트리와 분기 resolver이며 DAY 17은 시작하지 않았다.
+
+## 2026-08-31 09:54 KST — DAY 16 V4 Notion 소스 잠금·전면 재구축 격차 감사 PASS
+
+- 이번 실행은 DAY 16만 대상으로 이해했다. 최신 `DAY 16 — 잊힌 사람의 이름 | SCENARIO V4` 하위 페이지 `3c9c31f0-29a6-81a9-a067-d92edc10b353`의 `<content>` 20,130자, 명시 본문 16,646자, SCENE 01~24, 주요 선택 1~12, 지훈 동석·혼자 외출·집·연락/무연락 대체 경로와 구현 메모를 전부 읽었다. 상위 Markdown 첨부와 하위 `<file>` 블록 두 개는 무시했다.
+- 기존 DAY 16 V1 `현재 관계망 확인`은 지훈 중심 8장면·3선택으로 최신 유리 V4와 직접 대응하는 장면이 `0/24`다. 신규 진행에는 전면 재구축이 필요하며 V1은 기존 진입·완료 저장의 레거시 복원 전용으로만 보존한다.
+- SIP 냉독 지적을 반영해 소스 감사 PASS와 플레이 구현 미착수를 분리하고, 재조회 비교 필드, `false`와 `UNKNOWN`, V1 무추정 복원을 명시했다. SSOT 읽기 감사에서는 역사적 V1 기록은 보존 대상으로 확인했고, 카페 50% 유혹·호감도 상승을 전제한 공용 유리 재회 이벤트가 V4와 충돌하므로 V4 진행 중 격리해야 한다는 관문을 추가했다.
+- 소스 잠금과 구현 격차·콘텐츠 커버리지 감사를 `docs/day16`에 추가했다. 플레이 코드와 이미지는 아직 변경하지 않았다. 다음 관문은 V4 챕터·상태·지식·V1 레거시 라우팅 계약이며 DAY 17은 시작하지 않았다.
+
 ## 2026-08-31 09:37 KST — DAY 15 V4 공개 출시 COMPLETE / 현재 재구축 대상 DAY 16
 
 - Notion 최우선 DAY 15 V4 검증 커밋 `218cd1fd78f01ac3ce85fcd56ac188e2ff56488e`를 `feature/today-day-one-mvp`와 `gh-pages`에 일반 push했고 두 원격 브랜치가 동일 SHA를 가리킨다. 승인된 보호 규칙 우회만 사용했으며 force push와 rebase는 없었다.

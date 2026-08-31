@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DAY 16 V4 Actual UI QA Entry</title>
+  <style>
+    body{font:16px system-ui;background:#151322;color:#fff;display:grid;min-height:100vh;place-items:center;margin:0}
+    main{max-width:680px;padding:28px;background:#242033;border-radius:18px}
+    .actions{display:grid;gap:12px}
+    button{padding:14px 20px;border:0;border-radius:10px;background:#df5f91;color:#fff;font-weight:800}
+  </style>
+</head>
+<body><main><h1>DAY 16 V4 실제 UI QA</h1><p>DAY 15 V4 완료 직후의 캠페인 저장을 경로별로 만들고 제품 진입점으로 이동합니다.</p><div class="actions"><button data-route="cafe" type="button">혼자 카페 전체 경로 열기</button><button data-route="home" type="button">집에서 쉬는 경로 열기</button><button data-route="ended-choice6" type="button">종료된 관계 선택 6 직전 열기</button></div><p id="status" role="status"></p></main>
+<script type="module">
+import {createInitialState} from "../src/game-core.mjs";
+import {createGirlfriendFromProfile} from "../src/girlfriend-manager.mjs";
+import {SaveManager} from "../src/save-manager.mjs";
+import {GAME_MODES} from "../src/scenario-state.mjs";
+import {prepareDay16V4GameEntry,applyDay16V4GameChoice} from "../src/day16-v4-game-bridge.mjs";
+
+const makeState=route=>{
+  const state=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});
+  state.day=16;
+  state.phase=0;
+  state.affection=720;
+  state.trust=620;
+  state.pendingStoryId="m30-day16-current-social-circle";
+  state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};
+  state.storyHistory.push({day:15,sceneId:"m30-day15-current-leisure-date",choiceId:"day15_v4_qa_complete",response:"DAY 15 V4 QA 완료"});
+  Object.assign(state.storyFlags,{day15V4Version:"NOTION_V4",day15V4Completed:true,day16JihoonContactHookPending:true});
+  prepareDay16V4GameEntry(state);
+  if(route==="ended-choice6"){
+    for(const id of ["day16_v4_time_solo_cafe","day16_v4_morning_own_time","day16_v4_greeting_talk","day16_v4_past_not_today","day16_v4_starting_points_acknowledge"]){
+      applyDay16V4GameChoice(state,id);
+    }
+    state.breakup={day:15,reason:"QA_SOURCE_GAP_LOCK"};
+  }
+  return state;
+};
+
+document.querySelectorAll("[data-route]").forEach(button=>button.addEventListener("click",()=>{
+  SaveManager.save(makeState(button.dataset.route));
+  document.querySelector("#status").textContent="저장 준비 완료";
+  location.href="../index.html?qa=day16-v4&route="+button.dataset.route;
+}));
+</script></body></html>
