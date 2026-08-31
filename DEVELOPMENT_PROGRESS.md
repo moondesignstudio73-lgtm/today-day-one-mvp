@@ -1,6 +1,6 @@
 # 《결혼까지 30일!》 개발 진행표
 
-## DAY 16 V4 GAME ENTRY / ACTUAL BROWSER QA PASS · RELEASE GATE ACTIVE (2026-08-31 22:24 KST)
+## DAY 16 V4 PUBLIC RELEASE COMPLETE · DAY 17 NOT STARTED (2026-08-31 22:47 KST)
 
 - Connected the exact 24-scene/12-choice DAY 16 V4 runtime to `game.js` through a dedicated game bridge and immersive adapter. New V4 saves, exact checkpoint resume, route-only continuation, completion cue, legacy V1 isolation, and the DAY 17 body-check handoff are covered; no DAY 17 implementation was changed.
 - Reused the verified home, cafe, and street backgrounds. No new bitmap was needed, so ImageGen and every API image path were intentionally unused.
@@ -8,7 +8,9 @@
 - Actual in-app browser QA completed the solo-cafe route through choices 1–12 and the home route through choices 1, 2, 8, and 9. Both reached the DAY 16 ending and emitted the DAY 17 pending hook; warning/error logs were empty. Save-to-product entry and exact checkpoint restoration were exercised through `tests/day16-v4-browser-entry.html`.
 - Focused DAY 16 verification passes `66/66`; the full repository test suite passes `358/358`; `game.js` syntax and diff hygiene pass apart from line-ending notices. SIP fresh review findings for speaker validation and terminal-step validation were applied.
 - Mandela identifies verifier/designer coupling as the only validation leak. Independent truth enters through the freshly locked Notion child body, literal source registries and negative tests, the pre-existing full regression suite, actual browser behavior, and fresh-context shower reviews. SSOT read-only review leaves prose in the registries and state ownership in the state contract; no consolidation mutation was made.
-- Next gate is commit, normal push to `feature/today-day-one-mvp`, identical-SHA `gh-pages` push, GitHub Pages completion, and cache-bypassed public verification. DAY 17 remains out of scope.
+- The release merge `e509936f81eb76485b5ef390e58643c09e2e84d9` was pushed normally to both `feature/today-day-one-mvp` and `gh-pages`; both remote refs were read back at the identical SHA. The pre-existing `gh-pages` ending/TIP layout and late-night Yuri cafe fixes were preserved through a no-force, no-rebase merge.
+- GitHub Actions runs `33398323103` (`Deploy GitHub Pages`) and `33398319800` (`pages build and deployment`) both completed successfully for `e509936`. The cache-bypassed public title screen, DAY 16 QA entry, and actual `DAY 16 · 화요일` resume all rendered in the in-app browser. Public `game.js?v=182`, `src/day16-v4-runtime.mjs`, and the QA entry returned HTTP 200.
+- DAY 16 is complete. DAY 17 implementation, source retrieval, mutation, and QA have not started and remain outside the authorized work scope.
 
 ## DAY 16 V4 SCENE 10 CURRENT-CONVERSATION EXACT NOTE VARIANT PASS (2026-08-31 11:41 KST)
 

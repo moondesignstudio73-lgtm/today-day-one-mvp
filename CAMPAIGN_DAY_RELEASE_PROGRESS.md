@@ -1,12 +1,14 @@
 # DAY 5~30 순차 출시 진행표
 
-## DAY 16 V4 RELEASE GATE ACTIVE (2026-08-31 22:24 KST)
+## DAY 16 V4 PUBLIC RELEASE COMPLETE (2026-08-31 22:47 KST)
 
 - Latest DAY 16 V4 child source remains locked at 24 scenes and 12 choices; parent Markdown/file attachments are excluded.
 - Exact V4 registry, state/knowledge/legacy contract, resolver, atomic runtime, reaction/continuation projection, immersive adapter, presentation mapping, game bridge, and actual `game.js` entry are complete.
 - One source omission remains: the ended-relationship replacement for choice 6 has a button label but no Yuri reaction. Only that option is hidden/rejected at the game surface with user authorization; no reaction was invented and the registry still exposes the omission for audit.
 - Actual browser QA completed solo-cafe and home routes to the DAY 16 ending with empty warning/error logs. Focused tests pass `66/66`; full tests pass `358/358`.
-- Status: `QA PASS · COMMIT/PUSH/SAME-SHA DEPLOY/PUBLIC VERIFY PENDING`. DAY 17 work has not started.
+- Release merge `e509936f81eb76485b5ef390e58643c09e2e84d9` is present on both `feature/today-day-one-mvp` and `gh-pages` at the identical remote SHA. The merge preserved the two newer remote `gh-pages` fixes without force push or rebase.
+- GitHub Pages runs `33398323103` and `33398319800` both succeeded for that SHA. Cache-bypassed public browser QA reached the title, the DAY 16 route harness, the STORY MODE `DAY 16` resume card, and the actual `DAY 16 · 화요일` scene. Public cache version `game.js?v=182`, runtime, and harness all resolve.
+- Status: `DAY 16 COMPLETE · QA/PUSH/SAME-SHA DEPLOY/PUBLIC VERIFY PASS`. DAY 17 work has not started.
 
 ## 2026-08-31 11:41 KST — DAY 16 V4 SCENE 10 현재 대화 exact-note 변형 PASS
 
