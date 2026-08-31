@@ -1,6 +1,6 @@
 # DAY 15 V4 이미지 커버리지 감사·제작
 
-상태: `IMAGE PRODUCTION 6/6 · FINAL SET QA PASS · DIRECTION/AUDIO PASS · ACTUAL BROWSER QA PASS · RELEASE ACTIVE`
+상태: `IMAGE PRODUCTION 6/6 · FINAL SET QA PASS · DIRECTION/AUDIO PASS · ACTUAL BROWSER QA PASS · PUBLIC RELEASE COMPLETE`
 
 ## 최신 원고와 생성 경로 잠금
 
@@ -112,8 +112,9 @@ SCENE 17의 작은 도록 이미지, SCENE 18의 전화, SCENE 22의 공개 자�
 - 반복 읽기 감사에서 현재 `6/6`, 여섯 파일명·SHA, 남은 세트 최종 QA는 제작 계획 코드, 집중 테스트, 이 문서와 최신 진행표 사이에 일치한다. 과거 진행표의 1/6~5/6 기록은 당시 결과를 보존하는 이력이라 교체하지 않는다. 새로운 경쟁 정본이나 승인 필요한 SSOT 통합은 만들지 않는다.
 - 최종 세트 뒤 무맥락 냉독은 슬롯 순서·장면 범위·좌표 유형·빈 URL을 validator가 충분히 막지 않는 점과 `mobileFocus`의 중앙 60% 의미를 지적했다. validator와 집중 회귀를 보강하고 이 문서에 의미를 명시했다. 자산 존재·규격·해시는 통합 테스트, 분기 자격·스프라이트 순서는 어댑터 테스트가 독립 관문으로 유지되며, 최신 Notion 원고·원본 육안 감사·실제 브라우저를 외부 근거로 삼아 테스트끼리의 자기확인만으로 PASS를 선언하지 않는다.
 
-## 미완료 관문
+## 출시 완료
 
-- SIP 냉독·일관성 감사와 `git diff --check`를 끝낸다.
-- DAY 15 검증 커밋을 `origin/feature/today-day-one-mvp`에 일반 push하고, 동일 SHA를 `gh-pages`에 배포한 뒤 원격 SHA와 공개 페이지를 확인한다.
-- DAY 15는 실제 브라우저 QA까지 PASS했지만 원격 출시 전이므로 아직 COMPLETE가 아니다. DAY 16 작업은 시작하지 않는다.
+- SIP 냉독이 지적한 선택 9→10 저장 경계는 JSON 복원 회귀로 추가 고정했고, 집중 `81/81`, 전체 시뮬레이션, `git diff --check`가 PASS했다.
+- 검증 커밋 `218cd1fd78f01ac3ce85fcd56ac188e2ff56488e`를 `origin/feature/today-day-one-mvp`와 `gh-pages`에 일반 push해 동일 SHA를 확인했다. force push와 rebase는 사용하지 않았다.
+- GitHub Actions `Deploy GitHub Pages` 실행 `33344923247`이 동일 SHA로 success를 완료했다. 캐시 우회 공개 제목 화면은 warning/error 0건이며 조건부 어깨 접촉 CG 공개본도 1672×941로 실제 로드됐다.
+- DAY 15 이미지·연출/오디오·실제 브라우저·원격·공개 관문은 모두 COMPLETE다. 다음 순차 대상은 DAY 16이지만 이 문서 작업에서는 시작하지 않는다.

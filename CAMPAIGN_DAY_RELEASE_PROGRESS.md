@@ -1,5 +1,12 @@
 # DAY 5~30 순차 출시 진행표
 
+## 2026-08-31 09:37 KST — DAY 15 V4 공개 출시 COMPLETE / 현재 재구축 대상 DAY 16
+
+- Notion 최우선 DAY 15 V4 검증 커밋 `218cd1fd78f01ac3ce85fcd56ac188e2ff56488e`를 `feature/today-day-one-mvp`와 `gh-pages`에 일반 push했고 두 원격 브랜치가 동일 SHA를 가리킨다. 승인된 보호 규칙 우회만 사용했으며 force push와 rebase는 없었다.
+- GitHub Actions `Deploy GitHub Pages` 실행 `33344923247`이 동일 SHA `218cd1f`로 success를 완료했다. 캐시 우회 공개 `https://superstarman35.github.io/game/`은 제목 화면을 정상 렌더하고 warning/error 0건이었다. 공개 조건부 어깨 접촉 CG도 HTTP 공개본에서 1672×941로 실제 로드됐다.
+- 최신 Notion 하위 본문 24,208자, 24개 장면·12개 선택·전체 분기, 내장 ImageGen 6종, 연출/오디오, 상태/지식/레거시 계약, 정확 원문 resolver, 실제 저장 복원, DAY 16 인접 도달, 집중 `81/81`, 전체 시뮬레이션, 실제 참석·무연락·전화 이탈 브라우저 경로, origin·동일 SHA gh-pages·공개 확인이 모두 PASS했다.
+- DAY 15는 COMPLETE다. 현재 순차 재구축 대상은 `DAY 16`이지만, 이번 실행에서는 DAY 16 하위 페이지 조회·원고·구현을 시작하지 않았다.
+
 ## 2026-08-31 09:27 KST — DAY 15 V4 실제 브라우저 전 경로 QA PASS / 출시 관문 진행 중
 
 - 이번 실행은 DAY 15 실제 브라우저 경로 완료와 발견 결함 교정까지만 수행하는 것으로 이해했고, DAY 16 원고·구현은 건드리지 않았다. 직전 최신 Notion DAY 15 V4 하위 페이지 본문 24,208자를 다시 전부 읽었으며 페이지 `3c9c31f0-29a6-8138-ab56-ed8ee668526d`, 스냅샷 `2026-08-27T21:19:12.202Z`는 그대로다. 상위 Markdown 첨부와 `<file>` 블록은 제외했다.

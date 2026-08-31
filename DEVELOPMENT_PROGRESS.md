@@ -1,5 +1,12 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 15 V4 PUBLIC RELEASE COMPLETE / CURRENT REBUILD TARGET DAY 16 (2026-08-31 09:37 KST)
+
+- Pushed the Notion-first DAY 15 V4 verification commit `218cd1fd78f01ac3ce85fcd56ac188e2ff56488e` normally to both `feature/today-day-one-mvp` and `gh-pages`; both remote branches reference the identical SHA. Only the approved protection-rule bypass was used, with no force push or rebase.
+- GitHub Actions `Deploy GitHub Pages` run `33344923247` completed successfully for the same `218cd1f` SHA. A cache-bypassed public tab at `https://superstarman35.github.io/game/` rendered the title screen with zero warnings/errors, and the public conditional shoulder-contact CG loaded at its verified 1672×941 dimensions.
+- The latest 24,208-character Notion child body, all 24 scenes and 12 choices, every route, six built-in ImageGen assets, direction/audio, state/knowledge/legacy contracts, exact-source resolvers, save/restore, DAY 16 adjacency, focused `81/81`, the full simulation, actual attendance/no-contact/phone-left browser routes, origin, identical-SHA gh-pages, and public verification all pass.
+- DAY 15 is COMPLETE. The sequential rebuild target is now `DAY 16`, but this run did not fetch, write, or implement any DAY 16 content.
+
 ## DAY 15 V4 ACTUAL BROWSER ROUTE MATRIX PASS / RELEASE GATE ACTIVE (2026-08-31 09:27 KST)
 
 - Interpreted this run as finishing DAY 15 actual-browser coverage and correcting any discovered DAY 15 defect only; DAY 16 narrative and implementation remain untouched. Refetched and fully read all 24,208 characters of the current authoritative DAY 15 V4 child body from page `3c9c31f0-29a6-8138-ab56-ed8ee668526d`; snapshot `2026-08-27T21:19:12.202Z` is unchanged, and parent Markdown attachments plus `<file>` blocks were ignored.
