@@ -809,6 +809,7 @@ function startImmersiveScene(session) {
   $("#gameScreen").classList.remove("classic-mode");
   $("#gameScreen").classList.add("story-mode");
   $("#visualNovelStage").classList.toggle("location-event-scene",Boolean(session.locationEvent));
+  $("#visualNovelStage").classList.toggle("image-text-only",Boolean(session.hideCharacter));
   $("#skipButton").classList.remove("hidden");
   $("#storyChoiceLayer").classList.add("hidden");
   $("#vnNpcRear").hidden=true;
@@ -821,7 +822,15 @@ function startImmersiveScene(session) {
   preloadImmersiveAssets([{assetUrl:immersiveScene.activeCharacterAssetUrl},...session.sequence]);
   eventRuntime.markAssets(immersiveScene.presentation?.backgroundUrl?"READY":"FALLBACK");eventRuntime.transition("TRANSITIONING");persistEventRuntime(true);
   updateImmersiveCharacter(immersiveScene.presentation.expressionId);
-  if(immersiveScene.presentation.characterId===null||session.hideCharacter){$("#vnCharacter").hidden=true;$("#vnCharacterVideo").hidden=true;}
+  if(immersiveScene.presentation.characterId===null){$("#vnCharacter").hidden=true;$("#vnCharacterVideo").hidden=true;}
+  if(session.hideCharacter){
+    $("#vnCharacter").hidden=true;
+    $("#vnCharacterVideo").hidden=true;
+    $("#vnAccessoryLayer").hidden=true;
+    $("#vnGiftVehicleLayer").hidden=true;
+    $("#vnNpcRear").hidden=true;
+    $("#vnNpcFront").hidden=true;
+  }
   if(session.id===LOCKED_DAY1_SCENE_ID){$("#vnCharacter").hidden=true;delete $("#vnCharacter").dataset.day1Pose;}
   renderImmersiveStep();
 }
@@ -1176,7 +1185,7 @@ function finishImmersiveScene() {
   const returnToFreeAction=Boolean(completedSession?.fromStoryFreeAction&&markStoryFreeActionEventComplete(state,completedSession.id));
   const nextCampaignScene=returnToFreeAction?null:advanceCampaignChapter(completedSession);
   eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
-  $("#visualNovelStage").classList.remove("narration-mode","location-event-scene");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.toggle("hidden",state.scenario?.enabled===true);$("#nextButton").classList.toggle("hidden",state.scenario?.enabled===true);
+  $("#visualNovelStage").classList.remove("narration-mode","location-event-scene","image-text-only");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.toggle("hidden",state.scenario?.enabled===true);$("#nextButton").classList.toggle("hidden",state.scenario?.enabled===true);
   SaveManager.save(state);render();$(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true);
   if(returnToFreeAction){const story=getStoryScene(state.storyFreeAction?.storySceneId);if(story)setTimeout(()=>openStoryScene(story),0);return;}
   if(nextCampaignScene){eventRuntime.queue=[];eventRuntime.microQueue=[];setTimeout(()=>openStoryScene(nextCampaignScene),0);return;}
@@ -2444,7 +2453,7 @@ function openTemptation({ npc, level }) {
 function openEventScene(event,{debugPreview=false,previewOutfitImage=null,skipToChoice=false,resumeSequenceIndex=0,fromStoryFreeAction=state.storyFreeAction?.status==="EVENT"&&state.storyFreeAction?.event?.id===event.id}={}) {
   const presentation=resolveStoryPresentation({id:event.id,title:event.title,message:event.message,bgm:"theme",presentation:event.presentation},state);
   const sequence=createEventSceneSequence(event).slice(Math.max(0,resumeSequenceIndex));
-  const triggerReason=event.record?.triggerReason??[],locationEvent=event.trigger==="location-enter"||triggerReason.some(reason=>String(reason).startsWith("장소 입장:"));
+  const triggerReason=event.record?.triggerReason??[],locationEvent=debugPreview||event.trigger==="location-enter"||triggerReason.some(reason=>String(reason).startsWith("장소 입장:"));
   startImmersiveScene({id:event.id,type:"event",presentation,sequence,previewOutfitImage,triggerReason,locationEvent,fromStoryFreeAction,onChoice:event.scenes?.length?choiceId=>{const result=resolveSituationEventChoice(state,event,choiceId);if(!result)return null;state.logs.push({time:`DAY ${state.day} · EPISODE`,text:`${event.title} · ${result.choice.label}`});SaveManager.save(state);const lastScene=event.scenes?.at(-1),reactionSpeaker=lastScene?.dialogueTurns?.find(turn=>turn.type==="dialogue")?.speaker??event.npcName??state.partner.name,reactionText=result.choice.response??result.choice.memory??"선택의 의미가 앞으로의 관계에 남았다.",reactionExpression=choiceId==="risk"?"tense":"smile";return {sequence:[{type:"narration",text:`나는 “${result.choice.label}”라고 답하고 행동했다.`},{type:"expressionChange",expressionId:reactionExpression},{type:"dialogue",speaker:reactionSpeaker,text:reactionText,expressionId:reactionExpression},...(result.mbtiAdjustment?.label?[{type:"narration",text:`${result.mbtiAdjustment.label}에 맞는 반응이 관계 수치에 추가로 반영됐다.`}]:[]),{type:"narration",text:"이 선택의 결과가 관계 수치와 다음 사건의 가능성에 남았다."},{type:"sceneEnd"}],resultPopup:{action:{id:`${event.id}-choice`,title:event.title},message:`${result.choice.label} · ${reactionText}`,effects:result.effects,imageAsset:event.image?.result??event.image?.intro??null}};}:null,debugPreview});
   if(skipToChoice)setTimeout(()=>skipImmersiveScene(new Event("click")),0);
 }
