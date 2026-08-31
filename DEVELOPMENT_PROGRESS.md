@@ -1,5 +1,123 @@
 # 《결혼까지 30일!》 개발 진행표
 
+## DAY 15 V4 ACTUAL BROWSER ROUTE MATRIX PASS / RELEASE GATE ACTIVE (2026-08-31 09:27 KST)
+
+- Interpreted this run as finishing DAY 15 actual-browser coverage and correcting any discovered DAY 15 defect only; DAY 16 narrative and implementation remain untouched. Refetched and fully read all 24,208 characters of the current authoritative DAY 15 V4 child body from page `3c9c31f0-29a6-8138-ab56-ed8ee668526d`; snapshot `2026-08-27T21:19:12.202Z` is unchanged, and parent Markdown attachments plus `<file>` blocks were ignored.
+- The actual in-app product UI completed the attendance route through choices 1–12, Scene 03/05/07/12/24 CG exposure, a choice-5 reload/resume, public-material consent, and DAY 16 reachability. It also completed no-invite/no-contact and phone/Haeun-left terminal paths from their real choice gates to DAY 16. Browser warning/error logs stayed empty.
+- Actual play exposed a timing defect: Scene 20 source contact played after choice 10, but `day15V4ShoulderContactOccurred` was not calculated until choice 11, so its conditional CG had already been skipped. The runtime now resolves contact eligibility immediately after choice 9 establishes the return walk. Regression coverage proves the choice-10 continuation includes the Scene 20 CG only with prior contact, and the actual UI received `cg-day15-v4-conditional-shoulder-touch-v1.png` through `#vnEventCg`.
+- Added `tests/day15-v4-browser-entry.html` as a test-only product-entry harness for fresh contact/no-contact state and deterministic Scene 20, no-contact choice-5, and phone-left choice-9 checkpoints. It does not change production bootstrap behavior.
+- Focused DAY 15 verification passes `81/81`; the full `tests/simulation.test.mjs` suite passes. Remaining gate: SIP and diff hygiene, then commit, push `origin/feature/today-day-one-mvp`, deploy the identical SHA to `gh-pages`, and verify the public page. DAY 16 work has not started.
+
+## DAY 15 V4 FINAL SET + DIRECTION/AUDIO PASS / ACTUAL BROWSER QA ACTIVE (2026-08-31 08:31 KST)
+
+- Refetched and fully read all 23,171 characters of the authoritative DAY 15 V4 Notion child body immediately before this audit. Page `3c9c31f0-29a6-8138-ab56-ed8ee668526d` remains at snapshot `2026-08-27T21:19:12.202Z`; parent Markdown attachments and `<file>` blocks were ignored.
+- Cold-read all six 1672×941 CGs as one set and passed character, wardrobe, location, emotional-continuity, and route-boundary review. Every slot now owns a normalized `mobileFocus` fully inside the center 60%; validation locks exact slot order, scene-number ranges, numeric focus bounds, and nonempty asset URLs.
+- Reconciled SFX to the source actions: only scenes 1, 3, 8, 11, 12, 18, 20, 22, and 23 retain the matching everyday cue. Invented bag-zipper, cup, and phone-screen-off cues were removed; `directionAudioGate` is `passed-day15-v4-direction-audio-audit`.
+- Focused verification passes `19/19`; the expanded DAY 15/module-entry run passes `81/81`; `game.js` syntax, the full simulation suite, and diff hygiene pass.
+- Actual in-app browser QA passed DAY 14→15 entry, choices 1–2, the real Scene 03 CG load, desktop and 390×844 layout, and browser loading of all six exact 1672×941 assets. The long continuous run stopped safely at choice 3 when the control tool timed out, so later attendance/nonattendance, contact/noncontact, save/reload, and ending exposure remain ACTIVE.
+- DAY 15 remains incomplete and uncommitted/undeployed. Next single gate: finish the remaining actual-browser route matrix. DAY 16 has not started.
+
+## DAY 15 V4 BUILT-IN IMAGEGEN 6 OF 6 / SCENE 24 STATIC INTEGRATION PASS (2026-08-31 08:04 KST)
+
+- Refetched and fully read the authoritative DAY 15 V4 Notion child body immediately before production: all 23,171 body characters from page `3c9c31f0-29a6-8138-ab56-ed8ee668526d`. Snapshot `2026-08-27T21:19:12.202Z` remains unchanged; parent Markdown attachments and `<file>` blocks were ignored.
+- Added `isDay15V4EndingSceneEligible` before making the final asset. Fresh, forged checkpoint, contradictory, and public-material-interrupted saves fail closed; ordinary attendance, completed material, no-contact, Haeun-left, and completed saves expose Scene 24 only at their real ending frontier.
+- Produced and cold-read-corrected `cg-day15-v4-line-on-paper-epilogue-v1.png` through Codex built-in ImageGen, then copied it non-destructively into the project. The accepted 1672×941 8-bit RGB PNG has SHA-256 `89596DBBC061114EAC4427DE6930AD2728F876C5E422334CC094B0DA74158AB7`; no SDK, external image API, or `OPENAI_API_KEY` route was used.
+- The route-neutral protagonist-POV frame contains only the source-shared exhibition guide, one rough remembered line, a visible fold in progress, dark phone, and one-sided lamp light. It contains no readable title/message, exact artwork reconstruction, Haeun, Siwoo, other person, or recovered-memory claim.
+- The plan-derived gate is now `in-production-6-of-6`; all six files are statically integrated. Focused verification passes `18/18`, and the expanded DAY 15 plus module-entry run passes `81/81`.
+- DAY 15 remains incomplete and uncommitted/undeployed. Next gate: whole-set original-resolution consistency and mobile crop QA, then direction/audio and actual-browser QA. DAY 16 has not started.
+
+## DAY 15 V4 BUILT-IN IMAGEGEN 5 OF 6 / SCENE 20 CONDITIONAL INTEGRATION PASS (2026-08-31 07:47 KST)
+
+- Refetched and fully read the authoritative DAY 15 V4 Notion child body immediately before production: all 23,171 body characters from page `3c9c31f0-29a6-8138-ab56-ed8ee668526d`. Snapshot `2026-08-27T21:19:12.202Z` remains unchanged; parent Markdown attachments and `<file>` blocks were ignored.
+- Produced `cg-day15-v4-conditional-shoulder-touch-v1.png` through Codex built-in ImageGen and copied it non-destructively into the project. The accepted 1672×941 8-bit RGB PNG has SHA-256 `175226C121564BFE5C25D458063B2353A1D2CBF1B661FE981A489A760E682C6B`; no SDK, external image API, or `OPENAI_API_KEY` route was used.
+- The frame shows only the source-authorized close-return variant: Haeun and the protagonist keep walking at the same pace while their outer shoulders briefly touch. Hands remain separate, with no embrace, arm wrap, pull, kiss, stop, or third focal character. The ineligible route still receives no CG.
+- The plan-derived gate is now `in-production-5-of-6`; scenes 3, 5, 7, 12, and conditional 20 are `ready-new`. The selector rechecks attendance and the full contact-eligibility contract instead of trusting a forged occurrence flag. Focused verification passes `16/16`, and the expanded DAY 15 plus module-entry run passes `85/85`.
+- DAY 15 remains incomplete and uncommitted/undeployed. Next gate: require a valid Scene 24 ending checkpoint before materializing its route-neutral line-on-paper epilogue CG. DAY 16 has not started.
+
+## DAY 15 V4 BUILT-IN IMAGEGEN 4 OF 6 / SCENE 12 STATIC INTEGRATION PASS (2026-08-31 07:38 KST)
+
+- Refetched and fully read all 25,204 response characters and all 23,171 body characters from the authoritative DAY 15 V4 Notion child page. Page ID `3c9c31f0-29a6-8138-ab56-ed8ee668526d` and snapshot `2026-08-27T21:19:12.202Z` remain unchanged; parent Markdown attachments and `<file>` blocks were ignored.
+- Produced `cg-day15-v4-cafe-confession-v1.png` through Codex built-in ImageGen, copied it non-destructively into the project, and deterministically converted the repository copy to 24-bit RGB. The accepted 1672×941 PNG has SHA-256 `BD3CE26F7E63F550550DF231A3061C3E42797921F8B9976852F307DF28E46A51`.
+- The protagonist-POV frame holds the shared instant before choice 7: Haeun waits across two drinks after asking for just one feeling. It commits to none of the jealousy, inadequacy, or control branches and depicts no touching, argument, departure, or reconciliation.
+- The plan-derived gate is now `in-production-4-of-6`; only scenes 3, 5, 7, and 12 are `ready-new`. Focused verification passes `15/15`, and the expanded DAY 15 plus module-entry run passes `84/84`.
+- DAY 15 remains incomplete and uncommitted/undeployed. Next gate: Scene 20 conditional shoulder-contact CG. DAY 16 has not started.
+
+## DAY 15 V4 BUILT-IN IMAGEGEN 3 OF 6 / SCENE 07 STATIC INTEGRATION PASS (2026-08-31 07:26 KST)
+
+- Refetched and fully read all 25,204 characters returned for the authoritative DAY 15 V4 Notion child page. Page ID `3c9c31f0-29a6-8138-ab56-ed8ee668526d` and snapshot `2026-08-27T21:19:12.202Z` remain unchanged; parent Markdown attachments and `<file>` blocks were ignored.
+- Produced `cg-day15-v4-wavering-line-artwork-v1.png` through Codex built-in ImageGen and copied it non-destructively into the project. The first result made the source's small artwork too large and was rejected; the accepted correction is a 1672×941 RGB PNG with SHA-256 `CA397A7CFFF261EB4EE67EEC8CEA68FA998ED0FF929CC437E8D42CC73B07A4DA`.
+- The protagonist-POV frame centers the subtle wavering line in a small anonymous artwork and Haeun's quiet observation without committing to any choice 4 or 5 branch. Siwoo and the protagonist stay out of the foreground so attention moves from interpersonal comparison to the artwork.
+- The plan-derived gate is now `in-production-3-of-6`; only scenes 3, 5, and 7 are `ready-new`. Focused verification passes `14/14`, and the expanded DAY 15 plus module-entry run passes `83/83`.
+- DAY 15 remains incomplete and uncommitted/undeployed. Next gate: Scene 12 cafe-confession CG. DAY 16 has not started.
+
+## DAY 15 V4 BUILT-IN IMAGEGEN 2 OF 6 / SCENE 05 STATIC INTEGRATION PASS (2026-08-31 07:14 KST)
+
+- Refetched and fully read all 25,204 characters returned for the authoritative DAY 15 V4 Notion child page. Page ID `3c9c31f0-29a6-8138-ab56-ed8ee668526d` and snapshot `2026-08-27T21:19:12.202Z` remain unchanged; parent Markdown attachments and `<file>` blocks were ignored.
+- Produced `cg-day15-v4-direction-mistake-laugh-v1.png` through Codex built-in ImageGen and copied it non-destructively into the project. The 1672×941 RGB original has SHA-256 `6E6595E2C113EFEC169BCD51790B07A544CC771A625904F7F814271DF1BD5212`; no SDK, external image API, or `OPENAI_API_KEY` route was used.
+- The protagonist-POV frame makes Siwoo's mistaken gesture and Haeun's opposite eyeline readable while preserving their professional distance and harmless familiarity. It contains no touching, romantic implication, villainization, exaggerated slapstick, memory overlay, or readable gallery text.
+- The plan-derived gate is now `in-production-2-of-6`; only scenes 3 and 5 are `ready-new`. Both attendance scenes clear the transition character, show one CG, then restore Haeun; nonattendance exposes neither asset. Focused verification passes `13/13`, and the expanded DAY 15 plus module-entry run passes `82/82`.
+- DAY 15 remains incomplete and uncommitted/undeployed. Next gate: Scene 7 wavering-line CG. DAY 16 has not started.
+
+## DAY 15 V4 IMAGE COVERAGE AUDIT / BUILT-IN IMAGEGEN 1 OF 6 (2026-08-31 06:47 KST)
+
+- Refetched and fully read all 25,204 characters returned for the authoritative DAY 15 V4 Notion child page. Page ID `3c9c31f0-29a6-8138-ab56-ed8ee668526d` and snapshot `2026-08-27T21:19:12.202Z` remain unchanged; parent Markdown attachments and `<file>` blocks were ignored.
+- Audited Git history, DAY 1–14 production notes, scripts, and existing assets. The established path remains Codex built-in ImageGen with non-destructive project copying and deterministic local post-processing only when needed. No SDK, Responses/Images API, external API, or `OPENAI_API_KEY` route was used.
+- Reused the audited gallery/cafe backgrounds and Haeun outfit, rejected the DAY 11 Siwoo-message and bench-lean CGs as materially different scenes, and locked six action CGs: gallery entrance, mistaken direction, wavering line, cafe confession, conditional shoulder touch, and the paper-line epilogue.
+- Produced and integrated `cg-day15-v4-gallery-entrance-v1.png`, a 1672×941 RGB built-in ImageGen original with SHA-256 `1BB2E107194EE0955019714ED0FC54FFFBD41E29B0150CA61FE0AF798B52AE04`. Scene 3 clears the transition character, emits one `cgShow`, then restores Haeun only after the CG closes; the image preserves professional spacing, non-villain Siwoo, protagonist POV, anonymous art, and the dialogue safe area.
+- Presentation status is derived from the plan as global `in-production-1-of-6`. Each slot now owns a semantic coverage range, one display anchor, eligibility, and sprite policy; the unfinished shoulder-contact slot remains fail-closed even when contact occurred. Focused route plus asset signature/dimension/color/hash verification passes `12/12`. DAY 15 remains incomplete and uncommitted/undeployed. Next gate: the scene-5 mistaken-direction CG. DAY 16 has not started.
+
+## DAY 15 V4 ACTUAL GAME ENTRY/CHOICE/RESUME CONNECTED / IMAGE AUDIT PENDING (2026-08-31 06:33 KST)
+
+- Refetched and fully read all 25,204 characters returned for the authoritative DAY 15 V4 Notion child page. Page ID `3c9c31f0-29a6-8138-ab56-ed8ee668526d` and snapshot `2026-08-27T21:19:12.202Z` remain unchanged; parent Markdown attachments and `<file>` blocks were ignored.
+- Added the DAY 15 V4 game bridge and wired actual `game.js` entry, checkpoint resume, choices 1–12, conditional public-material offer, completion cue, save, and finish handling to the V4 state/runtime/adapter contracts. V1 legacy and blocked/corrupt saves retain their previous behavior.
+- The renderer now passes choice-selection metadata automatically, renders message senders and narration-like source steps correctly, and requires the V4 completion contract before skip or ordinary playback can close the chapter.
+- SIP's zero-context review surfaced mutation during read APIs, forged/early completion cues, completed-save recovery, and stale/double choice handling. Resume/segment reads are now pure; completion requires the adapter's state-derived terminal cue, is idempotent, and resumes through `sceneEnd`; stale or repeated choice IDs fail closed.
+- The state/runtime, exact resolvers/adapter, and UI bridge retain separate SSOT responsibilities. No image was generated and no SDK, external image API, or `OPENAI_API_KEY` route was introduced.
+- Focused DAY 15 verification passes `72/72`; the expanded run including legacy DAY 15, campaign transition, and module-entry adjacency passes `81/81`. DAY 15 remains incomplete and uncommitted/undeployed. Next gate: audit existing image coverage and create only required assets through Codex built-in ImageGen plus the established deterministic local post-processing path. Direction/audio, full/browser regression, push, and deployment remain later gates; DAY 16 has not started.
+
+## DAY 15 V4 EXACT-SOURCE IMMERSIVE ADAPTER CONNECTED / `game.js` ENTRY PENDING (2026-08-31 06:22 KST)
+
+- Refetched and fully read all 25,204 characters returned for the authoritative DAY 15 V4 Notion child page. Page ID `3c9c31f0-29a6-8138-ab56-ed8ee668526d` and snapshot `2026-08-27T21:19:12.202Z` remain unchanged; parent Markdown attachments and `<file>` blocks were ignored.
+- Switched the immersive adapter's SCENE 01–12 provider from the rejected condensed baseline to the exact-source resolver. Attendance, own-afternoon, phone/no-contact ordering, immediate reactions, scene-6 choices 3–5 resume, and the separate-afternoon outfit close now come from the locked source projection.
+- SIP cold-read hardening enforces terminal single choice cues, restores presentation scaffolding on scene-6 resume, validates phone/no-contact detour state, rejects stale continuation calls, and applies symmetric late-choice reaction checks.
+- The exact registry remains the source SSOT, resolvers remain state projections, and the adapter remains the presentation transform. Registry runtime metadata is now `exact-route-resolved-adapter-connected`.
+- Focused adapter, front/late resolver, source-registry, runtime, state-contract, and baseline-module verification passes `67/67`. `git diff --check` separately confirms pre-existing conflict markers in `game.js` and `index.html`, outside this provider-wiring gate.
+- DAY 15 remains incomplete and uncommitted/undeployed. Next gate: wire actual DAY 15 V4 entry, choice, and resume through `game.js`. Images, direction/audio, full/browser regression, push, and deployment remain later gates; DAY 16 has not started.
+
+## DAY 15 V4 SCENE 01–12 EXACT-SOURCE ROUTE RESOLVER PASS / IMMERSIVE ADAPTER SWITCH PENDING (2026-08-31 06:08 KST)
+
+- Refetched and fully read the authoritative DAY 15 V4 Notion child body immediately before work. Page ID `3c9c31f0-29a6-8138-ab56-ed8ee668526d` and snapshot `2026-08-27T21:19:12.202Z` remain unchanged; parent Markdown attachments and file blocks were ignored.
+- Added the fail-closed first-half resolver over the immutable exact registry. It selects one invitation/attendance/own-afternoon/choice branch per stored state, restores the own-afternoon choices 3–5 in order, and emits only the first unresolved cue.
+- SIP cold-read fixes make scenes 5/8 explicitly attendance-common, preserve legitimate `- ` source lines, reject duplicate or out-of-order markers, expose plural `selectedChoiceIds` for scene 6, and keep explicit active/inactive result shapes.
+- Focused source, resolver, immersive adapter, runtime, and state verification passes `57/57`. The exact registry remains the source SSOT; the resolver is a derived state projection.
+- DAY 15 remains incomplete and uncommitted/undeployed. Next gate: switch the immersive adapter's SCENE 01–12 provider to this resolver. Images, direction/audio, full/browser regression, push, and deployment remain later gates; DAY 16 has not started.
+
+## DAY 15 V4 SCENE 01–12 EXACT SOURCE REGISTRY PASS / EXACT ROUTE RESOLVER PENDING (2026-08-31 05:48 KST)
+
+- Freshly refetched and fully read the authoritative DAY 15 V4 Notion child body. Parent Markdown attachments and file blocks remained excluded. The registry records page ID `3c9c31f0-29a6-8138-ab56-ed8ee668526d`, snapshot `2026-08-27T21:19:12.202Z`, extraction boundaries, LF normalization, and UTF-8 hash encoding.
+- Preserved the exact SCENE 01 heading through the boundary before SCENE 13 as 9,711 JavaScript UTF-16 code units / 21,979 UTF-8 bytes with SHA-256 `cccf47e000930ff0e870536aa2773c75d198f33025840a05b2fcf77a56f443b1`. Node tests own byte/hash identity; the browser-safe validator owns the 12-scene order, exact choice-to-scene mapping, and full route-contract structure.
+- The omission audit found eight representative source lines absent from the condensed first-half playable module, so that module is explicitly rejected as exact. The raw `sourceMarkdown`, not the shared parser projection, is the identity source.
+- The SIP context-free review surfaced an overstated validator name, weak choice/route validation, and ambiguous provenance/length units; all were corrected. Focused DAY 15 verification passes `56/56`.
+- DAY 15 remains incomplete and uncommitted/undeployed. Next gate: implement a fail-closed SCENE 01–12 exact-source resolver that emits only the active attendance/own-afternoon and choice branch. `game.js`, images, direction/audio, full/browser regression, push, and deployment remain later gates; DAY 16 has not started.
+
+## DAY 15 V4 CHAPTER + STATE/LEGACY ROUTING CONTRACTS PASS (2026-08-31 03:39 KST)
+
+- Freshly refetched and fully read the authoritative 23,171-character Notion child body `DAY 15 — 빛나는 쪽을 보다 | SCENARIO V4`. It is byte-identical to the locked payload, so SHA-256 `c1b542d06e5d931aae5c70f45eb936ae1bdd23efa02d9c9b018282a70b5543ea` remains authoritative. Parent Markdown attachments and file blocks remained ignored.
+- Added `docs/day15/DAY15_CHAPTER_CONTRACT_V4.md`. It groups the 24 scenes into eight playable beats and locks attendance, own-afternoon phone/no-contact, control-continuation, boundary-resolution, twelve numbered strategy choices, LOW/MID/HIGH response constraints, Voice Profiles, knowledge/reveal budgets, and the ten-question contract. Attendance and nonattendance alternatives at choices 3–5 occupy the same numbers rather than inflating the source's twelve-choice count.
+- Added `docs/day15/DAY15_V4_STATE_LEGACY_ROUTING_CONTRACT.md`. It defines `V4`, `V4_NEW`, `V1_LEGACY`, `BLOCKED_PREREQUISITE`, and `BLOCKED_CORRUPT`; preserves versionless and completed V1 saves; blocks mixed V1/V4 evidence; makes selected choice IDs authoritative over validated derived position; and separates route, conflict, contact, material, and fact-level knowledge provenance.
+- Exact existing predicates now govern DAY 14 callbacks, DAY 12 Seojin personal invitation/disclosure, and DAY 13 Ara meeting/continued contact. Seojin affection and status-interest remain independent and unchanged. Contact eligibility is derived from exact prior-contact, DAY13 distancing, DAY15 resolution, departure, and return-walk fields; actual contact is stored. The Jihoon hook is named `day16JihoonContactHookPending` so it cannot be mistaken for a scheduled meeting.
+- The SIP blind end-to-end cold read found the missing route-specific active-choice definition and a collision where choices 3 and 4 would overwrite one viewing field. The contract now provides a canonical per-choice activation/ID/write/checkpoint/completion matrix and separates gallery understanding from Haeun-viewing strategy. A read-only two-method SSOT audit found intentional summaries but no competing field authority; `factchk` is skipped because these artifacts assert deliberate game canon and local save contracts rather than external reality.
+- No playable code, asset, commit, origin update, or deployment has started; DAY 16 remains untouched. Next gate: implement `src/day15-v4-campaign-data.mjs`, `src/day15-v4-state-contract.mjs`, all SCENE 01–24 playable data and choices 1–12, plus focused compatibility/save tests.
+
+## DAY 15 V4 NOTION SOURCE LOCK / IMPLEMENTATION-GAP AND CONTENT AUDIT PASS (2026-08-31 03:20 KST)
+
+- Freshly fetched and fully read the `AI해커톤 > DAY 15 — 빛나는 쪽을 보다 | SCENARIO V4` child-page body before work: the complete 23,171-character connector payload, its author-declared 18,797-character narrative body, SCENE 01–24, 12 major choices, attendance/own-afternoon/call/no-contact alternatives, and internal implementation notes. Parent Markdown attachments and file blocks were ignored for source and conflict decisions.
+- Added `docs/day15/DAY15_NOTION_SOURCE_LOCK_V4.md`, locking child-body authority, knowledge provenance, non-villain Siwoo, conditional attendance/contact/material sharing, actual DAY 12–14 callbacks, the tentative Jihoon hook, and save-restore invariants. The child metadata's Haeun age 29 conflicts with the global-bible age 23; DAY 15 will not expose age or silently mutate the global profile until that cross-campaign continuity issue is decided separately.
+- Added `docs/day15/DAY15_V4_IMPLEMENTATION_GAP_CONTENT_COVERAGE_AUDIT.md`. Current V1 directly covers `0/24` V4 scenes. Hangang Gallery, River-view Cafe, room/Cafe Corner, DAY 11 Siwoo schedule, actual DAY 12 Seojin invitation, DAY 13 Ara contact, and DAY 14 V4 invitation are mapped into the new route. The existing eight-scene/three-choice V1 remains restore-only for already-entered or completed saves.
+- A context-free `sip` cold read flagged mutable-source detection, the relationship between 12 numbered and alternate-route choices, authority by domain, and the still-pending V1/V4 routing, impossible-state, and fact-level knowledge contracts. The source lock now records the fetched-payload SHA-256 and a source-change re-audit rule; the gap audit now explicitly blocks coding, requires fact-level provenance, a routing truth table and allowed transitions, and relabels pre-implementation QA as measurable `EXPECTED PASS`. A read-only two-term SSOT audit found no additional conflict in V4 authority, `0/24`, or V1 restore-only status. External `factchk` did not apply because the artifacts assert fictional canon and locally verified repository state, not unverified real-world claims.
+- The four legacy V1 baseline tests—contract, runtime, regression, and presentation—pass with zero failures, and `git diff --check` passes. These results preserve the V1 baseline; they do not establish V4 fidelity.
+- No code or asset changed yet. The next gate is `DAY15_CHAPTER_CONTRACT_V4` plus the V4 state, knowledge-provenance, and V1 legacy-routing contract. DAY 16 has not started; commit, origin, identical-SHA gh-pages deployment, and public verification remain gated behind all DAY 15 QA.
+
 ## DAY 14 V4 PUBLIC RELEASE COMPLETE / CURRENT REBUILD TARGET DAY 15 (2026-08-31 03:03 KST)
 
 - Pushed the Notion-first DAY 14 V4 verification commit `8dda7bb1fd29c9db9974522a0c76336b6959fc9c` normally to both `feature/today-day-one-mvp` and `gh-pages`; both remote branches reference the identical SHA. Only the approved protection-rule bypass was used, with no force push or rebase.
@@ -2707,3 +2825,49 @@ DAY 1 상태: 잠금본 기준 PHASE 12 배경 에셋 명세를 완료했다. �
 - Ran a single-change built-in ImageGen background extraction against the previously approved full-body Ara candidate. The result retained the target `887×1774` framing but was again `Format24bppRgb`, with fully opaque checkerboard pixels (`A=255`) at the corners.
 - Rejected the false-transparency result without copying it into the project or modifying any existing/user asset. The DAY 13 image gate remains `10/11 PARTIAL PASS`.
 - Native RGBA output remains unavailable in the current generation path, so the final sprite verification is deferred. No verification commit, origin update, gh-pages deployment, or DAY 14 work was started.
+# 2026-08-31 DAY 15 V4 STRUCTURAL DATA + BASE STATE/LEGACY VALIDATOR PASS
+
+- Freshly fetched and fully read the authoritative 23,171-character Notion child body `DAY 15 — 빛나는 쪽을 보다 | SCENARIO V4`; it is byte-identical to the locked body at SHA-256 `c1b542d06e5d931aae5c70f45eb936ae1bdd23efa02d9c9b018282a70b5543ea`. Parent Markdown attachments and file blocks were ignored.
+- Added `src/day15-v4-campaign-data.mjs` with all 24 stable scene records and 12 source-exact choice contracts, including attendance/own-afternoon substitutes and callback-sensitive variants. Added `src/day15-v4-state-contract.mjs` with V4-new/V4/V1-legacy/blocked/corrupt dispatch, non-destructive initialization, save restore data, knowledge provenance, public-material implications, and conditional shoulder-contact eligibility.
+- The SIP blind read found three material defects: existing V4 sessions could be overwritten on re-entry, partial V4 namespaces could be misread as new, and a broad no-contact rule erased facts personally observed by attendees. Initialization now writes only for `V4_NEW`, every partial `day15V4*` namespace is validated instead of filled, and the no-direct-knowledge rule applies only to `OWN_AFTERNOON + NO_CONTACT`.
+- `tests/day15-v4-state-contract.test.mjs` and all existing DAY 15 V1 focused suites pass: `21 PASS / 0 FAIL`; diff hygiene passes. SSOT audit found code is now the executable source while the docs remain contract/explanation copies; no consolidation mutation was authorized or needed. External fact checking does not apply to fictional canon and repository-local behavior.
+- Current target remains DAY 15 V4. Structural coverage is scenes `24/24` and choices `12/12`, but playable dialogue coverage remains `0/24`; next is the source-complete SCENE 01–24 script plus choice runtime and route/checkpoint tests. No commit, push, deployment, or DAY 16 work started.
+# DAY 15 V4 SCENE 01~12 PLAYABLE DATA PASS / 12~24 IN PROGRESS (2026-08-31 04:19 KST)
+
+- Freshly fetched and fully read all 23,171 characters of the authoritative Notion child body immediately before work. It was byte-identical to the source lock at SHA-256 `c1b542d06e5d931aae5c70f45eb936ae1bdd23efa02d9c9b018282a70b5543ea`; parent Markdown attachments and file blocks were ignored.
+- Added `src/day15-v4-playable-script-01-12.mjs` and `tests/day15-v4-playable-script-01-12.test.mjs` for scenes 01–12, choices 1–7, attendance/own-afternoon substitutes, and stored immediate reactions. Non-invited and non-attending routes cannot invent gallery knowledge.
+- The required `sip` cold read found duplicate choice cues, stale own-afternoon reactions leaking into attendance, and a `LEAVE` result falling back to `SEPARATE`. The resolver now emits one cue only for an unresolved active choice, blocks inactive route reactions, and keeps an explicit repaired leave route.
+- Focused playable/state validation passes `21/21`. The read-only SSOT audit keeps choice/effect authority in `day15-v4-campaign-data.mjs`, playable scene authority in the new module, and state validity in `day15-v4-state-contract.mjs`; no consolidation mutation was made. `factchk` did not apply to deliberate fiction and repository-local behavior.
+- DAY 15 is not complete and source omission zero has not been claimed. Next gate: scenes 13–24 and choices 8–12, then the 24-scene choice runtime, checkpoints, and save/restore. Do not start DAY 16 or commit/push/deploy yet.
+
+# DAY 15 V4 SCENE 13~24 EXACT SOURCE REGISTRY PASS / FULL RUNTIME PENDING (2026-08-31 04:37 KST)
+
+- Freshly fetched and fully read all 23,171 characters of the authoritative Notion child body before work. It remained byte-identical to the locked SHA-256 `c1b542d06e5d931aae5c70f45eb936ae1bdd23efa02d9c9b018282a70b5543ea`; parent Markdown attachments and file blocks were ignored.
+- Added the exact 8,508-character SCENE 13–24 source slice at SHA-256 `ea39ac07f3e45fb61092b999720a1575c679c47791834e9d815ce4965cf02658`, parsed all 12 late scenes, linked choices 8–12, and exposed broad route eligibility without inventing absent contact or material access.
+- The required SIP cold read correctly identified the artifact as a verbatim route-superset registry, not a route-resolved runtime: alternative `###` sections remain unfiltered and choice buttons/effects stay canonical in campaign data. Public metadata and QA now say this explicitly. The same read found retrospective deactivation after choice 9 and a possible `PHONE + haeunLeft` overlap; both were fixed and covered by regression tests.
+- Focused SCENE 01–24 source/state and existing DAY 15 regression tests pass `34/34`. SSOT dual search found no competing executable late-source copy. External fact checking does not apply to deliberate fiction and repository-local contracts.
+- DAY 15 remains incomplete. Next is the full route-resolved 24-scene runtime, exact first-half omission audit, checkpoint/save restoration, then presentation, assets, browser, full regression, commit, push, same-SHA gh-pages, and public verification. DAY 16 has not started.
+
+# 2026-08-31 DAY 15 V4 CHOICE/STATE RUNTIME + SAVE RESTORE PASS
+
+- 최신 Notion 하위 DAY 15 V4 본문 23,171자를 작업 직전에 다시 완독했고 잠금 SHA-256 `c1b542d06e5d931aae5c70f45eb936ae1bdd23efa02d9c9b018282a70b5543ea`와 동일했다. 상위 Markdown 첨부와 파일 블록은 제외했다.
+- `src/day15-v4-runtime.mjs`에서 참석·자기 오후 전화/무연락·통제 지속 이탈·선택적 공개 자료의 활성 선택, 효과, 지식 출처, 체크포인트, JSON 복원, 완료 훅을 구현했다. 선택 3·7의 원고 장면 번호도 SCENE 04·12로 바로잡았다.
+- SIP 별도 콜드리드가 찾은 실패 후 부분 상태 잔존과 공개 자료 재제안 체크포인트 되감기를 원자적 롤백과 멱등 처리로 수정했다. 선택 필드/이력 미러를 검증하고 SCENE 24 도달 확인 없이는 완료할 수 없다.
+- `tests/day15-v4-runtime.test.mjs`를 포함한 DAY 15 V4 집중 검증 `33/33 PASS`, `git diff --check` 오류 0이다. 서진 호감도와 관심 상태는 합치지 않고 불변이다.
+- `THANKS` 선택 효과가 코드 정본에는 있으나 설명 문서 enum에 빠진 SSOT 불일치 1건은 읽기 감사로 기록했으며 별도 통합 승인이 없어 수정하지 않았다.
+- 남은 문제/다음 작업: 후반 원문 레지스트리의 상호 배타 대안과 선택 반응을 상태별 하나로 거르는 SCENE 13~24 resolver. 전체 24장면 게임 연결·브라우저·커밋·배포 전이며 DAY 16은 시작하지 않는다.
+
+# 2026-08-31 DAY 15 V4 SCENE 13~24 ROUTE RESOLVER PASS
+
+- 작업 직전 authoritative Notion DAY 15 V4 하위 본문 23,171자를 새로 완독했고 잠금 SHA-256 `c1b542d06e5d931aae5c70f45eb936ae1bdd23efa02d9c9b018282a70b5543ea`와 동일함을 확인했다. 상위 Markdown 첨부와 파일 블록은 무시했다.
+- `src/day15-v4-playable-resolver-13-24.mjs`가 정확 원문 레지스트리를 비파괴 입력으로 사용해 후반 콜백, 선택 8~12 즉시 반응, 접촉·통화·무연락·자료·종결 분기를 상태별 하나로 해석한다. 선택 11의 무대사 감사도 저장 선택 단계로 보존한다.
+- SIP 무맥락 냉독의 누락 마커 절단, invalid choice 공백, 모순된 참석+통화 종결 지식을 fail-closed 검증과 테스트로 교정했다. 집중 검증 `44/44 PASS`, `git diff --check` PASS이며 사용자 미추적 이미지 5종은 변경하지 않았다.
+- 남은 문제/다음 작업: SCENE 01~12 타입 데이터와 SCENE 13~24 resolver를 하나의 게임 프레젠테이션 어댑터로 연결하고 24장면 원고 누락 0·대표 경로 체크포인트 복원을 검증한다. 전체 회귀·브라우저·커밋·배포 전이며 DAY 16은 시작하지 않는다.
+
+# 2026-08-31 DAY 15 V4 IMMERSIVE ADAPTER + SAVE RESUME PASS
+
+- 작업 직전 authoritative Notion DAY 15 V4 하위 본문 23,171자를 새로 완독했고 잠금 SHA-256 `c1b542d06e5d931aae5c70f45eb936ae1bdd23efa02d9c9b018282a70b5543ea`와 동일함을 확인했다. 상위 Markdown 첨부와 파일 블록은 무시했다.
+- `src/day15-v4-immersive-adapter.mjs`와 `src/day15-v4-presentation-data.mjs`가 전후반 24장면을 route-resolved transition/대사/메시지/선택 단계로 연결한다. 불참 전화의 SCENE 18→12 순서와 무연락 SCENE 19→23→24를 보존하고 저장 체크포인트 우회를 거부한다.
+- SIP 무맥락 냉독이 찾은 SCENE 06 선택 3·4 뒤 JSON 복원 재생, 반응 누락의 묵시적 빈 출력, 미완료 `sceneEnd`, 이미지 대기 상태의 과도한 PASS를 교정했다. 이제 다음 선택만 복원하고, 반응/단계는 fail-closed이며, 완료 전에는 `chapterCompletionCue`를 내보낸다.
+- DAY 15 V4 집중 검증은 `52/52 PASS`다. 프레젠테이션은 기존 배경·의상만 연결한 `baseline-only`이고 이미지·연출/오디오·실제 브라우저는 pending이다.
+- SCENE 01~12의 줄 단위 정확 원문 대응이 아직 없어 원고 누락 0은 주장하지 않는다. 다음은 전반 정확 원문 레지스트리/감사 뒤 `game.js` V4 진입 연결이며, 커밋·push·배포와 DAY 16은 시작하지 않는다.

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DAY 15 V4 Actual UI QA Entry</title>
+  <style>
+    body{font:16px system-ui;background:#151322;color:#fff;display:grid;min-height:100vh;place-items:center;margin:0}
+    main{max-width:680px;padding:28px;background:#242033;border-radius:18px}
+    .actions{display:grid;gap:12px}
+    button{padding:14px 20px;border:0;border-radius:10px;background:#df5f91;color:#fff;font-weight:800}
+  </style>
+</head>
+<body><main><h1>DAY 15 V4 실제 UI QA</h1><p>DAY 14 V4 완료 직후의 캠페인 저장을 경로별로 만들고 제품 진입점으로 이동합니다.</p><div class="actions"><button data-route="contact" type="button">접촉 자격 참석 경로 열기</button><button data-route="no-contact" type="button">비초대·무연락 경로 열기</button><button data-route="contact-scene20" type="button">SCENE 20 접촉 CG 직전 열기</button><button data-route="no-contact-choice5" type="button">비초대·무연락 선택 5 직전 열기</button><button data-route="phone-left-choice9" type="button">전화·이탈 선택 9 직전 열기</button></div><p id="status" role="status"></p></main>
+<script type="module">
+import {createInitialState} from "../src/game-core.mjs";
+import {createGirlfriendFromProfile} from "../src/girlfriend-manager.mjs";
+import {SaveManager} from "../src/save-manager.mjs";
+import {GAME_MODES} from "../src/scenario-state.mjs";
+import {beginDay15V4} from "../src/day15-v4-state-contract.mjs";
+import {applyDay15V4Choice} from "../src/day15-v4-runtime.mjs";
+
+const makeState=route=>{
+  const invited=!['no-contact','no-contact-choice5','phone-left-choice9'].includes(route);
+  const state=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});
+  state.day=15;
+  state.phase=0;
+  state.affection=720;
+  state.trust=620;
+  state.pendingStoryId="m30-day15-current-leisure-date";
+  state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};
+  state.storyHistory.push({day:14,sceneId:"m30-day14-spending-and-gift",choiceId:"day14_v4_qa_complete",response:"DAY 14 V4 QA 완료"});
+  Object.assign(state.storyFlags,{
+    day14V4Version:"NOTION_V4",
+    day14V4Completed:true,
+    day15GalleryPlanPending:true,
+    day14V4ExhibitionInvitation:invited?"INVITED":"NOT_INVITED",
+    day14V4InteractionRoute:invited?"IN_PERSON":"FULL_REST",
+    day14V4MeetingProposal:invited?"SIT_WITHOUT_DEMAND":"WAIT_OWN_WORK",
+    day14V4UnresolvedContactBoundary:false,
+    day14V4HandContactEstablished:invited,
+    day14V4HaeunCallsLater:false,
+    day11V3SiwooNameKnown:true
+  });
+  if(route==="contact-scene20"){
+    beginDay15V4(state,{relationshipBand:"HIGH",haeunCallsTonight:false});
+    for(const id of ["day15_v4_invitation_attend","day15_v4_outfit_comfort","day15_v4_gallery_ask","day15_v4_view_ask_preference","day15_v4_rest_together","day15_v4_cafe_inner","day15_v4_conflict_jealousy","day15_v4_reciprocity_admit_fear","day15_v4_boundary_ask_haeun","day15_v4_perception_wavering_line"]){
+      applyDay15V4Choice(state,id);
+    }
+  }
+  if(route==="no-contact-choice5"){
+    beginDay15V4(state,{relationshipBand:"HIGH",haeunCallsTonight:false});
+    for(const id of ["day15_v4_invitation_no_invite","day15_v4_outfit_comfort","day15_v4_own_stop","day15_v4_own_rest"]){
+      applyDay15V4Choice(state,id);
+    }
+  }
+  if(route==="phone-left-choice9"){
+    beginDay15V4(state,{relationshipBand:"HIGH",haeunCallsTonight:true});
+    for(const id of ["day15_v4_invitation_no_invite","day15_v4_outfit_comfort","day15_v4_own_reread","day15_v4_own_write","day15_v4_own_continue","day15_v4_conflict_control","day15_v4_reciprocity_admit_fear"]){
+      applyDay15V4Choice(state,id);
+    }
+  }
+  return state;
+};
+
+document.querySelectorAll("[data-route]").forEach(button=>button.addEventListener("click",()=>{
+  SaveManager.save(makeState(button.dataset.route));
+  document.querySelector("#status").textContent="저장 준비 완료";
+  location.href="../index.html?qa=day15-v4";
+}));
+</script></body></html>
