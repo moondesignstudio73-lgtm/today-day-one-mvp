@@ -33,9 +33,9 @@ export const DAY11_SHARE_CHOICES=Object.freeze([
 
 function day10RhythmCallback(state){
   const id=state.storyFlags?.day10RhythmStrategy;
-  if(id==="work10_rhythm_symptom_check")return n("DAY 10의 증상·집중도 확인표를 보고, 생활표의 근무 카드에도 다음 블록을 여는 조건을 적었다.");
-  if(id==="work10_rhythm_task_milestones")return n("DAY 10의 되돌릴 수 있는 세 작업과 강제 중단선을 근무 카드의 완료 기준으로 옮겼다.");
-  return n("DAY 10에 지킨 45분 업무·10분 휴식·45분 업무 틀을 확대하지 않은 채 근무 카드에 옮겼다.");
+  if(id==="work10_rhythm_symptom_check")return n("증상·집중도 확인표를 펼치고, 생활표의 근무 카드에도 다음 블록을 여는 조건을 적었다.");
+  if(id==="work10_rhythm_task_milestones")return n("어제 정한 되돌릴 수 있는 세 작업과 강제 중단선을 근무 카드의 완료 기준으로 옮겼다.");
+  return n("어제 지킨 45분 업무·10분 휴식·45분 업무 틀을 늘리지 않은 채 근무 카드에 옮겼다.");
 }
 function day10LunchCallback(state){
   const id=state.storyFlags?.day10LunchStrategy;
@@ -46,7 +46,7 @@ function day10LunchCallback(state){
 function day10DebriefCallback(state){
   const id=state.storyFlags?.day10DebriefStrategy;
   if(id==="work10_debrief_adjust_one_block")return n("마지막 검토에는 피로가 높았던 한 블록만 줄이고 나머지 조건은 유지한다고 적었다.");
-  if(id==="work10_debrief_keep_rhythm")return n("마지막 검토에는 DAY 10의 시간 틀을 확대 없이 다음 주 후보로 남겼다.");
+  if(id==="work10_debrief_keep_rhythm")return n("마지막 검토에는 어제의 시간 틀을 늘리지 않은 채 다음 주 후보로 남겼다.");
   return n("마지막 검토에는 업무 결과·회복 상태·동료 관계를 서로 다른 열로 남겼다.");
 }
 

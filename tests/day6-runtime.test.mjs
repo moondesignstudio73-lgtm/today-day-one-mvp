@@ -83,7 +83,7 @@ for(const [returnPlan,required] of [["request-current-briefing","파란 파일 �
 }
 
 const allText=JSON.stringify([0,1,2,3].flatMap(stage=>getLockedDay6Segment(state,stage)));
-for(const required of ["임시 예비폰","현재값 확인","DAY 6 카페","경계는 바깥에서","같이 가도 대신 결정하지 않기"])assert.ok(allText.includes(required),required);
+for(const required of ["임시 예비폰","현재값 확인","오늘의 카페","경계는 바깥에서","같이 가도 대신 결정하지 않기"])assert.ok(allText.includes(required),required);
 for(const forbidden of ["가짜 하은","D-29","트럭 충돌","하은이 사고에 동승","의미심장한 미소"])assert.ok(!allText.includes(forbidden),forbidden);
 
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");

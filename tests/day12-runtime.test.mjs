@@ -21,7 +21,7 @@ assert.equal(selectNextStoryScene(makeState())?.id,"m30-day12-current-account-re
 assert.equal(validateLockedDay12Runtime(),true);
 const callbackCases=[
   ["day11AnchorStrategy","life11_anchor_recovery","복약·휴식 사이"],["day11AnchorStrategy","life11_anchor_work","근무 블록 뒤"],["day11AnchorStrategy","life11_anchor_shared","개인 확인 카드"],
-  ["day11ConflictStrategy","life11_conflict_health_first","건강 우선 규칙"],["day11ConflictStrategy","life11_conflict_owner_decides","유지·축소·이동"],["day11ConflictStrategy","life11_conflict_buffer","보호 버퍼"],
+  ["day11ConflictStrategy","life11_conflict_health_first","건강 우선 규칙"],["day11ConflictStrategy","life11_conflict_owner_decides","유지·축소·이동"],["day11ConflictStrategy","life11_conflict_buffer","보호 시간"],
   ["day11ShareStrategy","life11_share_changes_only","영향을 주는 변경만"],["day11ShareStrategy","life11_share_weekly_review","주말 검토 전"],["day11ShareStrategy","life11_share_separate_ownership","소유권 분리 규칙"]
 ];
 for(const [key,id,marker] of callbackCases){const state=makeState();state.storyFlags[key]=id;state.storyFlags.day12VerifyStrategy=DAY12_VERIFY_CHOICES[0].id;state.storyFlags.day12ExpenseStrategy=DAY12_EXPENSE_CHOICES[0].id;const text=[...getLockedDay12Segment(state,0),...getLockedDay12Segment(state,2)].map(step=>step.text??"").join(" ");assert.ok(text.includes(marker),`${id} callback`);}

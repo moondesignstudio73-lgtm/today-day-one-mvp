@@ -29,7 +29,7 @@ export function createStorySceneSequence(scene, presentation, choices = scene.ch
     : [{ type:"dialogue", speaker:scene.speaker, text:scene.question ?? scene.prompt ?? scene.title, expressionId:presentation.expressionId }];
   return [
     { type:"transition", style:"fade", label:`DAY ${scene.window?.[0] ?? ""} · ${scene.arc}` },
-    { type:"narration", text:scene.message },
+    ...(typeof scene.playerFacingNarration==="string"&&scene.playerFacingNarration.trim()?[{type:"narration",text:scene.playerFacingNarration}]:[]),
     { type:"characterEnter", characterId:presentation.characterId, animationId:presentation.animationId },
     ...dialogue,
     { type:"choice", options:choices.map(choice => ({ id:choice.id, label:choice.label })) }
@@ -42,7 +42,6 @@ export function createStoryReactionSequence(result) {
     { type:"narration", text:`나는 “${result.choice.label}”라고 답했다.` },
     { type:"expressionChange", expressionId },
     { type:"dialogue", speaker:result.scene.speaker, text:result.response, expressionId },
-    ...(result.mbtiAdjustment?.label?[{type:"narration",text:`${result.mbtiAdjustment.label}에 맞는 반응이 관계 수치에 추가로 반영됐다.`}]:[]),
     { type:"transition", style:"fade", label:"시간은 다시 일상으로 흐른다." },
     { type:"sceneEnd" }
   ];
@@ -102,7 +101,6 @@ export function createTemptationReactionSequence(npc, choiceId) {
   return [
     { type:"expressionChange", expressionId },
     { type:"dialogue", speaker:npc.name, text:responses[choiceId] ?? "알겠어.", expressionId },
-    { type:"narration", text:"선택의 의미는 숫자가 아니라 앞으로의 관계에 남을 것이다." },
     { type:"sceneEnd" }
   ];
 }

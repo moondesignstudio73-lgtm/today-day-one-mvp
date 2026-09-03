@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DAY 18 Content Audit Entry</title>
+  <style>body{font:16px system-ui;background:#151322;color:#fff;display:grid;min-height:100vh;place-items:center;margin:0}main{max-width:680px;padding:28px;background:#242033;border-radius:18px}button{padding:14px 20px;border:0;border-radius:10px;background:#df5f91;color:#fff;font-weight:800}</style>
+</head>
+<body>
+  <main>
+    <h1>DAY 18 실제 UI 콘텐츠 감사</h1>
+    <p>DAY 17을 실제 완료한 저장 상태로 제품 진입점을 엽니다.</p>
+    <button id="start" type="button">DAY 18 시작</button>
+  </main>
+  <script type="module">
+    import {createInitialState} from "../src/game-core.mjs";
+    import {createGirlfriendFromProfile} from "../src/girlfriend-manager.mjs";
+    import {SaveManager} from "../src/save-manager.mjs";
+    import {GAME_MODES} from "../src/scenario-state.mjs";
+
+    document.querySelector("#start").addEventListener("click",()=>{
+      const state=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});
+      state.day=18;
+      state.phase=0;
+      state.pendingStoryId="m30-day18-current-home-safety";
+      state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};
+      state.storyFlags={
+        day17RuntimeComplete:true,
+        day17CurrentHealthRoutineCompleted:true,
+        day17DataStrategy:"health17_data_private_summary",
+        day18CurrentHomeSafetyPending:true,
+        haeun_contact_unlocked:true
+      };
+      state.storyHistory=[{sceneId:"m30-day17-current-health-routine",choiceId:"health17_data_private_summary",day:17,response:"건강 데이터 경계를 정했다."}];
+      SaveManager.save(state);
+      location.href="../index.html?qa=story-content-audit-day18";
+    });
+  </script>
+</body>
+</html>

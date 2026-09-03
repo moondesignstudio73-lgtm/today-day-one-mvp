@@ -1,14 +1,11 @@
 import {DAY8_V3_CHOICES} from "./day8-v3-campaign-data.mjs";
 import {getDay8V3PlayableScene,getNextDay8V3Choice} from "./day8-v3-runtime.mjs";
 import {getDay8V3Presentation} from "./day8-v3-presentation-data.mjs";
+import {projectAuthoredStoryStep} from "./story-player-facing-policy.mjs";
 
 const CHOICE_SCENES=Object.freeze({1:1,2:3,3:5,4:8,5:10,6:14,7:16,8:18,9:19,10:21});
 const choiceSceneFor=number=>CHOICE_SCENES[number];
-const convertStep=(step,presentation)=>Object.freeze(step.type==="dialogue"?{
-  type:"dialogue",speaker:step.speaker,text:step.text,expressionId:presentation.expressionId
-}:step.type==="message"?{
-  type:"message",sender:step.sender,text:step.text,device:"phone"
-}:{type:"narration",text:step.text,sourceType:step.type});
+const convertStep=(step,presentation)=>projectAuthoredStoryStep(step,{expressionId:presentation.expressionId});
 
 export function getDay8V3ImmersiveScene(state,sceneNumber){
   const playable=getDay8V3PlayableScene(state,sceneNumber);

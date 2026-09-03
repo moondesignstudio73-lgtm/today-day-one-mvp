@@ -3,10 +3,11 @@ import {DAY12_V3_PLAYABLE_SCRIPT_01_12,getDay12V3PlayableScene01To12} from "./da
 import {DAY12_V3_PLAYABLE_SCRIPT_13_24,getDay12V3PlayableScene13To24} from "./day12-v3-playable-script-13-24.mjs";
 import {getNextDay12V3Choice} from "./day12-v3-runtime.mjs";
 import {getDay12V3Presentation} from "./day12-v3-presentation-data.mjs";
+import {projectAuthoredStoryStep} from "./story-player-facing-policy.mjs";
 
 const playable=(state,number)=>number<=12?getDay12V3PlayableScene01To12(state,number):getDay12V3PlayableScene13To24(state,number);
 const rawScene=number=>number<=12?DAY12_V3_PLAYABLE_SCRIPT_01_12[number-1]:DAY12_V3_PLAYABLE_SCRIPT_13_24[number-13];
-const convertStep=step=>Object.freeze(step.type==="dialogue"?{type:"dialogue",speaker:step.speaker,text:step.text}:step.type==="message"?{type:"message",sender:step.sender,text:step.text,device:"phone"}:step.type==="stageDirection"?{type:"stageDirection",text:step.text}:step.type==="note"?{type:"message",sender:"메모",text:step.text,device:"note"}:step.type==="choiceCue"?{type:"choiceCue",choiceId:step.choiceId,choiceNumber:step.choiceNumber}:{type:"narration",text:step.text,sourceType:step.type});
+const convertStep=step=>projectAuthoredStoryStep(step);
 
 function backgroundIdFor(number){
   if(number===1||number>=21)return "day12-home-bedroom";

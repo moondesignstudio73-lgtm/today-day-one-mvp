@@ -41,12 +41,12 @@ function accessReaction(id){
   return [d("나","잔액, 현재 명세, 고정 생활비만 읽기 전용으로 열게."),d("하은","송금과 투자 버튼은 계속 닫아 두고.","smile"),n("기본 금융 확인은 가능해졌지만 자산을 움직이는 기능은 잠긴 채 남았다.")];
 }
 
-function day11AnchorCallback(state){const id=state.storyFlags?.day11AnchorStrategy;if(id==="life11_anchor_work")return [n("DAY 11에 합의한 근무 블록 뒤에만 계정 확인 시간을 붙였다.")];if(id==="life11_anchor_shared")return [n("DAY 11의 개인 확인 카드와 함께 볼 항목에 현재 명의와 명세만 추가했다.")];return [n("DAY 11에 고정한 복약·휴식 사이에 짧은 계정 확인 시간을 배치했다.")];}
-function day11ConflictCallback(state){const id=state.storyFlags?.day11ConflictStrategy;if(id==="life11_conflict_owner_decides")return [n("일정이 겹치면 계정의 주인인 내가 유지·축소·이동 중 하나를 고르기로 한 규칙을 다시 확인했다.")];if(id==="life11_conflict_buffer")return [n("DAY 11의 보호 버퍼 안에서는 공식 문의 한 건만 처리하기로 범위를 줄였다.")];return [n("증상이나 외래 일정과 겹치면 금융 확인을 옮기는 건강 우선 규칙을 적용했다.")];}
+function day11AnchorCallback(state){const id=state.storyFlags?.day11AnchorStrategy;if(id==="life11_anchor_work")return [n("합의한 근무 블록 뒤에만 계정 확인 시간을 붙였다.")];if(id==="life11_anchor_shared")return [n("개인 확인 카드의 함께 볼 항목에 현재 명의와 명세만 추가했다.")];return [n("복약·휴식 사이에 짧은 계정 확인 시간을 배치했다.")];}
+function day11ConflictCallback(state){const id=state.storyFlags?.day11ConflictStrategy;if(id==="life11_conflict_owner_decides")return [n("일정이 겹치면 계정의 주인인 내가 유지·축소·이동 중 하나를 고르기로 한 규칙을 다시 확인했다.")];if(id==="life11_conflict_buffer")return [n("보호 시간 안에서는 공식 문의 한 건만 처리하기로 범위를 줄였다.")];return [n("증상이나 외래 일정과 겹치면 금융 확인을 옮기는 건강 우선 규칙을 적용했다.")];}
 function day11ShareCallback(state){const id=state.storyFlags?.day11ShareStrategy;if(id==="life11_share_weekly_review")return [n("오늘 결과를 저장한 뒤 주말 검토 전까지 반복 확인하지 않기로 했다.")];if(id==="life11_share_separate_ownership")return [n("개인 명세는 닫고 공동 후보 항목만 서로 확인하는 소유권 분리 규칙을 유지했다.")];return [n("현재 생활에 영향을 주는 변경만 공유하고 나머지 잔액 정보는 개인 기록에 남겼다.")];}
 
 const segment0=state=>[
-  ...scene("S01_NO_MOVEMENT_DAY","DAY 12 · 현재 계정의 주인"),enter("girlfriend","smile"),n("식탁에는 DAY 11에 만든 확인 목록, 최근 공과금 세 장, 봉인된 계정 안내서와 임시 결제 영수증이 놓여 있었다."),...day11AnchorCallback(state),
+  ...scene("S01_NO_MOVEMENT_DAY","DAY 12 · 현재 계정의 주인"),enter("girlfriend","smile"),n("식탁에는 어제 만든 확인 목록, 최근 공과금 세 장, 봉인된 계정 안내서와 임시 결제 영수증이 놓여 있었다."),...day11AnchorCallback(state),
   d("하은","잔액을 알게 돼도 오늘은 돈을 움직이지 않는 날로 하자."),d("나","명의, 공식 접근, 현재 생활비까지만. 투자와 과거 소비는 닫아 두고."),
   ...scene("S02_OFFICIAL_SOURCE","SCENE 02 · 공식 출처만 남기기"),enter("girlfriend","calm"),n("휴대폰의 검색 결과 대신 명세서에 적힌 공식 앱 주소와 문의 번호를 종이에 옮겼다."),...day11ConflictCallback(state),d("하은","내가 기억하는 비밀번호는 확인된 출처가 아니야."),d("나","복구도 공식 본인 확인으로만 진행할게."),
   ...scene("S03_FIRST_VERIFICATION","SCENE 03 · 첫 확인 범위"),enter("girlfriend","smile"),d("하은","어디서 시작하든 확인과 판단을 같은 버튼으로 누르지는 말자."),choice(DAY12_VERIFY_CHOICES)

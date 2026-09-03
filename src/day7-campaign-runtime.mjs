@@ -28,7 +28,7 @@ export const DAY7_MEMORY_CHOICES=Object.freeze([
 
 function day6PlanOpening(state){
   const id=state.storyFlags?.day6DatePlan;
-  if(id==="date_new_place")return [n("DAY 6에 정한 ‘둘 다 처음인 장소’ 계획 아래 책방과 신설 전시관이 나란히 저장돼 있었다."),d("하은","나도 처음이니까 오늘은 길 안내 잘하는 척 금지. 같이 틀리기.","smile")];
+  if(id==="date_new_place")return [n("‘둘 다 처음인 장소’라고 적힌 계획 아래 책방과 신설 전시관이 나란히 저장돼 있었다."),d("하은","나도 처음이니까 오늘은 길 안내 잘하는 척 금지. 같이 틀리기.","smile")];
   if(id==="date_revisit_with_opt_out")return [n("강변 계획 옆에는 ‘기억이 없어도 실패 아님, 불편하면 설명 없이 변경’이 굵게 표시돼 있었다."),d("하은","계속 갈지 네가 먼저 정하고, 바꾸면 이유는 나중에 말해도 돼.","smile")];
   return [n("이동·식사·활동을 번갈아 고르는 표에서 오늘 첫 선택권만 비어 있었다."),d("하은","먼저 고른 사람은 다음 차례에 참견 금지. 표정으로도 금지.","smile")];
 }

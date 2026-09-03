@@ -1,16 +1,13 @@
 import {DAY7_V3_CHOICES} from "./day7-v3-campaign-data.mjs";
 import {getAvailableDay7V3ChoiceOptions,getDay7V3PlayableScene,getNextDay7V3Choice} from "./day7-v3-runtime.mjs";
 import {getDay7V3Presentation} from "./day7-v3-presentation-data.mjs";
+import {projectAuthoredStoryStep} from "./story-player-facing-policy.mjs";
 
 const STATIC_CHOICE_SCENES=Object.freeze({1:2,2:3,3:4,4:6,6:13,7:15,8:17,9:19,10:20,11:21});
 const routeChoiceScene=route=>({"night-view":8,"theme-park":9,"book-and-dinner":10}[route]??8);
 const choiceSceneFor=(choiceNumber,state)=>choiceNumber===5?routeChoiceScene(state?.storyFlags?.day7V3DateRoute):STATIC_CHOICE_SCENES[choiceNumber];
 
-const convertScriptStep=(step,presentation)=>Object.freeze(step.type==="dialogue"?{
-  type:"dialogue",speaker:step.speaker,text:step.text,expressionId:presentation.expressionId
-}:step.type==="message"?{
-  type:"message",sender:step.sender,text:step.text,device:"phone"
-}:{type:"narration",text:step.text,sourceType:step.type});
+const convertScriptStep=(step,presentation)=>projectAuthoredStoryStep(step,{expressionId:presentation.expressionId});
 
 export function getDay7V3ImmersiveScene(state,sceneNumber){
   const playable=getDay7V3PlayableScene(state,sceneNumber);

@@ -3,10 +3,11 @@ import {DAY14_V4_PLAYABLE_SCRIPT_01_11,getDay14V4PlayableScene01To11} from "./da
 import {DAY14_V4_PLAYABLE_SCRIPT_12_22,getDay14V4PlayableScene12To22} from "./day14-v4-playable-script-12-22.mjs";
 import {getNextDay14V4Choice} from "./day14-v4-runtime.mjs";
 import {getDay14V4ClosingDeskCg,getDay14V4Presentation} from "./day14-v4-presentation-data.mjs";
+import {projectAuthoredStoryStep} from "./story-player-facing-policy.mjs";
 
 const playable=(state,number)=>number<=11?getDay14V4PlayableScene01To11(state,number):getDay14V4PlayableScene12To22(state,number);
 const rawScene=number=>number<=11?DAY14_V4_PLAYABLE_SCRIPT_01_11.find(scene=>scene.number===number):DAY14_V4_PLAYABLE_SCRIPT_12_22.find(scene=>scene.number===number);
-const convertStep=step=>Object.freeze(step.type==="dialogue"?{type:"dialogue",speaker:step.speaker,text:step.text}:step.type==="message"?{type:"message",sender:step.sender,text:step.text,device:"phone"}:step.type==="stageDirection"?{type:"stageDirection",text:step.text}:step.type==="choiceCue"?{type:"choiceCue",choiceNumber:step.choiceNumber}:{type:"narration",text:step.text,sourceType:step.type});
+const convertStep=step=>projectAuthoredStoryStep(step);
 const backgroundFor=(presentation,flags)=>{
   const branch=presentation.branchBackgroundUrls??{};
   if(flags.day14V4InteractionRoute&&branch[flags.day14V4InteractionRoute])return branch[flags.day14V4InteractionRoute];

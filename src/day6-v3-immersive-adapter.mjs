@@ -1,13 +1,12 @@
 import {DAY6_V3_CHOICES} from "./day6-v3-campaign-data.mjs";
 import {getDay6V3PlayableScene} from "./day6-v3-runtime.mjs";
 import {getDay6V3Presentation} from "./day6-v3-presentation-data.mjs";
+import {projectAuthoredStoryStep} from "./story-player-facing-policy.mjs";
 
 const CHOICE_SCENE_BY_NUMBER=Object.freeze({1:1,2:2,3:4,4:7,5:10,6:12,7:15,8:16,9:18,10:20,11:22});
 const choiceByScene=new Map(DAY6_V3_CHOICES.map(choice=>[CHOICE_SCENE_BY_NUMBER[choice.number],choice]));
 
-const convertScriptStep=(step,presentation)=>Object.freeze(step.type==="dialogue"?{
-  type:"dialogue",speaker:step.speaker,text:step.text,expressionId:presentation.expressionId
-}:{type:"narration",text:step.text,sourceType:step.type});
+const convertScriptStep=(step,presentation)=>projectAuthoredStoryStep(step,{expressionId:presentation.expressionId});
 
 export function getDay6V3ImmersiveScene(state,sceneNumber){
   const playable=getDay6V3PlayableScene(state,sceneNumber);

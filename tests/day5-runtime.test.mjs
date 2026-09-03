@@ -96,10 +96,10 @@ assert.deepEqual(introResumed,introFull.slice(introMarker+1));assert.equal(intro
 const reportRestore=structuredClone(state),reportFull=getLockedDay5Segment(reportRestore,4),reportMarker=reportFull.findIndex(step=>step.checkpointId==="before-day-report");
 assert.ok(reportMarker>0);assert.equal(applyLockedDay5CheckpointState(reportRestore,"before-day-report"),true);
 const reportResumed=getLockedDay5Segment(structuredClone(reportRestore),4);
-assert.deepEqual(reportResumed,reportFull.slice(reportMarker+1));assert.ok(reportResumed[0].text.startsWith("DAY REPORT"));
+assert.deepEqual(reportResumed,reportFull.slice(reportMarker+1));assert.equal(reportResumed[0].type,"continuityNote");
 assert.equal(reportRestore.storyFlags.day5_haeun_autonomy_trust,true);assert.equal(reportRestore.storyFlags.day6_life_restart_pending,true);
 for(const forbidden of ["가짜 하은","D-29","트럭 충돌","하은이 사고에 동승"])assert.ok(!allText.includes(forbidden),forbidden);
-for(const required of ["확인된 사실","민호","윤서진","판단을 빌리는 연습","임시 예비폰","연기가 먼저 증거를 제출","지훈은 내가 단 음료","출처 없이 제 감정","생활 안전 앱 업데이트: 오늘은 성공","서로 다른 세 폴더","DAY REPORT"])assert.ok(allText.includes(required),required);
+for(const required of ["확인된 사실","민호","윤서진","판단을 빌리는 연습","임시 예비폰","연기가 먼저 증거를 제출","지훈은 내가 단 음료","출처 없이 제 감정","생활 안전 앱 업데이트: 오늘은 성공","서로 다른 세 폴더"])assert.ok(allText.includes(required),required);
 
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 assert.match(game,/LOCKED_DAY5_SCENE_ID/);

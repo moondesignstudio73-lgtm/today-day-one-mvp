@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Story Content Audit Entry</title>
+  <style>body{font:16px system-ui;background:#151322;color:#fff;display:grid;min-height:100vh;place-items:center;margin:0}main{max-width:680px;padding:28px;background:#242033;border-radius:18px}button{padding:14px 20px;border:0;border-radius:10px;background:#df5f91;color:#fff;font-weight:800}</style>
+</head>
+<body>
+  <main>
+    <h1>스토리 실제 UI 콘텐츠 감사</h1>
+    <p id="description"></p>
+    <button id="start" type="button">감사 시작</button>
+  </main>
+  <script type="module">
+    import {createInitialState} from "../src/game-core.mjs";
+    import {createGirlfriendFromProfile} from "../src/girlfriend-manager.mjs";
+    import {SaveManager} from "../src/save-manager.mjs";
+    import {GAME_MODES} from "../src/scenario-state.mjs";
+
+    const ids=[null,"m30-day1-hospital-awakening","m30-day2-rehabilitation","m30-day3-discharge-phone","m30-day4-arrive-home","m30-day5-work-return","m30-day6-neighborhood","m30-day7-first-present-date","m30-day8-independent-errand","m30-day9-second-office-adaptation","m30-day10-three-hour-work-rhythm","m30-day11-current-life-plan","m30-day12-current-account-review","m30-day13-current-household-budget","m30-day14-current-choice-spending","m30-day15-current-leisure-date","m30-day16-current-social-circle","m30-day17-current-health-routine","m30-day18-current-home-safety","m30-day19-current-shared-chore","m30-day20-current-shared-meal","m30-day21-current-full-workday","m30-day22-current-recovery-day","m30-day23-current-family-contact","m30-day24-current-commitment-check","m30-day25-current-wedding-scope","m30-day26-current-legal-preparation","m30-day27-current-final-check","m30-day28-current-ceremony-rehearsal","m30-day29-current-eve-reconfirmation","m30-day30-current-wedding-decision"];
+    const day=Math.min(30,Math.max(1,Number(new URLSearchParams(location.search).get("day"))||1));
+    document.querySelector("#description").textContent=`DAY ${day} 첫 선택까지 제품 UI를 검사합니다.`;
+    document.querySelector("#start").addEventListener("click",()=>{
+      const state=createInitialState(createGirlfriendFromProfile("haeun",()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});
+      state.day=day;
+      state.phase=0;
+      state.pendingStoryId=ids[day];
+      state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};
+      state.storyFlags={haeun_contact_unlocked:true};
+      for(let previous=1;previous<day;previous+=1)state.storyHistory.push({sceneId:ids[previous],choiceId:`qa-day-${previous}`,day:previous,response:"QA 완료"});
+      const legacyPending={14:"day14CurrentChoiceSpendingPending",15:"day15CurrentLeisureDatePending",16:"day16CurrentSocialCirclePending",17:"day17CurrentHealthRoutinePending",18:"day18CurrentHomeSafetyPending",19:"day19CurrentSharedChorePending",20:"day20CurrentSharedMealPending",21:"day21CurrentFullWorkdayPending",22:"day22CurrentRecoveryDayPending",23:"day23CurrentFamilyContactPending",24:"day24CurrentCommitmentCheckPending",25:"day25CurrentWeddingScopePending",26:"day26CurrentLegalPreparationPending",27:"day27CurrentFinalCheckPending",28:"day28CurrentCeremonyRehearsalPending",29:"day29CurrentEveReconfirmationPending",30:"day30CurrentWeddingDecisionPending"}[day];
+      if(legacyPending)state.storyFlags[legacyPending]=true;
+      if(day===17)state.storyFlags.day17DataStrategy="__audit_legacy_route__";
+      SaveManager.save(state);
+      location.href=`../index.html?qa=story-content-audit&day=${day}`;
+    });
+  </script>
+</body>
+</html>

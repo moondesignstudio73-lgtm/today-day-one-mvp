@@ -67,7 +67,7 @@ for(const [flag,id,phrase,stage] of [
   ["day10LunchStrategy","work10_lunch_current_roles","현재 역할과 최근 바뀐 일",1],
   ["day10LunchStrategy","work10_lunch_one_question_each","서로 다른 질문 하나씩",1],
   ["day10LunchStrategy","work10_lunch_quiet_recovery","식사·복약·조용한 휴식",1],
-  ["day10DebriefStrategy","work10_debrief_keep_rhythm","확대 없이 다음 주 후보",3],
+  ["day10DebriefStrategy","work10_debrief_keep_rhythm","어제의 시간 틀을 늘리지 않은 채 다음 주 후보",3],
   ["day10DebriefStrategy","work10_debrief_adjust_one_block","한 블록만 줄이고",3],
   ["day10DebriefStrategy","work10_debrief_separate_scores","업무 결과·회복 상태·동료 관계",3]
 ]){

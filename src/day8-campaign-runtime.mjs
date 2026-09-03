@@ -28,9 +28,9 @@ export const DAY8_SHARE_CHOICES=Object.freeze([
 
 function day7OpeningCallback(state){
   const id=state.storyFlags?.day7OpeningStrategy;
-  if(id==="date7_lead_first_leg")return [n("DAY 7에 첫 이동을 맡았던 표 아래 오늘의 혼자 처리 칸이 이어졌다."),d("하은","어제 첫 길은 네가 정했지. 오늘은 우편함부터 네 순서야.","smile")];
+  if(id==="date7_lead_first_leg")return [n("어제 첫 이동을 맡았던 표 아래 오늘의 혼자 처리 칸이 이어졌다."),d("하은","어제 첫 길은 네가 정했지. 오늘은 우편함부터 네 순서야.","smile")];
   if(id==="date7_follow_then_switch")return [n("어제 목적지와 지도 역할을 바꿨던 표를 오늘은 ‘같이 확인’과 ‘혼자 처리’ 두 칸으로 나눴다."),d("하은","약은 같이 확인하고, 현관 밖부터는 역할 교대. 오늘은 네가 지도 담당.","smile")];
-  return [n("DAY 7에 거리와 체력을 비교했던 방식대로 우편함·생활용품점·귀가 대안을 나란히 적었다."),d("하은","후보 비교부터 하는 사람답게, 세제보다 귀가 대안이 먼저네.","smile")];
+  return [n("어제처럼 거리와 체력을 비교하려고 우편함·생활용품점·귀가 대안을 나란히 적었다."),d("하은","후보 비교부터 하는 사람답게, 세제보다 귀가 대안이 먼저네.","smile")];
 }
 
 function day7RecoveryCallback(state){
@@ -108,10 +108,10 @@ function segment3(state){const high=(state.scenario?.haeunTrust??0)>=35;return [
   ...shareReaction(state.storyFlags?.day8ShareStrategy),
   ...(high?[d("하은","응, 다음 질문 순서도 네가 정해. 오늘 계약 잘 작동했어.","smile")]:[d("하은","사실 연락하고 싶었지만 계약대로 기다렸어. 다음에도 같은 규칙을 써도 괜찮을까?","calm"),d("나","출발 전에 조건을 다시 확인하면 괜찮아. 오늘처럼 변경만 공유하자.")]),
   ...scene("S08_DAY9_PLAN","SCENE 08 · 다음 길은 출근 방향",state),enter("calm","phone"),
-  n("임시 예비폰에 DAY 9의 제한된 두 번째 직장 적응 방문 계획을 열었다."),d("하은","내일은 회사 방향이네. 오늘 혼자 다녀온 방식 중 뭘 가져갈래?"),
+  n("임시 예비폰에 두 번째 직장 적응 방문 계획을 열었다. 방문 시간과 접근 범위는 아직 빈칸이었다."),d("하은","내일은 회사 방향이네. 오늘 혼자 다녀온 방식 중 뭘 가져갈래?"),
   n("이동 경로, 체력 중단선, 팀장에게 확인할 현재 업무 범위를 세 칸으로 나눴다."),
   d("나","현재 정보부터 확인하고, 모르는 건 추측하지 않고, 중단 조건은 먼저 공유한다."),d("하은","이동은 혼자, 중단 조건은 같이. 오늘 표랑 같은 구조네.","smile"),
-  d("나","DAY 5에서 정한 범위는 팀장과 다시 확인하고 늘리지 않는다."),d("하은","그럼 도시락은 범위 밖이야?","smile"),
+  d("나","전에 팀장과 정한 업무 범위는 다시 확인하고, 내 마음대로 늘리지 않는다."),d("하은","그럼 도시락은 범위 밖이야?","smile"),
   d("나","생활 지원이라 허용. 단, 너무 무겁지 않게."),d("하은","승인 받았습니다. 생활형 로맨스 계속.","smile"),
   n("혼자 처리한 생활 업무와 귀가 뒤 함께 정리한 판단, 다음 출근의 확인 순서가 저장됐다."),
   {type:"transition",style:"fade",label:"DAY 8 END",backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing",bgmId:"daily"},{type:"sceneEnd"}

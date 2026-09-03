@@ -3,9 +3,10 @@ import {DAY10_V3_PLAYABLE_SCRIPT_01_12,getDay10V3PlayableScene01To12} from "./da
 import {DAY10_V3_PLAYABLE_SCRIPT_13_24,getDay10V3PlayableScene13To24} from "./day10-v3-playable-script-13-24.mjs";
 import {getNextDay10V3Choice} from "./day10-v3-runtime.mjs";
 import {getDay10V3Presentation} from "./day10-v3-presentation-data.mjs";
+import {projectAuthoredStoryStep} from "./story-player-facing-policy.mjs";
 
 const playable=(state,number)=>number<=12?getDay10V3PlayableScene01To12(state,number):getDay10V3PlayableScene13To24(state,number);
-const convertStep=step=>Object.freeze(step.type==="dialogue"?{type:"dialogue",speaker:step.speaker,text:step.text}:step.type==="message"?{type:"message",sender:step.sender,text:step.text,device:"phone"}:step.type==="stageDirection"?{type:"stageDirection",text:step.text}:step.type==="choiceCue"?{type:"choiceCue",choiceId:step.choiceId}:{type:"narration",text:step.text,sourceType:step.type});
+const convertStep=step=>projectAuthoredStoryStep(step);
 
 export function getDay10V3ImmersiveScene(state,sceneNumber){
   const script=playable(state,sceneNumber),presentation=getDay10V3Presentation(sceneNumber,state);if(!presentation)throw new Error("DAY10_V3_PRESENTATION_MISSING");

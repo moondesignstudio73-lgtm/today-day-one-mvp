@@ -603,6 +603,25 @@ const STANDARD_STORY_SCENES = [
 export const LEGACY_FREE_STORY_SCENES = [...STANDARD_STORY_SCENES,...HIDDEN_ROUTE_SCENES,...HEROINE_STORY_SCENES];
 export const STORY_SCENES = [...MARRIAGE_30_STORY_SCENES];
 
+const LATE_V4_SCENE_METADATA=Object.freeze({
+  "m30-day19-current-shared-chore":["돈으로 사려던 시간","완벽한 여행을 대신 마련하려던 마음을 내려놓고, 서로의 돈·시간·취향으로 여행을 함께 고친다."],
+  "m30-day20-current-shared-meal":["같은 집, 다른 하루","잘 대접해야 한다는 긴장을 내려놓고 같은 집에서 각자의 속도로 편하게 머무는 저녁을 경험한다."],
+  "m30-day21-current-full-workday":["남겨 둔 자리","하은의 기다림 안에 있던 평범하고 복잡한 하루를 듣고 과거의 빚과 지금의 마음을 구분한다."],
+  "m30-day22-current-recovery-day":["떠날 수 있는 사람","예상과 달라진 여행에서 계획을 줄이고 서로 다른 속도로 같은 하루를 즐긴다."],
+  "m30-day23-current-family-contact":["돌아갈 곳","여행 뒤 각자의 집으로 돌아가도 이어지는 마음과 다음 만남을 자기 말로 고른다."],
+  "m30-day24-current-commitment-check":["끝내지 못한 문장","좋은 사람으로 남으려 미룬 말을 끝내고 상대를 잃을 가능성까지 대답의 일부로 받아들인다."],
+  "m30-day25-current-wedding-scope":["좋아한다는 말 다음","서로 다른 집과 하루를 상상하는 두 사람이 좋아한다는 말 뒤에 살펴볼 생활을 붙인다."],
+  "m30-day26-current-legal-preparation":["사람들 앞의 우리","축하받고 싶은 마음이 상대의 답을 앞서지 않도록 관계의 이름 뒤에 있는 각자의 목소리를 듣는다."],
+  "m30-day27-current-final-check":["되돌릴 수 없는 말","흐리거나 삼킨 말을 꺼내고 사과보다 어려운 상대의 대답을 끝까지 듣는다."],
+  "m30-day28-current-ceremony-rehearsal":["다시 만나자는 뜻","재회가 과거로 돌아가는 일이 아님을 알고 남은 마음과 달라진 거리를 함께 고른다."],
+  "m30-day29-current-eve-reconfirmation":["내일도 내가 고를게","지난 물건에서 정답을 찾는 대신 오늘 좋아하는 것과 앞으로 지킬 약속을 직접 고른다."],
+  "m30-day30-current-wedding-decision":["오늘부터, 그다음","정답으로 닫힌 결말 대신 오늘의 마음을 말하고 그다음 하루도 서로 다시 선택한다."]
+});
+for(const scene of STORY_SCENES){
+  const metadata=LATE_V4_SCENE_METADATA[scene.id];
+  if(metadata){scene.arc=metadata[0];scene.title=metadata[0];scene.message=metadata[1];}
+}
+
 const FRIEND_SCENE_IDS=new Set(["friend-warning","hidden-friend-question"]);
 const COWORKER_SCENE_IDS=new Set(["coworker-introduction","project-opportunity","promise-clash","hidden-cracks"]);
 const inferPreferenceTags=choice=>{

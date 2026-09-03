@@ -31,7 +31,7 @@ function day8Callbacks(state){
   if(check==="errand8_change_only_checkin")lines.push(d("하은","경로·몸 상태·끝나는 시각이 바뀔 때만 연락. 오늘도 내가 먼저 위치 묻지 않기.","girlfriend","home-morning"));
   else if(check==="errand8_timed_checkin")lines.push(d("하은","도착하고 나올 때 상태와 다음 행동 한 줄. 그 사이에는 재촉 안 하기.","girlfriend","home-morning"));
   else lines.push(d("하은","예정 시각을 넘길 때만 연락. 그전에는 계획대로 움직이는 걸로.","girlfriend","home-morning"));
-  if(purchase==="errand8_compare_labels")lines.push(n("DAY 8에 표시를 대조했던 순서대로 물병·약·출입증을 직접 확인했다."));
+  if(purchase==="errand8_compare_labels")lines.push(n("어제 표시를 대조했던 순서대로 물병·약·출입증을 직접 확인했다."));
   else if(purchase==="errand8_ask_current_need")lines.push(d("나","오늘 필요한 건 90분 방문에 쓸 물건뿐이야. 가방 구성은 내가 정할게.","girlfriend","home-morning"));
   else lines.push(n("오늘도 90분만 시험하고, 다음 방문 확대는 귀가 뒤 판단하기로 했다."));
   if(share==="errand8_sort_receipt_together")lines.push(n("종이에는 완료·보류·같이 확인할 일의 세 칸이 남아 있었다."));
@@ -42,9 +42,9 @@ function day8Callbacks(state){
 
 function day5ReturnCallback(state){
   const id=state.storyFlags?.day5ReturnStrategy;
-  if(id==="request-current-briefing")return [d("윤서진","DAY 5처럼 현재 파일부터 열게요. 담당, 마감, 책임자 순서예요.","female-coworker")];
+  if(id==="request-current-briefing")return [d("윤서진","지난번처럼 현재 파일부터 열게요. 담당, 마감, 책임자 순서예요.","female-coworker")];
   if(id==="rebuild-social-context")return [d("윤서진","사람 이름 옆에 지금 맡은 일과 질문 가능한 시간을 붙였어요. 관계도 현재형으로 보죠.","female-coworker")];
-  return [d("윤서진","15분 상태 확인, 90분 종료, 승인 금지. DAY 5의 경계를 문서 위에 고정했어요.","female-coworker")];
+  return [d("윤서진","15분마다 상태 확인, 90분에 종료, 승인 업무는 금지. 전에 합의한 경계를 문서 위에 고정했어요.","female-coworker")];
 }
 
 function day5SeojinCallback(state){
@@ -103,7 +103,7 @@ function segment2(state){return [
 
 function segment3(state){return [
   ...debriefReaction(state.storyFlags?.day9DebriefStrategy),d("윤서진","제가 두 얘기를 섞으면 어느 쪽 답인지 다시 물어봐요.","female-coworker","neighborhood-street-day"),d("나","그 기준은 서로 적용하죠.","female-coworker","neighborhood-street-day"),d("윤서진","그럴 줄 알았어요. 그게 평가인지 감상인지는 아직 보류하고.","female-coworker","neighborhood-street-day"),
-  ...scene("S08_STOP_AND_RETURN","SCENE 08 · 90분에 손을 떼는 일"),n("종료 알람이 울리자 미완성 메모 끝에 ‘다음 방문’을 적고 파일을 닫았다.",{backgroundId:"office-day",characterId:"office-best-male"}),d("민호","예전의 너라면 여기서 오 분만 했어.","office-best-male"),d("나","오늘의 나는 종료합니다.","office-best-male"),d("민호","좋네. 다음엔 기억 퀴즈 없는 현재형 점심까지.","office-best-male"),d("팀장","다음은 3시간. 중간 휴식과 승인 금지는 그대로 둡니다.","team-lead"),n("DAY 8 계약대로 종료·상태·다음 행동을 임시 예비폰에 남겼다.",{backgroundId:"office-day",characterId:"team-lead"}),
+  ...scene("S08_STOP_AND_RETURN","SCENE 08 · 90분에 손을 떼는 일"),n("종료 알람이 울리자 미완성 메모 끝에 ‘다음 방문’을 적고 파일을 닫았다.",{backgroundId:"office-day",characterId:"office-best-male"}),d("민호","예전의 너라면 여기서 오 분만 했어.","office-best-male"),d("나","오늘의 나는 종료합니다.","office-best-male"),d("민호","좋네. 다음엔 기억 퀴즈 없는 현재형 점심까지.","office-best-male"),d("팀장","다음은 3시간. 중간 휴식과 승인 금지는 그대로 둡니다.","team-lead"),n("임시 예비폰에 종료 시각과 몸 상태, 다음 방문 때 할 일을 짧게 남겼다.",{backgroundId:"office-day",characterId:"team-lead"}),
   {type:"transition",style:"fade",label:"집 · 오전",backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing",bgmId:"daily"},d("하은","성과 말고 상태부터.","girlfriend","home-morning"),d("나","피곤함은 기준 안. 권한 밖 질문이 왔고 책임자에게 연결했어.","girlfriend","home-morning"),d("하은","안 도망치고, 다 떠안지도 않았네.","girlfriend","home-morning"),d("나","다음은 세 시간. 중간 휴식하고 동료들과 점심까지.","girlfriend","home-morning"),d("하은","그럼 도시락은 안 싸 줄게. 점심 메뉴가 실패하면 저녁에 복구 회의.","girlfriend","home-morning"),n("익숙한 자리를 되찾은 대신 멈출 시각과 물을 사람을 정하고 돌아왔다.",{backgroundId:"home-morning",characterId:"girlfriend"}),{type:"transition",style:"fade",label:"DAY 9 END",backgroundId:"home-morning",characterId:"girlfriend",expressionId:"smile",poseId:"standing",bgmId:"daily"},{type:"sceneEnd"}
 ];}
 
