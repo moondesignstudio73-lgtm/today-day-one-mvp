@@ -52,3 +52,10 @@
 `COMPLETE — IMPLEMENTATION / REGRESSION / ACTUAL PLAY PASS`
 
 DAY 17의 24개 Scene, 12개 선택, 대면·비대면 및 유리 초대·미초대 상태 계약을 구현했고 두 대표 경로의 실제 UI 완주와 DAY 18 전환을 확인했다. 이번 작업은 DAY 17만 변경했으며 DAY 18 본문 구현은 시작하지 않았다.
+
+## 공개 배포
+
+- 구현 커밋: `3d5e6f7f5ac3cb02ea53a61abad231336e14d948`
+- 반영 브랜치: 대상 저장소 `main`, `gh-pages`
+- GitHub Pages run: `33782479070` — `completed/success`
+- 공개 검증: `game.js?v=183`, DAY 17 V4 브리지 import, 브리지 모듈 HTTP 200
