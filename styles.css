@@ -1205,6 +1205,14 @@ body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-call .vn-nameplate:
 body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-call[data-call-cue="grip-shift"] .vn-dialogue{animation:day18-phone-grip-shift .65s ease-in-out both}
 @keyframes day18-phone-grip-shift{0%{transform:translateX(0) rotate(0)}38%{transform:translateX(-16px) rotate(-.35deg)}100%{transform:translateX(12px) rotate(.25deg)}}
 @media(prefers-reduced-motion:reduce){body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-call[data-call-cue="grip-shift"] .vn-dialogue{animation:none}}
+.vn-stage[data-room-action] .vn-backdrop{transition:background-position .8s ease,transform .8s ease,filter .8s ease;transform:scale(1.025)}
+.vn-stage[data-room-action="phone-close"] .vn-backdrop{background-position:35% 50%;filter:brightness(.72) saturate(.8)}
+.vn-stage[data-room-action="wardrobe-check"] .vn-backdrop{background-position:78% 50%}
+.vn-stage[data-room-action="desk-reset"] .vn-backdrop{background-position:18% 52%}
+.vn-stage[data-room-action="sleep-ready"] .vn-backdrop{background-position:62% 68%;filter:brightness(.72)}
+.vn-stage[data-room-action="alarm-set"] .vn-backdrop{background-position:28% 62%;filter:brightness(.65)}
+.vn-stage[data-final-fade="active"] .vn-backdrop{filter:brightness(.16) saturate(.45);transition:filter 1.4s ease}
+.vn-stage[data-final-fade="active"] .vn-dialogue{background:#090a12eb;transition:background 1.4s ease}
 .vn-stage.private-note-active .vn-dialogue{visibility:hidden}
 .story-private-note{position:absolute;z-index:8;top:12%;bottom:8%;left:50%;transform:translateX(-50%);width:min(430px,calc(100% - 32px));box-sizing:border-box;display:flex;flex-direction:column;padding:24px;color:#263347;background:#f6f8fc;border:1px solid #ccd4df;border-radius:12px;font:inherit;text-align:left;box-shadow:0 12px 42px #17182b60}
 .story-private-note header{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #ccd4df;padding-bottom:16px}

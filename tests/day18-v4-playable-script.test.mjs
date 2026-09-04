@@ -701,6 +701,23 @@ test('ending after an unresolved confession does not summarize the night as mere
   assert.match(text,/이미 말한 마음/);
 });
 
+test('scenes 21 through 24 stage room actions and slow fade outside ordinary narration',()=>{
+  const s=start('SOLO',true,{haeunContactAllowed:false});
+  for(const id of ['morning_solo','menu_familiar','solo_food','return_home','alone_stop','travel_life']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  const scene=n=>steps.findIndex(x=>x.type==='sceneDirection'&&x.number===n);
+  const cue=status=>steps.findIndex(x=>x.type==='roomActionCue'&&x.status===status);
+  assert.ok(cue('wardrobe-check')<scene(22));
+  assert.ok(scene(22)<cue('phone-close')&&cue('phone-close')<scene(23));
+  assert.ok(scene(23)<cue('desk-reset')&&cue('desk-reset')<cue('sleep-ready')&&cue('sleep-ready')<scene(24));
+  assert.ok(scene(24)<cue('alarm-set'));
+  const fade=steps.findIndex(x=>x.type==='finalFadeCue');
+  const lastThought=steps.findIndex(x=>x.text==='내일의 약속은 그 말 다음에서 시작해야 했다.');
+  assert.ok(cue('alarm-set')<fade&&fade<lastThought);
+  const narration=steps.filter(x=>x.type==='narration').map(x=>x.text).join('\n');
+  assert.doesNotMatch(narration,/화면을 끄고 내일 입을 옷을 봤다|알람을 맞추고 휴대전화를 내려놓았다/);
+});
+
 test('follow-up intent alone does not invent an agreed contact date', () => {
   const s=start('YURI');
   for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks','relationship_haeun','next_ask','pay_split','night_tell','future_unsure','travel_life']) applyDay18V4Choice(s,`day18_v4_${id}`);

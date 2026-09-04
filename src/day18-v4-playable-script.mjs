@@ -167,7 +167,9 @@ function reaction(c) {
     case 'alone_jihoon': return jihoonAtNight(c);
     case 'travel_near': return [n('돌아오고 싶으면 돌아올 수 있다는 생각도 여행을 망치는 말은 아니었다.')];
     case 'travel_busan': return [travelPhoto(),n('역에서 이동하고, 먹고, 쉬고, 다시 돌아와야 했다. 사진 아래의 시간을 내 하루로 옮겨 봐야 했다.')];
-    case 'travel_life': return [n('화면을 끄고 내일 입을 옷을 봤다. 지금 사는 방도 계속 살 곳이었다.')];
+    case 'travel_life': return [{type:'sfx',sfxId:'SFX_PHONE_SCREEN_OFF'},
+      {type:'roomActionCue',status:'wardrobe-check',actionLabel:'화면을 끄고 내일 입을 옷을 확인함',duration:900},
+      n('먼 데 가지 않는다고 오늘의 생활이 예행연습으로 남는 것은 아니었다. 지금 사는 방도 계속 살 곳이었다.')];
     default: throw new Error(`DAY18_REACTION_MISSING:${key}`);
   }
 }
@@ -290,10 +292,13 @@ function ending(c) {
   const hasLie = f.statements.some(s => !s.truthful);
   return [n('오늘은 어느 쪽도 결제하지 않았다. 누군가와 함께 가려면 그 사람의 내일도 물어야 했다.'),
     scene(22, 'home-evening', 'night'),
+    {type:'sfx',sfxId:'SFX_PHONE_SCREEN_OFF'},
+    {type:'roomActionCue',status:'phone-close',actionLabel:'오늘 나눈 말이 있는 화면을 닫음',duration:700},
     n(f.dinner === 'YURI' ? '유리 씨가 나를 어떻게 기억하는지는 조금 더 들었다. 그렇다고 내가 그 기억 속 사람의 표정을 따라 하면 오늘 저녁이 완성되는 건 아니었다.'
       : f.dinner === 'HAEUN' ? '하은이 파일 이름 때문에 웃던 얼굴이 떠올랐다. 나를 안심시키려고 지은 얼굴이 아니었다.'
       : '한 줄을 다 먹고 한 번 더 주문한 일이 떠올랐다. 누군가와 함께할 준비가 끝나야 나를 먹일 수 있는 건 아니었다.'),
     scene(23, 'home-evening', 'night'),
+    {type:'roomActionCue',status:'desk-reset',actionLabel:'컵을 제자리에 두고 의자를 밀어 넣음',duration:1000},
     ...(f.yuriNext === 'REQUESTED_NOT_ACCEPTED' && c.input.contactAllowed && f.contactTonight !== 'night_tell'
       ? [n('다시 만나고 싶다고 한 말은 아직 하은에게 전하지 않았다. 내가 말하지 않았다고 그 마음이 없던 일이 되지는 않았다.')] : []),
     n(hasLie ? '내가 실제로 보낸 문장을 다시 보았다. 이미 말한 마음을, 몰랐다는 말로 지우지는 않기로 했다.'
@@ -302,6 +307,7 @@ function ending(c) {
       : f.appointmentCancelled ? '약속을 바꾼 사실과 그때 보낸 말을 다시 보았다. 취소를 없던 일로 만들지 않는 것도 오늘 내가 할 수 있는 일이었다.'
         : f.dinner === 'SOLO' ? '혼자 보내기로 한 저녁을 누구에게 벌처럼 돌리지 않은 것. 그 정도로 끝나는 날도 있었다.'
           : '오늘 내가 한 약속을 지킨 것. 나와 먹고 싶다는 사람에게 나도 먹고 싶다고 말한 것. 그 정도로 끝나는 날도 있었다.'),
+    {type:'roomActionCue',status:'sleep-ready',actionLabel:'오늘 입은 옷을 걸어 두고 침대에 누움',duration:1100},
     scene(24, 'home-evening', 'night'),
     ...(f.travelTogetherDiscussed ? msg(D(24, undefined, '생각할 시간을 둔 밤')) : f.followUpContact
       ? [n(followUp.status === 'TIME_WINDOW_AGREED'
@@ -309,7 +315,9 @@ function ending(c) {
         : followUp.status === 'CONTACT_PROMISED'
         ? '내일 연락하기로 한 약속을 남겼다. 여행 사진은 아직 보내지 않았다. 먼 풍경으로 오늘의 대답을 대신하고 싶지 않았다.'
         : '여행 사진은 아직 보내지 않았다. 다시 이야기할 시간을 함께 정해야 했다. 먼 풍경으로 오늘의 대답을 대신하고 싶지 않았다.')]
-      : [n('알람을 맞추고 휴대전화를 내려놓았다. 내일은 내 돈과 내 시간부터 볼 생각이었다.')]),
+      : [{type:'roomActionCue',status:'alarm-set',actionLabel:'알람을 맞추고 휴대전화를 내려놓음',duration:850},
+        n('내일은 내 돈과 내 시간부터 볼 생각이었다.')]),
+    {type:'finalFadeCue',duration:1400,actionLabel:'방의 불빛이 천천히 어두워짐'},
     n('오늘 저녁에 누구와 앉았는지만으로는 내 마음을 설명할 수 없었다. 그래도 내가 무슨 말을 했는지는 남았다.'),
     n('내일의 약속은 그 말 다음에서 시작해야 했다.'),
     {type: 'chapterCompletionCue', day: 18, finalSceneReached: true}];

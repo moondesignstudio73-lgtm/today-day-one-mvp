@@ -8,6 +8,10 @@ const start=source.indexOf('  if(step.type==="phoneCallCue"){');
 const end=source.indexOf('  if(step.type==="itemShow")',start);
 assert.ok(start>=0&&end>start);
 const handler=`(()=>{${source.slice(start,end)}})()`;
+const roomStart=source.indexOf('  if(step.type==="roomActionCue"||step.type==="finalFadeCue"){');
+const roomEnd=source.indexOf('  if(step.type==="itemShow")',roomStart);
+assert.ok(roomStart>=0&&roomEnd>roomStart);
+const roomHandler=`(()=>{${source.slice(roomStart,roomEnd)}})()`;
 
 test('actual phone cue handler clears stale speech without writing dialogue or history',()=>{
   for(const status of ['silence','grip-shift','ended']) {
@@ -35,4 +39,29 @@ test('actual phone cue handler clears stale speech without writing dialogue or h
   assert.match(css,/@keyframes day18-phone-grip-shift/);
   assert.match(css,/prefers-reduced-motion:reduce/);
   assert.ok(start<source.indexOf('if(isInternalStoryStep(step)||!isPlayerFacingStoryStep(step))'));
+});
+
+test('room actions and final fade are visual cues, not dialogue or history entries',()=>{
+  for(const step of [
+    {type:'roomActionCue',status:'desk-reset',actionLabel:'컵을 제자리에 두고 의자를 밀어 넣음',duration:1000},
+    {type:'finalFadeCue',actionLabel:'방의 불빛이 천천히 어두워짐',duration:1400}
+  ]) {
+    const attributes={},classes=new Set(['narration-mode','is-typing']);
+    const node={textContent:'stale',classList:{add:(...names)=>names.forEach(n=>classes.add(n)),remove:(...names)=>names.forEach(n=>classes.delete(n))}};
+    const stage={dataset:{},classList:node.classList,querySelector:()=>({setAttribute:(k,v)=>attributes[k]=v})};
+    const title={...node},sceneText={...node},calls=[];
+    vm.runInNewContext(roomHandler,{step,$:id=>id==='#visualNovelStage'?stage:id==='#sceneTitle'?title:sceneText,
+      finishDialogueTyping:()=>calls.push('finish'),setStoryMessagePresentation:value=>calls.push(value),queueSceneStep:delay=>calls.push(delay)});
+    assert.equal(sceneText.textContent,'');
+    assert.equal(title.textContent,'');
+    assert.equal(attributes['aria-label'],step.actionLabel);
+    assert.equal(stage.dataset[step.type==='finalFadeCue'?'finalFade':'roomAction'],step.type==='finalFadeCue'?'active':step.status);
+    assert.deepEqual(calls,['finish',null,step.duration]);
+    assert.equal(classes.has('narration-mode'),false);
+    assert.equal(classes.has('is-typing'),false);
+  }
+  const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
+  for(const status of ['phone-close','wardrobe-check','desk-reset','sleep-ready','alarm-set']) assert.match(css,new RegExp(`data-room-action="${status}"`));
+  assert.match(css,/data-final-fade="active"/);
+  assert.match(source,/delete alarmStage\.dataset\.roomAction;delete alarmStage\.dataset\.finalFade/);
 });

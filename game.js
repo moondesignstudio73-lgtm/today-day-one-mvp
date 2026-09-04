@@ -81,7 +81,7 @@ import { applyDay16V4GameChoice, completeDay16V4GameChapter, getDay16V4Compatibi
 import { LOCKED_DAY17_SCENE_ID, applyLockedDay17ChoiceState, getLockedDay17LegacyChoice, getLockedDay17ResumePresentation, getLockedDay17Segment } from "./src/day17-campaign-runtime.mjs?v=1";
 import { applyDay17V4GameChoice, completeDay17V4GameChapter, getDay17V4Compatibility, getDay17V4GameResumePresentation, getDay17V4GameSegment, prepareDay17V4GameEntry } from "./src/day17-v4-game-bridge.mjs?v=2";
 import { LOCKED_DAY18_SCENE_ID, applyLockedDay18ChoiceState as applyLegacyDay18ChoiceState, getLockedDay18LegacyChoice, getLockedDay18ResumePresentation as getLegacyDay18ResumePresentation, getLockedDay18Segment as getLegacyDay18Segment } from "./src/day18-campaign-runtime.mjs?v=1";
-import {prepareDay18V4GameEntry, getDay18V4GameSegment, getDay18V4GameResumePresentation, applyDay18V4GameChoice, completeDay18V4GameChapter} from "./src/day18-v4-game-bridge.mjs?v=49";
+import {prepareDay18V4GameEntry, getDay18V4GameSegment, getDay18V4GameResumePresentation, applyDay18V4GameChoice, completeDay18V4GameChapter} from "./src/day18-v4-game-bridge.mjs?v=50";
 import { LOCKED_DAY19_SCENE_ID, applyLockedDay19ChoiceState, getLockedDay19LegacyChoice, getLockedDay19ResumePresentation, getLockedDay19Segment } from "./src/day19-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY20_SCENE_ID, applyLockedDay20ChoiceState, getLockedDay20LegacyChoice, getLockedDay20ResumePresentation, getLockedDay20Segment } from "./src/day20-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY21_SCENE_ID, applyLockedDay21ChoiceState, getLockedDay21LegacyChoice, getLockedDay21ResumePresentation, getLockedDay21Segment } from "./src/day21-campaign-runtime.mjs?v=1";
@@ -1066,6 +1066,17 @@ function renderImmersiveStep() {
     queueSceneStep(shifted?650:1200);
     return;
   }
+  if(step.type==="roomActionCue"||step.type==="finalFadeCue"){
+    finishDialogueTyping();
+    const stage=$("#visualNovelStage"),finalFade=step.type==="finalFadeCue";
+    setStoryMessagePresentation(null);
+    if(finalFade)stage.dataset.finalFade="active";else stage.dataset.roomAction=step.status;
+    stage.classList.remove("narration-mode","is-typing");
+    $("#sceneTitle").textContent="";$("#sceneTitle").classList.add("hidden");$("#sceneText").textContent="";
+    stage.querySelector(".vn-dialogue").setAttribute("aria-label",step.actionLabel);
+    queueSceneStep(step.duration??900);
+    return;
+  }
   if(step.type==="itemShow"){const layer=step.layer==="npcRear"?$("#vnNpcRear"):$("#vnNpcFront");layer.hidden=!step.source;if(step.source)layer.src=step.source;applyCharacterStage(layer,step.stage,step.characterId??(step.layer==="npcRear"?"nurse":"doctor"));queueSceneStep(120);return;}
   if(step.type==="alarmAction"){
     const layer=$("#vnEventCg"),stage=$("#visualNovelStage");
@@ -1115,6 +1126,7 @@ function setStoryMessagePresentation(step){
   clearStoryPrivateNote();
   const stage=$("#visualNovelStage"),mode=getStoryCommunicationPresentation(step);
   delete stage.dataset.callCue;
+  delete stage.dataset.roomAction;
   stage.classList.toggle("phone-message",mode.message);
   stage.classList.toggle("phone-call",mode.call);
   stage.dataset.messageSide=mode.side;
@@ -1221,7 +1233,7 @@ function applySkippedScenePresentation(choiceIndex){
   setStoryMessagePresentation(lastLine);
   if(lastLine){const narrationLike=["narration","monologue"].includes(lastLine.type);$("#sceneTitle").textContent=narrationLike?"":(lastLine.type==="message"?lastLine.sender:lastLine.speaker)??"";$("#sceneTitle").classList.toggle("hidden",narrationLike);$("#visualNovelStage").classList.toggle("narration-mode",narrationLike);typeDialogue(lastLine.text);finishDialogueTyping();}
 }
-function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;sound.stopTransientCues();if(immersiveScene.currentStep?.type==="alarmAction")sound.stopCue(immersiveScene.currentStep.sfxId);const alarmStage=$("#visualNovelStage");if(alarmStage?.dataset)delete alarmStage.dataset.alarmAction;alarmStage?.removeAttribute?.("aria-label");sound.restoreBgm({duration:180});$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){const choiceIndex=immersiveScene.sequence.indexOf(choice);applySkippedScenePresentation(choiceIndex);if(!eventRuntime.waitForInput("choice",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:choiceIndex})){persistEventRuntime(true);return;}immersiveScene.index=choiceIndex+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1,backgroundId:immersiveScene.presentation?.backgroundId});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else{const completionCue=immersiveScene.sequence.find(step=>step.type==="chapterCompletionCue");if(completionCue){try{if(completionCue.day===18)completeDay18V4GameChapter(state,completionCue);else if(completionCue.day===17)completeDay17V4GameChapter(state,completionCue);else if(completionCue.day===16)completeDay16V4GameChapter(state,completionCue);else completeDay15V4GameChapter(state,completionCue);SaveManager.save(state);}catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast(`DAY ${completionCue.day??""} 완료 상태를 확인할 수 없어 진행을 멈췄습니다.`);return;}}finishImmersiveScene();} }
+function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;sound.stopTransientCues();if(immersiveScene.currentStep?.type==="alarmAction")sound.stopCue(immersiveScene.currentStep.sfxId);const alarmStage=$("#visualNovelStage");if(alarmStage?.dataset){delete alarmStage.dataset.alarmAction;delete alarmStage.dataset.roomAction;delete alarmStage.dataset.finalFade;}alarmStage?.removeAttribute?.("aria-label");sound.restoreBgm({duration:180});$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){const choiceIndex=immersiveScene.sequence.indexOf(choice);applySkippedScenePresentation(choiceIndex);if(!eventRuntime.waitForInput("choice",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:choiceIndex})){persistEventRuntime(true);return;}immersiveScene.index=choiceIndex+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1,backgroundId:immersiveScene.presentation?.backgroundId});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else{const completionCue=immersiveScene.sequence.find(step=>step.type==="chapterCompletionCue");if(completionCue){try{if(completionCue.day===18)completeDay18V4GameChapter(state,completionCue);else if(completionCue.day===17)completeDay17V4GameChapter(state,completionCue);else if(completionCue.day===16)completeDay16V4GameChapter(state,completionCue);else completeDay15V4GameChapter(state,completionCue);SaveManager.save(state);}catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast(`DAY ${completionCue.day??""} 완료 상태를 확인할 수 없어 진행을 멈췄습니다.`);return;}}finishImmersiveScene();} }
 function advanceCampaignChapter(completedSession) {
   if(state.scenario?.enabled!==true)return null;
   if(prepareCampaignDayAdvance(state,completedSession?.id)===null)return null;
@@ -1298,7 +1310,7 @@ function finishImmersiveScene() {
   const returnToFreeAction=Boolean(completedSession?.fromStoryFreeAction&&markStoryFreeActionEventComplete(state,completedSession.id));
   const nextCampaignScene=returnToFreeAction?null:advanceCampaignChapter(completedSession);
   eventRuntime.input.unlock(completedSession?.id);eventRuntime.complete();immersiveScene=null;persistEventRuntime(true);
-  $("#visualNovelStage").classList.remove("narration-mode","location-event-scene","image-text-only");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.toggle("hidden",state.scenario?.enabled===true);$("#nextButton").classList.toggle("hidden",state.scenario?.enabled===true);
+  $("#visualNovelStage").classList.remove("narration-mode","location-event-scene","image-text-only");delete $("#visualNovelStage").dataset.focusCharacter;delete $("#visualNovelStage").dataset.sceneEffect;delete $("#visualNovelStage").dataset.roomAction;delete $("#visualNovelStage").dataset.finalFade;delete $("#vnCharacter").dataset.day1Pose;$("#skipButton").classList.add("hidden");$("#storyChoiceLayer").classList.add("hidden");$("#vnNpcRear").hidden=true;$("#vnNpcFront").hidden=true;$("#vnEventCg").hidden=true;$("#actionGrid").classList.toggle("hidden",state.scenario?.enabled===true);$("#nextButton").classList.toggle("hidden",state.scenario?.enabled===true);
   SaveManager.save(state);render();$(".story-toolbar").classList.toggle("hidden",state.scenario?.enabled!==true);
   if(returnToFreeAction){const story=getStoryScene(state.storyFreeAction?.storySceneId);if(story)setTimeout(()=>openStoryScene(story),0);return;}
   if(nextCampaignScene){eventRuntime.queue=[];eventRuntime.microQueue=[];setTimeout(()=>openStoryScene(nextCampaignScene),0);return;}
