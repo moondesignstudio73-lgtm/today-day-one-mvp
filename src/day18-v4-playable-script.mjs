@@ -167,14 +167,14 @@ function haeunMealConversation(c) {
   const menu = c.facts.menu;
   return D(12).flatMap(step => {
     if (step.text === '둘 다 먹고 나서 실망하면 억울하지 않잖아.') return [
-      step, {type:'cgShow',source:'assets/events/day18-v4/haeun-tasting-v1.png',fit:'contain',duration:2600}
+      step, {type:'cgShow',source:'assets/events/day18-v4/haeun-tasting-v2.png',fit:'contain',duration:2600}
     ];
     if (step.text === '둘 다 맛이 나쁜 건 아니었다. 남의 접시가 처음에는 더 좋아 보였을 뿐이었다.') return [
-      step, {type:'cgShow',source:'assets/events/day18-v4/own-meals-v1.png',fit:'contain',duration:2600},
+      step, {type:'cgShow',source:'assets/events/day18-v4/own-meals-v2.png',fit:'contain',duration:2600},
       n('멀쩡한 식사를 두고 굳이 관계에 대한 교훈을 붙이지는 않았다.')
     ];
     if (step.text === '어때?') return [
-      {type:'cgShow',source:'assets/events/day18-v4/food-sharing-v1.png',fit:'contain',duration:3000},
+      {type:'cgShow',source:'assets/events/day18-v4/food-sharing-v2.png',fit:'contain',duration:3000},
       step
     ];
     if (menu === 'menu_wait') return step;

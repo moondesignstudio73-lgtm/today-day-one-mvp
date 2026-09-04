@@ -90,7 +90,7 @@ test('food sharing is a silent action before tasting on all Haeun menu branches'
     assert.equal(segment.filter(x=>x.type==='cgShow'&&x.source.includes('food-sharing')).length,1);
     const thought=segment.findIndex(x=>x.text==='멀쩡한 식사를 두고 굳이 관계에 대한 교훈을 붙이지는 않았다.');
     assert.equal(segment[thought].type,'monologue');
-    assert.equal(segment[thought-1].source,'assets/events/day18-v4/own-meals-v1.png');
+    assert.equal(segment[thought-1].source,'assets/events/day18-v4/own-meals-v2.png');
     assert.equal(segment[thought-2].text,'둘 다 맛이 나쁜 건 아니었다. 남의 접시가 처음에는 더 좋아 보였을 뿐이었다.');
     assert.equal(segment[thought+1].text,'오늘 파일을 하나 보냈는데, 내용은 맞고 이름이 잘못됐어.');
     const tasting=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('haeun-tasting'));
