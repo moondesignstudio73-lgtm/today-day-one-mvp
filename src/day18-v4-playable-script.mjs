@@ -68,7 +68,9 @@ function reaction(c) {
       ...(!i.haeunKnowsAppointment ? [n('걱정할까 봐, 라는 덧말이 없어도 말이 끝났다.')] : [])];
     case 'disclose_withhold': return [...msg(part(2, '말하기 어렵다고 한다', '혼자 먹는다고 한다')),
       {type:'storyPause',duration:600}, ...msg([d('하은','나는 이제 점심 먹으러 갈게.')]), n('그녀의 오후가 내 답장 옆에서 멈추지는 않았다.')];
-    case 'disclose_solo': return [...msg([d('하은', '따뜻한 거 먹어.')]), ...(f.dinner === 'YURI' ? [n('하은은 내 거짓말을 알아맞히지 못했다. 그게 안심되면서, 안심하는 내가 불편했다.')] : [])];
+    case 'disclose_solo': return [...msg([d('하은', '따뜻한 거 먹어.')]),
+      ...(f.dinner === 'YURI' ? [n('하은은 내 거짓말을 알아맞히지 못했다. 그게 안심되면서, 안심하는 내가 불편했다.')]
+        : [{type:'cgShow',source:'assets/events/day18-v4/leftover-rice-check-v1.png',fit:'contain',duration:2800}])];
     case 'disclose_together': return [n('저녁에 만나기로 한 대화 아래에 답을 남겼다.')];
     case 'menu_each': case 'menu_share': case 'menu_wait':
       if (f.dinner === 'YURI') return D(4, `**${key === 'menu_each' ? '각자 고른다' : key === 'menu_share' ? '나눠 먹자고 한다' : '조금 더 본다'}**`, key === 'menu_each' ? '**나눠 먹자고 한다**' : key === 'menu_share' ? '**조금 더 본다**' : '하은과 함께 — 같은 선택');

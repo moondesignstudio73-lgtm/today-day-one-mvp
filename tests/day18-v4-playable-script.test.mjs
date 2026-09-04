@@ -95,6 +95,20 @@ test('lunch composition deletes the unsent word before choosing a reply', () => 
   }
 });
 
+test('only a genuinely solo disclosure checks the remaining rice after Haeuns reply', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','SOLO']) {
+    const s=start(partner,true,context);
+    applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
+    applyDay18V4Choice(s,'day18_v4_disclose_solo');
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const at=steps.findIndex(x=>x.source==='assets/events/day18-v4/leftover-rice-check-v1.png');
+    assert.equal(at>=0,partner==='SOLO');
+    if(at>=0){assert.equal(steps[at-1].text,'따뜻한 거 먹어.');assert.ok(existsSync(new URL(`../${steps[at].source}`,import.meta.url)));}
+    assert.equal(steps.some(x=>x.text?.includes('남은 밥이 있는지 다시 확인')),false);
+    assert.equal(JSON.stringify(s),before);assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+  }
+});
+
 test('physical meal directions are not emitted as monologues', () => {
   const steps=[8,10,14].flatMap(n=>day18V4DirectedDialogue(n));
   const text=steps.filter(x=>x.type==='monologue').map(x=>x.text).join('\n');
