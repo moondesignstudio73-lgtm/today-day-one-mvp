@@ -1228,6 +1228,7 @@ body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-call[data-call-cue=
 .vn-stage[data-story-action="yuri-hand-stop"] .vn-character{transform:translateX(-2px) scale(.995)}
 .vn-stage[data-story-action="haeun-expression-soften"] .vn-character{transform:translateY(2px) scale(1.006);filter:brightness(.92)}
 .vn-stage[data-story-action="phone-smile"] .vn-backdrop{filter:brightness(.84) saturate(1.06)}
+.vn-stage[data-story-action="yuri-outerwear-close"] .vn-character{transform:translateY(2px) scale(.998);filter:brightness(.78) saturate(.9)}
 .vn-stage[data-final-fade="active"] .vn-backdrop{filter:brightness(.16) saturate(.45);transition:filter 1.4s ease}
 .vn-stage[data-final-fade="active"] .vn-dialogue{background:#090a12eb;transition:background 1.4s ease}
 .vn-stage.private-note-active .vn-dialogue{visibility:hidden}

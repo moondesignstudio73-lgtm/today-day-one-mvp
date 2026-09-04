@@ -1,5 +1,5 @@
 import {getDay18V4Entry, beginDay18V4, applyDay18V4Choice, completeDay18V4, getDay18V4FollowUpContract} from './day18-v4-state-contract.mjs?v=3';
-import {getDay18V4PlayableSegment} from './day18-v4-playable-script.mjs?v=54';
+import {getDay18V4PlayableSegment} from './day18-v4-playable-script.mjs?v=55';
 import {BACKGROUND_ASSETS, NPC_ASSETS} from './assets/asset-manifest.mjs';
 import {MAP_LOCATION_ASSETS} from './map-location-assets.mjs';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
@@ -44,7 +44,7 @@ function presentation(direction) {
   if (!backgroundUrl) throw new Error(`DAY18_BACKGROUND_MISSING:${backgroundId}`);
   return {backgroundId, backgroundUrl, characterId,
     characterAssetUrl: characterId === 'girlfriend' ? STORY_OUTFIT_ASSETS.day8 : characterId === 'player-ex'
-      ? (direction.outerwear===true ? 'assets/events/day18-v4/yuri-arrival-jacket-v1.png' : NPC_ASSETS['player-ex']) : null,
+      ? (direction.outerwear===true ? 'assets/heroines/yuri/yuri-ex-girlfriend-jacket-2d-v1.png' : NPC_ASSETS['player-ex']) : null,
     expressionId: 'calm', poseId: 'standing', timeOfDay: direction.time,
     storyClock: clock[direction.time], storyLocation: direction.location};
 }

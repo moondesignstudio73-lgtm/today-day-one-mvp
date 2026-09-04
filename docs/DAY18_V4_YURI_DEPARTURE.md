@@ -15,6 +15,8 @@
 
 imagegen built-in 편집으로 기존 `yuri-arrival-jacket-v1.png`의 배경 제거를 두 번 시도했다. 두 결과 모두 요청한 alpha PNG가 아니라 체크무늬가 화상에 합쳐진 24-bit RGB였고 모서리 alpha가 전부 255였다. 실패 결과는 프로젝트에서 제거했으며 코드에 연결하거나 커밋하지 않았다. 따라서 원문의 `겉옷을 여민다`는 시각 행동은 **미완료**로 남긴다.
 
+> 2026-09-05 후속: 기본 투명 유리 스프라이트에서 재킷을 다시 만든 뒤 별도 background-extraction을 수행해 실제 RGBA/모서리 alpha 0 자산을 확보했다. `DAY18_V4_YURI_OUTERWEAR_FINAL.md`의 구현이 이 문서의 미완료 판정을 대체한다.
+
 최종 시도 프롬프트:
 
 > Use case: background-extraction. Asset type: production PNG character sprite. Remove the entire black/gray background from Image 1 and output ONLY the unchanged Yuri character pixels on a TRUE ALPHA-TRANSPARENT canvas. Critical correction: do NOT draw any checkerboard, white field, gray field, glow panel, rectangle, matte, drop shadow, or replacement background. Every pixel outside the character silhouette must have alpha 0. Preserve the exact adult character identity, face, long dark hair, charcoal jacket, white blouse and brooch, black skirt, belt, tights, heels, book, pose, proportions, hand anatomy, 2D cel-shaded visual-novel style, full-body composition and 1024x1536 canvas. Keep hair edges clean and semi-transparent only where naturally needed. No photorealistic skin, no anatomy changes, no text, no watermark.

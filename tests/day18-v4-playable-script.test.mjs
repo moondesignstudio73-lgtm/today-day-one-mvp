@@ -97,13 +97,15 @@ test('Yuri wears the same outer jacket until the chair action then returns to he
     applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
     applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':partner==='HAEUN'?'day18_v4_disclose_together':'day18_v4_disclose_solo');
     const before=JSON.stringify(s),steps=getDay18V4GameSegment(s);
-    const coat=steps.findIndex(x=>x.characterAssetUrl==='assets/events/day18-v4/yuri-arrival-jacket-v1.png');
+    const coat=steps.findIndex(x=>x.characterAssetUrl==='assets/heroines/yuri/yuri-ex-girlfriend-jacket-2d-v1.png');
     const hang=steps.findIndex(x=>x.source==='assets/events/day18-v4/yuri-jacket-chair-v1.png');
     assert.equal(coat>=0,partner==='YURI');assert.equal(hang>=0,partner==='YURI');
     if(partner==='YURI'){
       assert.ok(coat<hang);assert.equal(steps[hang-1].text,'지금 제목을 다 아는 단계예요.');
       assert.equal(steps[hang+1].characterAssetUrl,'assets/heroines/yuri/yuri-ex-girlfriend-2d.png?v=2');
       for(const file of [steps[coat].characterAssetUrl,steps[hang].source])assert.ok(existsSync(new URL(`../${file}`,import.meta.url)));
+      const sprite=readFileSync(new URL(`../${steps[coat].characterAssetUrl}`,import.meta.url));
+      assert.equal(sprite.readUInt32BE(16),1024);assert.equal(sprite.readUInt32BE(20),1536);assert.equal(sprite[25],6,'outerwear sprite must be RGBA');
     }
     assert.equal(JSON.stringify(s),before);assert.deepEqual(steps,getDay18V4GameSegment(JSON.parse(before)));
   }
@@ -992,8 +994,10 @@ test('Yuri payment and departure use receipt, opposite-direction and footstep st
     assert.equal(steps.some(step=>step.sfxId==='SFX_DOCUMENT_RECEIVE'),choice==='pay_split');
     assert.equal(steps.some(step=>step.text?.includes('영수증은 필요한 사람이')),false,'receipt action is not printed as dialogue');
     const outside=steps.findIndex(step=>step.type==='sceneDirection'&&step.location==='neighborhood-day'&&step.character==='yuri');
-    assert.ok(outside>=0);assert.equal(steps[outside].outerwear,undefined);
-    assert.equal(steps[outside+1].text,'잘 들어가.');assert.equal(steps[outside+2].text,'유리 씨도요.');
+    assert.ok(outside>=0);assert.equal(steps[outside].outerwear,true);
+    assert.equal(steps[outside+1].type,'storyActionCue');assert.equal(steps[outside+1].status,'yuri-outerwear-close');
+    assert.equal(steps[outside+2].text,'잘 들어가.');assert.equal(steps[outside+3].text,'유리 씨도요.');
+    assert.equal(steps.some(step=>step.text?.includes('겉옷을 여몄다')||step.text?.includes('옷을 대신 여며')),false);
     const footsteps=steps.findIndex((step,index)=>index>outside&&step.sfxId==='SFX_FOOTSTEP_APPROACH');
     assert.ok(footsteps>outside);
     const separated=steps.findIndex((step,index)=>index>footsteps&&step.type==='sceneDirection'&&step.location==='neighborhood-day'&&step.character===null);

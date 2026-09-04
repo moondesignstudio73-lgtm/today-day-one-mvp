@@ -191,7 +191,8 @@ function reaction(c) {
 
 function departure(c) {
   return c.facts.dinner === 'YURI'
-    ? [scene(11,'neighborhood-day','evening','yuri'),
+    ? [{...scene(11,'neighborhood-day','evening','yuri'),outerwear:true},
+      {type:'storyActionCue',status:'yuri-outerwear-close',actionLabel:'유리가 자기 겉옷을 여밈',duration:800},
       d('유리', '잘 들어가.'), d('나', '유리 씨도요.'),
       {type:'storyPause',duration:450},{type:'sfx',sfxId:'SFX_FOOTSTEP_APPROACH'},
       scene(11,'neighborhood-day','evening'),{type:'storyPause',duration:350}]
