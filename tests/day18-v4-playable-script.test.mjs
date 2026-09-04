@@ -307,6 +307,34 @@ test('Yuri report waits for a reply and uses short text only when the call is un
   }
 });
 
+test('travel inspiration is shown before discussion and revisited only for the Busan candidate', () => {
+  for(const partner of ['YURI','HAEUN','SOLO']) {
+    const s=start(partner,true,{callScheduling:true,separateDinnerScheduling:true});
+    let count=0;
+    while(s.storyFlags.day18V4.phase!=='travel') {
+      assert.ok(count++<25);
+      applyDay18V4Choice(s,getDay18V4Options(s.storyFlags.day18V4)[0].id);
+    }
+    const before=JSON.stringify(s),segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const photo=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('travel-window-sea'));
+    const text=segment.findIndex(x=>x.text?.startsWith('파란 바다와 창가의 테이블'));
+    assert.ok(photo>0&&photo<text);
+    assert.ok(existsSync(new URL(`../${segment[photo].source}`,import.meta.url)));
+    assert.equal(segment[photo].fit,'contain');
+    assert.equal(segment[photo-1].location,'home-evening');
+    assert.equal(segment[photo-1].time,'night');
+    assert.equal(segment[photo-1].character,null);
+    assert.equal(JSON.stringify(s),before,'viewing the image must not create a booking or message');
+    for(const id of ['travel_near','travel_busan','travel_life']) {
+      const branch=JSON.parse(before);applyDay18V4Choice(branch,`day18_v4_${id}`);
+      const reaction=getDay18V4PlayableSegment(branch.storyFlags.day18V4);
+      assert.equal(reaction.filter(x=>x.type==='cgShow').length,id==='travel_busan'?1:0);
+      assert.equal(branch.storyFlags.day18V4.facts.travelTogetherDiscussed,s.storyFlags.day18V4.facts.travelTogetherDiscussed);
+      assert.deepEqual(reaction,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(branch.storyFlags.day18V4))));
+    }
+  }
+});
+
 test('source-locked dialogue and all choices resolve through deterministic route coverage', () => {
   const covered = new Set();
   for (const partner of ['YURI', 'HAEUN', 'SOLO']) for (let run = 0; run < 180; run++) {

@@ -9,6 +9,7 @@ const scene = (number, location, time, character = null) => ({type: 'sceneDirect
 const msg = steps => steps.map(s => s.type === 'dialogue'
   ? {...s, type: 'message', sender: s.speaker === '나' ? '나' : s.speaker, device: 'phone'} : s);
 const call = steps => steps.map(s => s.type === 'dialogue' ? {...s,device:'call'} : s);
+const travelPhoto = () => ({type:'cgShow',source:'assets/events/day18-v4/travel-window-sea-v1.png',fit:'contain',duration:3000});
 const chosen = c => c.choices.at(-1)?.id.replace('day18_v4_', '');
 const place = c => c.facts.dinner === 'YURI' ? 'rose-bistro' : c.facts.dinner === 'HAEUN' ? 'alley-pub' : 'gimbap-village';
 const companion = c => c.facts.dinner === 'YURI' ? 'yuri' : c.facts.dinner === 'HAEUN' ? 'girlfriend' : null;
@@ -127,7 +128,7 @@ function reaction(c) {
     case 'alone_note': return [n('상대의 표정을 추측하는 대신 내가 한 문장을 적었다. 메모를 누구에게도 보내지 않았다.')];
     case 'alone_jihoon': return jihoonAtNight(c);
     case 'travel_near': return [n('돌아오고 싶으면 돌아올 수 있다는 생각도 여행을 망치는 말은 아니었다.')];
-    case 'travel_busan': return [n('역에서 이동하고, 먹고, 쉬고, 다시 돌아와야 했다. 사진 아래의 시간을 내 하루로 옮겨 봐야 했다.')];
+    case 'travel_busan': return [travelPhoto(),n('역에서 이동하고, 먹고, 쉬고, 다시 돌아와야 했다. 사진 아래의 시간을 내 하루로 옮겨 봐야 했다.')];
     case 'travel_life': return [n('화면을 끄고 내일 입을 옷을 봤다. 지금 사는 방도 계속 살 곳이었다.')];
     default: throw new Error(`DAY18_REACTION_MISSING:${key}`);
   }
@@ -200,7 +201,7 @@ function opening(c) {
       ...D(19, '**주인공** “다음에는', '### 평온한 경로의 선택 12')])];
     case 'alone_end': return [...(!i.contactAllowed ? departure(c) : []), scene(20, 'home-evening', 'night'),
       n(f.nightRoute === 'UNRESOLVED' ? '화면을 보고 있었다. 한 번 더 누르면 말을 조금 더 잘할 수 있을 것 같았다.' : '휴대전화를 내려놓았다. 남은 밤에는 내가 할 수 있는 작은 일이 있었다.')];
-    case 'travel': return [scene(21, 'home-evening', 'night'), n('파란 바다와 창가의 테이블. 사진 바깥에는 이동 시간도, 돌아와서 쌓인 빨래도 없었다.'),
+    case 'travel': return [scene(21, 'home-evening', 'night'), travelPhoto(), n('파란 바다와 창가의 테이블. 사진 바깥에는 이동 시간도, 돌아와서 쌓인 빨래도 없었다.'),
       ...(f.travelTogetherDiscussed ? msg(D(21, undefined, '같이 갈 마음이 아직')) : [n('사진을 보내며 누군가의 미래를 정해 놓지는 않았다.')])];
     case 'ending': return ending(c);
     default: throw new Error(`DAY18_OPENING_MISSING:${c.phase}`);
