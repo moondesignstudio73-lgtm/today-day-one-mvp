@@ -102,7 +102,7 @@ function reaction(c) {
     case 'next_ask': return [...D(10, '**다시 만나고 싶다고 한다**', '현재 연애가 있다는 말을 들었다면'),
       ...(f.yuriRelationshipClaim !== 'relationship_free' ? [d('유리', '네가 누구와 어떤 관계인지 흐린 채로, 나한테 다음을 물어보지는 않았으면 해.')] : []),
       n('유리 씨가 혼자라는 사실만으로 내 다음 저녁이 예약되는 건 아니었다.')];
-    case 'pay_split': return [n('둘이 정한 만큼 나누고, 영수증은 필요한 사람이 받았다.')];
+    case 'pay_split': return [{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'}];
     case 'pay_offer': return part(11, '한 끼를 사고 싶다고 한다', '마음 편하려고 낸다');
     case 'pay_debt': return D(11, '**마음 편하려고 낸다**', '밖으로 나오자').flatMap(step =>
       step.text==='그 마음은 네가 조금 들고 가면 안 돼?' ? [step,wallet('closed')] : [step]);
@@ -172,7 +172,10 @@ function reaction(c) {
 
 function departure(c) {
   return c.facts.dinner === 'YURI'
-    ? [d('유리', '잘 들어가.'), d('나', '유리 씨도요.'), n('그녀가 돌아서는 방향과 내가 가는 방향은 달랐다.')]
+    ? [scene(11,'neighborhood-day','evening','yuri'),
+      d('유리', '잘 들어가.'), d('나', '유리 씨도요.'),
+      {type:'storyPause',duration:450},{type:'sfx',sfxId:'SFX_FOOTSTEP_APPROACH'},
+      scene(11,'neighborhood-day','evening'),{type:'storyPause',duration:350}]
     : c.facts.dinner === 'HAEUN' ? [n('서로 집으로 가는 방향을 확인했다.')] : [];
 }
 

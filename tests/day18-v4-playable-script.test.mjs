@@ -823,6 +823,28 @@ test('wallet opens before payment discussion and closes only after the guilt-pay
   }
 });
 
+test('Yuri payment and departure use receipt, opposite-direction and footstep staging without the matte sprite',()=>{
+  const base=start('YURI');
+  for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_past','apology_thanks','relationship_haeun','next_time'])applyDay18V4Choice(base,`day18_v4_${id}`);
+  const before=JSON.stringify(base);
+  for(const choice of ['pay_split','pay_offer','pay_debt']) {
+    const branch=JSON.parse(before);applyDay18V4Choice(branch,`day18_v4_${choice}`);
+    const steps=getDay18V4PlayableSegment(branch.storyFlags.day18V4);
+    assert.equal(steps.some(step=>step.sfxId==='SFX_DOCUMENT_RECEIVE'),choice==='pay_split');
+    assert.equal(steps.some(step=>step.text?.includes('영수증은 필요한 사람이')),false,'receipt action is not printed as dialogue');
+    const outside=steps.findIndex(step=>step.type==='sceneDirection'&&step.location==='neighborhood-day'&&step.character==='yuri');
+    assert.ok(outside>=0);assert.equal(steps[outside].outerwear,undefined);
+    assert.equal(steps[outside+1].text,'잘 들어가.');assert.equal(steps[outside+2].text,'유리 씨도요.');
+    const footsteps=steps.findIndex((step,index)=>index>outside&&step.sfxId==='SFX_FOOTSTEP_APPROACH');
+    assert.ok(footsteps>outside);
+    const separated=steps.findIndex((step,index)=>index>footsteps&&step.type==='sceneDirection'&&step.location==='neighborhood-day'&&step.character===null);
+    assert.ok(separated>footsteps);
+    const home=steps.findIndex((step,index)=>index>separated&&step.type==='sceneDirection'&&step.location==='home-evening');
+    assert.ok(home>separated);
+    assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(branch.storyFlags.day18V4))));
+  }
+});
+
 test('putting the phone aside and washing a cup is confined to the stop-contact choice',()=>{
   for(const choice of ['alone_stop','alone_note','alone_jihoon']) {
     const s=start('SOLO',true,{haeunContactAllowed:false});
