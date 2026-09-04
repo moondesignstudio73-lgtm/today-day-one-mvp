@@ -224,7 +224,8 @@ function opening(c) {
           ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-jacket-chair-v1.png',fit:'contain',duration:3000},scene(3,place(c),'evening','yuri')] : [step])]
         : f.dinner === 'HAEUN' ? [n('밖에서 기다리려던 마음이 바람 앞에서는 오래가지 못했다.'), scene(3,place(c),'evening','girlfriend'),
           d('나','밖에서 기다리려다가 바람이 불어서 먼저 들어왔어.'), d('하은','잘했네.'), ...D(3, '하은과 약속한 저녁', '혼자 먹는 저녁')]
-        : [n('배고픈 것보다 눈이 바쁘다는 걸 깨달았다.'), ...D(3, '혼자 먹는 저녁'), n('대단한 허락을 받은 것도 아닌데 마음이 편해졌다. 처음부터 저녁 전체를 맞힐 필요는 없었다.')]),
+        : [n('배고픈 것보다 눈이 바쁘다는 걸 깨달았다.'), ...D(3, '혼자 먹는 저녁'), n('대단한 허락을 받은 것도 아닌데 마음이 편해졌다. 처음부터 저녁 전체를 맞힐 필요는 없었다.'),
+          {type:'cgShow',source:'assets/events/day18-v4/solo-bag-seat-move-v1.png',fit:'contain',duration:3000}]),
       scene(4, place(c), 'evening', companion(c)), ...(f.dinner === 'YURI' ? D(4, undefined, '### 선택 3') : [])];
     case 'yuri_purpose': return [scene(5, place(c), 'evening', 'yuri'), ...D(5, undefined, '### 선택 4')];
     case 'yuri_apology': return [scene(6, place(c), 'evening', 'yuri'), ...D(6), scene(7, place(c), 'evening', 'yuri'), ...D(7, undefined, '### 선택 5')];
