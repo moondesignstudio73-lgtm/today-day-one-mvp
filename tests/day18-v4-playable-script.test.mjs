@@ -657,6 +657,24 @@ test('conflict at dinner is not resolved by choosing a pleasant night greeting',
   assert.match(text,/아까 들은 마음/);
 });
 
+test('scene 18 shows screen-check silence and changes phone grip before the authored resolve thought', () => {
+  for (const partner of ['YURI','HAEUN']) {
+    const s=start(partner,true,{otherInterest:partner==='HAEUN'});
+    const route=partner==='YURI'
+      ? ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks','relationship_haeun','next_time','pay_split','night_tell']
+      : ['morning_keep','disclose_together','menu_each','topic_other','night_good'];
+    for(const id of route) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const silence=steps.findIndex(x=>x.type==='phoneCallCue'&&x.status==='silence');
+    const listening=steps.findIndex(x=>x.text==='듣고 있어.');
+    const shift=steps.findIndex(x=>x.type==='phoneCallCue'&&x.status==='grip-shift');
+    const resolve=steps.findIndex(x=>x.text==='남의 선택을 존중한다는 말 뒤에 내 선택을 숨길 수는 없었다.');
+    assert.ok(silence>=0&&silence<listening);
+    assert.ok(listening<shift&&shift<resolve);
+    assert.equal(steps.filter(x=>x.type==='dialogue'&&/폰|휴대전화|손으로 옮/.test(x.text??'')).length,0);
+  }
+});
+
 test('home return and fridge actions happen after leaving the restaurant', () => {
   for (const id of ['return_home','return_food']) {
     const s = start('SOLO');

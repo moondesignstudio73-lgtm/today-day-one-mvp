@@ -10,7 +10,7 @@ assert.ok(start>=0&&end>start);
 const handler=`(()=>{${source.slice(start,end)}})()`;
 
 test('actual phone cue handler clears stale speech without writing dialogue or history',()=>{
-  for(const status of ['silence','ended']) {
+  for(const status of ['silence','grip-shift','ended']) {
     const attributes={},classes=new Set(['narration-mode','is-typing','hidden']);
     const node={textContent:'old speech',classList:{remove:(...names)=>names.forEach(n=>classes.delete(n))}};
     const stage={dataset:{},classList:node.classList,querySelector:()=>({setAttribute:(k,v)=>attributes[k]=v})};
@@ -23,12 +23,16 @@ test('actual phone cue handler clears stale speech without writing dialogue or h
     assert.equal(text.textContent,'');
     assert.equal(title.textContent,status==='ended'?'통화 종료':'하은');
     assert.equal(stage.dataset.callCue,status);
-    assert.equal(attributes['aria-label'],status==='ended'?'통화 종료':'통화 중 · 잠시 침묵');
+    assert.equal(attributes['aria-label'],status==='ended'?'통화 종료':status==='grip-shift'?'통화 중 · 휴대전화를 다른 손으로 옮김':'통화 중 · 잠시 침묵');
     assert.equal(calls[0],'finish');
-    assert.equal(calls.at(-1),1200,'existing queue owns input locking and cancellation');
+    assert.equal(calls.at(-1),status==='grip-shift'?650:1200,'existing queue owns input locking and cancellation');
     assert.equal(classes.size,0);
     assert.equal(status==='ended'?calls[1]===null:calls[1].device==='call',true);
   }
   assert.match(source,/delete stage\.dataset\.callCue/);
+  const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
+  assert.match(css,/data-call-cue="grip-shift"/);
+  assert.match(css,/@keyframes day18-phone-grip-shift/);
+  assert.match(css,/prefers-reduced-motion:reduce/);
   assert.ok(start<source.indexOf('if(isInternalStoryStep(step)||!isPlayerFacingStoryStep(step))'));
 });
