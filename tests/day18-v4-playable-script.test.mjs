@@ -18,6 +18,23 @@ function start(partner, known = true, context = {}) {
   beginDay18V4(s, context); return s;
 }
 
+test('separate menu choices preserve the original shared-meal reflection only in Yuri each route', () => {
+  const thought='같은 것을 고르지 않았는데도 한 끼가 시작됐다.';
+  assert.ok(DAY18_V4_SOURCE_SCENES[3].body.includes(thought));
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN'])for(const menu of ['menu_each','menu_share','menu_wait']) {
+    const s=start(partner,true,context);
+    applyDay18V4Choice(s,'day18_v4_morning_keep');
+    applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':'day18_v4_disclose_together');
+    applyDay18V4Choice(s,`day18_v4_${menu}`);
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const at=steps.findIndex(x=>x.text===thought);
+    assert.equal(at>=0,partner==='YURI'&&menu==='menu_each');
+    if(at>=0){assert.equal(steps[at].type,'monologue');assert.equal(steps[at-1].text,'저는 이걸로요.');}
+    assert.equal(JSON.stringify(s),before);
+    assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+  }
+});
+
 test('menu opens twice before Yuri arrives and never leaks into other dinner routes', () => {
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN','SOLO']) {
     const s=start(partner,true,context);
