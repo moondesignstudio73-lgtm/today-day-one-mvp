@@ -12,6 +12,10 @@ const roomStart=source.indexOf('  if(step.type==="roomActionCue"||step.type==="s
 const roomEnd=source.indexOf('  if(step.type==="itemShow")',roomStart);
 assert.ok(roomStart>=0&&roomEnd>roomStart);
 const roomHandler=`(()=>{${source.slice(roomStart,roomEnd)}})()`;
+const clearStart=source.indexOf('function clearStoryActionPresentation(){');
+const clearEnd=source.indexOf('\nfunction setStoryMessagePresentation',clearStart);
+assert.ok(clearStart>=0&&clearEnd>clearStart);
+const clearHandler=`(${source.slice(clearStart,clearEnd)})()`;
 
 test('actual phone cue handler clears stale speech without writing dialogue or history',()=>{
   for(const status of ['silence','grip-shift','ended']) {
@@ -44,6 +48,7 @@ test('actual phone cue handler clears stale speech without writing dialogue or h
 test('room, scene actions and final fade are visual cues, not dialogue or history entries',()=>{
   for(const step of [
     {type:'roomActionCue',status:'desk-reset',actionLabel:'컵을 제자리에 두고 의자를 밀어 넣음',duration:1000},
+    {type:'storyActionCue',status:'cup-square',actionLabel:'주인공이 컵을 식탁에 바로 놓음',duration:650},
     {type:'finalFadeCue',actionLabel:'방의 불빛이 천천히 어두워짐',duration:1400}
   ]) {
     const attributes={},classes=new Set(['narration-mode','is-typing']);
@@ -63,7 +68,29 @@ test('room, scene actions and final fade are visual cues, not dialogue or histor
   }
   const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
   for(const status of ['phone-close','wardrobe-check','desk-reset','sleep-ready','alarm-set','entry-shoes','wardrobe-hang','fridge-check']) assert.match(css,new RegExp(`data-room-action="${status}"`));
-  for(const status of ['crosswalk-wait','crosswalk-cross','ride-wait']) assert.match(css,new RegExp(`data-story-action="${status}"`));
+  for(const status of ['crosswalk-wait','crosswalk-cross','ride-wait','yuri-napkin-fold','haeun-napkin-fold','cup-square','yuri-gaze-lower','yuri-hand-stop','haeun-expression-soften','meal-decision-pause','napkin-pull']) assert.match(css,new RegExp(`data-story-action="${status}"`));
   assert.match(css,/data-final-fade="active"/);
   assert.match(source,/delete alarmStage\.dataset\.roomAction;delete alarmStage\.dataset\.storyAction;delete alarmStage\.dataset\.finalFade/);
+});
+
+test('opening a choice clears the preceding action cue and its accessible label',()=>{
+  const stageAttributes={'aria-label':'이전 알람 행동'};
+  const dialogueAttributes={'aria-label':'주인공이 컵을 식탁에 바로 놓음'};
+  const makeAttributes=attributes=>({
+    removeAttribute:key=>delete attributes[key]
+  });
+  const stage={
+    dataset:{callCue:'silence',roomAction:'desk-reset',storyAction:'cup-square',finalFade:'active'},
+    ...makeAttributes(stageAttributes),
+    querySelector:()=>makeAttributes(dialogueAttributes)
+  };
+  vm.runInNewContext(clearHandler,{$:()=>stage});
+  assert.deepEqual({...stage.dataset},{});
+  assert.equal('aria-label' in stageAttributes,false);
+  assert.equal('aria-label' in dialogueAttributes,false);
+
+  const choiceStart=source.indexOf('function renderImmersiveChoices(options=[]) {');
+  const layerSetup=source.indexOf('  const layer=$("#storyChoiceLayer");',choiceStart);
+  const cleanup=source.indexOf('  clearStoryActionPresentation();',choiceStart);
+  assert.ok(choiceStart>=0&&cleanup>choiceStart&&cleanup<layerSetup,'choice cleanup runs before the choice layer is opened');
 });

@@ -92,7 +92,7 @@ function reaction(c) {
     case 'apology_lonely': return part(7, '외로웠겠다고 한다', '다 잘못했다고 한다');
     case 'apology_all': return part(7, '다 잘못했다고 한다');
     case 'relationship_haeun': return part(9, '관계를 이어 간다고 한다', '흔들리는 마음을 말한다');
-    case 'relationship_wavering': return part(9, '흔들리는 마음을 말한다', '자유롭게 지낸다고 한다');
+    case 'relationship_wavering': return [{type:'storyActionCue',status:'yuri-gaze-lower',actionLabel:'유리가 잠시 시선을 내림',duration:650},...part(9, '흔들리는 마음을 말한다', '자유롭게 지낸다고 한다')];
     case 'relationship_free': return i.relationshipActive && i.yuriKnowsRelationship ? []
       : [d('유리', '그렇구나.'), ...(i.relationshipActive ? [n('그녀가 묻지 않은 질문을 나까지 없애 버릴 수 있는 건 아니었다.')] : [])];
     case 'yuri_correct': return [d('유리', '그러면 자유롭다고 하지는 마.')];
@@ -106,10 +106,12 @@ function reaction(c) {
     case 'pay_offer': return part(11, '한 끼를 사고 싶다고 한다', '마음 편하려고 낸다');
     case 'pay_debt': return D(11, '**마음 편하려고 낸다**', '밖으로 나오자').flatMap(step =>
       step.text==='그 마음은 네가 조금 들고 가면 안 돼?' ? [step,wallet('closed')] : [step]);
-    case 'topic_good': return part(13, '지금 좋은 마음을 말한다', '다른 마음을 말한다');
-    case 'topic_other': return i.otherInterest ? [d('나','다른 사람을 더 알고 싶은 마음이 있어. 네가 기다려 주기로 한 것처럼 생각하고 싶지는 않아.'), ...D(13, '**다른 마음을 말한다**', '실제 관심이 없다면')]
+    case 'topic_good': return [{type:'storyActionCue',status:'haeun-expression-soften',actionLabel:'하은이 눈을 조금 가늘게 뜨고 먹는 표정을 지음',duration:700},...part(13, '지금 좋은 마음을 말한다', '다른 마음을 말한다')];
+    case 'topic_other': return i.otherInterest ? [d('나','다른 사람을 더 알고 싶은 마음이 있어. 네가 기다려 주기로 한 것처럼 생각하고 싶지는 않아.'), ...D(13, '**다른 마음을 말한다**', '실제 관심이 없다면'),
+      {type:'storyActionCue',status:'meal-decision-pause',actionLabel:'두 사람이 각자 접시와 자리를 살피며 더 먹을지 일어날지 따로 정함',duration:850}]
       : [d('나', '아니, 지금 있는 마음은 너랑 더 만나고 싶다는 거야. 없는 고민까지 말하려 했네.'), d('하은', '없는 사람까지 저녁에 초대하지는 말자.')];
-    case 'topic_score': return part(13, '확인받고 싶다고 한다');
+    case 'topic_score': return part(13, '확인받고 싶다고 한다').flatMap(step => step.text === '그럼 오늘은 안 나눠 줄게.'
+      ? [step,{type:'storyActionCue',status:'napkin-pull',actionLabel:'하은이 빈 냅킨을 자기 쪽으로 당김',duration:650}] : [step]);
     case 'close_seat': return part(14, '옆자리를 묻는다', '산책을 제안한다').flatMap(step => step.text === '와.'
       ? [{type:'cgShow',source:'assets/events/day18-v4/haeun-bag-cleared-v1.png',fit:'contain',duration:2400}, step, scene(14, 'day18-haeun-beside', 'evening')]
       : step.text === '아니. 괜히 작은 소리로 말하게 돼.'
@@ -202,6 +204,17 @@ function yuriPresentConversation(c) {
     : [step]);
 }
 
+function yuriRelationshipOpening(c) {
+  return D(9, undefined, '### 선택 6').map(step => step.text === '그래도 하나는 분명히 듣고 싶어. 지금 만나는 사람하고는 어떻게 지내?' && c.input.yuriKnowsRelationship
+    ? d('유리','그래도 하나는 분명히 듣고 싶어. 하은 씨하고는 어떻게 지내?') : step);
+}
+
+function haeunTopicOpening(c) {
+  const steps=c.input.yuriPastRelevant ? D(13, undefined, '유리와의 접점이 없거나') : D(13, '유리와의 접점이 없거나', '### 선택 9');
+  return steps.flatMap(step => step.text === '보여 주는 건 고마운데, 계속 심사받는 얼굴이면 나도 밥을 어떻게 먹어야 할지 모르겠어.'
+    ? [{type:'storyActionCue',status:'haeun-napkin-fold',actionLabel:'하은이 냅킨을 접어 두고 식탁을 바라봄',duration:700},step] : [step]);
+}
+
 function haeunMealConversation(c) {
   const menu = c.facts.menu;
   return D(12).flatMap(step => {
@@ -256,12 +269,13 @@ function opening(c) {
       scene(4, place(c), 'evening', companion(c)), ...(f.dinner === 'YURI' ? D(4, undefined, '### 선택 3') : [])];
     case 'yuri_purpose': return [scene(5, place(c), 'evening', 'yuri'), ...D(5, undefined, '### 선택 4')];
     case 'yuri_apology': return [scene(6, place(c), 'evening', 'yuri'), ...D(6), scene(7, place(c), 'evening', 'yuri'), ...D(7, undefined, '### 선택 5')];
-    case 'yuri_relationship': return [scene(8, place(c), 'evening', 'yuri'), ...yuriPresentConversation(c), scene(9, place(c), 'evening', 'yuri'), ...D(9, undefined, '### 선택 6')];
-    case 'yuri_correction': return [d('유리', '지난번에는 여자친구가 있다고 했잖아. 그사이 헤어졌다는 뜻이야?')];
+    case 'yuri_relationship': return [scene(8, place(c), 'evening', 'yuri'), ...yuriPresentConversation(c), scene(9, place(c), 'evening', 'yuri'),
+      {type:'storyActionCue',status:'yuri-napkin-fold',actionLabel:'유리가 웃음을 가라앉히며 냅킨을 접음',duration:700},...yuriRelationshipOpening(c),
+      {type:'storyActionCue',status:'cup-square',actionLabel:'주인공이 컵을 식탁에 바로 놓음',duration:650}];
+    case 'yuri_correction': return [{type:'storyActionCue',status:'yuri-hand-stop',actionLabel:'유리의 손이 멈춤',duration:600},d('유리', '지난번에는 여자친구가 있다고 했잖아. 그사이 헤어졌다는 뜻이야?')];
     case 'yuri_next': return [scene(10, place(c), 'evening', 'yuri'), ...D(10, undefined, '### 선택 7')];
     case 'payment': return [scene(11, place(c), 'evening', 'yuri'), wallet('open'), ...D(11, undefined, '### 선택 8')];
-    case 'haeun_topic': return [scene(12, place(c), 'evening', 'girlfriend'), ...haeunMealConversation(c), scene(13, place(c), 'evening', 'girlfriend'),
-      ...(i.yuriPastRelevant ? D(13, undefined, '유리와의 접점이 없거나') : D(13, '유리와의 접점이 없거나', '### 선택 9'))];
+    case 'haeun_topic': return [scene(12, place(c), 'evening', 'girlfriend'), ...haeunMealConversation(c), scene(13, place(c), 'evening', 'girlfriend'),...haeunTopicOpening(c)];
     case 'closeness': return [scene(14, place(c), 'evening', 'girlfriend'), ...D(14, undefined, '### 선택 10')];
     case 'solo_contact': return [scene(15, place(c), 'evening'),
       n('아직 배가 고픈지 보기 전에 누가 연락했는지 먼저 보고 있었다.'),

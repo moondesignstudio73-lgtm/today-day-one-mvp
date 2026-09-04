@@ -1219,6 +1219,14 @@ body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-call[data-call-cue=
 .vn-stage[data-story-action="crosswalk-wait"] .vn-backdrop{background-position:42% 50%}
 .vn-stage[data-story-action="crosswalk-cross"] .vn-backdrop{background-position:58% 50%}
 .vn-stage[data-story-action="ride-wait"] .vn-character{transform:translateX(3px) scale(.995)}
+.vn-stage[data-story-action="yuri-napkin-fold"] .vn-character,
+.vn-stage[data-story-action="haeun-napkin-fold"] .vn-character,
+.vn-stage[data-story-action="napkin-pull"] .vn-character{transform:translateY(7px) scale(.992)}
+.vn-stage[data-story-action="cup-square"] .vn-backdrop,
+.vn-stage[data-story-action="meal-decision-pause"] .vn-backdrop{background-position:50% 62%;filter:brightness(.72)}
+.vn-stage[data-story-action="yuri-gaze-lower"] .vn-character{transform:translateY(5px) scale(.99);filter:brightness(.8)}
+.vn-stage[data-story-action="yuri-hand-stop"] .vn-character{transform:translateX(-2px) scale(.995)}
+.vn-stage[data-story-action="haeun-expression-soften"] .vn-character{transform:translateY(2px) scale(1.006);filter:brightness(.92)}
 .vn-stage[data-final-fade="active"] .vn-backdrop{filter:brightness(.16) saturate(.45);transition:filter 1.4s ease}
 .vn-stage[data-final-fade="active"] .vn-dialogue{background:#090a12eb;transition:background 1.4s ease}
 .vn-stage.private-note-active .vn-dialogue{visibility:hidden}

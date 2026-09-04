@@ -81,7 +81,7 @@ import { applyDay16V4GameChoice, completeDay16V4GameChapter, getDay16V4Compatibi
 import { LOCKED_DAY17_SCENE_ID, applyLockedDay17ChoiceState, getLockedDay17LegacyChoice, getLockedDay17ResumePresentation, getLockedDay17Segment } from "./src/day17-campaign-runtime.mjs?v=1";
 import { applyDay17V4GameChoice, completeDay17V4GameChapter, getDay17V4Compatibility, getDay17V4GameResumePresentation, getDay17V4GameSegment, prepareDay17V4GameEntry } from "./src/day17-v4-game-bridge.mjs?v=2";
 import { LOCKED_DAY18_SCENE_ID, applyLockedDay18ChoiceState as applyLegacyDay18ChoiceState, getLockedDay18LegacyChoice, getLockedDay18ResumePresentation as getLegacyDay18ResumePresentation, getLockedDay18Segment as getLegacyDay18Segment } from "./src/day18-campaign-runtime.mjs?v=1";
-import {prepareDay18V4GameEntry, getDay18V4GameSegment, getDay18V4GameResumePresentation, applyDay18V4GameChoice, completeDay18V4GameChapter} from "./src/day18-v4-game-bridge.mjs?v=52";
+import {prepareDay18V4GameEntry, getDay18V4GameSegment, getDay18V4GameResumePresentation, applyDay18V4GameChoice, completeDay18V4GameChapter} from "./src/day18-v4-game-bridge.mjs?v=53";
 import { LOCKED_DAY19_SCENE_ID, applyLockedDay19ChoiceState, getLockedDay19LegacyChoice, getLockedDay19ResumePresentation, getLockedDay19Segment } from "./src/day19-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY20_SCENE_ID, applyLockedDay20ChoiceState, getLockedDay20LegacyChoice, getLockedDay20ResumePresentation, getLockedDay20Segment } from "./src/day20-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY21_SCENE_ID, applyLockedDay21ChoiceState, getLockedDay21LegacyChoice, getLockedDay21ResumePresentation, getLockedDay21Segment } from "./src/day21-campaign-runtime.mjs?v=1";
@@ -1122,12 +1122,20 @@ function clearStoryPrivateNote(){
   stage.classList.remove("private-note-active");
 }
 
-function setStoryMessagePresentation(step){
-  clearStoryPrivateNote();
-  const stage=$("#visualNovelStage"),mode=getStoryCommunicationPresentation(step);
+function clearStoryActionPresentation(){
+  const stage=$("#visualNovelStage");
   delete stage.dataset.callCue;
   delete stage.dataset.roomAction;
   delete stage.dataset.storyAction;
+  delete stage.dataset.finalFade;
+  stage.removeAttribute("aria-label");
+  stage.querySelector(".vn-dialogue")?.removeAttribute("aria-label");
+}
+
+function setStoryMessagePresentation(step){
+  clearStoryPrivateNote();
+  const stage=$("#visualNovelStage"),mode=getStoryCommunicationPresentation(step);
+  clearStoryActionPresentation();
   stage.classList.toggle("phone-message",mode.message);
   stage.classList.toggle("phone-call",mode.call);
   stage.dataset.messageSide=mode.side;
@@ -1146,6 +1154,7 @@ function showSceneTransition(step) {
   sceneAdvanceTimer=setTimeout(()=>{layer.classList.remove("active");sceneAdvanceTimer=setTimeout(()=>{layer.classList.add("hidden");sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene?.id);if(eventRuntime.state==="TRANSITIONING")eventRuntime.transition("PLAYING");persistEventRuntime();renderImmersiveStep();},360);},720);
 }
 function renderImmersiveChoices(options=[]) {
+  clearStoryActionPresentation();
   const layer=$("#storyChoiceLayer");
   const day4Stage=state.storyFlags?.day4RuntimeStage??0;
   const day2Exploration=isDay2ExplorationChoice({type:"choice",options});

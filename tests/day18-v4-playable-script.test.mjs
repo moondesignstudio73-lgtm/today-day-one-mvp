@@ -827,6 +827,44 @@ test('solo dinner acts the phone, extra food and bag mimic before contact choice
   assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(s.storyFlags.day18V4))));
 });
 
+test('scene 9 stages napkin, cup, gaze and known-name continuity outside dialogue',()=>{
+  for(const known of [false,true]) {
+    const s=start('YURI',known);
+    for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks']) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const opening=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const napkin=opening.findIndex(x=>x.type==='storyActionCue'&&x.status==='yuri-napkin-fold');
+    const question=opening.findIndex(x=>x.type==='dialogue'&&x.text.includes('어떻게 지내?'));
+    const cup=opening.findIndex(x=>x.type==='storyActionCue'&&x.status==='cup-square');
+    assert.ok(napkin>=0&&napkin<question&&question<cup);
+    assert.equal(opening[question].text.includes('하은 씨'),known);
+    assert.equal(opening.some(x=>x.text?.includes('냅킨을 접었다')||x.text?.includes('컵을 바로 놓았다')),false);
+    applyDay18V4Choice(s,'day18_v4_relationship_wavering');
+    assert.equal(getDay18V4PlayableSegment(s.storyFlags.day18V4)[0].status,'yuri-gaze-lower');
+  }
+  const correction=start('YURI',true);
+  for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks','relationship_free']) applyDay18V4Choice(correction,`day18_v4_${id}`);
+  const segment=getDay18V4PlayableSegment(correction.storyFlags.day18V4);
+  assert.equal(segment[0].status,'yuri-hand-stop');
+  assert.match(segment[1].text,/지난번에는 여자친구가/);
+});
+
+test('scene 13 keeps napkin and expression actions route-specific and nonverbal',()=>{
+  for(const relevant of [false,true]) {
+    const s=start('HAEUN',true,{yuriPastRelevant:relevant});
+    for(const id of ['morning_keep','disclose_together','menu_each']) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const opening=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    assert.equal(opening.some(x=>x.type==='storyActionCue'&&x.status==='haeun-napkin-fold'),relevant);
+    assert.equal(opening.some(x=>x.text?.includes('하은은 냅킨을 접었다')),false);
+  }
+  for(const [choice,status,otherInterest] of [['topic_good','haeun-expression-soften',false],['topic_other','meal-decision-pause',true],['topic_score','napkin-pull',false]]) {
+    const s=start('HAEUN',true,{otherInterest});
+    for(const id of ['morning_keep','disclose_together','menu_each',choice]) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    assert.ok(segment.some(x=>x.type==='storyActionCue'&&x.status===status),`${choice}:${status}`);
+    assert.equal(segment.some(x=>x.text?.includes('빈 냅킨을 자기 쪽으로 당겼다')||x.text?.includes('더 먹을지 먼저 일어날지')),false);
+  }
+});
+
 test('actual interest is spoken before Haeun asks what it means, never invented otherwise', () => {
   for(const otherInterest of [true,false]) {
     const s=start('HAEUN',true,{otherInterest});
