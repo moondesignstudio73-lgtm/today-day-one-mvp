@@ -5,6 +5,7 @@ import {beginDay18V4, applyDay18V4Choice, getDay18V4Options} from '../src/day18-
 import {getDay18V4PlayableSegment} from '../src/day18-v4-playable-script.mjs';
 import {DAY18_V4_SOURCE_SCENES} from '../src/day18-v4-source-registry.mjs';
 import {selectDay18V4Source} from '../src/day18-v4-source-selection.mjs';
+import {getDay18V4GameSegment} from '../src/day18-v4-game-bridge.mjs';
 import {validateDay18V4BeatAnchors,day18V4DirectedDialogue} from '../src/day18-v4-source-beats.mjs';
 
 function start(partner, known = true, context = {}) {
@@ -17,6 +18,24 @@ function start(partner, known = true, context = {}) {
     day17V4HaeunDisclosure: known ? 'TOLD' : 'WITHHELD'}};
   beginDay18V4(s, context); return s;
 }
+
+test('Yuri wears the same outer jacket until the chair action then returns to her base portrait', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN','SOLO']) {
+    const s=start(partner,true,context);
+    applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
+    applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':partner==='HAEUN'?'day18_v4_disclose_together':'day18_v4_disclose_solo');
+    const before=JSON.stringify(s),steps=getDay18V4GameSegment(s);
+    const coat=steps.findIndex(x=>x.characterAssetUrl==='assets/events/day18-v4/yuri-arrival-jacket-v1.png');
+    const hang=steps.findIndex(x=>x.source==='assets/events/day18-v4/yuri-jacket-chair-v1.png');
+    assert.equal(coat>=0,partner==='YURI');assert.equal(hang>=0,partner==='YURI');
+    if(partner==='YURI'){
+      assert.ok(coat<hang);assert.equal(steps[hang-1].text,'지금 제목을 다 아는 단계예요.');
+      assert.equal(steps[hang+1].characterAssetUrl,'assets/heroines/yuri/yuri-ex-girlfriend-2d.png?v=2');
+      for(const file of [steps[coat].characterAssetUrl,steps[hang].source])assert.ok(existsSync(new URL(`../${file}`,import.meta.url)));
+    }
+    assert.equal(JSON.stringify(s),before);assert.deepEqual(steps,getDay18V4GameSegment(JSON.parse(before)));
+  }
+});
 
 test('separate menu choices preserve the original shared-meal reflection only in Yuri each route', () => {
   const thought='같은 것을 고르지 않았는데도 한 끼가 시작됐다.';

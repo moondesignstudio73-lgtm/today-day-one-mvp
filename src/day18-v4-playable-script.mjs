@@ -219,7 +219,9 @@ function opening(c) {
       ...(f.dinner === 'YURI' ? [n('유리 씨는 아직 오지 않았다.'), n('상대를 기다리는 일에도 오래 해 본 사람 같은 자세가 있을까 싶었다.'),
         ...[['closed',650],['open',2400],['closed',650],['open',1400]].map(([frame,duration]) =>
           ({type:'cgShow',source:`assets/events/day18-v4/menu-${frame}-v1.png`,fit:'contain',duration})),
-        scene(3,place(c),'evening','yuri'), ...D(3, undefined, '하은과 약속한 저녁')]
+        {...scene(3,place(c),'evening','yuri'),outerwear:true},
+        ...D(3, undefined, '하은과 약속한 저녁').flatMap(step => step.text==='지금 제목을 다 아는 단계예요.'
+          ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-jacket-chair-v1.png',fit:'contain',duration:3000},scene(3,place(c),'evening','yuri')] : [step])]
         : f.dinner === 'HAEUN' ? [n('밖에서 기다리려던 마음이 바람 앞에서는 오래가지 못했다.'), scene(3,place(c),'evening','girlfriend'),
           d('나','밖에서 기다리려다가 바람이 불어서 먼저 들어왔어.'), d('하은','잘했네.'), ...D(3, '하은과 약속한 저녁', '혼자 먹는 저녁')]
         : [n('배고픈 것보다 눈이 바쁘다는 걸 깨달았다.'), ...D(3, '혼자 먹는 저녁'), n('대단한 허락을 받은 것도 아닌데 마음이 편해졌다. 처음부터 저녁 전체를 맞힐 필요는 없었다.')]),
