@@ -307,6 +307,33 @@ test('Yuri report waits for a reply and uses short text only when the call is un
   }
 });
 
+test('accepted calls pause without speech and only the explicit ended branch shows termination', () => {
+  for(const known of [true,false]) {
+    const s=start('YURI',known,{callScheduling:true,separateDinnerScheduling:true});
+    for(const id of ['morning_keep','disclose_withhold','menu_each','purpose_present','apology_thanks','relationship_haeun','next_ask','pay_split','night_tell'])
+      applyDay18V4Choice(s,`day18_v4_${id}`);
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    assert.equal(JSON.stringify(s),before);
+    assert.equal(steps.some(x=>x.type==='phoneCallCue'),known);
+    if(!known) continue;
+    const silence=steps.findIndex(x=>x.type==='phoneCallCue');
+    assert.equal(steps[silence].status,'silence');
+    assert.equal(steps[silence+1].text,'듣고 있어.');
+    assert.match(steps[silence+2].text,/침묵을 고장처럼/);
+    for(const choice of ['future_continue','future_unsure','future_others']) {
+      const branch=JSON.parse(before);applyDay18V4Choice(branch,`day18_v4_${choice}`);
+      const reaction=getDay18V4PlayableSegment(branch.storyFlags.day18V4);
+      const ended=reaction.findIndex(x=>x.type==='phoneCallCue'&&x.status==='ended');
+      assert.equal(ended>=0,choice==='future_others');
+      if(ended>=0) {
+        assert.equal(reaction[ended-1].text,'내가 지금 널 이해하는 말을 해 주기는 어려워.');
+        assert.equal(reaction[ended].text,undefined);
+      }
+      assert.deepEqual(reaction,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(branch.storyFlags.day18V4))));
+    }
+  }
+});
+
 test('travel inspiration is shown before discussion and revisited only for the Busan candidate', () => {
   for(const partner of ['YURI','HAEUN','SOLO']) {
     const s=start(partner,true,{callScheduling:true,separateDinnerScheduling:true});

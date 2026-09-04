@@ -120,7 +120,9 @@ function reaction(c) {
     case 'night_lie_cancel': return [n('한 문장을 덮으려고 다음 문장을 썼다는 사실을 알고 있었다.')];
     case 'future_continue': return call(part(18, '관계를 이어 가고 싶다고 한다', '확신을 꾸미지 않는다'));
     case 'future_unsure': return call(part(18, '확신을 꾸미지 않는다', '다른 사람을 더 만나고 싶다고 한다'));
-    case 'future_others': return call(part(18, '다른 사람을 더 만나고 싶다고 한다'));
+    case 'future_others': return call(part(18, '다른 사람을 더 만나고 싶다고 한다')).flatMap(step =>
+      step.text === '내가 지금 널 이해하는 말을 해 주기는 어려워.'
+        ? [step,{type:'phoneCallCue',status:'ended',speaker:'하은'}] : [step]);
     case 'calm_trip': return msg(part(19, '하루 나가고 싶다', '쉬는 모습을 보고 싶다'));
     case 'calm_rest': return msg(part(19, '쉬는 모습을 보고 싶다', '같은 저녁을 원한다'));
     case 'calm_dinner': return msg(part(19, '같은 저녁을 원한다'));
@@ -191,8 +193,8 @@ function opening(c) {
     case 'night_correction': return msg([d('하은', '약속 취소됐어?')]);
     case 'relationship_future': return [scene(18, 'home-evening', 'night'),
       ...(f.dinner !== 'YURI' ? msg([d('나','지금 통화할 수 있어?'),d('하은','응. 지금은 이야기할 수 있어.')]) : []),
-      {type:'storyPause',duration:600}, ...call([
-      d('하은', '듣고 있어.'), d('하은', f.dinner === 'YURI' ? '너는 얘기하고 와서 정리가 조금 됐을 수도 있는데, 나는 지금 처음 듣는 마음이 있어.' : '아까 들은 마음을 아직 생각하고 있어. 같이 밥을 먹었다고 바로 괜찮아지는 건 아니잖아.'),
+      {type:'phoneCallCue',status:'silence',speaker:'하은'}, ...call([
+      d('하은', '듣고 있어.'), n('내가 침묵을 고장처럼 확인했다는 게 민망했다.'), d('하은', f.dinner === 'YURI' ? '너는 얘기하고 와서 정리가 조금 됐을 수도 있는데, 나는 지금 처음 듣는 마음이 있어.' : '아까 들은 마음을 아직 생각하고 있어. 같이 밥을 먹었다고 바로 괜찮아지는 건 아니잖아.'),
       ...(f.dinner === 'YURI' && f.yuriPurpose === 'purpose_past' && f.yuriNext !== 'REQUESTED_NOT_ACCEPTED'
         ? [d('나', '오늘은 그 사람 얘기를 들었어. 나한테 좋았던 사람인지 나빴던 사람인지 답을 받으려 했는데, 그렇게 끝낼 수는 없었어.'), d('하은', '그건 나도 대신 말할 수 없지.')]
         : [d('하은', '그럼 나는 네 마음이 돌아올 때까지 기다리고 있어야 해?'), d('나', '그렇게 부탁할 수는 없어.'), d('하은', '그 말만 하면 내가 다 정해야 하는 것 같아. 네가 나랑 어떻게 지내고 싶은지도 말해 줘.')])])];
