@@ -356,6 +356,17 @@ test('private notes quote only the players immediately preceding spoken reply, w
   assert.deepEqual(getDay18V4PlayableSegment(quiet.storyFlags.day18V4).find(x=>x.type==='privateNote').lines,[]);
 });
 
+test('a false cancellation selected aloud remains visible in the private note',()=>{
+  const s=start('YURI',true,{callScheduling:true,separateDinnerScheduling:true});
+  for(const id of ['morning_keep','disclose_yuri','menu_share','purpose_self','apology_all','relationship_free','yuri_lie_breakup','next_ask','pay_debt','night_solo'])applyDay18V4Choice(s,`day18_v4_${id}`);
+  assert.doesNotMatch(getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x=>x.text??'').join('\n'),/같은 음식을 이야기/);
+  for(const id of ['night_lie_cancel','alone_note'])applyDay18V4Choice(s,`day18_v4_${id}`);
+  const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  assert.deepEqual(steps.find(x=>x.type==='privateNote').lines,['응, 취소됐어.']);
+  assert.equal(JSON.stringify(s),before);
+  assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(s.storyFlags.day18V4))));
+});
+
 test('accepted calls pause without speech and only the explicit ended branch shows termination', () => {
   for(const known of [true,false]) {
     const s=start('YURI',known,{callScheduling:true,separateDinnerScheduling:true});

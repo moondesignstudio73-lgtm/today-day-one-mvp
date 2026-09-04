@@ -115,7 +115,7 @@ function reaction(c) {
     case 'schedule_ask_tomorrow': return msg([d('하은','응. 지금 시간을 정하기는 어렵네. 내일 물어봐 줘.'),
       d('나','알겠어. 오늘은 쉬어.')]);
     case 'night_defer': return msg(part(17, '시간을 요청한다', '혼자 먹었다고 한다'));
-    case 'night_solo': return f.dinner === 'SOLO' ? msg([d('하은', '뭐 먹었어?'), d('나', '김밥. 한 줄 먹고 더 시켰어.')]) : [n('같은 음식을 이야기하면서도, 맞은편에 앉았던 사람은 말하지 않았다.')];
+    case 'night_solo': return f.dinner === 'SOLO' ? msg([d('하은', '뭐 먹었어?'), d('나', '김밥. 한 줄 먹고 더 시켰어.')]) : [n('맞은편에 앉았던 사람은 말하지 않았다.')];
     case 'night_correct': return msg([d('하은', '왜 지금 혼자라고 했어?'), d('나', '네가 무슨 생각 할지 무서워서. 그런데 거짓말을 했어.'), d('하은', '오늘은 여기까지 이야기하자.')]);
     case 'night_lie_cancel': return [n('한 문장을 덮으려고 다음 문장을 썼다는 사실을 알고 있었다.')];
     case 'future_continue': return call(part(18, '관계를 이어 가고 싶다고 한다', '확신을 꾸미지 않는다'));
@@ -134,6 +134,11 @@ function reaction(c) {
     case 'alone_note': {
       const previous={...c,choices:c.choices.slice(0,-1)};
       const lines=reaction(previous).filter(step => ['dialogue','message'].includes(step.type)&&step.speaker==='나').map(step=>step.text);
+      const last=previous.choices.at(-1);
+      if(!lines.length&&['night','night_correction','night_schedule'].includes(last?.phase)) {
+        const spoken=getDay18V4Options({...previous,phase:last.phase}).find(option=>option.id===last.id);
+        if(spoken)lines.push(spoken.label);
+      }
       return [{type:'privateNote',lines},n('메모를 누구에게도 보내지 않았다. 오늘 작성한 문장을 곧바로 성실함의 증거로 보여 주고 싶지 않았다.')];
     }
     case 'alone_jihoon': return jihoonAtNight(c);
