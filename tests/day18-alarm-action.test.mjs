@@ -28,5 +28,14 @@ test('DAY18 alarm has a dedicated looping wav and the renderer stops it on actio
   assert.equal(manager.stopCue('SFX_DAY18_PHONE_ALARM'),true);
   assert.equal(audios.at(-1).paused,true);
   const game=readFileSync(new URL('../game.js',import.meta.url),'utf8');
-  for(const marker of ['step.type==="alarmAction"','sound.playCue(step.sfxId,{cooldownMs:0})','sound.stopCue(immersiveScene.currentStep.sfxId)','delete alarmStage.dataset.alarmAction'])assert.ok(game.includes(marker),marker);
+  for(const marker of ['step.type==="alarmAction"','sound.playCue(step.sfxId,{cooldownMs:0})','sound.stopCue(immersiveScene.currentStep.sfxId)','delete alarmStage.dataset.alarmAction','alarmStage.removeAttribute("aria-label")','alarmStage?.removeAttribute("aria-label")'])assert.ok(game.includes(marker),marker);
+});
+
+test('story mode exposes the shared sound toggle and resumes an active alarm after unmute',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const game=readFileSync(new URL('../game.js',import.meta.url),'utf8');
+  assert.match(html,/id="storySoundButton"[^>]+aria-pressed="false"/);
+  assert.ok(game.includes('$("#soundButton").addEventListener("click",toggleSound)'));
+  assert.ok(game.includes('$("#storySoundButton").addEventListener("click",toggleSound)'));
+  assert.ok(game.includes('if(immersiveScene.currentStep?.type==="alarmAction")sound.playCue(immersiveScene.currentStep.sfxId,{cooldownMs:0})'));
 });

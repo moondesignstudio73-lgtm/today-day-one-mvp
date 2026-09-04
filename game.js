@@ -464,7 +464,25 @@ function handleModalKeydown(event) {
   focusable[getWrappedFocusIndex(currentIndex, focusable.length, event.shiftKey)].focus();
 }
 
-function renderSoundButton(){ const button=$("#soundButton");const label=sound.enabled?"사운드 끄기":"사운드 켜기";button.innerHTML=`<i class="fa-solid ${sound.enabled?"fa-volume-high":"fa-volume-xmark"}" aria-hidden="true"></i>`;button.setAttribute("aria-pressed",String(sound.enabled));button.setAttribute("aria-label",label);button.title=label; }
+function renderSoundButton(){
+  const button=$("#soundButton"),storyButton=$("#storySoundButton"),label=sound.enabled?"사운드 끄기":"사운드 켜기";
+  button.innerHTML=`<i class="fa-solid ${sound.enabled?"fa-volume-high":"fa-volume-xmark"}" aria-hidden="true"></i>`;
+  for(const control of [button,storyButton]){control.setAttribute("aria-pressed",String(sound.enabled));control.setAttribute("aria-label",label);control.title=label;}
+  storyButton.textContent=sound.enabled?"SND ON":"SND OFF";
+}
+
+function toggleSound(){
+  const enabled=sound.toggle();renderSoundButton();
+  if(enabled){
+    sound.play("success");
+    if(immersiveScene){
+      sound.applyStoryAudio(resolveStoryAudioCue({day:state.day,sceneId:immersiveScene.id,backgroundId:immersiveScene.presentation?.backgroundId}));
+      if(immersiveScene.currentStep?.type==="alarmAction")sound.playCue(immersiveScene.currentStep.sfxId,{cooldownMs:0});
+    }else if(state)sound.playScene(phases[state.phase].key,state.day);
+    else sound.playBgm("title",new Date().getDate(),{fadeIn:1000});
+  }
+  toast(enabled?"효과음과 BGM을 켰어요.":"모든 소리를 껐어요.");
+}
 
 function finishDialogueTyping() {
   if (!dialogueTimer) return false;
@@ -1190,7 +1208,7 @@ function chooseImmersiveOption(choiceId) {
   if(resultPopup){openActionResultModal(resultPopup.action,resultPopup.message,resultPopup.effects,renderImmersiveStep,resultPopup.imageAsset??null);return;}
   renderImmersiveStep();
 }
-function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentStep?.type==="choice"||eventRuntime.input.snapshot().locked)return;if(immersiveScene.currentStep?.type==="alarmAction"){sound.stopCue(immersiveScene.currentStep.sfxId);$("#vnEventCg").hidden=true;delete $("#visualNovelStage").dataset.alarmAction;}if(!eventRuntime.resumePlaying({sceneId:eventRuntime.active?.sceneId}))return;renderImmersiveStep(); }
+function advanceImmersiveScene() { if(!immersiveScene||immersiveScene.currentStep?.type==="choice"||eventRuntime.input.snapshot().locked)return;if(immersiveScene.currentStep?.type==="alarmAction"){const alarmStage=$("#visualNovelStage");sound.stopCue(immersiveScene.currentStep.sfxId);$("#vnEventCg").hidden=true;delete alarmStage.dataset.alarmAction;alarmStage.removeAttribute("aria-label");}if(!eventRuntime.resumePlaying({sceneId:eventRuntime.active?.sceneId}))return;renderImmersiveStep(); }
 function applySkippedScenePresentation(choiceIndex){
   const transitionLayer=$("#sceneTransition");transitionLayer.classList.remove("active");transitionLayer.classList.add("hidden");
   const skipped=immersiveScene.sequence.slice(0,choiceIndex);
@@ -1203,7 +1221,7 @@ function applySkippedScenePresentation(choiceIndex){
   setStoryMessagePresentation(lastLine);
   if(lastLine){const narrationLike=["narration","monologue"].includes(lastLine.type);$("#sceneTitle").textContent=narrationLike?"":(lastLine.type==="message"?lastLine.sender:lastLine.speaker)??"";$("#sceneTitle").classList.toggle("hidden",narrationLike);$("#visualNovelStage").classList.toggle("narration-mode",narrationLike);typeDialogue(lastLine.text);finishDialogueTyping();}
 }
-function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;sound.stopTransientCues();if(immersiveScene.currentStep?.type==="alarmAction")sound.stopCue(immersiveScene.currentStep.sfxId);const alarmStage=$("#visualNovelStage");if(alarmStage?.dataset)delete alarmStage.dataset.alarmAction;sound.restoreBgm({duration:180});$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){const choiceIndex=immersiveScene.sequence.indexOf(choice);applySkippedScenePresentation(choiceIndex);if(!eventRuntime.waitForInput("choice",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:choiceIndex})){persistEventRuntime(true);return;}immersiveScene.index=choiceIndex+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1,backgroundId:immersiveScene.presentation?.backgroundId});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else{const completionCue=immersiveScene.sequence.find(step=>step.type==="chapterCompletionCue");if(completionCue){try{if(completionCue.day===18)completeDay18V4GameChapter(state,completionCue);else if(completionCue.day===17)completeDay17V4GameChapter(state,completionCue);else if(completionCue.day===16)completeDay16V4GameChapter(state,completionCue);else completeDay15V4GameChapter(state,completionCue);SaveManager.save(state);}catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast(`DAY ${completionCue.day??""} 완료 상태를 확인할 수 없어 진행을 멈췄습니다.`);return;}}finishImmersiveScene();} }
+function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;sound.stopTransientCues();if(immersiveScene.currentStep?.type==="alarmAction")sound.stopCue(immersiveScene.currentStep.sfxId);const alarmStage=$("#visualNovelStage");if(alarmStage?.dataset)delete alarmStage.dataset.alarmAction;alarmStage?.removeAttribute("aria-label");sound.restoreBgm({duration:180});$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){const choiceIndex=immersiveScene.sequence.indexOf(choice);applySkippedScenePresentation(choiceIndex);if(!eventRuntime.waitForInput("choice",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:choiceIndex})){persistEventRuntime(true);return;}immersiveScene.index=choiceIndex+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1,backgroundId:immersiveScene.presentation?.backgroundId});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else{const completionCue=immersiveScene.sequence.find(step=>step.type==="chapterCompletionCue");if(completionCue){try{if(completionCue.day===18)completeDay18V4GameChapter(state,completionCue);else if(completionCue.day===17)completeDay17V4GameChapter(state,completionCue);else if(completionCue.day===16)completeDay16V4GameChapter(state,completionCue);else completeDay15V4GameChapter(state,completionCue);SaveManager.save(state);}catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast(`DAY ${completionCue.day??""} 완료 상태를 확인할 수 없어 진행을 멈췄습니다.`);return;}}finishImmersiveScene();} }
 function advanceCampaignChapter(completedSession) {
   if(state.scenario?.enabled!==true)return null;
   if(prepareCampaignDayAdvance(state,completedSession?.id)===null)return null;
@@ -2812,7 +2830,8 @@ const isProtectedStorySurface=target=>target instanceof Element&&Boolean(target.
 document.addEventListener("dragstart",event=>{if(isProtectedStorySurface(event.target))event.preventDefault();},true);
 document.addEventListener("selectstart",event=>{if(isProtectedStorySurface(event.target))event.preventDefault();},true);
 $("#visualNovelStage").querySelectorAll("img,video").forEach(media=>media.draggable=false);
-$("#soundButton").addEventListener("click",()=>{const enabled=sound.toggle();renderSoundButton();if(enabled){sound.play("success");if(immersiveScene)sound.applyStoryAudio(resolveStoryAudioCue({day:state.day,sceneId:immersiveScene.id,backgroundId:immersiveScene.presentation?.backgroundId}));else if(state)sound.playScene(phases[state.phase].key,state.day);else sound.playBgm("title",new Date().getDate(),{fadeIn:1000});}toast(enabled?"효과음과 BGM을 켰어요.":"모든 소리를 껐어요.");});
+$("#soundButton").addEventListener("click",toggleSound);
+$("#storySoundButton").addEventListener("click",toggleSound);
 $("#guideToggleButton").addEventListener("click",toggleGuide);
 $("#guideConfirmButton").addEventListener("click",advanceGuide);
 $("#debugButton").addEventListener("click",openDebug);
