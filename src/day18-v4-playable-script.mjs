@@ -1,6 +1,6 @@
 import {day18V4DirectedDialogue as D} from './day18-v4-source-beats.mjs';
 import {DAY18_V4_SOURCE_SCENES} from './day18-v4-source-registry.mjs';
-import {getDay18V4Options, validateDay18V4} from './day18-v4-state-contract.mjs';
+import {getDay18V4Options, validateDay18V4, getDay18V4FollowUpContract} from './day18-v4-state-contract.mjs?v=2';
 
 const n = text => ({type: 'monologue', text, origin: 'route-adaptation'});
 const d = (speaker, text) => ({type: 'dialogue', speaker, text, origin: 'route-adaptation'});
@@ -96,6 +96,10 @@ function reaction(c) {
       d('나',f.yuriPurpose === 'purpose_past' ? '예전에 둘이 어땠는지 궁금해서 나갔어.' : f.yuriPurpose === 'purpose_present' ? '지금의 유리 씨가 궁금해서 나갔다고 말했어.' : '내가 왜 다시 만나고 싶은지 확인하고 싶었다고 말했어.'),
       d('나',f.yuriNext === 'REQUESTED_NOT_ACCEPTED' ? '다시 만나고 싶다고도 했어. 그쪽에서는 아직 만나겠다고 한 건 아니라고 했고.' : f.yuriNext === 'PAST_CLOSED' ? '과거 이야기는 여기까지 듣고 싶다고 했어.' : '당분간 각자 지내 보자고 했어.')])
       : msg([d('나', '김밥 한 줄 먹고, 결국 더 시켰어.')]);
+    case 'schedule_after_dinner': return msg([d('하은','응. 내일 저녁 먹고 나서 이야기하자.'),
+      d('나','먹고 나면 먼저 연락할게.'),d('하은','응. 오늘은 좀 쉴게.')]);
+    case 'schedule_ask_tomorrow': return msg([d('하은','응. 지금 시간을 정하기는 어렵네. 내일 물어봐 줘.'),
+      d('나','알겠어. 오늘은 쉬어.')]);
     case 'night_defer': return msg(part(17, '시간을 요청한다', '혼자 먹었다고 한다'));
     case 'night_solo': return f.dinner === 'SOLO' ? msg([d('하은', '뭐 먹었어?'), d('나', '김밥. 한 줄 먹고 더 시켰어.')]) : [n('같은 음식을 이야기하면서도, 맞은편에 앉았던 사람은 말하지 않았다.')];
     case 'night_correct': return msg([d('하은', '왜 지금 혼자라고 했어?'), d('나', '네가 무슨 생각 할지 무서워서. 그런데 거짓말을 했어.'), d('하은', '오늘은 여기까지 이야기하자.')]);
@@ -154,6 +158,8 @@ function opening(c) {
     case 'solo_contact': return [scene(15, place(c), 'evening'), n('김밥 한 줄을 다 먹었을 때 휴대전화를 한 번 봤다.'), n('아직 배가 고픈지 보기 전에 누가 연락했는지 먼저 보고 있었다.'), n('휴대전화를 뒤집었다. 조금 생각한 뒤 작은 식사를 하나 더 주문했다.')];
     case 'return': return [scene(16, place(c), 'evening'), n('다 먹은 뒤에야 휴대전화를 들었다.')];
     case 'night': return [...departure(c), scene(17, 'home-evening', 'night'), n('현관 불을 켜고 물을 한 잔 마셨다.')];
+    case 'night_schedule': return [scene(17, 'home-evening', 'night'),
+      ...msg([d('하은','오늘은 좀 피곤해서 길게 듣기는 어려울 것 같아. 내일 이야기해도 될까?')])];
     case 'night_correction': return msg([d('하은', '약속 취소됐어?')]);
     case 'relationship_future': return [scene(18, 'home-evening', 'night'),
       ...msg([d('나','지금 통화할 수 있어?'),d('하은','응. 지금은 이야기할 수 있어.')]),
@@ -176,6 +182,7 @@ function opening(c) {
 
 function ending(c) {
   const f = c.facts;
+  const followUp = getDay18V4FollowUpContract(c);
   const hasLie = f.statements.some(s => !s.truthful);
   return [n('오늘은 어느 쪽도 결제하지 않았다. 누군가와 함께 가려면 그 사람의 내일도 물어야 했다.'),
     scene(22, 'home-evening', 'night'),
@@ -192,7 +199,9 @@ function ending(c) {
           : '오늘 내가 한 약속을 지킨 것. 나와 먹고 싶다는 사람에게 나도 먹고 싶다고 말한 것. 그 정도로 끝나는 날도 있었다.'),
     scene(24, 'home-evening', 'night'),
     ...(f.travelTogetherDiscussed ? msg(D(24, undefined, '생각할 시간을 둔 밤')) : f.followUpContact
-      ? [n(f.contactTonight === 'night_defer'
+      ? [n(followUp.status === 'TIME_WINDOW_AGREED'
+        ? '내일 저녁을 먹은 뒤 이야기하기로 했다. 오늘 피곤하다는 말을 더 붙잡지는 않았다. 여행 사진은 아직 보내지 않았다.'
+        : followUp.status === 'CONTACT_PROMISED'
         ? '내일 연락하기로 한 약속을 남겼다. 여행 사진은 아직 보내지 않았다. 먼 풍경으로 오늘의 대답을 대신하고 싶지 않았다.'
         : '여행 사진은 아직 보내지 않았다. 다시 이야기할 시간을 함께 정해야 했다. 먼 풍경으로 오늘의 대답을 대신하고 싶지 않았다.')]
       : [n('알람을 맞추고 휴대전화를 내려놓았다. 내일은 내 돈과 내 시간부터 볼 생각이었다.')]),
@@ -217,6 +226,7 @@ const PROMPTS = {
   yuri_correction: '방금 한 말을 바로잡을까', yuri_next: '이 저녁 다음에 바라는 것', payment: '계산대 앞에서',
   haeun_topic: '하은과 나누고 싶은 이야기', closeness: '조금 더 같이 있고 싶다', solo_contact: '이 저녁에 더하고 싶은 것',
   return: '돌아가는 길', night: '저녁 뒤에 남는 말', night_correction: '약속이 취소됐냐는 질문 앞에서',
+  night_schedule: '다시 이야기할 시간',
   relationship_future: '하은과의 다음을 어떻게 말할까', calm_future: '같이 해 보고 싶은 것', alone_end: '남은 밤에 할 일',
   travel: '내일 살펴볼 하루'
 };

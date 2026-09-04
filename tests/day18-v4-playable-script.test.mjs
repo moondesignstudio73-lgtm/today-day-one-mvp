@@ -250,10 +250,31 @@ test('Jihoon states his availability before the difficult night conversation', (
   assert.equal(messages[1].text,'무슨 일인데?');
 });
 
+test('scheduled night stays in messages, preserves conflict, and recalls only the chosen agreement', () => {
+  for (const conflict of [false,true]) for (const agreed of [false,true]) {
+    const s=start('HAEUN',true,{callScheduling:true,otherInterest:conflict});
+    const choices=['morning_keep','disclose_together','menu_each',conflict?'topic_other':'topic_good',
+      ...(!conflict?['close_home']:[]),'night_thought'];
+    for(const id of choices) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const pending=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    assert.ok(pending.some(x=>x.type==='message'&&x.sender==='하은'&&x.text.includes('피곤해서')));
+    assert.ok(!pending.some(x=>x.device==='call'||x.character));
+    for(const id of [agreed?'schedule_after_dinner':'schedule_ask_tomorrow','alone_stop','travel_life']) {
+      applyDay18V4Choice(s,`day18_v4_${id}`);
+      assert.ok(!getDay18V4PlayableSegment(s.storyFlags.day18V4).some(x=>x.device==='call'||x.character));
+    }
+    const text=getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x=>x.text??'').join('\n');
+    assert.match(text,agreed?/내일 저녁을 먹은 뒤 이야기하기로 했다/:/내일 연락하기로 한 약속/);
+    if(!agreed) assert.doesNotMatch(text,/저녁을 먹은 뒤 이야기하기로/);
+    if(conflict) assert.match(text,/아직 모르는 마음을 억지로 정리하지는 않았다/);
+    assert.equal(s.storyFlags.day18V4.facts.travelTogetherDiscussed,false);
+  }
+});
+
 test('source-locked dialogue and all choices resolve through deterministic route coverage', () => {
   const covered = new Set();
   for (const partner of ['YURI', 'HAEUN', 'SOLO']) for (let run = 0; run < 180; run++) {
-    const s = start(partner, run % 2 === 0), all = [];
+    const s = start(partner, run % 2 === 0, {callScheduling:run % 3 === 0}), all = [];
     let step = 0, random = run + 11;
     while (true) {
       const chapter = s.storyFlags.day18V4;
@@ -277,7 +298,7 @@ test('source-locked dialogue and all choices resolve through deterministic route
     else assert.doesNotMatch(text,/혼자 보내기로 한 저녁을 누구에게 벌처럼/);
     assert.equal(all.at(-1).type, 'chapterCompletionCue');
   }
-  for (const id of ['yuri_correct', 'yuri_lie_breakup', 'night_correct', 'night_lie_cancel', 'future_others', 'calm_trip', 'next_ask']) {
+  for (const id of ['yuri_correct', 'yuri_lie_breakup', 'night_correct', 'night_lie_cancel', 'future_others', 'calm_trip', 'next_ask','schedule_after_dinner','schedule_ask_tomorrow']) {
     assert.ok(covered.has(`day18_v4_${id}`), `missing route coverage: ${id}`);
   }
 });

@@ -1,6 +1,7 @@
 // DAY18's facts are independent of the legacy home-safety chapter.
 // Every consequence is replayed from a frozen entry snapshot and ordered choices.
 export const DAY18_V4_SCHEMA = 'day18-notion-v4/1';
+export const DAY18_V4_CALL_SCHEMA = 'day18-notion-v4/2';
 const clone = value => JSON.parse(JSON.stringify(value));
 const option = (id, label) => ({id: `day18_v4_${id}`, label});
 const opts = pairs => pairs.map(([id, label]) => option(id, label));
@@ -37,12 +38,13 @@ export function getDay18V4Entry(state, context = {}) {
     yuriPastRelevant: context.yuriPastRelevant === true,
     yuriOwnBookKnown: context.yuriOwnBookKnown === true,
     handHoldingComfortable: context.handHoldingComfortable === true,
-    source: {day17Choice9: f.day17V4Choice9 ?? null, day17Disclosure: f.day17V4HaeunDisclosure ?? null}
+    source: {day17Choice9: f.day17V4Choice9 ?? null, day17Disclosure: f.day17V4HaeunDisclosure ?? null},
+    ...(context.callScheduling === true ? {callScheduling: true} : {})
   }};
 }
 
 function initial(input) {
-  return {schema: DAY18_V4_SCHEMA, input: clone(input), choices: [], phase: 'morning', complete: false,
+  return {schema: input.callScheduling === true ? DAY18_V4_CALL_SCHEMA : DAY18_V4_SCHEMA, input: clone(input), choices: [], phase: 'morning', complete: false,
     facts: {dinner: null, appointmentCancelled: false, haeunKnowsDinner: input.haeunKnowsAppointment,
       statements: [], yuriRelationshipClaim: null, yuriNext: null, payment: null,
       haeunTopic: null, comfortableDinner: false, sharedSeat: false, walkTogether: false,
@@ -113,6 +115,9 @@ export function getDay18V4Options(chapter) {
       ['night_tell', '오늘 저녁이 어땠는지 이야기하고 싶어.'],
       ['night_defer', '생각을 조금 정리하고 싶어. 내일 이야기할 수 있을까?'],
       ['night_solo', '별일 없었어. 혼자 먹고 왔어.']]);
+    case 'night_schedule': return opts([
+      ['schedule_after_dinner', '내일 저녁 먹고 나서는 어때?'],
+      ['schedule_ask_tomorrow', '그럼 내일 연락해서 가능한 시간을 물어볼게.']]);
     case 'night_correction': return opts([
       ['night_correct', '아니. 만났어. 방금 내가 거짓말했어.'], ['night_lie_cancel', '응, 취소됐어.']]);
     case 'relationship_future': return opts([
@@ -196,7 +201,9 @@ function reduce(c, id) {
     case 'return': f.returnAction = key; moveAfterDinner(c); break;
     case 'night':
       f.contactTonight = key;
-      if (key === 'night_defer' || key === 'night_rest') {
+      if (c.input.callScheduling === true && f.dinner === 'HAEUN' && key === 'night_thought') {
+        f.callDeferred = true; f.nightRoute = 'DEFERRED'; c.phase = 'night_schedule';
+      } else if (key === 'night_defer' || key === 'night_rest') {
         f.followUpContact = key === 'night_defer'; f.nightRoute = 'ALONE'; c.phase = 'alone_end';
       } else if (key === 'night_solo' && f.dinner === 'YURI') {
         statement(c, 'HAEUN', 'ATE_ALONE', false);
@@ -209,6 +216,8 @@ function reduce(c, id) {
         f.nightRoute = 'CALM'; c.phase = 'calm_future';
       }
       break;
+    case 'night_schedule':
+      f.followUpContact = true; c.phase = 'alone_end'; break;
     case 'night_correction': {
       const previous = f.statements.findLast(s => s.recipient === 'HAEUN');
       statement(c, 'HAEUN', key === 'night_correct' ? 'ATE_WITH_YURI' : 'APPOINTMENT_CANCELLED', key === 'night_correct', key === 'night_correct' ? previous.id : null);
@@ -228,8 +237,9 @@ function reduce(c, id) {
 
 export function validateDay18V4(chapter) {
   try {
-    if (chapter?.schema !== DAY18_V4_SCHEMA || !Array.isArray(chapter.choices) || typeof chapter.complete !== 'boolean') return false;
+    if (![DAY18_V4_SCHEMA, DAY18_V4_CALL_SCHEMA].includes(chapter?.schema) || !Array.isArray(chapter.choices) || typeof chapter.complete !== 'boolean') return false;
     const i = chapter.input;
+    if (chapter.schema === DAY18_V4_CALL_SCHEMA ? i?.callScheduling !== true : Object.hasOwn(i ?? {}, 'callScheduling')) return false;
     if (!['YURI', 'HAEUN', 'SOLO'].includes(i?.appointment)) return false;
     for (const key of ['relationshipActive', 'contactAllowed', 'haeunKnowsAppointment', 'yuriKnowsRelationship', 'otherInterest', 'yuriPastRelevant', 'yuriOwnBookKnown', 'handHoldingComfortable']) {
       if (typeof i[key] !== 'boolean') return false;
@@ -253,6 +263,14 @@ export function getDay18V4FollowUpContract(chapter) {
   const result = {status: 'NONE', promisedBy: null, contactDay: null,
     agreedTime: null, sourceChoiceId: null};
   if (!chapter.input.contactAllowed) return result;
+  const schedule = chapter.choices.find(({phase}) => phase === 'night_schedule');
+  if (schedule) {
+    const agreed = schedule.id === 'day18_v4_schedule_after_dinner';
+    return {...result, status: agreed ? 'TIME_WINDOW_AGREED' : 'CONTACT_PROMISED',
+      promisedBy: 'PLAYER', contactDay: 19,
+      agreedTime: agreed ? {day: 19, window: 'AFTER_DINNER'} : null,
+      sourceChoiceId: schedule.id};
+  }
   const record = chapter.choices.findLast(({id}) => [
     'day18_v4_night_defer', 'day18_v4_night_correct',
     'day18_v4_future_continue', 'day18_v4_future_unsure'

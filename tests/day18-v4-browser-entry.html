@@ -6,6 +6,7 @@
 <p>테스트용 DAY17 완료 상태로 실제 게임을 엽니다. 기존 저장은 이 탭의 세션에 백업되며 복원 버튼으로 되돌릴 수 있습니다. 전체 NEW GAME 통과 검증을 대신하지 않습니다.</p>
 <button data-route="YURI">유리와 저녁</button><button data-route="HAEUN">하은과 저녁</button><button data-route="SOLO">혼자 저녁</button>
 <button data-route="YURI" data-night-call="true">밤 통화 집중 QA (연락 가능)</button>
+<button data-route="HAEUN" data-night-deferred="true">밤 대화 연기 집중 QA</button>
 <p><label><input id="no-contact" type="checkbox">하은 연락 휴식 (유리/혼자 경로)</label>
 <label><input id="other-interest" type="checkbox">서진에게 실제 관심을 표현한 이력</label>
 <label><input id="unknown-appointment" type="checkbox">하은에게 유리 약속을 아직 말하지 않음</label></p>
@@ -15,7 +16,7 @@ import {createInitialState} from '../src/game-core.mjs';
 import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
 import {SaveManager} from '../src/save-manager.mjs';
 import {GAME_MODES} from '../src/scenario-state.mjs';
-import {prepareDay18V4GameEntry,applyDay18V4GameChoice} from '../src/day18-v4-game-bridge.mjs';
+import {prepareDay18V4GameEntry,applyDay18V4GameChoice} from '../src/day18-v4-game-bridge.mjs?v=2';
 const backupKey = 'day18-v4-qa-save-backup';
 const keys = [SaveManager.key, SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)];
 document.querySelectorAll('[data-route]').forEach(button => button.addEventListener('click', () => {
@@ -39,6 +40,10 @@ document.querySelectorAll('[data-route]').forEach(button => button.addEventListe
     s.storyFlags.day17V4HaeunContactPaused=false;
     prepareDay18V4GameEntry(s);
     for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks','relationship_haeun','next_time','pay_split','night_tell']) applyDay18V4GameChoice(s,`day18_v4_${id}`);
+  }
+  if(button.dataset.nightDeferred) {
+    prepareDay18V4GameEntry(s);
+    for(const id of ['morning_keep','disclose_together','menu_each','topic_good','close_home','night_thought']) applyDay18V4GameChoice(s,`day18_v4_${id}`);
   }
   SaveManager.save(s); location.href = '../index.html?qa=day18-v4';
 }));

@@ -59,6 +59,32 @@ test('follow-up contract never invents contact for fresh, paused or damaged save
   assert.equal(JSON.stringify(s), before);
 });
 
+test('call scheduling is versioned: old saves retain the old night and new saves defer only the authored branch', () => {
+  for (const versioned of [false,true]) {
+    const s = start('HAEUN',versioned ? {callScheduling:true} : {});
+    for (const key of ['morning_keep','disclose_together','menu_each','topic_good','close_home','night_thought']) choose(s,key);
+    assert.equal(c(s).schema,`day18-notion-v4/${versioned ? 2 : 1}`);
+    assert.equal(c(s).phase,versioned ? 'night_schedule' : 'calm_future');
+    const saved = JSON.stringify(c(s));
+    assert.equal(validateDay18V4(JSON.parse(saved)),true);
+    const changed = JSON.parse(saved); changed.schema = `day18-notion-v4/${versioned ? 1 : 2}`;
+    assert.equal(validateDay18V4(changed),false,'version cannot be flipped without changing the replay');
+    if (versioned) for (const choice of ['schedule_after_dinner','schedule_ask_tomorrow']) {
+      const branch = structuredClone(s); choose(branch,choice);
+      const contract = getDay18V4FollowUpContract(c(branch));
+      assert.equal(contract.status,choice === 'schedule_after_dinner' ? 'TIME_WINDOW_AGREED' : 'CONTACT_PROMISED');
+      assert.equal(contract.contactDay,19);
+      assert.deepEqual(contract.agreedTime,choice === 'schedule_after_dinner' ? {day:19,window:'AFTER_DINNER'} : null);
+      assert.equal(c(branch).phase,'alone_end');
+      assert.equal(c(branch).facts.travelTogetherDiscussed,false);
+      assert.equal(validateDay18V4(JSON.parse(JSON.stringify(c(branch)))),true);
+    }
+    assert.equal(JSON.stringify(c(s)),saved);
+  }
+  const yuri = start('YURI',{callScheduling:true}); afterYuriDinner(yuri); choose(yuri,'night_tell');
+  assert.equal(c(yuri).phase,'relationship_future');
+});
+
 test('DAY18 refuses legacy, missing prerequisites, unaccepted proposals and damaged V4 without writes', () => {
   for (const [s, expected] of [
     [{storyFlags: {}}, 'BLOCKED_PREREQUISITE'],
