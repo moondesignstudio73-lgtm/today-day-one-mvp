@@ -90,8 +90,16 @@ test('food sharing is a silent action before tasting on all Haeun menu branches'
     assert.equal(segment.filter(x=>x.type==='cgShow'&&x.source.includes('food-sharing')).length,1);
     const thought=segment.findIndex(x=>x.text==='멀쩡한 식사를 두고 굳이 관계에 대한 교훈을 붙이지는 않았다.');
     assert.equal(segment[thought].type,'monologue');
-    assert.equal(segment[thought-1].text,'둘 다 맛이 나쁜 건 아니었다. 남의 접시가 처음에는 더 좋아 보였을 뿐이었다.');
+    assert.equal(segment[thought-1].source,'assets/events/day18-v4/own-meals-v1.png');
+    assert.equal(segment[thought-2].text,'둘 다 맛이 나쁜 건 아니었다. 남의 접시가 처음에는 더 좋아 보였을 뿐이었다.');
     assert.equal(segment[thought+1].text,'오늘 파일을 하나 보냈는데, 내용은 맞고 이름이 잘못됐어.');
+    const tasting=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('haeun-tasting'));
+    assert.equal(segment[tasting-1].text,'둘 다 먹고 나서 실망하면 억울하지 않잖아.');
+    assert.ok(tasting>at&&tasting<thought-1);
+    for(const action of [segment[tasting],segment[thought-1]]) {
+      assert.equal(action.type,'cgShow');assert.equal(action.text,undefined);
+      assert.ok(existsSync(new URL(`../${action.source}`,import.meta.url)));
+    }
     assert.equal(JSON.stringify(s),before);
     assert.deepEqual(getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4),segment);
   }
@@ -99,7 +107,7 @@ test('food sharing is a silent action before tasting on all Haeun menu branches'
     const s=start(partner);
     for(let count=0;s.storyFlags.day18V4.phase!=='ending';count++) {
       assert.ok(count<25);
-      assert.ok(!getDay18V4PlayableSegment(s.storyFlags.day18V4).some(x=>x.type==='cgShow'&&x.source.includes('food-sharing')));
+      assert.ok(!getDay18V4PlayableSegment(s.storyFlags.day18V4).some(x=>x.type==='cgShow'&&/food-sharing|haeun-tasting|own-meals/.test(x.source)));
       applyDay18V4Choice(s,getDay18V4Options(s.storyFlags.day18V4)[0].id);
     }
   }
@@ -114,7 +122,7 @@ test('cancelled Haeun dinner never borrows the sharing action in any saved schem
       const restored=JSON.parse(JSON.stringify(s.storyFlags.day18V4));
       assert.equal(restored.facts.dinner,'SOLO');
       const segment=getDay18V4PlayableSegment(restored);
-      assert.ok(!segment.some(x=>x.type==='cgShow'&&x.source.includes('food-sharing')));
+      assert.ok(!segment.some(x=>x.type==='cgShow'&&/food-sharing|haeun-tasting|own-meals/.test(x.source)));
       assert.ok(!segment.some(x=>x.text==='네 거가 더 맛있어 보이는데.'));
       applyDay18V4Choice(s,getDay18V4Options(s.storyFlags.day18V4)[0].id);
     }
