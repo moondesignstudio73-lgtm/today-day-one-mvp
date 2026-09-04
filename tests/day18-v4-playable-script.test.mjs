@@ -527,11 +527,14 @@ test('closeness consent and hand-holding remain separate across saved schemas', 
         if(contact>=0) {
           assert.equal(segment[contact-1].text,'아니. 괜히 작은 소리로 말하게 돼.');
           assert.equal(segment[contact+1].type,'storyPause');
-          assert.equal(segment[contact+2].text,'큰 사건은 아니었는데 물잔을 드는 손이 조금 조심스러워졌다.');
+          assert.equal(segment[contact+2].source,'assets/events/day18-v4/shoulder-water-glass-v1.png');
+          assert.equal(segment[contact+2].type,'cgShow');
           assert.equal(segment[contact].duration,3000);
           assert.ok(existsSync(new URL(`../${segment[contact].source}`,import.meta.url)));
+          assert.ok(existsSync(new URL(`../${segment[contact+2].source}`,import.meta.url)));
         }
-        assert.equal(segment.some(x=>x.text==='큰 사건은 아니었는데 물잔을 드는 손이 조금 조심스러워졌다.'),choice==='close_seat');
+        assert.equal(segment.some(x=>typeof x.source==='string'&&x.source.includes('shoulder-water-glass')),choice==='close_seat');
+        assert.equal(segment.some(x=>x.text==='큰 사건은 아니었는데 물잔을 드는 손이 조금 조심스러워졌다.'),false);
         assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(chapter))));
         assert.equal(JSON.stringify(s),before);
       }

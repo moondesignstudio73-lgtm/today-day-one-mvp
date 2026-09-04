@@ -114,6 +114,8 @@ function reaction(c) {
       ? [step, scene(14, 'day18-haeun-beside', 'evening')]
       : step.text === '아니. 괜히 작은 소리로 말하게 돼.'
         ? [step, {type:'cgShow',source:'assets/events/day18-v4/shoulder-contact-v1.png',fit:'contain',duration:3000}]
+        : step.text === '큰 사건은 아니었는데 물잔을 드는 손이 조금 조심스러워졌다.'
+          ? [{type:'cgShow',source:'assets/events/day18-v4/shoulder-water-glass-v1.png',fit:'contain',duration:2800}]
         : [step]);
     case 'close_walk': return [...part(14, '산책을 제안한다', '여기서 마친다'), scene(16, 'neighborhood-day', 'evening', 'girlfriend'),
       n(f.heldHands ? '손이 스친 다음 자연스럽게 이어졌다.' : '나란히 걷는 거리만 조금 좁아졌다.')];
