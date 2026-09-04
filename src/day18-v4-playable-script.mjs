@@ -73,7 +73,11 @@ function reaction(c) {
         : [{type:'cgShow',source:'assets/events/day18-v4/leftover-rice-check-v1.png',fit:'contain',duration:2800}])];
     case 'disclose_together': return [n('저녁에 만나기로 한 대화 아래에 답을 남겼다.')];
     case 'menu_each': case 'menu_share': case 'menu_wait':
-      if (f.dinner === 'YURI') return D(4, `**${key === 'menu_each' ? '각자 고른다' : key === 'menu_share' ? '나눠 먹자고 한다' : '조금 더 본다'}**`, key === 'menu_each' ? '**나눠 먹자고 한다**' : key === 'menu_share' ? '**조금 더 본다**' : '하은과 함께 — 같은 선택');
+      if (f.dinner === 'YURI') {
+        const steps=D(4, `**${key === 'menu_each' ? '각자 고른다' : key === 'menu_share' ? '나눠 먹자고 한다' : '조금 더 본다'}**`, key === 'menu_each' ? '**나눠 먹자고 한다**' : key === 'menu_share' ? '**조금 더 본다**' : '하은과 함께 — 같은 선택');
+        return key === 'menu_wait' ? steps.flatMap(step => step.text === '메뉴 기다리는 사람이 둘이나 더 생긴 줄.'
+          ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-menu-wait-water-v1.png',fit:'contain',duration:3000}] : [step]) : steps;
+      }
       return key === 'menu_each' ? [d('하은', '네 거 맛있으면 한 입만 구경할게.')]
         : key === 'menu_share' ? [d('하은', '먼저 먹어 보고, 내가 싫으면 네가 책임지는 건 아니야.')]
         : [d('하은', '나도 고민 중이야. 빨리 고르는 얼굴만 하고 있었어.'), d('나', '그 얼굴 좀 알려 줘.'), d('하은', '지금 네 얼굴.')];

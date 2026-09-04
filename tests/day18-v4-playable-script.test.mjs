@@ -32,6 +32,16 @@ test('the solo protagonist clears the opposite chair for an arriving customer wi
   }
 });
 
+test('the protagonist drinks water only after the Yuri menu counting-unit joke', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN'])for(const menu of ['menu_each','menu_share','menu_wait']) {
+    const s=start(partner,true,context);applyDay18V4Choice(s,'day18_v4_morning_keep');applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':'day18_v4_disclose_together');applyDay18V4Choice(s,`day18_v4_${menu}`);
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.source==='assets/events/day18-v4/yuri-menu-wait-water-v1.png');
+    assert.equal(at>=0,partner==='YURI'&&menu==='menu_wait');
+    if(at>=0){assert.equal(steps[at-1].text,'메뉴 기다리는 사람이 둘이나 더 생긴 줄.');assert.equal(steps[at+1].text,'두 분이 아니라 이 분. 단위를 잘못 말했다.');assert.ok(existsSync(new URL(`../${steps[at].source}`,import.meta.url)));}
+    assert.equal(steps.some(x=>x.text?.includes('물을 마셨다')),false);assert.equal(JSON.stringify(s),before);assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+  }
+});
+
 test('Haeun sets down her existing bag only after the chair line and only in her dinner route', () => {
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN','SOLO']) {
     const s=start(partner,true,context);applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
