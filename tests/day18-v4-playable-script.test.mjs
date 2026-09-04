@@ -28,6 +28,28 @@ test('physical meal directions are not emitted as monologues', () => {
   assert.ok(DAY18_V4_SOURCE_SCENES[7].body.includes('나는 바로 한 입 먹었다.'));
 });
 
+test('the vegetable bite follows the answer and belongs only to Yuri dinner', () => {
+  for(const partner of ['YURI','HAEUN','SOLO']) {
+    const s=start(partner),all=[];
+    for(let count=0;s.storyFlags.day18V4.phase!=='ending';count++) {
+      assert.ok(count<25);
+      const before=JSON.stringify(s),segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+      const at=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('vegetable-bite'));
+      if(at>=0) {
+        assert.equal(partner,'YURI');
+        assert.equal(segment[at-1].text,'지금은 진짜예요.');
+        assert.equal(segment[at].text,undefined);
+        assert.equal(segment[at].fit,'contain');
+        assert.ok(existsSync(new URL(`../${segment[at].source}`,import.meta.url)));
+      }
+      all.push(...segment);assert.equal(JSON.stringify(s),before);
+      assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+      applyDay18V4Choice(s,getDay18V4Options(s.storyFlags.day18V4)[0].id);
+    }
+    assert.equal(all.filter(x=>x.type==='cgShow'&&x.source.includes('vegetable-bite')).length,partner==='YURI'?1:0);
+  }
+});
+
 test('Yuri makes table space after the pause without changing the next-meeting facts', () => {
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
     const s=start('YURI',true,context);
