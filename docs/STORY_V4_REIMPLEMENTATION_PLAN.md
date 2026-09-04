@@ -90,3 +90,5 @@ SCENE01~08 및 09~24 누락 감사는 `DAY18_V4_SOURCE_AUDIT_01_08.md`, `DAY18_V
 21:25 후속: 새 `/3`의 유리 약속 미고지 경로에 불가 응답→짧은 보고→시간 협의를 추가했다(`DAY18_V4_YURI_CALL_DEFERRAL.md`). 사전 공유 경로는 통화 가능 응답 후 상세 발언을 통화 자막으로 전달한다. `/1`·`/2` 그래프 유지. 실제 불가 경로와 저장 재개 확인, 자동 테스트 443 PASS. 다음은 **새 `/3`의 4성향 전체 실제 플레이 및 누락 연출 정리**, DAY18 PARTIAL 유지.
 
 21:36 후속: Friendly를 DAY18 아침부터 DAY19까지 비-SKIP 완주하고 저녁 저장 재개를 확인했다(`DAY18_V4_FULL_ROUTE_QA.md`). 나눠 먹기에도 얼굴 흉내 농담을 회수하는 오류를 발견하여 menu_wait 전용으로 수정하고 실제 재생 확인했다. 물건 연출 미완료로 전체 Fidelity PASS는 아니다. 다음은 **문서에 정한 Neutral 전체 경로**, 이후 Distant/Mixed다. DAY18 PARTIAL 유지.
+
+21:46 후속: Neutral을 아침부터 진행하며 식당의 유리 스프라이트 미표시 HIGH 오류를 발견했다. DAY18 명시적 인물 전환에 렌더 호출을 추가하고 유리/하은 실제 표시·귀가 후 숨김을 확인했다(`DAY18_V4_CHARACTER_TRANSITION_FIX.md`). 같은 저장에서 Neutral을 DAY19까지 완료, 저녁/밤 재개 확인. 자동 테스트 445 PASS, game191. 다음은 **Distant 전체 경로**, 이후 Mixed 및 남은 행동 연출. DAY18 PARTIAL.
