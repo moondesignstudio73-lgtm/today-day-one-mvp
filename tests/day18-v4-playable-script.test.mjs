@@ -186,6 +186,47 @@ test('beside-seat viewpoint follows consent and precedes the changed-distance di
   }
 });
 
+test('closeness consent and hand-holding remain separate across saved schemas', () => {
+  for(const schema of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const handHoldingComfortable of [false,true]) {
+      for(const choice of ['close_seat','close_walk','close_home']) {
+        const s=start('HAEUN',true,{...schema,handHoldingComfortable});
+        for(const id of ['morning_keep','disclose_together','menu_each','topic_good',choice])
+          applyDay18V4Choice(s,`day18_v4_${id}`);
+        const before=JSON.stringify(s), chapter=JSON.parse(JSON.stringify(s.storyFlags.day18V4));
+        const segment=getDay18V4PlayableSegment(chapter);
+        assert.equal(chapter.facts.sharedSeat,choice==='close_seat');
+        assert.equal(chapter.facts.walkTogether,choice==='close_walk');
+        assert.equal(chapter.facts.heldHands,choice==='close_walk'&&handHoldingComfortable);
+        assert.equal(segment.some(x=>x.location==='day18-haeun-beside'),choice==='close_seat');
+        assert.equal(segment.some(x=>x.text==='큰 사건은 아니었는데 물잔을 드는 손이 조금 조심스러워졌다.'),choice==='close_seat');
+        assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(chapter))));
+        assert.equal(JSON.stringify(s),before);
+      }
+    }
+  }
+});
+
+test('actual other interest blocks closeness and cannot be bypassed by a stale choice', () => {
+  for(const schema of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const otherInterest of [false,true]) {
+      const s=start('HAEUN',true,{...schema,otherInterest});
+      for(const id of ['morning_keep','disclose_together','menu_share','topic_other'])
+        applyDay18V4Choice(s,`day18_v4_${id}`);
+      assert.equal(s.storyFlags.day18V4.phase==='closeness',!otherInterest);
+      if(!otherInterest) continue;
+      const before=JSON.stringify(s);
+      assert.ok(!getDay18V4Options(s.storyFlags.day18V4).some(x=>x.id==='day18_v4_close_seat'));
+      assert.throws(()=>applyDay18V4Choice(s,'day18_v4_close_seat'),/DAY18_CHOICE_UNAVAILABLE/);
+      assert.equal(JSON.stringify(s),before);
+      const segment=getDay18V4PlayableSegment(JSON.parse(JSON.stringify(s.storyFlags.day18V4)));
+      assert.ok(!segment.some(x=>x.location==='day18-haeun-beside'));
+      assert.ok(!segment.some(x=>x.text==='아니. 괜히 작은 소리로 말하게 돼.'));
+      assert.equal(s.storyFlags.day18V4.facts.sharedSeat,false);
+    }
+  }
+});
+
 test('withheld noon disclosure lets Haeun leave for her own lunch', () => {
   const s=start('YURI',false);
   for(const id of ['morning_keep','disclose_withhold']) applyDay18V4Choice(s,`day18_v4_${id}`);
