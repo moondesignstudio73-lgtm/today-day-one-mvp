@@ -175,6 +175,25 @@ test('cancelling Haeun dinner preserves her disappointment without inventing rea
   }
 });
 
+test('morning solo opens the fridge after any required cancellation, without inventing a message', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const partner of ['YURI','HAEUN','SOLO']) {
+      const s=start(partner,true,context);
+      applyDay18V4Choice(s,'day18_v4_morning_solo');
+      const before=JSON.stringify(s),chapter=JSON.parse(JSON.stringify(s.storyFlags.day18V4));
+      const segment=getDay18V4PlayableSegment(chapter);
+      const at=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('fridge-open-morning'));
+      assert.ok(at>=0);
+      assert.ok(existsSync(new URL(`../${segment[at].source}`,import.meta.url)));
+      assert.equal(segment[at+1].text,'혼자 먹는다고 저녁까지 없어지는 건 아니었다.');
+      assert.equal(segment.slice(0,at).some(x=>x.text==='오늘은 못 만나겠어. 미안해.'),partner!=='SOLO');
+      assert.ok(!segment.some(x=>x.text?.includes('냉장고 문을 열었다.')));
+      assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(chapter))));
+      assert.equal(JSON.stringify(s),before);
+    }
+  }
+});
+
 test('morning water is a visual action before the frozen appointment recap', () => {
   for(const schema of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
     for(const partner of ['YURI','HAEUN','SOLO']) {

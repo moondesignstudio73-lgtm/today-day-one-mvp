@@ -57,7 +57,9 @@ function reaction(c) {
       n('날짜 하나가 저절로 옮겨지지는 않았다.'),
       ...(i.appointment === 'HAEUN' ? [n('실망하지 않았다는 말까지 덧붙이지는 않았다.'),
         n('취소한 사람이 먼저 상대의 기분을 달래 달라고 할 뻔하다가 멈췄다.')] : [])];
-    case 'morning_solo': return [...(f.appointmentCancelled ? msg([d('나', '오늘은 못 만나겠어. 미안해.')]) : []), n('냉장고 문을 열었다. 혼자 먹는다고 저녁까지 없어지는 건 아니었다.')];
+    case 'morning_solo': return [...(f.appointmentCancelled ? msg([d('나', '오늘은 못 만나겠어. 미안해.')]) : []),
+      {type:'cgShow',source:'assets/events/day18-v4/fridge-open-morning-v1.png',fit:'contain',duration:2800},
+      n('혼자 먹는다고 저녁까지 없어지는 건 아니었다.')];
     case 'disclose_yuri': return [...msg(i.haeunKnowsAppointment ? [d('나', '오늘 어떤 마음으로 나가는지도 이야기하고 싶어.'), d('하은', '밥 먹는다는 것보다, 네가 어떤 마음으로 나가는지 알고 싶었어.')]
       : [d('하은', '언제 정했어?'), d('나', '어제.'), d('하은', '나한테는 오늘 말하고 싶어진 거야?'), d('나', '어제도 말할 수 있었어. 내가 미뤘어.')]),
       ...(!i.haeunKnowsAppointment ? [n('걱정할까 봐, 라는 덧말이 없어도 말이 끝났다.')] : [])];
