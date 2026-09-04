@@ -986,9 +986,7 @@ function closeStoryFreeAction(){
 
 function renderImmersiveStep() {
   if (!immersiveScene) return;
-  $("#visualNovelStage").querySelector(".story-private-note")?.remove();
-  if($("#visualNovelStage").classList.contains("private-note-active"))$("#visualNovelStage").setAttribute("aria-label","대화 전체 표시");
-  $("#visualNovelStage").classList.remove("private-note-active");
+  clearStoryPrivateNote();
   const step=immersiveScene.sequence[immersiveScene.index++];
   immersiveScene.currentStep=step;
   eventRuntime.setProgress({sequenceIndex:Math.max(0,immersiveScene.index-1),sceneId:step?.label??eventRuntime.active?.sceneId,dialogueIndex:Math.max(0,immersiveScene.index-1),backgroundId:step?.backgroundId??immersiveScene.presentation?.backgroundId,bgmId:step?.bgmId??null});persistEventRuntime(step?.type==="transition"||step?.type==="choice");
@@ -1073,7 +1071,15 @@ function renderImmersiveStep() {
   scheduleAutoAdvance();
 }
 
+function clearStoryPrivateNote(){
+  const stage=$("#visualNovelStage");
+  stage.querySelector(".story-private-note")?.remove();
+  if(stage.classList.contains("private-note-active"))stage.setAttribute("aria-label","대화 전체 표시");
+  stage.classList.remove("private-note-active");
+}
+
 function setStoryMessagePresentation(step){
+  clearStoryPrivateNote();
   const stage=$("#visualNovelStage"),mode=getStoryCommunicationPresentation(step);
   delete stage.dataset.callCue;
   stage.classList.toggle("phone-message",mode.message);
@@ -1191,6 +1197,7 @@ function advanceCampaignChapter(completedSession) {
   return selectNextStoryScene(state);
 }
 function finishImmersiveScene() {
+  clearStoryPrivateNote();
   closeStoryFreeAction();
   if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID&&!state.storyFlags?.day1FreeActionComplete){const freeAction={type:"freeAction",id:"day1-hospital-evening",phase:"evening",location:"hospital",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;

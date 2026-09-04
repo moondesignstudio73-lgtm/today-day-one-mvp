@@ -26,3 +26,20 @@ test('private note uses a separate escaped document and ordinary story input wit
   assert.match(source,/querySelector\("\.story-private-note"\)\?\.remove\(\)/);
   assert.match(source,/classList\.remove\("private-note-active"\)/);
 });
+
+test('normal advance, skipped presentation and scene end all clear the private note idempotently',()=>{
+  const begin=source.indexOf('function clearStoryPrivateNote(){');
+  const stop=source.indexOf('function setStoryMessagePresentation',begin);
+  assert.ok(begin>=0&&stop>begin);
+  let exists=true,removed=0,label='메모 읽고 닫기';
+  const classes=new Set(['private-note-active','other-ui']);
+  const stage={querySelector:()=>exists?{remove:()=>{exists=false;removed++;}}:null,
+    classList:{contains:c=>classes.has(c),remove:c=>classes.delete(c)},
+    setAttribute:(k,v)=>{if(k==='aria-label')label=v;}};
+  vm.runInNewContext(`${source.slice(begin,stop)}clearStoryPrivateNote();clearStoryPrivateNote();`,{$:()=>stage});
+  assert.equal(exists,false);assert.equal(removed,1);assert.equal(label,'대화 전체 표시');
+  assert.deepEqual([...classes],['other-ui']);
+  assert.match(source,/function renderImmersiveStep\(\)\s*\{\s*if \(!immersiveScene\) return;\s*clearStoryPrivateNote\(\)/);
+  assert.match(source,/function setStoryMessagePresentation\(step\)\{\s*clearStoryPrivateNote\(\)/);
+  assert.match(source,/function finishImmersiveScene\(\)\s*\{\s*clearStoryPrivateNote\(\)/);
+});
