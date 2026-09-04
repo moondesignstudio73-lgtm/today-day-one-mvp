@@ -248,3 +248,5 @@ SCENE11 겉옷 최종 후속(9/5): 기본 유리 투명 스프라이트를 기�
 모바일 최종 QA 시도(9/5): `390×844` viewport override 뒤 새 탭을 열었지만 실제 페이지는 `1103×620`, 보정 뒤에도 `951×534`로 남아 모바일 미디어쿼리 증거로 인정하지 않았다. 인앱 브라우저의 탭 CDP emulation capability와 연결된 Chrome도 없어 모바일 관문은 BLOCKED다. 잘못된 폭의 Friendly 시험 저장과 임시 viewport를 모두 복원했다. DAY18 PARTIAL 유지. 환경이 열릴 때까지 같은 실패를 반복하지 않고 다음은 **DAY15~17 잔여 충실도 감사**다.
 
 DAY15 충실도 재감사(9/5): Notion 원문 페이지를 다시 검색·전체 수신해 page id와 last-edited snapshot, 24 Scene/12 Choice, 출석·전화·무연락 경로, DAY12~14 지식 경계와 조건부 접촉/공개 자료/잠정적 DAY23 hook을 현재 구현과 대조했다(`day15/DAY15_V4_FIDELITY_REAUDIT_2026-09-05.md`). DAY15 집중 회귀 81/81 PASS이며, 과거 중간 문서의 `5/6`·`browser pending` 표기는 후속 공개 릴리스/실제 브라우저 완료 기록이 대체한다. DAY15 감사는 PASS로 닫고 다음은 **DAY16 Notion 원문 전체 재감사**다.
+
+DAY16 충실도 재감사(9/5): Notion 원문 전체를 다시 수신해 동일 page id/snapshot, 선언 본문 16,646자, 24 Scene/12 Choice와 지훈 동석·혼자 카페·집, 연락휴식, 하은 공개, 유리 연락/모레 제안 경계를 현재 구현과 대조했다(`day16/DAY16_V4_FIDELITY_REAUDIT_2026-09-05.md`). V4 및 Story/Free 배타성 집중 회귀 67/67 PASS다. 끝난 관계 선택 6의 원문 반응 공백은 승인된 대로 한 옵션만 fail-closed UI 잠금하며 새 반응을 만들지 않는다. 과거 중간 문서의 미착수/릴리스 대기 표기는 후속 공개 릴리스 기록이 대체한다. DAY16 감사는 PASS로 닫고 다음은 **DAY17 Notion 원문 전체 재감사**다.
