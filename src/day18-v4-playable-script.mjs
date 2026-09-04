@@ -8,6 +8,7 @@ const scene = (number, location, time, character = null) => ({type: 'sceneDirect
   number, title: DAY18_V4_SOURCE_SCENES[number - 1].title, location, time, character});
 const msg = steps => steps.map(s => s.type === 'dialogue'
   ? {...s, type: 'message', sender: s.speaker === '나' ? '나' : s.speaker, device: 'phone'} : s);
+const call = steps => steps.map(s => s.type === 'dialogue' ? {...s,device:'call'} : s);
 const chosen = c => c.choices.at(-1)?.id.replace('day18_v4_', '');
 const place = c => c.facts.dinner === 'YURI' ? 'rose-bistro' : c.facts.dinner === 'HAEUN' ? 'alley-pub' : 'gimbap-village';
 const companion = c => c.facts.dinner === 'YURI' ? 'yuri' : c.facts.dinner === 'HAEUN' ? 'girlfriend' : null;
@@ -99,9 +100,9 @@ function reaction(c) {
     case 'night_solo': return f.dinner === 'SOLO' ? msg([d('하은', '뭐 먹었어?'), d('나', '김밥. 한 줄 먹고 더 시켰어.')]) : [n('같은 음식을 이야기하면서도, 맞은편에 앉았던 사람은 말하지 않았다.')];
     case 'night_correct': return msg([d('하은', '왜 지금 혼자라고 했어?'), d('나', '네가 무슨 생각 할지 무서워서. 그런데 거짓말을 했어.'), d('하은', '오늘은 여기까지 이야기하자.')]);
     case 'night_lie_cancel': return [n('한 문장을 덮으려고 다음 문장을 썼다는 사실을 알고 있었다.')];
-    case 'future_continue': return msg(part(18, '관계를 이어 가고 싶다고 한다', '확신을 꾸미지 않는다'));
-    case 'future_unsure': return msg(part(18, '확신을 꾸미지 않는다', '다른 사람을 더 만나고 싶다고 한다'));
-    case 'future_others': return msg(part(18, '다른 사람을 더 만나고 싶다고 한다'));
+    case 'future_continue': return call(part(18, '관계를 이어 가고 싶다고 한다', '확신을 꾸미지 않는다'));
+    case 'future_unsure': return call(part(18, '확신을 꾸미지 않는다', '다른 사람을 더 만나고 싶다고 한다'));
+    case 'future_others': return call(part(18, '다른 사람을 더 만나고 싶다고 한다'));
     case 'calm_trip': return msg(part(19, '하루 나가고 싶다', '쉬는 모습을 보고 싶다'));
     case 'calm_rest': return msg(part(19, '쉬는 모습을 보고 싶다', '같은 저녁을 원한다'));
     case 'calm_dinner': return msg(part(19, '같은 저녁을 원한다'));
@@ -154,7 +155,9 @@ function opening(c) {
     case 'return': return [scene(16, place(c), 'evening'), n('다 먹은 뒤에야 휴대전화를 들었다.')];
     case 'night': return [...departure(c), scene(17, 'home-evening', 'night'), n('현관 불을 켜고 물을 한 잔 마셨다.')];
     case 'night_correction': return msg([d('하은', '약속 취소됐어?')]);
-    case 'relationship_future': return [scene(18, 'home-evening', 'night'), ...msg([
+    case 'relationship_future': return [scene(18, 'home-evening', 'night'),
+      ...msg([d('나','지금 통화할 수 있어?'),d('하은','응. 지금은 이야기할 수 있어.')]),
+      {type:'storyPause',duration:600}, ...call([
       d('하은', '듣고 있어.'), d('하은', f.dinner === 'YURI' ? '너는 얘기하고 와서 정리가 조금 됐을 수도 있는데, 나는 지금 처음 듣는 마음이 있어.' : '아까 들은 마음을 아직 생각하고 있어. 같이 밥을 먹었다고 바로 괜찮아지는 건 아니잖아.'),
       ...(f.dinner === 'YURI' && f.yuriPurpose === 'purpose_past' && f.yuriNext !== 'REQUESTED_NOT_ACCEPTED'
         ? [d('나', '오늘은 그 사람 얘기를 들었어. 나한테 좋았던 사람인지 나빴던 사람인지 답을 받으려 했는데, 그렇게 끝낼 수는 없었어.'), d('하은', '그건 나도 대신 말할 수 없지.')]

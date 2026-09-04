@@ -1201,4 +1201,5 @@ body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-message .vn-dialogu
 body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-message[data-message-side="outgoing"] .vn-dialogue {background:#624256f5;border-radius:20px 20px 20px 4px;}
 body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-message .vn-dialogue p {max-width:none;overflow-wrap:anywhere;}
 body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-message .vn-nameplate::before {content:"문자 · ";font-weight:400;}
+body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-call .vn-nameplate::before {content:"통화 · ";font-weight:400;}
 @media(max-width:760px){body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-message .vn-dialogue{left:14px;right:14px;bottom:12px;width:auto;min-height:108px;padding:26px 36px 20px 20px;}}

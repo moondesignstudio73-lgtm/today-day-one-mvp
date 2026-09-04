@@ -1,6 +1,7 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=16";
 import { SaveManager } from "./src/save-manager.mjs?v=20";
 import { getDialogueHistoryTime } from "./src/dialogue-history-time.mjs";
+import { getStoryCommunicationPresentation } from "./src/story-communication-presentation.mjs";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, getRuntimeEventDefinitions, rollRuntimeEvent } from "./src/event-manager.mjs?v=10";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=9";
@@ -1045,10 +1046,11 @@ function renderImmersiveStep() {
 }
 
 function setStoryMessagePresentation(step){
-  const stage=$("#visualNovelStage"),message=step?.type==="message";
-  stage.classList.toggle("phone-message",message);
-  stage.dataset.messageSide=message&&step.sender==="나"?"outgoing":"incoming";
-  stage.querySelector(".vn-dialogue").setAttribute("aria-label",message?`문자 · ${step.sender??""}`:"대화");
+  const stage=$("#visualNovelStage"),mode=getStoryCommunicationPresentation(step);
+  stage.classList.toggle("phone-message",mode.message);
+  stage.classList.toggle("phone-call",mode.call);
+  stage.dataset.messageSide=mode.side;
+  stage.querySelector(".vn-dialogue").setAttribute("aria-label",mode.label);
 }
 
 function queueSceneStep(delay) {

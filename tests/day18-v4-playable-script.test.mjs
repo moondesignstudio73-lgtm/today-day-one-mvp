@@ -179,6 +179,25 @@ test('source selection retains non-dialogue as non-renderable notes, never narra
   assert.throws(() => selectDay18V4Source(2, {from: 'nonexistent boundary'}), /BOUNDARY_MISSING/);
 });
 
+test('relationship call begins after availability exchange; deferred contact never calls',()=>{
+  for(const night of ['night_tell','night_defer']) {
+    const s=start('YURI');
+    for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks','relationship_haeun','next_time','pay_split',night]) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const firstCall=segment.findIndex(x=>x.device==='call');
+    assert.equal(firstCall>=0,night==='night_tell');
+    if(night==='night_tell') {
+      const accepted=segment.findIndex(x=>x.text==='응. 지금은 이야기할 수 있어.');
+      assert.ok(accepted>=0&&accepted<firstCall);
+      assert.equal(segment[accepted].type,'message');
+      applyDay18V4Choice(s,'day18_v4_future_others');
+      const ending=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+      assert.ok(ending.some(x=>x.text==='그럼 오늘은 여기까지 이야기하자.'&&x.device==='call'));
+      assert.equal(ending.at(-1).type,'choice');
+    }
+  }
+});
+
 test('Jihoon meal photo appears before the evidence joke, only on his contact branch', () => {
   for(const contact of ['solo_jihoon','solo_haeun','solo_food']) {
     const s=start('SOLO');
