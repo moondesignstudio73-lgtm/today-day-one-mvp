@@ -122,3 +122,5 @@ SCENE01~08 및 09~24 누락 감사는 `DAY18_V4_SOURCE_AUDIT_01_08.md`, `DAY18_V
 23:41 후속: SCENE10 침묵 뒤 추가 접시를 위한 컵 이동 CG/SFX를 연결했다(`DAY18_V4_TABLE_SPACE.md`). 실제 표시/선택 복귀/저장 Scene 재개, 459 PASS, game203. 정지 CG이며 애니메이션 완료를 뜻하지 않는다. 다음은 **SCENE12/08 맛보기 및 SCENE14 어깨 접촉**, 그 외 행동 감사와 최종 QA. DAY18 PARTIAL 유지.
 
 23:48 후속: SCENE08 “지금은 진짜예요” 직후 자기 접시의 채소를 드는 POV CG를 연결했다(`DAY18_V4_YURI_VEGETABLE.md`). 실제 비-SKIP 표시/유리 관계 질문 복귀, 460 PASS, game204. 빈 상대 의자가 보인 초안은 식탁 클로즈업으로 수정했다. 다음은 **SCENE12 상대 음식 맛보기/각자 식사와 SCENE14 어깨 접촉**, 남은 행동·최종 QA. DAY18 PARTIAL 유지.
+
+23:52 회귀: CG 표시 중 SKIP의 타이머 취소/입력 잠금 해제/다음 선택과 자동 종료의 장면 소유권을 실제 코드 테스트 및 브라우저로 확인했다(`DAY18_V4_CG_SKIP_QA.md`). 오류 미관찰, game204 유지. 이 SKIP 시험은 비-SKIP 원문 QA에 합산하지 않는다. 다음은 **SCENE12 상대 음식 맛보기/각자 식사**, 이후 어깨/남은 행동. DAY18 PARTIAL.
