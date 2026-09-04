@@ -26,7 +26,8 @@ test("solo route skips meeting-only choices and never invents Yuri contact",()=>
   assert.equal(state.storyFlags.day17V4Choice4,undefined);assert.equal(state.storyFlags.day17V4Choice6,undefined);
   const played=JSON.stringify(all);assert.equal(played.includes("유리에게서 메시지가"),false);
   assert.equal(played.includes('"speaker":"담당자"'),false,"home route must not invent a gym staff reply");
-  assert.ok(played.includes("유리와 연락처를 나누지 않았거나 인사로 끝난 길에는 새 메시지가 없었다."));
+  assert.ok(played.includes("휴대폰 화면을 끄고 달력의 빈 저녁 칸을 보았다."));
+  assert.equal(played.includes("연락처를 나누지 않았거나"),false,"author branch conditions are not player dialogue");
   assert.equal(steps.at(-2).type,"chapterCompletionCue");
 });
 

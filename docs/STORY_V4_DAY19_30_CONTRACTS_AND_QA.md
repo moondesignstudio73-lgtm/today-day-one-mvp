@@ -67,18 +67,18 @@ DAY START / 이전 경험 확인
 ## 2026-09-04 실행 결과
 
 ```text
-Scenario Fidelity       PASS (V4 제목·핵심 사건·원본 선택 문구)
-Dialogue Quality        PASS (요약 narration 0, 회차/구간별 실제 대화 5개 이상)
-Gameplay                PASS
-Choices                 PASS
-Flags                   PASS
-Story History           PASS
-Save                    PASS
-Load                    PASS
-UI                      PASS
-Day Transition          PASS
-Regression              PASS (전체 387 tests)
-Runtime Text Audit      PASS
+Scenario Fidelity       FAIL — 원본 다수 장면과 대체 경로 누락
+Dialogue Quality        NOT VERIFIED — 대사 개수는 원본 충실도 증거가 아님
+Gameplay                FAIL — 회차당 4구간·3선택 축약
+Choices                 FAIL — 표시 문구와 기존 choice ID의 의미 불일치
+Flags                   FAIL — 기존 집안일 등의 상태 변화가 새 문구에 연결됨
+Story History           FAIL — 실제 경험에 따른 분기 검증 부족
+Save                    PARTIAL — JSON 복원 검사만 수행
+Load                    PARTIAL — 경로별 실제 UI 재개 검증 필요
+UI                      PARTIAL — DAY19/30 일부 선택창만 확인
+Day Transition          PARTIAL — 기존 골격 이동 검사만 수행
+Regression              PARTIAL — 기존 자동 테스트 통과가 원본 완성을 증명하지 않음
+Runtime Text Audit      PARTIAL — 출력 문자열 검사 범위에 한정
 ```
 
 - Friendly / Neutral / Distant / Mixed DAY 19→30 자동 플레이 및 매 선택 JSON 저장·복원: PASS

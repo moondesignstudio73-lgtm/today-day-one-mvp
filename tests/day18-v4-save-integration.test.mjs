@@ -1,0 +1,65 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createInitialState} from '../src/game-core.mjs';
+import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
+import {SaveManager} from '../src/save-manager.mjs';
+import {GAME_MODES} from '../src/scenario-state.mjs';
+import {prepareCampaignDayAdvance} from '../src/story-flow-guard.mjs';
+import {getDay18V4Options} from '../src/day18-v4-state-contract.mjs';
+import {getDay18V4GameContext, prepareDay18V4GameEntry, getDay18V4GameSegment,
+  applyDay18V4GameChoice, completeDay18V4GameChapter, DAY18_V4_CAMPAIGN_SLOT} from '../src/day18-v4-game-bridge.mjs';
+
+function seed(partner) {
+  const s = createInitialState(createGirlfriendFromProfile('haeun', () => .5), () => .5, {mode:GAME_MODES.MARRIAGE_30});
+  s.day = 18; s.pendingStoryId = DAY18_V4_CAMPAIGN_SLOT;
+  Object.assign(s.storyFlags, {day17V4Completed:true, day17V4Day18HookPending:true,
+    day17V4TomorrowPlan:partner === 'YURI' ? 'YURI_MEET' : partner,
+    day17V4Choice9:partner === 'YURI' ? 'day17_v4_yuri_short' : 'day17_v4_life_haeun',
+    day17V4DinnerAgreement:{day:18,partner,status:'ACCEPTED',sourceChoiceId:partner === 'YURI' ? 'day17_v4_yuri_short' : 'day17_v4_life_haeun'},
+    day16V4YuriEncountered:partner === 'YURI',day16V4YuriContact:'SHARED',day16V4YuriInvitation:'ANSWER_TOMORROW'});
+  return s;
+}
+
+test('DAY18 real SaveManager preserves every route checkpoint and completion advances once without safety rewards', () => {
+  for (const partner of ['YURI','HAEUN','SOLO']) for (let attitude = 0; attitude < 4; attitude++) {
+    let s = seed(partner);
+    const data = new Map(), storage = {getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v)};
+    assert.equal(prepareDay18V4GameEntry(s).mode,'V4');
+    const money = s.money;
+    let count = 0;
+    while(s.storyFlags.day18V4.phase !== 'ending') {
+      assert.ok(count++ < 25);
+      const options = getDay18V4Options(s.storyFlags.day18V4);
+      const pick = s.storyFlags.day18V4.phase === 'morning' && partner !== 'SOLO' ? 0 : attitude % options.length;
+      applyDay18V4GameChoice(s,options[pick].id);
+      const chapter = structuredClone(s.storyFlags.day18V4), segment = getDay18V4GameSegment(s);
+      SaveManager.save(s,storage); s = SaveManager.load(storage,GAME_MODES.MARRIAGE_30);
+      assert.ok(s,'production save validation');
+      assert.equal(prepareDay18V4GameEntry(s).mode,'V4');
+      assert.deepEqual(s.storyFlags.day18V4,chapter);
+      assert.deepEqual(getDay18V4GameSegment(s),segment);
+    }
+    const cue = getDay18V4GameSegment(s).at(-1);
+    completeDay18V4GameChapter(s,cue); completeDay18V4GameChapter(s,cue);
+    assert.equal(s.storyHistory.filter(h=>h.sceneId===DAY18_V4_CAMPAIGN_SLOT).length,1);
+    assert.equal(s.money,money);
+    assert.equal(s.storyFlags.day18AccessStrategy,undefined);
+    assert.equal(s.storyFlags.day18V4Day19HookPending,true);
+    assert.equal(prepareCampaignDayAdvance(s,DAY18_V4_CAMPAIGN_SLOT),18);
+    assert.equal(prepareCampaignDayAdvance(s,DAY18_V4_CAMPAIGN_SLOT),null);
+    assert.equal(s.day,19);
+  }
+});
+
+test('contact availability is not attraction or Haeun knowledge of Yuri', () => {
+  const s = {storyFlags:{day15V4SeojinCallbackAvailable:true,day15V4AraCallbackAvailable:true,
+    day16V4YuriEncountered:true,day16V4YuriContact:'SHARED',day16V4HaeunYuriKnowledge:'UNKNOWN'}};
+  assert.equal(getDay18V4GameContext(s).otherInterest,false);
+  assert.equal(getDay18V4GameContext(s).yuriPastRelevant,false);
+  s.storyFlags.day16V4IntentToYuri='UNKNOWN';
+  assert.equal(getDay18V4GameContext(s).otherInterest,true);
+  s.storyFlags.day16V4HaeunYuriKnowledge='CONTACT_SHARED';
+  assert.equal(getDay18V4GameContext(s).yuriPastRelevant,true);
+  s.storyFlags.day16V4IntentToYuri='END_HERE';
+  assert.equal(getDay18V4GameContext(s).yuriPastRelevant,false);
+});

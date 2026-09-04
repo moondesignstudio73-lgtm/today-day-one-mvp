@@ -88,6 +88,9 @@ const FEMALE_NPC_FALLBACK = "assets/npcs/female-coworker-clean.png";
 const MALE_NPC_FALLBACK = "assets/npcs/male-support-clean.png";
 
 export const BACKGROUND_ASSETS = {
+  "day18-rose-bistro":"assets/backgrounds/map-locations/024_rose-bistro.png",
+  "day18-alley-pub":"assets/backgrounds/map-locations/005_alley-pub.png",
+  "day18-gimbap-evening":"assets/backgrounds/map-locations/002_gimbap-village-evening-v1.png",
   "day1-hospital-ceiling":"assets/backgrounds/hospital/day1-hospital-pov-ceiling-v1.png",
   "day1-hospital-bedside":"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png",
   "day2-hospital-bedside":"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png",
