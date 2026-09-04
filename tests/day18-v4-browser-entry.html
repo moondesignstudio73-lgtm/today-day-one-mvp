@@ -5,6 +5,9 @@
 <h1>DAY18 V4 실제 게임 QA</h1>
 <p>테스트용 DAY17 완료 상태로 실제 게임을 엽니다. 기존 저장은 이 탭의 세션에 백업되며 복원 버튼으로 되돌릴 수 있습니다. 전체 NEW GAME 통과 검증을 대신하지 않습니다.</p>
 <button data-route="YURI">유리와 저녁</button><button data-route="HAEUN">하은과 저녁</button><button data-route="SOLO">혼자 저녁</button>
+<p><label><input id="no-contact" type="checkbox">하은 연락 휴식 (유리/혼자 경로)</label>
+<label><input id="other-interest" type="checkbox">서진에게 실제 관심을 표현한 이력</label>
+<label><input id="unknown-appointment" type="checkbox">하은에게 유리 약속을 아직 말하지 않음</label></p>
 <button id="restore">테스트 전 저장 복원</button><p role="status" id="status"></p>
 <script type="module">
 import {createInitialState} from '../src/game-core.mjs';
@@ -27,6 +30,9 @@ document.querySelectorAll('[data-route]').forEach(button => button.addEventListe
     day16V4YuriEncountered:partner === 'YURI',day16V4YuriContact:partner === 'YURI' ? 'SHARED' : 'ENDED_HERE',
     day16V4YuriInvitation:partner === 'YURI' ? 'ANSWER_TOMORROW' : 'NONE',
     day16V4HaeunRelationshipDisclosure:'NAMED_GIRLFRIEND',day17V4HaeunDisclosure:'TOLD'});
+  s.storyFlags.day17V4HaeunContactPaused = partner !== 'HAEUN' && document.querySelector('#no-contact').checked;
+  if (document.querySelector('#other-interest').checked) s.storyFlags.day12V3SeojinIntent = 'SPARK';
+  if (document.querySelector('#unknown-appointment').checked) s.storyFlags.day17V4HaeunDisclosure = 'WITHHELD';
   SaveManager.save(s); location.href = '../index.html?qa=day18-v4';
 }));
 document.querySelector('#restore').addEventListener('click', () => {

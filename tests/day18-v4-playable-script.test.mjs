@@ -58,6 +58,42 @@ test('Yuri book recollection requires that exact prior conversation, not just me
   }
 });
 
+test('a peaceful solo night does not invent a difficult relationship conversation for Jihoon', () => {
+  const s = start('SOLO', true, {haeunContactAllowed:false});
+  for (const id of ['morning_solo','menu_familiar','solo_food','return_home','alone_jihoon']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const text = getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x=>x.text??'').join('\n');
+  assert.doesNotMatch(text,/말을 좀 어렵게|상대한테|그 사람한텐|반성/);
+  assert.match(text,/밥 먹었어/);
+});
+
+test('conflict at dinner is not resolved by choosing a pleasant night greeting', () => {
+  const s = start('HAEUN', true, {otherInterest:true});
+  for (const id of ['morning_keep','disclose_together','menu_each','topic_other','night_good']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const chapter = s.storyFlags.day18V4;
+  const text = getDay18V4PlayableSegment(chapter).map(x=>x.text??'').join('\n');
+  assert.equal(chapter.phase,'relationship_future');
+  assert.doesNotMatch(text,/다음에도 그냥 배고프면 같이 먹자/);
+  assert.match(text,/아까 들은 마음/);
+});
+
+test('home return and fridge actions happen after leaving the restaurant', () => {
+  for (const id of ['return_home','return_food']) {
+    const s = start('SOLO');
+    for (const key of ['morning_solo','disclose_solo','menu_familiar','solo_food',id]) applyDay18V4Choice(s,`day18_v4_${key}`);
+    const segment = getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    assert.equal(segment[0].type,'sceneDirection');
+    assert.equal(segment[0].location,'home-evening');
+    assert.equal(segment[0].character,null);
+  }
+});
+
+test('telling Haeun at noon is remembered by the night report', () => {
+  const s=start('YURI',false);
+  for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_past','apology_thanks','relationship_haeun','next_time','pay_split','night_tell']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const text=getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x=>x.text??'').join('\n');
+  assert.match(text,/네가 아는 그 저녁/);
+});
+
 test('cancelled dinner has a solo prompt and never claims the appointment was kept', () => {
   const s = start('YURI');
   for (const id of ['morning_change','disclose_solo']) applyDay18V4Choice(s,`day18_v4_${id}`);

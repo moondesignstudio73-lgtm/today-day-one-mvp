@@ -12,6 +12,20 @@ const chosen = c => c.choices.at(-1)?.id.replace('day18_v4_', '');
 const place = c => c.facts.dinner === 'YURI' ? 'rose-bistro' : c.facts.dinner === 'HAEUN' ? 'alley-pub' : 'gimbap-village';
 const companion = c => c.facts.dinner === 'YURI' ? 'yuri' : c.facts.dinner === 'HAEUN' ? 'girlfriend' : null;
 const part = (s, from, to) => D(s, `**${from}**`, to ? `**${to}**` : undefined);
+const toldHaeunBeforeNight = c => c.input.haeunKnowsAppointment || c.facts.statements.some(s => s.recipient === 'HAEUN' && s.claim === 'YURI_DINNER_PLANNED' && s.truthful);
+
+function jihoonAtNight(c) {
+  const f = c.facts;
+  const difficultTalk = f.nightRoute === 'UNRESOLVED' || f.contactTonight === 'night_defer' ||
+    (f.haeunTopic === 'topic_other' && c.input.otherInterest) || f.statements.some(s => !s.truthful);
+  if (difficultTalk) return msg(part(20, '지훈에게 묻는다'));
+  // A quiet night is not evidence of a quarrel. Nor does an earlier meal chat
+  // authorize another instant reply from a busy friend.
+  return [
+    ...msg([d('나', f.soloContact === 'solo_jihoon' ? '아까 밥은 잘 먹었어? 시간 될 때 얘기하자.' : '밥 먹었어? 시간 될 때 잠깐 얘기하자.')]),
+    n('답을 기다리며 화면을 계속 켜 두지는 않았다.')
+  ];
+}
 
 function reaction(c) {
   const key = chosen(c), f = c.facts, i = c.input;
@@ -65,13 +79,14 @@ function reaction(c) {
     case 'solo_haeun': return msg(part(15, '하은에게 연락한다', '혼자 먹는 데 집중한다'));
     case 'solo_food': return [n('마지막 한 입을 천천히 먹었다. 지금은 그냥 내가 먹는 날이었다.')];
     case 'return_walk': return [scene(16, 'neighborhood-day', 'evening'), n('신호등 앞에서 한 번 멈췄다. 다음 신호를 기다렸다.'), n('같이 출발한 적도 없는 사람에게 뒤처졌다고 생각하고 있었다.')];
-    case 'return_home': return [n('현관에서 신발을 벗자 발이 편해졌다. 옷을 의자에 던지려다 옷걸이에 걸었다.')];
-    case 'return_food': return [n('냉장고를 열었다. 남은 것을 앞쪽으로 옮기고 문을 닫았다. 지금 당장 살 필요가 없는 것은 사지 않았다.')];
-    case 'night_good': return msg(D(17, '**좋았다고 말한다**', '**생각이 남았다고 말한다**'));
+    case 'return_home': return [scene(16, 'home-evening', 'evening'), n('현관에서 신발을 벗자 발이 편해졌다. 옷을 의자에 던지려다 옷걸이에 걸었다.')];
+    case 'return_food': return [scene(16, 'home-evening', 'evening'), n('냉장고를 열었다. 남은 것을 앞쪽으로 옮기고 문을 닫았다. 지금 당장 살 필요가 없는 것은 사지 않았다.')];
+    case 'night_good': return msg(f.comfortableDinner ? D(17, '**좋았다고 말한다**', '**생각이 남았다고 말한다**')
+      : [d('하은', '같이 먹은 시간이 다 싫었던 건 아니야. 그래도 아까 들은 마음은 아직 생각하고 있어.'), d('나', '응. 좋았다는 말로 그 이야기를 없애려는 건 아니야.')]);
     case 'night_thought': return [...msg(part(17, '생각이 남았다고 말한다', '짧게 인사한다')),
       ...msg(f.comfortableDinner ? [d('나','같이 먹어서 좋았어. 그 마음도 빠뜨리고 이야기할 뻔했네.')] : [d('나','아까 말한 다른 마음이 사라졌다고 할 수는 없어.')])];
     case 'night_rest': return msg(D(17, '**짧게 인사한다**', '이 세 갈래에서는'));
-    case 'night_tell': return f.dinner === 'YURI' ? msg([d('나', i.haeunKnowsAppointment ? '네가 아는 그 저녁 먹고 왔어. 내가 무슨 말을 했는지 이야기하고 싶어.' : '오늘 유리 씨와 저녁을 먹었어. 내가 무슨 말을 했는지도 이야기하고 싶어.'),
+    case 'night_tell': return f.dinner === 'YURI' ? msg([d('나', toldHaeunBeforeNight(c) ? '네가 아는 그 저녁 먹고 왔어. 내가 무슨 말을 했는지 이야기하고 싶어.' : '오늘 유리 씨와 저녁을 먹었어. 내가 무슨 말을 했는지도 이야기하고 싶어.'),
       d('나',f.yuriPurpose === 'purpose_past' ? '예전에 둘이 어땠는지 궁금해서 나갔어.' : f.yuriPurpose === 'purpose_present' ? '지금의 유리 씨가 궁금해서 나갔다고 말했어.' : '내가 왜 다시 만나고 싶은지 확인하고 싶었다고 말했어.'),
       d('나',f.yuriNext === 'REQUESTED_NOT_ACCEPTED' ? '다시 만나고 싶다고도 했어. 그쪽에서는 아직 만나겠다고 한 건 아니라고 했고.' : f.yuriNext === 'PAST_CLOSED' ? '과거 이야기는 여기까지 듣고 싶다고 했어.' : '당분간 각자 지내 보자고 했어.')])
       : msg([d('나', '김밥 한 줄 먹고, 결국 더 시켰어.')]);
@@ -87,7 +102,7 @@ function reaction(c) {
     case 'calm_dinner': return msg(part(19, '같은 저녁을 원한다'));
     case 'alone_stop': return [n('휴대전화를 내려놓고 컵을 씻었다. 물소리 때문에 방이 덜 조용해졌다.')];
     case 'alone_note': return [n('상대의 표정을 추측하는 대신 내가 한 문장을 적었다. 메모를 누구에게도 보내지 않았다.')];
-    case 'alone_jihoon': return msg(part(20, '지훈에게 묻는다'));
+    case 'alone_jihoon': return jihoonAtNight(c);
     case 'travel_near': return [n('돌아오고 싶으면 돌아올 수 있다는 생각도 여행을 망치는 말은 아니었다.')];
     case 'travel_busan': return [n('역에서 이동하고, 먹고, 쉬고, 다시 돌아와야 했다. 사진 아래의 시간을 내 하루로 옮겨 봐야 했다.')];
     case 'travel_life': return [n('화면을 끄고 내일 입을 옷을 봤다. 지금 사는 방도 계속 살 곳이었다.')];
