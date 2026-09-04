@@ -177,6 +177,13 @@ test('cancelling Haeun dinner preserves her disappointment without inventing rea
 
 test('morning solo opens the fridge after any required cancellation, without inventing a message', () => {
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const partner of ['YURI','HAEUN']) {
+      for(const id of ['morning_keep','morning_change']) {
+        const s=start(partner,true,context);
+        applyDay18V4Choice(s,`day18_v4_${id}`);
+        assert.ok(!getDay18V4PlayableSegment(s.storyFlags.day18V4).some(x=>x.type==='cgShow'&&x.source.includes('fridge-open-morning')));
+      }
+    }
     for(const partner of ['YURI','HAEUN','SOLO']) {
       const s=start(partner,true,context);
       applyDay18V4Choice(s,'day18_v4_morning_solo');
