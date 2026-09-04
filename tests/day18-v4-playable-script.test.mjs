@@ -27,6 +27,23 @@ test('directed source anchors exist and filename setup precedes the joke', () =>
   assert.ok(lines.includes('파일 이름에 진짜마지막이라고 써 놨거든.'));
 });
 
+test('Haeun meal recalls the face joke only after actually discussing that face', () => {
+  for(const menu of ['menu_each','menu_share','menu_wait']) {
+    const s=start('HAEUN',true,{callScheduling:true,separateDinnerScheduling:true});
+    for(const id of ['morning_keep','disclose_together',menu]) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const before=JSON.stringify(s);
+    const segment=getDay18V4PlayableSegment(s.storyFlags.day18V4),text=segment.map(x=>x.text??'').join('\n');
+    assert.equal(text.includes('메뉴판 앞에서 네 얼굴을 따라 했더니.'),menu==='menu_wait');
+    assert.equal(text.includes('기술이 유출됐네.'),menu==='menu_wait');
+    assert.match(text,/파일 이름에 진짜마지막/);
+    if(menu!=='menu_wait') {
+      const line=segment.find(x=>x.text===(menu==='menu_share'?'나눠 먹자고 하길 잘했네.':'한 입 먹어 볼래?'));
+      assert.equal(line.type,'dialogue'); assert.equal(line.source,undefined);
+    }
+    assert.equal(JSON.stringify(s),before);
+  }
+});
+
 test('Haeun arrival establishes the wind before the original joke', () => {
   const s=start('HAEUN');
   for(const id of ['morning_keep','disclose_together']) applyDay18V4Choice(s,`day18_v4_${id}`);

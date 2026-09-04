@@ -145,6 +145,20 @@ function yuriPresentConversation(c) {
     : [step]);
 }
 
+function haeunMealConversation(c) {
+  const menu = c.facts.menu;
+  return D(12).map(step => {
+    if (menu === 'menu_wait') return step;
+    if (step.text === '메뉴판 앞에서 네 얼굴을 따라 했더니.') {
+      return d('나',menu === 'menu_share' ? '나눠 먹자고 하길 잘했네.' : '한 입 먹어 볼래?');
+    }
+    if (step.text === '기술이 유출됐네.') {
+      return d('하은',menu === 'menu_share' ? '칭찬은 먹고 나서 할게.' : '응. 한 입만.');
+    }
+    return step;
+  });
+}
+
 function opening(c) {
   const f = c.facts, i = c.input;
   switch (c.phase) {
@@ -165,7 +179,7 @@ function opening(c) {
     case 'yuri_correction': return [d('유리', '지난번에는 여자친구가 있다고 했잖아. 그사이 헤어졌다는 뜻이야?')];
     case 'yuri_next': return [scene(10, place(c), 'evening', 'yuri'), ...D(10, undefined, '### 선택 7')];
     case 'payment': return [scene(11, place(c), 'evening', 'yuri'), ...D(11, undefined, '### 선택 8')];
-    case 'haeun_topic': return [scene(12, place(c), 'evening', 'girlfriend'), ...D(12), scene(13, place(c), 'evening', 'girlfriend'),
+    case 'haeun_topic': return [scene(12, place(c), 'evening', 'girlfriend'), ...haeunMealConversation(c), scene(13, place(c), 'evening', 'girlfriend'),
       ...(i.yuriPastRelevant ? D(13, undefined, '유리와의 접점이 없거나') : D(13, '유리와의 접점이 없거나', '### 선택 9'))];
     case 'closeness': return [scene(14, place(c), 'evening', 'girlfriend'), ...D(14, undefined, '### 선택 10')];
     case 'solo_contact': return [scene(15, place(c), 'evening'), n('김밥 한 줄을 다 먹었을 때 휴대전화를 한 번 봤다.'), n('아직 배가 고픈지 보기 전에 누가 연락했는지 먼저 보고 있었다.'), n('휴대전화를 뒤집었다. 조금 생각한 뒤 작은 식사를 하나 더 주문했다.')];
