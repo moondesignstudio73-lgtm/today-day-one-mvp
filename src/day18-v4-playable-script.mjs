@@ -80,7 +80,8 @@ function reaction(c) {
       }
       return key === 'menu_each' ? [d('하은', '네 거 맛있으면 한 입만 구경할게.')]
         : key === 'menu_share' ? [d('하은', '먼저 먹어 보고, 내가 싫으면 네가 책임지는 건 아니야.')]
-        : [d('하은', '나도 고민 중이야. 빨리 고르는 얼굴만 하고 있었어.'), d('나', '그 얼굴 좀 알려 줘.'), d('하은', '지금 네 얼굴.')];
+        : [{type:'cgShow',source:'assets/events/day18-v4/haeun-menu-wait-water-v1.png',fit:'contain',duration:2800},
+          d('하은', '나도 고민 중이야. 빨리 고르는 얼굴만 하고 있었어.'), d('나', '그 얼굴 좀 알려 줘.'), d('하은', '지금 네 얼굴.')];
     case 'menu_familiar': case 'menu_new': case 'menu_later': return [n('오늘의 배고픔을 과거의 취향으로 맞히려 하지는 않았다.'), n('주문한 한 줄이 나오자 따뜻한 끝부분부터 먹었다.')];
     case 'purpose_past': return part(5, '과거가 궁금하다', '현재의 유리가 궁금하다');
     case 'purpose_present': return part(5, '현재의 유리가 궁금하다', '내 마음을 확인하고 싶다');
