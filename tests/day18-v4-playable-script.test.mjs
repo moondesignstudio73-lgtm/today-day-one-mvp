@@ -18,6 +18,26 @@ function start(partner, known = true, context = {}) {
   beginDay18V4(s, context); return s;
 }
 
+test('menu opens twice before Yuri arrives and never leaks into other dinner routes', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN','SOLO']) {
+    const s=start(partner,true,context);
+    applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
+    applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':partner==='HAEUN'?'day18_v4_disclose_together':'day18_v4_disclose_solo');
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const cuts=steps.filter(x=>x.type==='cgShow'&&typeof x.source==='string'&&x.source.includes('/menu-'));
+    assert.equal(cuts.length,partner==='YURI'?4:0);
+    if(partner==='YURI') {
+      assert.deepEqual(cuts.map(x=>x.source.split('/').at(-1)),['menu-closed-v1.png','menu-open-v1.png','menu-closed-v1.png','menu-open-v1.png']);
+      for(const cut of cuts)assert.ok(existsSync(new URL(`../${cut.source}`,import.meta.url)));
+      const arrival=steps.findIndex(x=>x.type==='sceneDirection'&&x.character==='yuri');
+      assert.ok(cuts.every(x=>steps.indexOf(x)<arrival));
+      assert.equal(steps.some(x=>x.text?.includes('메뉴를 한 번 다 읽었는데')),false);
+    }
+    assert.equal(JSON.stringify(s),before);
+    assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+  }
+});
+
 test('Yuri considers sharing before agreeing, without turning the pause into consent or narration', () => {
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
     for(const partner of ['YURI','HAEUN'])for(const menu of ['menu_each','menu_share','menu_wait']) {
