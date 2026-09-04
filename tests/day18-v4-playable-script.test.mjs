@@ -307,6 +307,25 @@ test('Yuri report waits for a reply and uses short text only when the call is un
   }
 });
 
+test('putting the phone aside and washing a cup is confined to the stop-contact choice',()=>{
+  for(const choice of ['alone_stop','alone_note','alone_jihoon']) {
+    const s=start('SOLO',true,{haeunContactAllowed:false});
+    for(const id of ['morning_solo','menu_familiar','solo_food','return_home',choice]) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const washing=steps.findIndex(x=>x.type==='cgShow'&&x.source.includes('washing-cup'));
+    assert.equal(washing>=0,choice==='alone_stop');
+    if(washing>=0) {
+      assert.equal(steps[washing-1].sfxId,'SFX_PHONE_SOFT_DROP');
+      assert.ok(existsSync(new URL(`../${steps[washing].source}`,import.meta.url)));
+      assert.ok(existsSync(new URL('../assets/audio/day1/phone-soft-drop.wav',import.meta.url)));
+      assert.match(steps[washing+1].text,/컵은 내일 쓸 수 있게/);
+      assert.doesNotMatch(steps[washing+1].text,/대화가 깨끗/,'quiet route does not imply a difficult call');
+    }
+    assert.equal(JSON.stringify(s),before);
+    assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(s.storyFlags.day18V4))));
+  }
+});
+
 test('private notes quote only the players immediately preceding spoken reply, without sending it',()=>{
   for(const choice of ['alone_note','alone_stop','alone_jihoon']) {
     const s=start('YURI',false,{callScheduling:true,separateDinnerScheduling:true});

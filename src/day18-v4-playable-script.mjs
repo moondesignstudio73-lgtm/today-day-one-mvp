@@ -126,7 +126,11 @@ function reaction(c) {
     case 'calm_trip': return msg(part(19, '하루 나가고 싶다', '쉬는 모습을 보고 싶다'));
     case 'calm_rest': return msg(part(19, '쉬는 모습을 보고 싶다', '같은 저녁을 원한다'));
     case 'calm_dinner': return msg(part(19, '같은 저녁을 원한다'));
-    case 'alone_stop': return [n('휴대전화를 내려놓고 컵을 씻었다. 물소리 때문에 방이 덜 조용해졌다.')];
+    case 'alone_stop': return [{type:'sfx',sfxId:'SFX_PHONE_SOFT_DROP'},
+      {type:'cgShow',source:'assets/events/day18-v4/washing-cup-night-v1.png',fit:'contain',duration:3200},
+      n(f.nightRoute==='UNRESOLVED'||f.callDeferred||f.contactTonight==='night_defer'
+        ? '뭔가를 씻는다고 대화가 깨끗해지지는 않았다. 그래도 컵은 내일 쓸 수 있게 됐다.'
+        : '씻은 컵은 내일 쓸 수 있게 됐다. 오늘은 그걸로 충분했다.')];
     case 'alone_note': {
       const previous={...c,choices:c.choices.slice(0,-1)};
       const lines=reaction(previous).filter(step => ['dialogue','message'].includes(step.type)&&step.speaker==='나').map(step=>step.text);
