@@ -75,8 +75,10 @@ function reaction(c) {
     case 'menu_each': case 'menu_share': case 'menu_wait':
       if (f.dinner === 'YURI') {
         const steps=D(4, `**${key === 'menu_each' ? '각자 고른다' : key === 'menu_share' ? '나눠 먹자고 한다' : '조금 더 본다'}**`, key === 'menu_each' ? '**나눠 먹자고 한다**' : key === 'menu_share' ? '**조금 더 본다**' : '하은과 함께 — 같은 선택');
-        return key === 'menu_wait' ? steps.flatMap(step => step.text === '메뉴 기다리는 사람이 둘이나 더 생긴 줄.'
-          ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-menu-wait-water-v1.png',fit:'contain',duration:3000}] : [step]) : steps;
+        return steps.flatMap(step => key === 'menu_each' && step.text === '같은 것을 고르지 않았는데도 한 끼가 시작됐다.'
+          ? [{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},{type:'storyPause',duration:180},{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},step]
+          : key === 'menu_wait' && step.text === '메뉴 기다리는 사람이 둘이나 더 생긴 줄.'
+            ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-menu-wait-water-v1.png',fit:'contain',duration:3000}] : [step]);
       }
       return key === 'menu_each' ? [d('하은', '네 거 맛있으면 한 입만 구경할게.')]
         : key === 'menu_share' ? [d('하은', '먼저 먹어 보고, 내가 싫으면 네가 책임지는 건 아니야.')]

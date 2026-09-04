@@ -52,6 +52,17 @@ test('Haeun drinks water before admitting she is still deciding, only on menu wa
   }
 });
 
+test('two separate menu-cover sounds precede the shared-meal reflection only on Yuri each', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN'])for(const menu of ['menu_each','menu_share','menu_wait']) {
+    const s=start(partner,true,context);applyDay18V4Choice(s,'day18_v4_morning_keep');applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':'day18_v4_disclose_together');applyDay18V4Choice(s,`day18_v4_${menu}`);
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.text==='같은 것을 고르지 않았는데도 한 끼가 시작됐다.');
+    const menuSounds=steps.filter(x=>x.type==='sfx'&&x.sfxId==='SFX_DOCUMENT_RECEIVE');
+    assert.equal(menuSounds.length,partner==='YURI'&&menu==='menu_each'?2:0);
+    if(at>=0){assert.deepEqual(steps.slice(at-3,at),[{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},{type:'storyPause',duration:180},{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'}]);assert.ok(existsSync(new URL('../assets/audio/day2/document-receive.wav',import.meta.url)));}
+    assert.equal(steps.some(x=>x.text?.includes('메뉴판을 덮는 소리')),false);assert.equal(JSON.stringify(s),before);assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+  }
+});
+
 test('Haeun sets down her existing bag only after the chair line and only in her dinner route', () => {
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN','SOLO']) {
     const s=start(partner,true,context);applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
@@ -92,7 +103,7 @@ test('separate menu choices preserve the original shared-meal reflection only in
     const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
     const at=steps.findIndex(x=>x.text===thought);
     assert.equal(at>=0,partner==='YURI'&&menu==='menu_each');
-    if(at>=0){assert.equal(steps[at].type,'monologue');assert.equal(steps[at-1].text,'저는 이걸로요.');}
+    if(at>=0){assert.equal(steps[at].type,'monologue');assert.equal(steps.slice(0,at).findLast(x=>x.type==='dialogue').text,'저는 이걸로요.');}
     assert.equal(JSON.stringify(s),before);
     assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
   }
