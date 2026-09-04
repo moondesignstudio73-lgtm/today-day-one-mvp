@@ -18,6 +18,28 @@ function start(partner, known = true, context = {}) {
   beginDay18V4(s, context); return s;
 }
 
+test('an unpromised solo evening is not a declaration and creates no cancellation', () => {
+  const thought='오늘 저녁이 혼자라는 사실이 누군가에게 보여 줄 선언일 필요도 없었다.';
+  assert.ok(DAY18_V4_SOURCE_SCENES[0].body.includes(thought));
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const partner of ['YURI','HAEUN','SOLO']) {
+      const s=start(partner,true,context);
+      applyDay18V4Choice(s,'day18_v4_morning_solo');
+      const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+      const at=steps.findIndex(x=>x.text===thought);
+      assert.equal(at>=0,partner==='SOLO');
+      assert.equal(s.storyFlags.day18V4.facts.appointmentCancelled,partner!=='SOLO');
+      if(at>=0) {
+        assert.equal(steps[at].type,'monologue');
+        assert.equal(steps[at+1].source,'assets/events/day18-v4/fridge-open-morning-v1.png');
+        assert.ok(!steps.slice(0,at+1).some(x=>x.type==='message'));
+      }
+      assert.equal(JSON.stringify(s),before);
+      assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+    }
+  }
+});
+
 test('physical meal directions are not emitted as monologues', () => {
   const steps=[8,10,14].flatMap(n=>day18V4DirectedDialogue(n));
   const text=steps.filter(x=>x.type==='monologue').map(x=>x.text).join('\n');
