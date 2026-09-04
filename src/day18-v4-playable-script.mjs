@@ -62,7 +62,8 @@ function reaction(c) {
       : [n('오늘 저녁이 혼자라는 사실이 누군가에게 보여 줄 선언일 필요도 없었다.')]),
       {type:'cgShow',source:'assets/events/day18-v4/fridge-open-morning-v1.png',fit:'contain',duration:2800},
       n('혼자 먹는다고 저녁까지 없어지는 건 아니었다.')];
-    case 'disclose_yuri': return [...msg(i.haeunKnowsAppointment ? [d('나', '오늘 어떤 마음으로 나가는지도 이야기하고 싶어.'), d('하은', '밥 먹는다는 것보다, 네가 어떤 마음으로 나가는지 알고 싶었어.')]
+    case 'disclose_yuri': return [...(i.haeunKnowsAppointment ? [] : [{type:'storyPause',duration:1200}]),
+      ...msg(i.haeunKnowsAppointment ? [d('나', '오늘 어떤 마음으로 나가는지도 이야기하고 싶어.'), d('하은', '밥 먹는다는 것보다, 네가 어떤 마음으로 나가는지 알고 싶었어.')]
       : [d('하은', '언제 정했어?'), d('나', '어제.'), d('하은', '나한테는 오늘 말하고 싶어진 거야?'), d('나', '어제도 말할 수 있었어. 내가 미뤘어.')]),
       ...(!i.haeunKnowsAppointment ? [n('걱정할까 봐, 라는 덧말이 없어도 말이 끝났다.')] : [])];
     case 'disclose_withhold': return [...msg(part(2, '말하기 어렵다고 한다', '혼자 먹는다고 한다')),

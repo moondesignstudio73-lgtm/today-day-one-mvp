@@ -64,6 +64,25 @@ test('morning clothes follow the kept appointment reply only, across saved schem
   }
 });
 
+test('first disclosure gives Haeun a pause before her reply without inventing a typing message', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const known of [true,false]) {
+      const s=start('YURI',known,context);
+      for(const id of ['morning_keep','disclose_yuri'])applyDay18V4Choice(s,`day18_v4_${id}`);
+      const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+      if(!known) {
+        assert.equal(steps[0].type,'storyPause');assert.equal(steps[0].duration,1200);
+        assert.equal(steps[0].text,undefined);
+        assert.equal(steps[1].type,'message');assert.equal(steps[1].sender,'하은');
+        assert.equal(steps[1].text,'언제 정했어?');
+      } else assert.equal(steps[0].text,'오늘 어떤 마음으로 나가는지도 이야기하고 싶어.');
+      assert.ok(!steps.some(x=>x.text?.includes('입력 중')));
+      assert.equal(JSON.stringify(s),before);
+      assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+    }
+  }
+});
+
 test('physical meal directions are not emitted as monologues', () => {
   const steps=[8,10,14].flatMap(n=>day18V4DirectedDialogue(n));
   const text=steps.filter(x=>x.type==='monologue').map(x=>x.text).join('\n');
