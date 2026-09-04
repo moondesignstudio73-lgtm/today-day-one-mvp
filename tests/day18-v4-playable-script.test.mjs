@@ -5,7 +5,7 @@ import {beginDay18V4, applyDay18V4Choice, getDay18V4Options} from '../src/day18-
 import {getDay18V4PlayableSegment} from '../src/day18-v4-playable-script.mjs';
 import {DAY18_V4_SOURCE_SCENES} from '../src/day18-v4-source-registry.mjs';
 import {selectDay18V4Source} from '../src/day18-v4-source-selection.mjs';
-import {validateDay18V4BeatAnchors} from '../src/day18-v4-source-beats.mjs';
+import {validateDay18V4BeatAnchors,day18V4DirectedDialogue} from '../src/day18-v4-source-beats.mjs';
 
 function start(partner, known = true, context = {}) {
   const s = {storyFlags: {day17V4Completed: true, day17V4Day18HookPending: true,
@@ -17,6 +17,16 @@ function start(partner, known = true, context = {}) {
     day17V4HaeunDisclosure: known ? 'TOLD' : 'WITHHELD'}};
   beginDay18V4(s, context); return s;
 }
+
+test('physical meal directions are not emitted as monologues', () => {
+  const steps=[8,10,14].flatMap(n=>day18V4DirectedDialogue(n));
+  const text=steps.filter(x=>x.type==='monologue').map(x=>x.text).join('\n');
+  assert.doesNotMatch(text,/바로 한 입 먹었다|둘 다 웃었다|접시가 오면 컵을 옮겨야|그녀의 어깨가 아주 조금 닿았다/);
+  assert.match(text,/물잔을 드는 손이 조금 조심스러워졌다/);
+  for(const line of ['지금은 진짜예요.','응. 그렇네.','아니. 괜히 작은 소리로 말하게 돼.'])
+    assert.ok(steps.some(x=>x.type==='dialogue'&&x.text===line));
+  assert.ok(DAY18_V4_SOURCE_SCENES[7].body.includes('나는 바로 한 입 먹었다.'));
+});
 
 test('food sharing is a silent action before tasting on all Haeun menu branches', () => {
   for(const menu of ['menu_each','menu_share','menu_wait']) {
