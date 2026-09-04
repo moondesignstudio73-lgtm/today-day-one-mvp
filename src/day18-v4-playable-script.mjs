@@ -195,7 +195,9 @@ function opening(c) {
     case 'closeness': return [scene(14, place(c), 'evening', 'girlfriend'), ...D(14, undefined, '### 선택 10')];
     case 'solo_contact': return [scene(15, place(c), 'evening'), n('김밥 한 줄을 다 먹었을 때 휴대전화를 한 번 봤다.'), n('아직 배가 고픈지 보기 전에 누가 연락했는지 먼저 보고 있었다.'), n('휴대전화를 뒤집었다. 조금 생각한 뒤 작은 식사를 하나 더 주문했다.')];
     case 'return': return [scene(16, place(c), 'evening'), n('다 먹은 뒤에야 휴대전화를 들었다.')];
-    case 'night': return [...departure(c), scene(17, 'home-evening', 'night'), n('현관 불을 켜고 물을 한 잔 마셨다.')];
+    case 'night': return [...departure(c), scene(17, 'home-evening', 'night'),
+      n(f.dinner==='SOLO'&&['return_home','return_food'].includes(f.returnAction)
+        ? '물을 한 잔 마셨다.' : '현관 불을 켜고 물을 한 잔 마셨다.')];
     case 'night_schedule': return [scene(17, 'home-evening', 'night'),
       ...(f.dinner === 'HAEUN' ? msg([d('하은','오늘은 좀 피곤해서 길게 듣기는 어려울 것 같아. 내일 이야기해도 될까?')]) : [])];
     case 'night_correction': return msg([d('하은', '약속 취소됐어?')]);

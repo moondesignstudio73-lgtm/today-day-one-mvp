@@ -133,6 +133,19 @@ test('a peaceful solo night does not invent a difficult relationship conversatio
   assert.match(text,/밥 먹었어/);
 });
 
+test('night does not repeat entering home after the player already entered or checked the fridge',()=>{
+  for(const action of ['return_home','return_food','return_walk']) {
+    const s=start('HAEUN');
+    for(const id of ['morning_change','disclose_solo','menu_familiar','solo_food',action]) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const night=steps.findIndex(x=>x.type==='sceneDirection'&&x.number===17);
+    assert.ok(night>=0);
+    assert.equal(steps[night+1].text.includes('현관 불'),action==='return_walk');
+    assert.equal(s.storyFlags.day18V4.facts.appointmentCancelled,true);
+    assert.equal(JSON.stringify(s),before);
+  }
+});
+
 test('conflict at dinner is not resolved by choosing a pleasant night greeting', () => {
   const s = start('HAEUN', true, {otherInterest:true});
   for (const id of ['morning_keep','disclose_together','menu_each','topic_other','night_good']) applyDay18V4Choice(s,`day18_v4_${id}`);
