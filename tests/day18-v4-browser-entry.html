@@ -17,6 +17,7 @@
 <button data-route="YURI" data-scene9="true">유리 관계 질문 행동 QA</button>
 <button data-route="HAEUN" data-haeun-arrival="true">하은 도착 가방 QA</button>
 <button data-route="HAEUN" data-scene13-score="true">하은 냅킨 행동 QA</button>
+<button data-route="HAEUN" data-scene19="true">평온한 밤 웃음 QA</button>
 <button data-route="SOLO" data-solo-arrival="true">혼자 도착 가방 QA</button>
 <button data-route="SOLO" data-solo-scene15="true">혼자 식사 후 행동 QA</button>
 <button data-route="HAEUN" data-food-sharing="true">음식 나누기 집중 QA</button>
@@ -40,7 +41,7 @@ import {createInitialState} from '../src/game-core.mjs';
 import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
 import {SaveManager} from '../src/save-manager.mjs';
 import {GAME_MODES} from '../src/scenario-state.mjs';
-import {prepareDay18V4GameEntry,applyDay18V4GameChoice} from '../src/day18-v4-game-bridge.mjs?v=53';
+import {prepareDay18V4GameEntry,applyDay18V4GameChoice} from '../src/day18-v4-game-bridge.mjs?v=54';
 const backupKey = 'day18-v4-qa-save-backup';
 const keys = [SaveManager.key, SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)];
 document.querySelectorAll('[data-route]').forEach(button => button.addEventListener('click', () => {
@@ -115,6 +116,10 @@ document.querySelectorAll('[data-route]').forEach(button => button.addEventListe
   if(button.dataset.scene13Score) {
     prepareDay18V4GameEntry(s);
     for(const id of ['morning_keep','disclose_together','menu_each','topic_score']) applyDay18V4GameChoice(s,`day18_v4_${id}`);
+  }
+  if(button.dataset.scene19) {
+    prepareDay18V4GameEntry(s);
+    for(const id of ['morning_keep','disclose_together','menu_each','topic_good','close_home','night_good']) applyDay18V4GameChoice(s,`day18_v4_${id}`);
   }
   if(button.dataset.wallet) {
     prepareDay18V4GameEntry(s);

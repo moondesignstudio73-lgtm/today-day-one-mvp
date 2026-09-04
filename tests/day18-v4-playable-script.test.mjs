@@ -865,6 +865,31 @@ test('scene 13 keeps napkin and expression actions route-specific and nonverbal'
   }
 });
 
+test('scene 19 keeps both authored smiles outside phone dialogue and restores its final thought',()=>{
+  const s=start('HAEUN',true,{callScheduling:true,separateDinnerScheduling:true});
+  for(const id of ['morning_keep','disclose_together','menu_each','topic_good','close_home','night_good']) {
+    applyDay18V4Choice(s,`day18_v4_${id}`);
+  }
+  assert.equal(s.storyFlags.day18V4.phase,'calm_future');
+  const opening=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  const joke=opening.findIndex(x=>x.type==='message'&&x.text==='그럼 현관 앞은 빼고.');
+  assert.ok(joke>=0);
+  assert.equal(opening[joke+1].type,'storyActionCue');
+  assert.equal(opening[joke+1].status,'phone-smile');
+  assert.equal(opening.some(x=>x.text==='나는 웃었다.'),false);
+
+  for(const id of ['calm_trip','calm_rest','calm_dinner']) {
+    const branch=JSON.parse(JSON.stringify(s));
+    applyDay18V4Choice(branch,`day18_v4_${id}`);
+    const reaction=getDay18V4PlayableSegment(branch.storyFlags.day18V4);
+    const smiles=reaction.filter(x=>x.type==='storyActionCue'&&x.status==='phone-smile');
+    assert.equal(smiles.length,id==='calm_dinner'?1:0,id);
+    assert.equal(reaction.some(x=>x.text?.includes('오늘 먹은 음식을 떠올리며 웃었다')),false);
+    assert.equal(reaction.some(x=>x.type==='monologue'&&x.text==='다음에도 같은 사람과 다른 음식을 고를 수 있다는 게 생각보다 설렜다.'),id==='calm_dinner');
+    assert.deepEqual(reaction,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(branch.storyFlags.day18V4))));
+  }
+});
+
 test('actual interest is spoken before Haeun asks what it means, never invented otherwise', () => {
   for(const otherInterest of [true,false]) {
     const s=start('HAEUN',true,{otherInterest});

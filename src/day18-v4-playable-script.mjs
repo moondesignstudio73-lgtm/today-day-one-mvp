@@ -160,7 +160,10 @@ function reaction(c) {
         ? [step,{type:'phoneCallCue',status:'ended',speaker:'하은'}] : [step]);
     case 'calm_trip': return msg(part(19, '하루 나가고 싶다', '쉬는 모습을 보고 싶다'));
     case 'calm_rest': return msg(part(19, '쉬는 모습을 보고 싶다', '같은 저녁을 원한다'));
-    case 'calm_dinner': return msg(part(19, '같은 저녁을 원한다'));
+    case 'calm_dinner': return msg(part(19, '같은 저녁을 원한다')).flatMap(step => step.text === '그건 꼭 바꾸자.'
+      ? [step,{type:'storyActionCue',status:'phone-smile',actionLabel:'주인공이 오늘 먹은 음식을 떠올리며 웃음',duration:700},
+        n('다음에도 같은 사람과 다른 음식을 고를 수 있다는 게 생각보다 설렜다.')]
+      : [step]);
     case 'alone_stop': return [{type:'sfx',sfxId:'SFX_PHONE_SOFT_DROP'},
       {type:'cgShow',source:'assets/events/day18-v4/washing-cup-night-v2.png',fit:'contain',duration:3200},
       n(f.nightRoute==='UNRESOLVED'||f.callDeferred||f.contactTonight==='night_defer'
@@ -303,7 +306,9 @@ function opening(c) {
       n('남의 선택을 존중한다는 말 뒤에 내 선택을 숨길 수는 없었다.')];
     case 'calm_future': return [scene(19, 'home-evening', 'night'), ...msg([
       ...(f.dinner === 'HAEUN' ? D(19, undefined, '같이 먹지 않고') : [d('나', '나는 오늘 김밥 먹었어. 너는 뭐 먹었어?'), d('하은', '나는 내 쪽에서 먹었지. 따뜻한 거 먹었어.')]),
-      ...D(19, '**주인공** “다음에는', '### 평온한 경로의 선택 12')])];
+      ...D(19, '**주인공** “다음에는', '### 평온한 경로의 선택 12')]).flatMap(step => step.text === '그럼 현관 앞은 빼고.'
+        ? [step,{type:'storyActionCue',status:'phone-smile',actionLabel:'주인공이 휴대전화 화면을 보며 웃음',duration:700}]
+        : [step])];
     case 'alone_end': return [...(!i.contactAllowed ? departure(c) : []), scene(20, 'home-evening', 'night'),
       n(f.nightRoute === 'UNRESOLVED' ? '화면을 보고 있었다. 한 번 더 누르면 말을 조금 더 잘할 수 있을 것 같았다.' : '휴대전화를 내려놓았다. 남은 밤에는 내가 할 수 있는 작은 일이 있었다.')];
     case 'travel': return [scene(21, 'home-evening', 'night'), travelPhoto(), n('파란 바다와 창가의 테이블. 사진 바깥에는 이동 시간도, 돌아와서 쌓인 빨래도 없었다.'),

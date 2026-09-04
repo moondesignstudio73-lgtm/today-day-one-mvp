@@ -68,7 +68,7 @@ test('room, scene actions and final fade are visual cues, not dialogue or histor
   }
   const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
   for(const status of ['phone-close','wardrobe-check','desk-reset','sleep-ready','alarm-set','entry-shoes','wardrobe-hang','fridge-check']) assert.match(css,new RegExp(`data-room-action="${status}"`));
-  for(const status of ['crosswalk-wait','crosswalk-cross','ride-wait','yuri-napkin-fold','haeun-napkin-fold','cup-square','yuri-gaze-lower','yuri-hand-stop','haeun-expression-soften','meal-decision-pause','napkin-pull']) assert.match(css,new RegExp(`data-story-action="${status}"`));
+  for(const status of ['crosswalk-wait','crosswalk-cross','ride-wait','yuri-napkin-fold','haeun-napkin-fold','cup-square','yuri-gaze-lower','yuri-hand-stop','haeun-expression-soften','meal-decision-pause','napkin-pull','phone-smile']) assert.match(css,new RegExp(`data-story-action="${status}"`));
   assert.match(css,/data-final-fade="active"/);
   assert.match(source,/delete alarmStage\.dataset\.roomAction;delete alarmStage\.dataset\.storyAction;delete alarmStage\.dataset\.finalFade/);
 });
