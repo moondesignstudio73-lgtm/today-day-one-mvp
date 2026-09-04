@@ -111,14 +111,14 @@ function reaction(c) {
       : [d('나', '아니, 지금 있는 마음은 너랑 더 만나고 싶다는 거야. 없는 고민까지 말하려 했네.'), d('하은', '없는 사람까지 저녁에 초대하지는 말자.')];
     case 'topic_score': return part(13, '확인받고 싶다고 한다');
     case 'close_seat': return part(14, '옆자리를 묻는다', '산책을 제안한다').flatMap(step => step.text === '와.'
-      ? [step, scene(14, 'day18-haeun-beside', 'evening')]
+      ? [{type:'cgShow',source:'assets/events/day18-v4/haeun-bag-cleared-v1.png',fit:'contain',duration:2400}, step, scene(14, 'day18-haeun-beside', 'evening')]
       : step.text === '아니. 괜히 작은 소리로 말하게 돼.'
         ? [step, {type:'cgShow',source:'assets/events/day18-v4/shoulder-contact-v1.png',fit:'contain',duration:3000}]
         : step.text === '큰 사건은 아니었는데 물잔을 드는 손이 조금 조심스러워졌다.'
           ? [{type:'cgShow',source:'assets/events/day18-v4/shoulder-water-glass-v1.png',fit:'contain',duration:2800}]
         : [step]);
-    case 'close_walk': return [...part(14, '산책을 제안한다', '여기서 마친다'), scene(16, 'neighborhood-day', 'evening', 'girlfriend'),
-      n(f.heldHands ? '손이 스친 다음 자연스럽게 이어졌다.' : '나란히 걷는 거리만 조금 좁아졌다.')];
+    case 'close_walk': return [...part(14, '산책을 제안한다', '여기서 마친다'), scene(16, 'neighborhood-day', 'evening'),
+      {type:'cgShow',source:f.heldHands ? 'assets/events/day18-v4/haeun-walk-holding-hands-v1.png' : 'assets/events/day18-v4/haeun-walk-close-v1.png',fit:'contain',duration:3200}];
     case 'close_home': return part(14, '여기서 마친다');
     case 'solo_jihoon': return msg(part(15, '지훈에게 연락한다', '하은에게 연락한다'));
     case 'solo_haeun': return msg(part(15, '하은에게 연락한다', '혼자 먹는 데 집중한다'));

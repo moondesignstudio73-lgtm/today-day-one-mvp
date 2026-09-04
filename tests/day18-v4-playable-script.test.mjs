@@ -522,6 +522,12 @@ test('closeness consent and hand-holding remain separate across saved schemas', 
         assert.equal(chapter.facts.walkTogether,choice==='close_walk');
         assert.equal(chapter.facts.heldHands,choice==='close_walk'&&handHoldingComfortable);
         assert.equal(segment.some(x=>x.location==='day18-haeun-beside'),choice==='close_seat');
+        const bagCleared=segment.findIndex(x=>x.type==='cgShow'&&x.source==='assets/events/day18-v4/haeun-bag-cleared-v1.png');
+        assert.equal(bagCleared>=0,choice==='close_seat');
+        if(bagCleared>=0) {
+          assert.equal(segment[bagCleared+1].text,'와.');
+          assert.ok(existsSync(new URL(`../${segment[bagCleared].source}`,import.meta.url)));
+        }
         const contact=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('shoulder-contact'));
         assert.equal(contact>=0,choice==='close_seat');
         if(contact>=0) {
@@ -535,6 +541,13 @@ test('closeness consent and hand-holding remain separate across saved schemas', 
         }
         assert.equal(segment.some(x=>typeof x.source==='string'&&x.source.includes('shoulder-water-glass')),choice==='close_seat');
         assert.equal(segment.some(x=>x.text==='큰 사건은 아니었는데 물잔을 드는 손이 조금 조심스러워졌다.'),false);
+        const walk=segment.find(x=>x.type==='cgShow'&&typeof x.source==='string'&&x.source.includes('haeun-walk-'));
+        assert.equal(Boolean(walk),choice==='close_walk');
+        if(walk) {
+          assert.equal(walk.source,handHoldingComfortable ? 'assets/events/day18-v4/haeun-walk-holding-hands-v1.png' : 'assets/events/day18-v4/haeun-walk-close-v1.png');
+          assert.ok(existsSync(new URL(`../${walk.source}`,import.meta.url)));
+        }
+        assert.equal(segment.some(x=>['손이 스친 다음 자연스럽게 이어졌다.','나란히 걷는 거리만 조금 좁아졌다.'].includes(x.text)),false);
         assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(chapter))));
         assert.equal(JSON.stringify(s),before);
       }
