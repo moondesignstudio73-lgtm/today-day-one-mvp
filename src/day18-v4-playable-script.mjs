@@ -1,4 +1,4 @@
-import {day18V4SourceDialogue as D} from './day18-v4-source-selection.mjs';
+import {day18V4DirectedDialogue as D} from './day18-v4-source-beats.mjs';
 import {DAY18_V4_SOURCE_SCENES} from './day18-v4-source-registry.mjs';
 import {getDay18V4Options, validateDay18V4} from './day18-v4-state-contract.mjs';
 
@@ -29,7 +29,7 @@ function reaction(c) {
     case 'disclose_solo': return [...msg([d('하은', '따뜻한 거 먹어.')]), ...(f.dinner === 'YURI' ? [n('하은은 내 거짓말을 알아맞히지 못했다. 그게 안심되면서, 안심하는 내가 불편했다.')] : [])];
     case 'disclose_together': return [n('저녁에 만나기로 한 대화 아래에 답을 남겼다.')];
     case 'menu_each': case 'menu_share': case 'menu_wait':
-      if (f.dinner === 'YURI') return part(4, key === 'menu_each' ? '각자 고른다' : key === 'menu_share' ? '나눠 먹자고 한다' : '조금 더 본다', key === 'menu_each' ? '나눠 먹자고 한다' : key === 'menu_share' ? '조금 더 본다' : undefined).filter(s => s.source.line < sourceLine(4, '하은과 함께 — 같은 선택'));
+      if (f.dinner === 'YURI') return D(4, `**${key === 'menu_each' ? '각자 고른다' : key === 'menu_share' ? '나눠 먹자고 한다' : '조금 더 본다'}**`, key === 'menu_each' ? '**나눠 먹자고 한다**' : key === 'menu_share' ? '**조금 더 본다**' : '하은과 함께 — 같은 선택');
       return key === 'menu_each' ? [d('하은', '네 거 맛있으면 한 입만 구경할게.')]
         : key === 'menu_share' ? [d('하은', '먼저 먹어 보고, 내가 싫으면 네가 책임지는 건 아니야.')]
         : [d('하은', '나도 고민 중이야. 빨리 고르는 얼굴만 하고 있었어.'), d('나', '그 얼굴 좀 알려 줘.'), d('하은', '지금 네 얼굴.')];
@@ -68,9 +68,12 @@ function reaction(c) {
     case 'return_home': return [n('현관에서 신발을 벗자 발이 편해졌다. 옷을 의자에 던지려다 옷걸이에 걸었다.')];
     case 'return_food': return [n('냉장고를 열었다. 남은 것을 앞쪽으로 옮기고 문을 닫았다. 지금 당장 살 필요가 없는 것은 사지 않았다.')];
     case 'night_good': return msg(D(17, '**좋았다고 말한다**', '**생각이 남았다고 말한다**'));
-    case 'night_thought': return msg(part(17, '생각이 남았다고 말한다', '짧게 인사한다'));
+    case 'night_thought': return [...msg(part(17, '생각이 남았다고 말한다', '짧게 인사한다')),
+      ...msg(f.comfortableDinner ? [d('나','같이 먹어서 좋았어. 그 마음도 빠뜨리고 이야기할 뻔했네.')] : [d('나','아까 말한 다른 마음이 사라졌다고 할 수는 없어.')])];
     case 'night_rest': return msg(D(17, '**짧게 인사한다**', '이 세 갈래에서는'));
-    case 'night_tell': return f.dinner === 'YURI' ? msg([d('나', i.haeunKnowsAppointment ? '네가 아는 그 저녁 먹고 왔어. 내가 무슨 말을 했는지 이야기하고 싶어.' : '오늘 유리 씨와 저녁을 먹었어. 내가 무슨 말을 했는지도 이야기하고 싶어.')])
+    case 'night_tell': return f.dinner === 'YURI' ? msg([d('나', i.haeunKnowsAppointment ? '네가 아는 그 저녁 먹고 왔어. 내가 무슨 말을 했는지 이야기하고 싶어.' : '오늘 유리 씨와 저녁을 먹었어. 내가 무슨 말을 했는지도 이야기하고 싶어.'),
+      d('나',f.yuriPurpose === 'purpose_past' ? '예전에 둘이 어땠는지 궁금해서 나갔어.' : f.yuriPurpose === 'purpose_present' ? '지금의 유리 씨가 궁금해서 나갔다고 말했어.' : '내가 왜 다시 만나고 싶은지 확인하고 싶었다고 말했어.'),
+      d('나',f.yuriNext === 'REQUESTED_NOT_ACCEPTED' ? '다시 만나고 싶다고도 했어. 그쪽에서는 아직 만나겠다고 한 건 아니라고 했고.' : f.yuriNext === 'PAST_CLOSED' ? '과거 이야기는 여기까지 듣고 싶다고 했어.' : '당분간 각자 지내 보자고 했어.')])
       : msg([d('나', '김밥 한 줄 먹고, 결국 더 시켰어.')]);
     case 'night_defer': return msg(part(17, '시간을 요청한다', '혼자 먹었다고 한다'));
     case 'night_solo': return f.dinner === 'SOLO' ? msg([d('하은', '뭐 먹었어?'), d('나', '김밥. 한 줄 먹고 더 시켰어.')]) : [n('같은 음식을 이야기하면서도, 맞은편에 앉았던 사람은 말하지 않았다.')];
@@ -92,10 +95,10 @@ function reaction(c) {
   }
 }
 
-function sourceLine(number, marker) {
-  const index = DAY18_V4_SOURCE_SCENES[number - 1].body.split('\n').findIndex(line => line.includes(marker));
-  if (index < 0) throw new Error(`DAY18_SOURCE_MARKER_MISSING:${number}:${marker}`);
-  return index + 1;
+function departure(c) {
+  return c.facts.dinner === 'YURI'
+    ? [d('유리', '잘 들어가.'), d('나', '유리 씨도요.'), n('그녀가 돌아서는 방향과 내가 가는 방향은 달랐다.')]
+    : c.facts.dinner === 'HAEUN' ? [n('서로 집으로 가는 방향을 확인했다.')] : [];
 }
 
 function yuriPresentConversation(c) {
@@ -111,8 +114,8 @@ function opening(c) {
       n(i.appointment === 'YURI' ? '유리 씨와 장소와 시간을 확인한 두 줄.' : i.appointment === 'HAEUN' ? '하은과 퇴근하고 만나자는 짧은 대화.' : '저녁 칸은 비어 있었다.')];
     case 'disclosure': return [scene(2, 'home-morning', 'afternoon'), ...msg([d('하은', '점심 먹었어? 나는 지금 먹으러 나왔어.'),
       ...(f.dinner === 'YURI' && i.haeunKnowsAppointment ? [d('하은', '오늘 너무 늦지는 않을 거지?')] : [])])];
-    case 'menu': return [scene(3, place(c), 'evening', companion(c)),
-      ...(f.dinner === 'YURI' ? [n('유리 씨는 아직 오지 않았다. 메뉴를 한 번 다 읽었는데 아무것도 고르지 않았다.'), ...D(3, undefined, '하은과 약속한 저녁')]
+    case 'menu': return [scene(3, place(c), 'evening', f.dinner === 'YURI' ? null : companion(c)),
+      ...(f.dinner === 'YURI' ? [n('유리 씨는 아직 오지 않았다. 메뉴를 한 번 다 읽었는데 아무것도 고르지 않았다.'), scene(3,place(c),'evening','yuri'), ...D(3, undefined, '하은과 약속한 저녁')]
         : f.dinner === 'HAEUN' ? D(3, '하은과 약속한 저녁', '혼자 먹는 저녁')
         : [n('배고픈 것보다 눈이 바쁘다는 걸 깨달았다.'), ...D(3, '혼자 먹는 저녁')]),
       scene(4, place(c), 'evening', companion(c)), ...(f.dinner === 'YURI' ? D(4, undefined, '### 선택 3') : [])];
@@ -127,18 +130,17 @@ function opening(c) {
     case 'closeness': return [scene(14, place(c), 'evening', 'girlfriend'), ...D(14, undefined, '### 선택 10')];
     case 'solo_contact': return [scene(15, place(c), 'evening'), n('김밥 한 줄을 다 먹었을 때 휴대전화를 한 번 봤다.'), n('아직 배가 고픈지 보기 전에 누가 연락했는지 먼저 보고 있었다.'), n('휴대전화를 뒤집었다. 조금 생각한 뒤 작은 식사를 하나 더 주문했다.')];
     case 'return': return [scene(16, place(c), 'evening'), n('다 먹은 뒤에야 휴대전화를 들었다.')];
-    case 'night': return [...(f.dinner === 'YURI' ? [d('유리', '잘 들어가.'), d('나', '유리 씨도요.'), n('그녀가 돌아서는 방향과 내가 가는 방향은 달랐다.')]
-      : f.dinner === 'HAEUN' ? [n('서로 집으로 가는 방향을 확인했다.')] : []), scene(17, 'home-evening', 'night'), n('현관 불을 켜고 물을 한 잔 마셨다.')];
+    case 'night': return [...departure(c), scene(17, 'home-evening', 'night'), n('현관 불을 켜고 물을 한 잔 마셨다.')];
     case 'night_correction': return msg([d('하은', '약속 취소됐어?')]);
     case 'relationship_future': return [scene(18, 'home-evening', 'night'), ...msg([
-      d('하은', '듣고 있어.'), d('하은', '너는 얘기하고 와서 정리가 조금 됐을 수도 있는데, 나는 지금 처음 듣는 마음이 있어.'),
+      d('하은', '듣고 있어.'), d('하은', f.dinner === 'YURI' ? '너는 얘기하고 와서 정리가 조금 됐을 수도 있는데, 나는 지금 처음 듣는 마음이 있어.' : '아까 들은 마음을 아직 생각하고 있어. 같이 밥을 먹었다고 바로 괜찮아지는 건 아니잖아.'),
       ...(f.dinner === 'YURI' && f.yuriPurpose === 'purpose_past' && f.yuriNext !== 'REQUESTED_NOT_ACCEPTED'
         ? [d('나', '오늘은 그 사람 얘기를 들었어. 나한테 좋았던 사람인지 나빴던 사람인지 답을 받으려 했는데, 그렇게 끝낼 수는 없었어.'), d('하은', '그건 나도 대신 말할 수 없지.')]
         : [d('하은', '그럼 나는 네 마음이 돌아올 때까지 기다리고 있어야 해?'), d('나', '그렇게 부탁할 수는 없어.'), d('하은', '그 말만 하면 내가 다 정해야 하는 것 같아. 네가 나랑 어떻게 지내고 싶은지도 말해 줘.')])])];
     case 'calm_future': return [scene(19, 'home-evening', 'night'), ...msg([
       ...(f.dinner === 'HAEUN' ? D(19, undefined, '같이 먹지 않고') : [d('나', '나는 오늘 김밥 먹었어. 너는 뭐 먹었어?'), d('하은', '나는 내 쪽에서 먹었지. 따뜻한 거 먹었어.')]),
       ...D(19, '**주인공** “다음에는', '### 평온한 경로의 선택 12')])];
-    case 'alone_end': return [scene(20, 'home-evening', 'night'),
+    case 'alone_end': return [...(!i.contactAllowed ? departure(c) : []), scene(20, 'home-evening', 'night'),
       n(f.nightRoute === 'UNRESOLVED' ? '화면을 보고 있었다. 한 번 더 누르면 말을 조금 더 잘할 수 있을 것 같았다.' : '휴대전화를 내려놓았다. 남은 밤에는 내가 할 수 있는 작은 일이 있었다.')];
     case 'travel': return [scene(21, 'home-evening', 'night'), n('파란 바다와 창가의 테이블. 사진 바깥에는 이동 시간도, 돌아와서 쌓인 빨래도 없었다.'),
       ...(f.travelTogetherDiscussed ? msg(D(21, undefined, '같이 갈 마음이 아직')) : [n('사진을 보내며 누군가의 미래를 정해 놓지는 않았다.')])];
@@ -158,7 +160,8 @@ function ending(c) {
     scene(23, 'home-evening', 'night'),
     n(hasLie ? '내가 실제로 보낸 문장을 다시 보았다. 이미 말한 마음을, 몰랐다는 말로 지우지는 않기로 했다.'
       : f.appointmentCancelled ? '약속을 바꾼 사실과 그때 보낸 말을 다시 보았다. 취소를 없던 일로 만들지 않는 것도 오늘 내가 할 수 있는 일이었다.'
-        : '오늘 내가 한 약속을 지킨 것. 혼자 보내기로 한 저녁을 누구에게 벌처럼 돌리지 않은 것. 그 정도로 끝나는 날도 있었다.'),
+        : f.dinner === 'SOLO' ? '혼자 보내기로 한 저녁을 누구에게 벌처럼 돌리지 않은 것. 그 정도로 끝나는 날도 있었다.'
+          : '오늘 내가 한 약속을 지킨 것. 나와 먹고 싶다는 사람에게 나도 먹고 싶다고 말한 것. 그 정도로 끝나는 날도 있었다.'),
     scene(24, 'home-evening', 'night'),
     ...(f.travelTogetherDiscussed ? msg(D(24, undefined, '생각할 시간을 둔 밤')) : f.followUpContact
       ? [n('내일 연락하기로 한 약속을 남겼다. 여행 사진은 아직 보내지 않았다. 먼 풍경으로 오늘의 대답을 대신하고 싶지 않았다.')]

@@ -11,7 +11,8 @@ export function getDay18V4GameContext(state) {
   const f = state.storyFlags ?? {};
   return {
     haeunContactAllowed: f.day17V4HaeunContactPaused !== true,
-    otherInterest: f.day12V3SeojinIntent === 'SPARK' || f.day16V4IntentToYuri === 'UNKNOWN',
+    // Not knowing one's feelings is not an affirmative romantic interest.
+    otherInterest: f.day12V3SeojinIntent === 'SPARK',
     yuriPastRelevant: f.day16V4YuriEncountered === true &&
       ['CONTACT_SHARED', 'LIMITED_CONVERSATION'].includes(f.day16V4HaeunYuriKnowledge) &&
       f.day16V4IntentToYuri !== 'END_HERE',
@@ -36,7 +37,7 @@ export function prepareDay18V4GameEntry(state) {
 function presentation(direction) {
   const characterId = direction.character === 'yuri' ? 'player-ex' : direction.character;
   const backgroundId = ({'rose-bistro': 'day18-rose-bistro', 'alley-pub': 'day18-alley-pub',
-    'gimbap-village': 'day18-gimbap-evening', 'neighborhood-day': 'river-night'})[direction.location] ?? direction.location;
+    'gimbap-village': 'day18-gimbap-evening', 'neighborhood-day': 'neighborhood-night'})[direction.location] ?? direction.location;
   const backgroundUrl = MAP_LOCATION_ASSETS[backgroundId] ?? BACKGROUND_ASSETS[backgroundId];
   if (!backgroundUrl) throw new Error(`DAY18_BACKGROUND_MISSING:${backgroundId}`);
   return {backgroundId, backgroundUrl, characterId,

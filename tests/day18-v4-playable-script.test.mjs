@@ -4,6 +4,7 @@ import {beginDay18V4, applyDay18V4Choice, getDay18V4Options} from '../src/day18-
 import {getDay18V4PlayableSegment} from '../src/day18-v4-playable-script.mjs';
 import {DAY18_V4_SOURCE_SCENES} from '../src/day18-v4-source-registry.mjs';
 import {selectDay18V4Source} from '../src/day18-v4-source-selection.mjs';
+import {validateDay18V4BeatAnchors} from '../src/day18-v4-source-beats.mjs';
 
 function start(partner, known = true, context = {}) {
   const s = {storyFlags: {day17V4Completed: true, day17V4Day18HookPending: true,
@@ -15,6 +16,37 @@ function start(partner, known = true, context = {}) {
     day17V4HaeunDisclosure: known ? 'TOLD' : 'WITHHELD'}};
   beginDay18V4(s, context); return s;
 }
+
+test('directed source anchors exist and filename setup precedes the joke', () => {
+  assert.equal(validateDay18V4BeatAnchors(), true);
+  const s = start('HAEUN');
+  for (const id of ['morning_keep','disclose_together','menu_share']) applyDay18V4Choice(s, `day18_v4_${id}`);
+  const lines = getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x => x.text);
+  assert.ok(lines.indexOf('파일 이름에 진짜마지막이라고 써 놨거든.') < lines.indexOf('그럼 다음 파일은?'));
+  assert.ok(lines.includes('파일 이름에 진짜마지막이라고 써 놨거든.'));
+});
+
+test('Yuri arrives after waiting and says goodbye even without Haeun contact', () => {
+  const s = start('YURI', true, {haeunContactAllowed:false});
+  applyDay18V4Choice(s,'day18_v4_morning_keep');
+  const arrival = getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  const directions = arrival.filter(x=>x.type==='sceneDirection');
+  assert.equal(directions[0].character, null);
+  assert.equal(directions[1].character, 'yuri');
+  for(const id of ['menu_each','purpose_present','apology_thanks','relationship_haeun','next_ask','pay_split']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const departure = getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  assert.ok(departure.some(x=>x.speaker==='유리'&&x.text==='잘 들어가.'));
+  assert.ok(!departure.some(x=>x.sender==='하은'));
+});
+
+test('night disclosure reports the chosen purpose and an unaccepted request accurately', () => {
+  const s=start('YURI');
+  for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks','relationship_haeun','next_ask','pay_split','night_tell']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const text=getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x=>x.text??'').join('\n');
+  assert.match(text,/지금의 유리 씨가 궁금해서/);
+  assert.match(text,/아직 만나겠다고 한 건 아니라고/);
+  assert.doesNotMatch(text,/예전에 둘이 어땠는지 궁금해서 나갔어/);
+});
 
 test('Yuri book recollection requires that exact prior conversation, not just meeting her', () => {
   for (const known of [true,false]) {
@@ -69,6 +101,7 @@ test('source-locked dialogue and all choices resolve through deterministic route
     assert.doesNotMatch(text, /SCENARIO|INTERNAL|실제 관심이 없다면|하은과 약속했다면|경로의 선택|day18V4/);
     if (partner !== 'YURI') assert.ok(!all.some(s => s.speaker === '유리' || s.sender === '유리'));
     if (partner === 'SOLO') assert.ok(!all.some(s => s.type === 'sceneDirection' && s.character));
+    else assert.doesNotMatch(text,/혼자 보내기로 한 저녁을 누구에게 벌처럼/);
     assert.equal(all.at(-1).type, 'chapterCompletionCue');
   }
   for (const id of ['yuri_correct', 'yuri_lie_breakup', 'night_correct', 'night_lie_cancel', 'future_others', 'calm_trip', 'next_ask']) {

@@ -1015,6 +1015,7 @@ function renderImmersiveStep() {
   if(step.type==="ambientHold"){ $("#vnCharacter").hidden=true;$("#vnCharacterVideo").hidden=true;queueSceneStep(step.duration??420);return; }
   if(step.type==="sfx"){if(step.stopCueId)sound.stopCue(step.stopCueId);else if(step.sfxId)sound.playCue(step.sfxId);queueSceneStep(40);return;}
   if(step.type==="animation"){queueSceneStep(40);return;}
+  if(step.type==="storyPause"){queueSceneStep(window.matchMedia("(prefers-reduced-motion: reduce)").matches?0:Math.min(1200,Math.max(0,step.duration??600)));return;}
   if(step.type==="itemShow"){const layer=step.layer==="npcRear"?$("#vnNpcRear"):$("#vnNpcFront");layer.hidden=!step.source;if(step.source)layer.src=step.source;applyCharacterStage(layer,step.stage,step.characterId??(step.layer==="npcRear"?"nurse":"doctor"));queueSceneStep(120);return;}
   if(step.type==="cgShow"){
     const layer=$("#vnEventCg");
@@ -1033,12 +1034,20 @@ function renderImmersiveStep() {
   if (step.expressionId&&immersiveScene?.id!==LOCKED_DAY1_SCENE_ID) updateImmersiveCharacter(step.expressionId);
   if(immersiveScene?.id===LOCKED_DAY1_SCENE_ID)updateDay1Focus(step.focusCharacterId??(step.type==="narration"?"pov":"haeun"),step.effect??"");
   const narrationLike=step.type==="narration"||step.type==="monologue";
+  setStoryMessagePresentation(step);
   $("#sceneTitle").textContent=narrationLike?"":(step.type==="message"?step.sender:step.speaker)??"";
   $("#sceneTitle").classList.toggle("hidden",narrationLike);
   $("#visualNovelStage").classList.toggle("narration-mode",narrationLike);
   typeDialogue(step.text);
   if(!eventRuntime.waitForInput("dialogue",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:immersiveScene.index-1})){eventRuntime.fail(new Error("Unable to enter story dialogue state"),{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);return;}persistEventRuntime();
   scheduleAutoAdvance();
+}
+
+function setStoryMessagePresentation(step){
+  const stage=$("#visualNovelStage"),message=step?.type==="message";
+  stage.classList.toggle("phone-message",message);
+  stage.dataset.messageSide=message&&step.sender==="나"?"outgoing":"incoming";
+  stage.querySelector(".vn-dialogue").setAttribute("aria-label",message?`문자 · ${step.sender??""}`:"대화");
 }
 
 function queueSceneStep(delay) {
@@ -1138,6 +1147,7 @@ function applySkippedScenePresentation(choiceIndex){
   if(characterStep?.assetUrl){immersiveScene.activeCharacterAssetUrl=characterStep.assetUrl;$("#vnCharacter").src=characterStep.assetUrl;$("#vnCharacter").hidden=false;applyCharacterStage($("#vnCharacter"),characterStep.stage,characterStep.characterId??immersiveScene.presentation.characterId);}
   else if((transition||characterStep)&&immersiveScene.presentation.characterId!==null)updateImmersiveCharacter(characterStep?.expressionId??transition?.expressionId??immersiveScene.presentation.expressionId);
   const lastLine=skipped.filter(step=>isPlayerFacingStoryStep(step)&&!isInternalStoryStep(step)&&typeof step.text==="string").at(-1);
+  setStoryMessagePresentation(lastLine);
   if(lastLine){const narrationLike=["narration","monologue"].includes(lastLine.type);$("#sceneTitle").textContent=narrationLike?"":(lastLine.type==="message"?lastLine.sender:lastLine.speaker)??"";$("#sceneTitle").classList.toggle("hidden",narrationLike);$("#visualNovelStage").classList.toggle("narration-mode",narrationLike);typeDialogue(lastLine.text);finishDialogueTyping();}
 }
 function skipImmersiveScene(event) { event.stopPropagation();if(!immersiveScene)return;sound.stopTransientCues();sound.restoreBgm({duration:180});$("#vnEventCg").hidden=true;if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);sceneAdvanceTimer=null;eventRuntime.input.unlock(immersiveScene.id);const choice=immersiveScene.sequence.find(step=>step.type==="choice");if(choice){const choiceIndex=immersiveScene.sequence.indexOf(choice);applySkippedScenePresentation(choiceIndex);if(!eventRuntime.waitForInput("choice",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:choiceIndex})){persistEventRuntime(true);return;}immersiveScene.index=choiceIndex+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1,backgroundId:immersiveScene.presentation?.backgroundId});persistEventRuntime(true);renderImmersiveChoices(choice.options);}else{const completionCue=immersiveScene.sequence.find(step=>step.type==="chapterCompletionCue");if(completionCue){try{if(completionCue.day===18)completeDay18V4GameChapter(state,completionCue);else if(completionCue.day===17)completeDay17V4GameChapter(state,completionCue);else if(completionCue.day===16)completeDay16V4GameChapter(state,completionCue);else completeDay15V4GameChapter(state,completionCue);SaveManager.save(state);}catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast(`DAY ${completionCue.day??""} 완료 상태를 확인할 수 없어 진행을 멈췄습니다.`);return;}}finishImmersiveScene();} }
@@ -2802,7 +2812,9 @@ $("#introGameStartButton").addEventListener("click",finishOnboarding);
 document.addEventListener("keydown", handleModalKeydown);
 document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("#gameToolsLayer").classList.contains("hidden"))closeGameTools();});
 document.addEventListener("fullscreenchange",()=>{if(isGameplayVisible()&&!document.fullscreenElement)document.body.classList.add("theater-mode");renderFullscreenButtons();if(activeGuide)requestAnimationFrame(positionActiveGuide);});
-document.addEventListener("pointerdown",()=>{if(isGameplayVisible()&&!document.fullscreenElement)requestInitialFullscreen();},true);
+// Do not resize the viewport between pointerdown and click: that can move the
+// chosen button out from under the pointer before its click is dispatched.
+document.addEventListener("click",()=>{if(isGameplayVisible()&&!document.fullscreenElement)requestInitialFullscreen();},true);
 window.addEventListener("resize",()=>{if(activeGuide)requestAnimationFrame(positionActiveGuide);});
 window.addEventListener("beforeunload",()=>sound.resetStoryAudio());
 document.addEventListener("scroll",()=>{if(activeGuide)requestAnimationFrame(positionActiveGuide);},true);

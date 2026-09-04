@@ -57,6 +57,8 @@ test('contact availability is not attraction or Haeun knowledge of Yuri', () => 
   assert.equal(getDay18V4GameContext(s).otherInterest,false);
   assert.equal(getDay18V4GameContext(s).yuriPastRelevant,false);
   s.storyFlags.day16V4IntentToYuri='UNKNOWN';
+  assert.equal(getDay18V4GameContext(s).otherInterest,false);
+  s.storyFlags.day12V3SeojinIntent='SPARK';
   assert.equal(getDay18V4GameContext(s).otherInterest,true);
   s.storyFlags.day16V4HaeunYuriKnowledge='CONTACT_SHARED';
   assert.equal(getDay18V4GameContext(s).yuriPastRelevant,true);
