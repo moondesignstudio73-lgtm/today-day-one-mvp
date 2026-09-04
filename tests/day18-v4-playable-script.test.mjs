@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {existsSync} from 'node:fs';
 import {beginDay18V4, applyDay18V4Choice, getDay18V4Options} from '../src/day18-v4-state-contract.mjs';
 import {getDay18V4PlayableSegment} from '../src/day18-v4-playable-script.mjs';
 import {DAY18_V4_SOURCE_SCENES} from '../src/day18-v4-source-registry.mjs';
@@ -161,6 +162,24 @@ test('source selection retains non-dialogue as non-renderable notes, never narra
   assert.throws(() => selectDay18V4Source(2, {from: 'nonexistent boundary'}), /BOUNDARY_MISSING/);
 });
 
+test('Jihoon meal photo appears before the evidence joke, only on his contact branch', () => {
+  for(const contact of ['solo_jihoon','solo_haeun','solo_food']) {
+    const s=start('SOLO');
+    for(const id of ['morning_solo','disclose_solo','menu_new',contact]) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const photos=segment.filter(x=>x.type==='cgShow');
+    assert.equal(photos.length,contact==='solo_jihoon'?1:0);
+    if(contact==='solo_jihoon') {
+      const index=segment.findIndex(x=>x.type==='cgShow');
+      assert.equal(segment[index-1].text,'내가 지금 입이 바빠.');
+      assert.equal(segment[index+1].text,'리뷰가 아니라 증거네.');
+      assert.ok(existsSync(new URL(`../${photos[0].source}`,import.meta.url)));
+      assert.equal(photos[0].fit,'contain');
+      assert.deepEqual(getDay18V4PlayableSegment(JSON.parse(JSON.stringify(s.storyFlags.day18V4))),segment);
+    }
+  }
+});
+
 test('actual interest is spoken before Haeun asks what it means, never invented otherwise', () => {
   for(const otherInterest of [true,false]) {
     const s=start('HAEUN',true,{otherInterest});
@@ -203,7 +222,7 @@ test('source-locked dialogue and all choices resolve through deterministic route
     while (true) {
       const chapter = s.storyFlags.day18V4;
       const segment = getDay18V4PlayableSegment(chapter); all.push(...segment);
-      for (const line of segment.filter(s => s.source)) {
+      for (const line of segment.filter(s => s.source && typeof s.source === 'object')) {
         const original = DAY18_V4_SOURCE_SCENES[line.source.scene - 1].body.split('\n')[line.source.line - 1];
         assert.ok(original.includes(`“${line.text}”`), `source mismatch ${JSON.stringify(line.source)}`);
       }
