@@ -258,6 +258,11 @@ test('morning water is a visual action before the frozen appointment recap', () 
       assert.equal(segment[0].location,'day4-bedroom-morning');
       assert.equal(segment[1].source,'assets/events/day18-v4/morning-alarm-off-v1.png');
       assert.equal(segment[1].type,'cgShow');
+      assert.deepEqual(segment.slice(2,5).map(x=>x.source),['rest','flex','rest'].map(pose=>`assets/events/day18-v4/morning-feet-${pose}-v1.png`));
+      for(const frame of segment.slice(2,5)) {
+        assert.equal(frame.type,'cgShow');assert.equal(frame.text,undefined);
+        assert.ok(existsSync(new URL(`../${frame.source}`,import.meta.url)));
+      }
       assert.ok(existsSync(new URL(`../${segment[1].source}`,import.meta.url)));
       assert.ok(!segment.some(x=>x.text?.includes('알람을 끄고 나서도')));
       assert.equal(segment[at-2].text,'어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.');

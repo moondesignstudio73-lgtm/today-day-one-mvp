@@ -71,6 +71,9 @@ test('unanswered morning survives production save/load with alarm and water in o
     assert.deepEqual(steps,expected);
     assert.deepEqual(steps.filter(x=>x.type==='cgShow').map(x=>x.source),[
       'assets/events/day18-v4/morning-alarm-off-v1.png',
+      'assets/events/day18-v4/morning-feet-rest-v1.png',
+      'assets/events/day18-v4/morning-feet-flex-v1.png',
+      'assets/events/day18-v4/morning-feet-rest-v1.png',
       'assets/events/day18-v4/morning-water-v1.png'
     ]);
     assert.equal(restored.storyFlags.day18V4.choices.length,0);

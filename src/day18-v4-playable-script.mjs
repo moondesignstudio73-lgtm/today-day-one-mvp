@@ -202,6 +202,7 @@ function opening(c) {
   switch (c.phase) {
     case 'morning': return [scene(1, 'day4-bedroom-morning', 'morning'),
       {type:'cgShow',source:'assets/events/day18-v4/morning-alarm-off-v1.png',fit:'contain',duration:2800},
+      ...['rest','flex','rest'].map(pose=>({type:'cgShow',source:`assets/events/day18-v4/morning-feet-${pose}-v1.png`,fit:'contain',duration:1000})),
       n('어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.'),
       scene(1, 'home-morning', 'morning'),
       {type:'cgShow',source:'assets/events/day18-v4/morning-water-v1.png',fit:'contain',duration:2800},
