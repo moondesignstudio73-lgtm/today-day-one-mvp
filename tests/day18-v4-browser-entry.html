@@ -11,6 +11,8 @@
 <button data-route="SOLO" data-travel-photo="true">여행 사진 집중 QA</button>
 <button data-route="YURI" data-wallet="true">지갑 행동 집중 QA</button>
 <button data-route="HAEUN" data-food-sharing="true">음식 나누기 집중 QA</button>
+<button data-route="HAEUN" data-food-sharing="menu_each">음식 나누기 각자 메뉴 QA</button>
+<button data-route="HAEUN" data-food-sharing="menu_wait">음식 나누기 메뉴 고민 QA</button>
 <p><label><input id="no-contact" type="checkbox">하은 연락 휴식 (유리/혼자 경로)</label>
 <label><input id="other-interest" type="checkbox">서진에게 실제 관심을 표현한 이력</label>
 <label><input id="unknown-appointment" type="checkbox">하은에게 유리 약속을 아직 말하지 않음</label></p>
@@ -66,7 +68,8 @@ document.querySelectorAll('[data-route]').forEach(button => button.addEventListe
   }
   if(button.dataset.foodSharing) {
     prepareDay18V4GameEntry(s);
-    for(const id of ['morning_keep','disclose_together','menu_share']) applyDay18V4GameChoice(s,`day18_v4_${id}`);
+    const menu=['menu_each','menu_wait'].includes(button.dataset.foodSharing) ? button.dataset.foodSharing : 'menu_share';
+    for(const id of ['morning_keep','disclose_together',menu]) applyDay18V4GameChoice(s,`day18_v4_${id}`);
   }
   SaveManager.save(s); location.href = '../index.html?qa=day18-v4';
 }));

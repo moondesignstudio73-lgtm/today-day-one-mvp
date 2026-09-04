@@ -43,6 +43,22 @@ test('food sharing is a silent action before tasting on all Haeun menu branches'
   }
 });
 
+test('cancelled Haeun dinner never borrows the sharing action in any saved schema', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    const s=start('HAEUN',true,context);
+    applyDay18V4Choice(s,'day18_v4_morning_change');
+    for(let count=0;s.storyFlags.day18V4.phase!=='ending';count++) {
+      assert.ok(count<25);
+      const restored=JSON.parse(JSON.stringify(s.storyFlags.day18V4));
+      assert.equal(restored.facts.dinner,'SOLO');
+      const segment=getDay18V4PlayableSegment(restored);
+      assert.ok(!segment.some(x=>x.type==='cgShow'&&x.source.includes('food-sharing')));
+      assert.ok(!segment.some(x=>x.text==='네 거가 더 맛있어 보이는데.'));
+      applyDay18V4Choice(s,getDay18V4Options(s.storyFlags.day18V4)[0].id);
+    }
+  }
+});
+
 test('directed source anchors exist and filename setup precedes the joke', () => {
   assert.equal(validateDay18V4BeatAnchors(), true);
   const s = start('HAEUN');
