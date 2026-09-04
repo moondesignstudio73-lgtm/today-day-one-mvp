@@ -127,7 +127,11 @@ function reaction(c) {
     case 'calm_rest': return msg(part(19, '쉬는 모습을 보고 싶다', '같은 저녁을 원한다'));
     case 'calm_dinner': return msg(part(19, '같은 저녁을 원한다'));
     case 'alone_stop': return [n('휴대전화를 내려놓고 컵을 씻었다. 물소리 때문에 방이 덜 조용해졌다.')];
-    case 'alone_note': return [n('상대의 표정을 추측하는 대신 내가 한 문장을 적었다. 메모를 누구에게도 보내지 않았다.')];
+    case 'alone_note': {
+      const previous={...c,choices:c.choices.slice(0,-1)};
+      const lines=reaction(previous).filter(step => ['dialogue','message'].includes(step.type)&&step.speaker==='나').map(step=>step.text);
+      return [{type:'privateNote',lines},n('메모를 누구에게도 보내지 않았다. 오늘 작성한 문장을 곧바로 성실함의 증거로 보여 주고 싶지 않았다.')];
+    }
     case 'alone_jihoon': return jihoonAtNight(c);
     case 'travel_near': return [n('돌아오고 싶으면 돌아올 수 있다는 생각도 여행을 망치는 말은 아니었다.')];
     case 'travel_busan': return [travelPhoto(),n('역에서 이동하고, 먹고, 쉬고, 다시 돌아와야 했다. 사진 아래의 시간을 내 하루로 옮겨 봐야 했다.')];

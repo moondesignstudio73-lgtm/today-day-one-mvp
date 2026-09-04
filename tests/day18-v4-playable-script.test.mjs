@@ -307,6 +307,23 @@ test('Yuri report waits for a reply and uses short text only when the call is un
   }
 });
 
+test('private notes quote only the players immediately preceding spoken reply, without sending it',()=>{
+  for(const choice of ['alone_note','alone_stop','alone_jihoon']) {
+    const s=start('YURI',false,{callScheduling:true,separateDinnerScheduling:true});
+    for(const id of ['morning_keep','disclose_withhold','menu_each','purpose_present','apology_thanks','relationship_haeun','next_ask','pay_split','night_tell','schedule_ask_tomorrow']) applyDay18V4Choice(s,`day18_v4_${id}`);
+    applyDay18V4Choice(s,`day18_v4_${choice}`);
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const note=steps.find(x=>x.type==='privateNote');
+    assert.equal(Boolean(note),choice==='alone_note');
+    if(note) assert.deepEqual(note.lines,['알겠어. 오늘은 쉬어.']);
+    assert.equal(JSON.stringify(s),before);
+    assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(s.storyFlags.day18V4))));
+  }
+  const quiet=start('SOLO',true,{haeunContactAllowed:false});
+  for(const id of ['morning_solo','menu_familiar','solo_food','return_home','alone_note']) applyDay18V4Choice(quiet,`day18_v4_${id}`);
+  assert.deepEqual(getDay18V4PlayableSegment(quiet.storyFlags.day18V4).find(x=>x.type==='privateNote').lines,[]);
+});
+
 test('accepted calls pause without speech and only the explicit ended branch shows termination', () => {
   for(const known of [true,false]) {
     const s=start('YURI',known,{callScheduling:true,separateDinnerScheduling:true});

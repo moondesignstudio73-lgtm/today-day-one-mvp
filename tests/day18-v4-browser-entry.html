@@ -18,7 +18,7 @@ import {createInitialState} from '../src/game-core.mjs';
 import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
 import {SaveManager} from '../src/save-manager.mjs';
 import {GAME_MODES} from '../src/scenario-state.mjs';
-import {prepareDay18V4GameEntry,applyDay18V4GameChoice} from '../src/day18-v4-game-bridge.mjs?v=6';
+import {prepareDay18V4GameEntry,applyDay18V4GameChoice} from '../src/day18-v4-game-bridge.mjs?v=7';
 const backupKey = 'day18-v4-qa-save-backup';
 const keys = [SaveManager.key, SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)];
 document.querySelectorAll('[data-route]').forEach(button => button.addEventListener('click', () => {

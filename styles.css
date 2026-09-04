@@ -1202,4 +1202,10 @@ body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-message[data-messag
 body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-message .vn-dialogue p {max-width:none;overflow-wrap:anywhere;}
 body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-message .vn-nameplate::before {content:"문자 · ";font-weight:400;}
 body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-call .vn-nameplate::before {content:"통화 · ";font-weight:400;}
+.vn-stage.private-note-active .vn-dialogue{visibility:hidden}
+.story-private-note{position:absolute;z-index:8;top:12%;bottom:8%;left:50%;transform:translateX(-50%);width:min(430px,calc(100% - 32px));box-sizing:border-box;display:flex;flex-direction:column;padding:24px;color:#263347;background:#f6f8fc;border:1px solid #ccd4df;border-radius:12px;font:inherit;text-align:left;box-shadow:0 12px 42px #17182b60}
+.story-private-note header{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #ccd4df;padding-bottom:16px}
+.story-private-note strong{font-size:18px}.story-private-note small,.story-private-note footer{color:#596f93;font-size:14px}
+.private-note-lines{overflow:auto;flex:1;min-height:0;padding:12px 0}.private-note-lines p{font-size:18px;line-height:1.8;overflow-wrap:anywhere;white-space:pre-wrap}.private-note-empty{color:#596f93}
+.story-private-note footer{padding-top:14px;border-top:1px solid #ccd4df;text-align:right}
 @media(max-width:760px){body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-message .vn-dialogue{left:14px;right:14px;bottom:12px;width:auto;min-height:108px;padding:26px 36px 20px 20px;}}

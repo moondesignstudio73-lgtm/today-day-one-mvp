@@ -81,7 +81,7 @@ import { applyDay16V4GameChoice, completeDay16V4GameChapter, getDay16V4Compatibi
 import { LOCKED_DAY17_SCENE_ID, applyLockedDay17ChoiceState, getLockedDay17LegacyChoice, getLockedDay17ResumePresentation, getLockedDay17Segment } from "./src/day17-campaign-runtime.mjs?v=1";
 import { applyDay17V4GameChoice, completeDay17V4GameChapter, getDay17V4Compatibility, getDay17V4GameResumePresentation, getDay17V4GameSegment, prepareDay17V4GameEntry } from "./src/day17-v4-game-bridge.mjs?v=2";
 import { LOCKED_DAY18_SCENE_ID, applyLockedDay18ChoiceState as applyLegacyDay18ChoiceState, getLockedDay18LegacyChoice, getLockedDay18ResumePresentation as getLegacyDay18ResumePresentation, getLockedDay18Segment as getLegacyDay18Segment } from "./src/day18-campaign-runtime.mjs?v=1";
-import {prepareDay18V4GameEntry, getDay18V4GameSegment, getDay18V4GameResumePresentation, applyDay18V4GameChoice, completeDay18V4GameChapter} from "./src/day18-v4-game-bridge.mjs?v=6";
+import {prepareDay18V4GameEntry, getDay18V4GameSegment, getDay18V4GameResumePresentation, applyDay18V4GameChoice, completeDay18V4GameChapter} from "./src/day18-v4-game-bridge.mjs?v=7";
 import { LOCKED_DAY19_SCENE_ID, applyLockedDay19ChoiceState, getLockedDay19LegacyChoice, getLockedDay19ResumePresentation, getLockedDay19Segment } from "./src/day19-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY20_SCENE_ID, applyLockedDay20ChoiceState, getLockedDay20LegacyChoice, getLockedDay20ResumePresentation, getLockedDay20Segment } from "./src/day20-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY21_SCENE_ID, applyLockedDay21ChoiceState, getLockedDay21LegacyChoice, getLockedDay21ResumePresentation, getLockedDay21Segment } from "./src/day21-campaign-runtime.mjs?v=1";
@@ -986,6 +986,9 @@ function closeStoryFreeAction(){
 
 function renderImmersiveStep() {
   if (!immersiveScene) return;
+  $("#visualNovelStage").querySelector(".story-private-note")?.remove();
+  if($("#visualNovelStage").classList.contains("private-note-active"))$("#visualNovelStage").setAttribute("aria-label","대화 전체 표시");
+  $("#visualNovelStage").classList.remove("private-note-active");
   const step=immersiveScene.sequence[immersiveScene.index++];
   immersiveScene.currentStep=step;
   eventRuntime.setProgress({sequenceIndex:Math.max(0,immersiveScene.index-1),sceneId:step?.label??eventRuntime.active?.sceneId,dialogueIndex:Math.max(0,immersiveScene.index-1),backgroundId:step?.backgroundId??immersiveScene.presentation?.backgroundId,bgmId:step?.bgmId??null});persistEventRuntime(step?.type==="transition"||step?.type==="choice");
@@ -1019,6 +1022,17 @@ function renderImmersiveStep() {
   if(step.type==="sfx"){if(step.stopCueId)sound.stopCue(step.stopCueId);else if(step.sfxId)sound.playCue(step.sfxId);queueSceneStep(40);return;}
   if(step.type==="animation"){queueSceneStep(40);return;}
   if(step.type==="storyPause"){queueSceneStep(window.matchMedia("(prefers-reduced-motion: reduce)").matches?0:Math.min(1200,Math.max(0,step.duration??600)));return;}
+  if(step.type==="privateNote"){
+    finishDialogueTyping();
+    setStoryMessagePresentation(null);
+    const stage=$("#visualNovelStage"),note=document.createElement("section");
+    note.className="story-private-note";
+    note.setAttribute("aria-label","내 메모 · 나에게만");
+    note.innerHTML=`<header><strong>내 메모</strong><small>나에게만</small></header><div class="private-note-lines">${step.lines.length?step.lines.map(line=>`<p>${escapeHtml(line)}</p>`).join(""):"<p class=\"private-note-empty\">아직 적은 말이 없다.</p>"}</div><footer>읽고 닫기</footer>`;
+    stage.append(note);stage.classList.add("private-note-active");stage.setAttribute("aria-label","메모 읽고 닫기");
+    if(!eventRuntime.waitForInput("dialogue",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:immersiveScene.index-1})){eventRuntime.fail(new Error("Unable to open private note"));return;}
+    persistEventRuntime();scheduleAutoAdvance();return;
+  }
   if(step.type==="phoneCallCue"){
     finishDialogueTyping();
     const ended=step.status==="ended",stage=$("#visualNovelStage");
