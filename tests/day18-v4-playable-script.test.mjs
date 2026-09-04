@@ -26,6 +26,38 @@ test('directed source anchors exist and filename setup precedes the joke', () =>
   assert.ok(lines.includes('파일 이름에 진짜마지막이라고 써 놨거든.'));
 });
 
+test('Haeun arrival establishes the wind before the original joke', () => {
+  const s=start('HAEUN');
+  for(const id of ['morning_keep','disclose_together']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  const lines=segment.map(x=>x.text??'');
+  const cause=lines.indexOf('밖에서 기다리려다가 바람이 불어서 먼저 들어왔어.');
+  assert.ok(cause>=0);
+  assert.equal(lines[cause+1],'잘했네.');
+  assert.ok(lines.findIndex(x=>x.includes('밖에 있었으면 더 멋있었을까'))>cause);
+  const directions=segment.filter(x=>x.type==='sceneDirection');
+  assert.equal(directions[0].character,null);
+  assert.equal(directions[1].character,'girlfriend');
+});
+
+test('withheld noon disclosure lets Haeun leave for her own lunch', () => {
+  const s=start('YURI',false);
+  for(const id of ['morning_keep','disclose_withhold']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  assert.ok(segment.some(x=>x.text==='나는 이제 점심 먹으러 갈게.'));
+  assert.ok(segment.some(x=>x.text==='그녀의 오후가 내 답장 옆에서 멈추지는 않았다.'));
+});
+
+test('present-purpose reply places the cup down before Yuri speaks', () => {
+  const s=start('YURI');
+  for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  const reply=segment.findIndex(x=>x.text==='그 말이 반갑기도 한데, 좀 조심스럽다.');
+  assert.ok(reply>=2);
+  assert.equal(segment[reply-2].sfxId,'SFX_CUP_SET_DOWN');
+  assert.equal(segment[reply-1].type,'storyPause');
+});
+
 test('Yuri arrives after waiting and says goodbye even without Haeun contact', () => {
   const s = start('YURI', true, {haeunContactAllowed:false});
   applyDay18V4Choice(s,'day18_v4_morning_keep');

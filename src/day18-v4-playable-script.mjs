@@ -31,15 +31,18 @@ function reaction(c) {
   const key = chosen(c), f = c.facts, i = c.input;
   if (!key) return [];
   switch (key) {
-    case 'morning_keep': return msg(i.appointment === 'YURI' ? [d('유리', '응. 늦으면 먼저 말해 줘. 나도 그러고.')]
-      : [d('하은', '나 오늘 일찍 끝날 줄 알고 밀린 것까지 잡으면 안 되겠다.'), d('나', '그럼 내가 일찍 끝나는 쪽을 응원할게.'), d('하은', '일이 끝나는 쪽. 내가 끝나는 쪽 말고.')]);
+    case 'morning_keep': return [...msg(i.appointment === 'YURI' ? [d('유리', '응. 늦으면 먼저 말해 줘. 나도 그러고.')]
+      : [d('하은', '나 오늘 일찍 끝날 줄 알고 밀린 것까지 잡으면 안 되겠다.'), d('나', '그럼 내가 일찍 끝나는 쪽을 응원할게.'), d('하은', '일이 끝나는 쪽. 내가 끝나는 쪽 말고.')]),
+      n('약속을 지킨다는 건 아침부터 멋진 사람으로 완성되어 있어야 한다는 뜻은 아니었다.')];
     case 'morning_change': return [...msg([d('나', '가서 계속 시계만 볼 것 같아서요. 미리 말하고 싶었어요.'),
       d(i.appointment === 'YURI' ? '유리' : '하은', i.appointment === 'YURI' ? '오늘 저녁은 취소하자. 다음을 정할지는 서로 생각해 보고.' : '알겠어. 오늘은 나도 집으로 갈게.')]),
       n('날짜 하나가 저절로 옮겨지지는 않았다.')];
     case 'morning_solo': return [...(f.appointmentCancelled ? msg([d('나', '오늘은 못 만나겠어. 미안해.')]) : []), n('냉장고 문을 열었다. 혼자 먹는다고 저녁까지 없어지는 건 아니었다.')];
-    case 'disclose_yuri': return msg(i.haeunKnowsAppointment ? [d('나', '오늘 어떤 마음으로 나가는지도 이야기하고 싶어.'), d('하은', '밥 먹는다는 것보다, 네가 어떤 마음으로 나가는지 알고 싶었어.')]
-      : [d('하은', '언제 정했어?'), d('나', '어제.'), d('하은', '나한테는 오늘 말하고 싶어진 거야?'), d('나', '어제도 말할 수 있었어. 내가 미뤘어.')]);
-    case 'disclose_withhold': return msg(part(2, '말하기 어렵다고 한다', '혼자 먹는다고 한다'));
+    case 'disclose_yuri': return [...msg(i.haeunKnowsAppointment ? [d('나', '오늘 어떤 마음으로 나가는지도 이야기하고 싶어.'), d('하은', '밥 먹는다는 것보다, 네가 어떤 마음으로 나가는지 알고 싶었어.')]
+      : [d('하은', '언제 정했어?'), d('나', '어제.'), d('하은', '나한테는 오늘 말하고 싶어진 거야?'), d('나', '어제도 말할 수 있었어. 내가 미뤘어.')]),
+      ...(!i.haeunKnowsAppointment ? [n('걱정할까 봐, 라는 덧말이 없어도 말이 끝났다.')] : [])];
+    case 'disclose_withhold': return [...msg(part(2, '말하기 어렵다고 한다', '혼자 먹는다고 한다')),
+      {type:'storyPause',duration:600}, ...msg([d('하은','나는 이제 점심 먹으러 갈게.')]), n('그녀의 오후가 내 답장 옆에서 멈추지는 않았다.')];
     case 'disclose_solo': return [...msg([d('하은', '따뜻한 거 먹어.')]), ...(f.dinner === 'YURI' ? [n('하은은 내 거짓말을 알아맞히지 못했다. 그게 안심되면서, 안심하는 내가 불편했다.')] : [])];
     case 'disclose_together': return [n('저녁에 만나기로 한 대화 아래에 답을 남겼다.')];
     case 'menu_each': case 'menu_share': case 'menu_wait':
@@ -47,7 +50,7 @@ function reaction(c) {
       return key === 'menu_each' ? [d('하은', '네 거 맛있으면 한 입만 구경할게.')]
         : key === 'menu_share' ? [d('하은', '먼저 먹어 보고, 내가 싫으면 네가 책임지는 건 아니야.')]
         : [d('하은', '나도 고민 중이야. 빨리 고르는 얼굴만 하고 있었어.'), d('나', '그 얼굴 좀 알려 줘.'), d('하은', '지금 네 얼굴.')];
-    case 'menu_familiar': case 'menu_new': case 'menu_later': return [n('주문한 한 줄이 나오자 따뜻한 끝부분부터 먹었다.')];
+    case 'menu_familiar': case 'menu_new': case 'menu_later': return [n('오늘의 배고픔을 과거의 취향으로 맞히려 하지는 않았다.'), n('주문한 한 줄이 나오자 따뜻한 끝부분부터 먹었다.')];
     case 'purpose_past': return part(5, '과거가 궁금하다', '현재의 유리가 궁금하다');
     case 'purpose_present': return part(5, '현재의 유리가 궁금하다', '내 마음을 확인하고 싶다');
     case 'purpose_self': return part(5, '내 마음을 확인하고 싶다');
@@ -125,14 +128,16 @@ function yuriPresentConversation(c) {
 function opening(c) {
   const f = c.facts, i = c.input;
   switch (c.phase) {
-    case 'morning': return [scene(1, 'home-morning', 'morning'), n('알람을 끄고 나서도 잠깐 누워 있었다.'), n('식탁에 놓인 물을 마셨다. 휴대전화에는 어제 내가 보낸 답이 남아 있었다.'),
-      n(i.appointment === 'YURI' ? '유리 씨와 장소와 시간을 확인한 두 줄.' : i.appointment === 'HAEUN' ? '하은과 퇴근하고 만나자는 짧은 대화.' : '저녁 칸은 비어 있었다.')];
+    case 'morning': return [scene(1, 'home-morning', 'morning'), n('알람을 끄고 나서도 잠깐 누워 있었다.'), n('어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.'), n('식탁에 놓인 물을 마셨다. 휴대전화에는 어제 내가 보낸 답이 남아 있었다.'),
+      n(i.appointment === 'YURI' ? '유리 씨와 장소와 시간을 확인한 두 줄.' : i.appointment === 'HAEUN' ? '하은과 퇴근하고 만나자는 짧은 대화.' : '저녁 칸은 비어 있었다.'),
+      ...(i.appointment === 'SOLO' ? [n('빈칸을 보고 나니 묘하게 늦은 것 같았다. 누구보다 늦었는지는 알 수 없었다.')] : [])];
     case 'disclosure': return [scene(2, 'home-morning', 'afternoon'), ...msg([d('하은', '점심 먹었어? 나는 지금 먹으러 나왔어.'),
       ...(f.dinner === 'YURI' && i.haeunKnowsAppointment ? [d('하은', '오늘 너무 늦지는 않을 거지?')] : [])])];
-    case 'menu': return [scene(3, place(c), 'evening', f.dinner === 'YURI' ? null : companion(c)),
-      ...(f.dinner === 'YURI' ? [n('유리 씨는 아직 오지 않았다. 메뉴를 한 번 다 읽었는데 아무것도 고르지 않았다.'), scene(3,place(c),'evening','yuri'), ...D(3, undefined, '하은과 약속한 저녁')]
-        : f.dinner === 'HAEUN' ? D(3, '하은과 약속한 저녁', '혼자 먹는 저녁')
-        : [n('배고픈 것보다 눈이 바쁘다는 걸 깨달았다.'), ...D(3, '혼자 먹는 저녁')]),
+    case 'menu': return [scene(3, place(c), 'evening', null),
+      ...(f.dinner === 'YURI' ? [n('유리 씨는 아직 오지 않았다. 메뉴를 한 번 다 읽었는데 아무것도 고르지 않았다.'), n('상대를 기다리는 일에도 오래 해 본 사람 같은 자세가 있을까 싶었다.'), scene(3,place(c),'evening','yuri'), ...D(3, undefined, '하은과 약속한 저녁')]
+        : f.dinner === 'HAEUN' ? [n('밖에서 기다리려던 마음이 바람 앞에서는 오래가지 못했다.'), scene(3,place(c),'evening','girlfriend'),
+          d('나','밖에서 기다리려다가 바람이 불어서 먼저 들어왔어.'), d('하은','잘했네.'), ...D(3, '하은과 약속한 저녁', '혼자 먹는 저녁')]
+        : [n('배고픈 것보다 눈이 바쁘다는 걸 깨달았다.'), ...D(3, '혼자 먹는 저녁'), n('대단한 허락을 받은 것도 아닌데 마음이 편해졌다. 처음부터 저녁 전체를 맞힐 필요는 없었다.')]),
       scene(4, place(c), 'evening', companion(c)), ...(f.dinner === 'YURI' ? D(4, undefined, '### 선택 3') : [])];
     case 'yuri_purpose': return [scene(5, place(c), 'evening', 'yuri'), ...D(5, undefined, '### 선택 4')];
     case 'yuri_apology': return [scene(6, place(c), 'evening', 'yuri'), ...D(6), scene(7, place(c), 'evening', 'yuri'), ...D(7, undefined, '### 선택 5')];
