@@ -57,3 +57,33 @@ test("game controller wires DAY 17 V4 entry, resume, choices and completion",()=
   for(const token of ["prepareDay17V4GameEntry(state)","getDay17V4GameResumePresentation(state)","getDay17V4GameSegment(state)","applyDay17V4GameChoice(state,choiceId)","completeDay17V4GameChapter(state,step)"])assert.ok(game.includes(token),token);
   assert.match(game,/getDay17V4Compatibility\(state\)\.mode==="V1_LEGACY"&&state\.storyFlags\?\.day17RuntimeComplete/);
 });
+
+test("restored DAY 17 dialogue keeps authored taste, fatigue, bag and affection exchanges",()=>{
+  const state=fresh(),all=[];prepareDay17V4GameEntry(state);all.push(...getDay17V4GameSegment(state));
+  for(const id of ["day17_v4_size_walk","day17_v4_meet_ask","day17_v4_goal_compare","day17_v4_rush_compare","day17_v4_drink_new","day17_v4_fear_disappoint","day17_v4_help_sort","day17_v4_rest_like","day17_v4_yuri_short","day17_v4_tell_meeting","day17_v4_tomorrow_body","day17_v4_night_moment"])all.push(...pick(state,id));
+  const text=all.map(step=>step.text).filter(Boolean);
+  for(const line of [
+    "누구?","나는 여기까지","별로야?","내가 좋아하는 맛은 아닌 것 같아.",
+    "이건 싸울 일 아니지?","응. 내 양만 늘었네.","계속 먹어도 괜찮아?","응. 이번엔 진짜.",
+    "나 계속 조심해야 하는 사람이면 재미없을 것 같아서.","내가 재미없다고 했어?",
+    "내가 그런 생각 할 수도 없다는 말은 아니야. 근데 오늘은 내가 말하기 전에 네가 먼저 실망시키고 있잖아. 네가 생각한 나를.",
+    "너무 대놓고 말했네.","아니. 나도 그렇게 말하고 싶었어.","네가 먼저 보고 있던 건데.",
+    "왜 이런 것까지 들고 다녔지.","엄청난 변화는 없네.","그래도 안에 쓰레기는 줄었어.",
+    "왜?","난 지금 누가 내 가방 들어 주는 것보다 그냥 안 움직이는 게 좋아.",
+    "내가 아까 힘들다고 했을 땐 못 들은 것 같더니.","그래서 미안하고. 지금은 좋아.","그럼 둘 다 해.",
+    "오늘 몸이 좀 피곤해서, 내일도 오래는 못 있을 것 같아요."
+  ])assert.ok(text.includes(line),line);
+
+  const honest=fresh();prepareDay17V4GameEntry(honest);pick(honest,"day17_v4_size_walk");
+  assert.ok(pick(honest,"day17_v4_meet_honest").some(step=>step.text==="누구한테?"));
+});
+
+test("solo call availability is truthful and forbidden schedule wording stays absent",()=>{
+  const state=fresh();state.storyFlags.day16V4YuriContact="ENDED_HERE";state.storyFlags.day16V4YuriInvitation="NONE";state.storyFlags.day17V4HaeunCallAvailable=false;
+  prepareDay17V4GameEntry(state);
+  for(const id of ["day17_v4_size_home","day17_v4_meet_solo","day17_v4_goal_info"])pick(state,id);
+  const unavailable=pick(state,"day17_v4_solo_call").map(step=>step.text).filter(Boolean);
+  assert.deepEqual(unavailable.slice(0,3),["지금 통화할 수 있어?","지금은 어려워.","알았어. 나중에"]);
+  const bridge=readFileSync(new URL("../src/day17-v4-game-bridge.mjs",import.meta.url),"utf8");
+  assert.equal(bridge.includes("힘들면 아예 안 가도 되죠?"),false,"authorial anti-example must never become player-facing text");
+});
