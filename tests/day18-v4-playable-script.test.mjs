@@ -448,7 +448,9 @@ test('morning water is a visual action before the frozen appointment recap', () 
       assert.ok(at>0);
       assert.equal(segment[0].location,'day4-bedroom-morning');
       assert.equal(segment[1].source,'assets/events/day18-v4/morning-alarm-off-v1.png');
-      assert.equal(segment[1].type,'cgShow');
+      assert.equal(segment[1].type,'alarmAction');
+      assert.equal(segment[1].sfxId,'SFX_DAY18_PHONE_ALARM');
+      assert.equal(segment[1].actionLabel,'눌러서 알람 끄기');
       assert.deepEqual(segment.slice(2,5).map(x=>x.source),['rest','flex','rest'].map(pose=>`assets/events/day18-v4/morning-feet-${pose}-v1.png`));
       for(const frame of segment.slice(2,5)) {
         assert.equal(frame.type,'cgShow');assert.equal(frame.text,undefined);

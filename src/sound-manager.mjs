@@ -1,5 +1,6 @@
 import { getDay1AudioCue } from "./day1-audio-data.mjs";
 import { getDay2AudioCue } from "./day2-audio-data.mjs";
+import { getDay18AudioCue } from "./day18-audio-data.mjs";
 
 export const SOUND_SETTING_KEY = "today-day-one.sound.v1";
 
@@ -181,7 +182,7 @@ export class SoundManager {
 
   playCue(cueId,{cooldownMs=120}={}) {
     if (!this.enabled) return false;
-    const preset = getDay1AudioCue(cueId) ?? getDay2AudioCue(cueId);
+    const preset = getDay1AudioCue(cueId) ?? getDay2AudioCue(cueId) ?? getDay18AudioCue(cueId);
     if (!preset) return false;
     try {
       const now=this.now(),last=this.lastCueAt.get(cueId)??-Infinity;

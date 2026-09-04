@@ -211,7 +211,7 @@ function opening(c) {
   const f = c.facts, i = c.input;
   switch (c.phase) {
     case 'morning': return [scene(1, 'day4-bedroom-morning', 'morning'),
-      {type:'cgShow',source:'assets/events/day18-v4/morning-alarm-off-v1.png',fit:'contain',duration:2800},
+      {type:'alarmAction',source:'assets/events/day18-v4/morning-alarm-off-v1.png',fit:'contain',sfxId:'SFX_DAY18_PHONE_ALARM',actionLabel:'눌러서 알람 끄기'},
       ...['rest','flex','rest'].map(pose=>({type:'cgShow',source:`assets/events/day18-v4/morning-feet-${pose}-v1.png`,fit:'contain',duration:1000})),
       n('어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.'),
       scene(1, 'home-morning', 'morning'),
