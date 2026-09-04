@@ -161,6 +161,40 @@ test('source selection retains non-dialogue as non-renderable notes, never narra
   assert.throws(() => selectDay18V4Source(2, {from: 'nonexistent boundary'}), /BOUNDARY_MISSING/);
 });
 
+test('actual interest is spoken before Haeun asks what it means, never invented otherwise', () => {
+  for(const otherInterest of [true,false]) {
+    const s=start('HAEUN',true,{otherInterest});
+    for(const id of ['morning_keep','disclose_together','menu_each','topic_other']) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const text=getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x=>x.text??'').join('\n');
+    if(otherInterest) {
+      assert.ok(text.indexOf('다른 사람을 더 알고 싶은 마음이 있어.')>=0);
+      assert.ok(text.indexOf('다른 사람을 더 알고 싶은 마음이 있어.')<text.indexOf('그 사람을 알고 싶은 거야'));
+    } else assert.doesNotMatch(text,/다른 사람을 더 알고 싶은 마음이 있어/);
+  }
+});
+
+test('unreported reunion request is remembered only with an active contact and no night report', () => {
+  for(const contactAllowed of [true,false]) for(const report of [true,false]) {
+    const s=start('YURI',true,{haeunContactAllowed:contactAllowed});
+    const ids=['morning_keep',...(contactAllowed?['disclose_yuri']:[]),'menu_each','purpose_present','apology_thanks','relationship_haeun','next_ask','pay_split',
+      ...(contactAllowed ? report?['night_tell','future_unsure']:['night_defer','alone_note'] : ['alone_note']), 'travel_life'];
+    for(const id of ids) applyDay18V4Choice(s,`day18_v4_${id}`);
+    assert.equal(s.storyFlags.day18V4.phase,'ending');
+    const text=getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x=>x.text??'').join('\n');
+    assert.equal(text.includes('다시 만나고 싶다고 한 말은 아직 하은에게 전하지 않았다.'),contactAllowed&&!report);
+    assert.match(text,/내일의 약속은 그 말 다음에서 시작해야 했다/);
+  }
+});
+
+test('Jihoon states his availability before the difficult night conversation', () => {
+  const s=start('YURI');
+  for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks','relationship_haeun','next_time','pay_split','night_defer','alone_jihoon']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const messages=getDay18V4PlayableSegment(s.storyFlags.day18V4).filter(x=>x.type==='message');
+  assert.equal(messages[0].sender,'지훈');
+  assert.equal(messages[0].text,'지금 길게는 어려워.');
+  assert.equal(messages[1].text,'무슨 일인데?');
+});
+
 test('source-locked dialogue and all choices resolve through deterministic route coverage', () => {
   const covered = new Set();
   for (const partner of ['YURI', 'HAEUN', 'SOLO']) for (let run = 0; run < 180; run++) {

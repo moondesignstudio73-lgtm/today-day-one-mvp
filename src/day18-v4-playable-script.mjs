@@ -18,7 +18,7 @@ function jihoonAtNight(c) {
   const f = c.facts;
   const difficultTalk = f.nightRoute === 'UNRESOLVED' || f.contactTonight === 'night_defer' ||
     (f.haeunTopic === 'topic_other' && c.input.otherInterest) || f.statements.some(s => !s.truthful);
-  if (difficultTalk) return msg(part(20, '지훈에게 묻는다'));
+  if (difficultTalk) return msg([d('지훈','지금 길게는 어려워.'), ...part(20, '지훈에게 묻는다')]);
   // A quiet night is not evidence of a quarrel. Nor does an earlier meal chat
   // authorize another instant reply from a busy friend.
   return [
@@ -66,12 +66,13 @@ function reaction(c) {
     case 'next_time': return part(10, '시간을 둔다', '과거 이야기를 마친다');
     case 'next_end': return part(10, '과거 이야기를 마친다', '다시 만나고 싶다고 한다');
     case 'next_ask': return [...D(10, '**다시 만나고 싶다고 한다**', '현재 연애가 있다는 말을 들었다면'),
-      ...(f.yuriRelationshipClaim !== 'relationship_free' ? [d('유리', '네가 누구와 어떤 관계인지 흐린 채로, 나한테 다음을 물어보지는 않았으면 해.')] : [])];
+      ...(f.yuriRelationshipClaim !== 'relationship_free' ? [d('유리', '네가 누구와 어떤 관계인지 흐린 채로, 나한테 다음을 물어보지는 않았으면 해.')] : []),
+      n('유리 씨가 혼자라는 사실만으로 내 다음 저녁이 예약되는 건 아니었다.')];
     case 'pay_split': return [n('둘이 정한 만큼 나누고, 영수증은 필요한 사람이 받았다.')];
     case 'pay_offer': return part(11, '한 끼를 사고 싶다고 한다', '마음 편하려고 낸다');
     case 'pay_debt': return D(11, '**마음 편하려고 낸다**', '밖으로 나오자');
     case 'topic_good': return part(13, '지금 좋은 마음을 말한다', '다른 마음을 말한다');
-    case 'topic_other': return i.otherInterest ? D(13, '**다른 마음을 말한다**', '실제 관심이 없다면')
+    case 'topic_other': return i.otherInterest ? [d('나','다른 사람을 더 알고 싶은 마음이 있어. 네가 기다려 주기로 한 것처럼 생각하고 싶지는 않아.'), ...D(13, '**다른 마음을 말한다**', '실제 관심이 없다면')]
       : [d('나', '아니, 지금 있는 마음은 너랑 더 만나고 싶다는 거야. 없는 고민까지 말하려 했네.'), d('하은', '없는 사람까지 저녁에 초대하지는 말자.')];
     case 'topic_score': return part(13, '확인받고 싶다고 한다');
     case 'close_seat': return [...part(14, '옆자리를 묻는다', '산책을 제안한다'), n('맞은편에서 옆으로 옮겼다. 같은 방향으로 식당 안을 보니, 고개를 돌리는 거리가 달라졌다.')];
@@ -178,6 +179,8 @@ function ending(c) {
       : f.dinner === 'HAEUN' ? '하은이 파일 이름 때문에 웃던 얼굴이 떠올랐다. 나를 안심시키려고 지은 얼굴이 아니었다.'
       : '한 줄을 다 먹고 한 번 더 주문한 일이 떠올랐다. 누군가와 함께할 준비가 끝나야 나를 먹일 수 있는 건 아니었다.'),
     scene(23, 'home-evening', 'night'),
+    ...(f.yuriNext === 'REQUESTED_NOT_ACCEPTED' && c.input.contactAllowed && f.contactTonight !== 'night_tell'
+      ? [n('다시 만나고 싶다고 한 말은 아직 하은에게 전하지 않았다. 내가 말하지 않았다고 그 마음이 없던 일이 되지는 않았다.')] : []),
     n(hasLie ? '내가 실제로 보낸 문장을 다시 보았다. 이미 말한 마음을, 몰랐다는 말로 지우지는 않기로 했다.'
       : f.relationshipIntent || (f.haeunTopic === 'topic_other' && !f.comfortableDinner) ? '아직 모르는 마음을 억지로 정리하지는 않았다. 다만 이미 말한 마음을, 몰랐다는 말로 지우지는 않기로 했다.'
       : f.appointmentCancelled ? '약속을 바꾼 사실과 그때 보낸 말을 다시 보았다. 취소를 없던 일로 만들지 않는 것도 오늘 내가 할 수 있는 일이었다.'
@@ -190,6 +193,7 @@ function ending(c) {
         : '여행 사진은 아직 보내지 않았다. 다시 이야기할 시간을 함께 정해야 했다. 먼 풍경으로 오늘의 대답을 대신하고 싶지 않았다.')]
       : [n('알람을 맞추고 휴대전화를 내려놓았다. 내일은 내 돈과 내 시간부터 볼 생각이었다.')]),
     n('오늘 저녁에 누구와 앉았는지만으로는 내 마음을 설명할 수 없었다. 그래도 내가 무슨 말을 했는지는 남았다.'),
+    n('내일의 약속은 그 말 다음에서 시작해야 했다.'),
     {type: 'chapterCompletionCue', day: 18, finalSceneReached: true}];
 }
 
