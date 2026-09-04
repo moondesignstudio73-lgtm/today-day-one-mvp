@@ -19,6 +19,16 @@ function start(partner, known = true, context = {}) {
   beginDay18V4(s, context); return s;
 }
 
+test('Haeun sets down her existing bag only after the chair line and only in her dinner route', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN','SOLO']) {
+    const s=start(partner,true,context);applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
+    applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':partner==='HAEUN'?'day18_v4_disclose_together':'day18_v4_disclose_solo');
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.source==='assets/events/day18-v4/haeun-bag-down-v1.png');
+    assert.equal(at>=0,partner==='HAEUN');if(at>=0){assert.equal(steps[at-1].text,'의자 맡아 둔 사람이 더 좋아.');assert.ok(existsSync(new URL(`../${steps[at].source}`,import.meta.url)));}
+    assert.equal(steps.some(x=>x.text?.includes('가방을 내려놓자')),false);assert.equal(JSON.stringify(s),before);assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+  }
+});
+
 test('Yuri wears the same outer jacket until the chair action then returns to her base portrait', () => {
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN','SOLO']) {
     const s=start(partner,true,context);
