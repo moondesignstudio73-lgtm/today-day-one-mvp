@@ -14,7 +14,9 @@ const before = new Map([
   ['8|오늘은 네가 질문만 할 줄 알았어. 이렇게 음식 얘기할 줄은 몰랐고.', [say('유리','좋아하는 일이라고 매 순간 좋은 건 아니더라. 작업이 끝나도 눈앞에 얼룩이 보이는 날이 있어.'), say('유리','그런 날은 집에서 아무것도 자세히 보고 싶지 않아.')]],
 ]);
 const after = new Map([
-  ['3|의자 맡아 둔 사람이 더 좋아.',[{type:'cgShow',source:'assets/events/day18-v4/haeun-bag-down-v1.png',fit:'contain',duration:3000}]],
+  ['3|의자 맡아 둔 사람이 더 좋아.',[
+    {type:'cgShow',source:'assets/events/day18-v4/haeun-bag-down-v1.png',fit:'contain',duration:3000},
+    {type:'cgShow',source:'assets/events/day18-v4/haeun-menu-slide-v1.png',fit:'contain',duration:2600}]],
   ['4|저는 이걸로요.',[mono('같은 것을 고르지 않았는데도 한 끼가 시작됐다.')]],
   ['8|지금은 진짜예요.',[{type:'cgShow',source:'assets/events/day18-v4/vegetable-bite-v1.png',fit:'contain',duration:2600}]],
   ['3|지금 제목을 다 아는 단계예요.',[mono('카페에서 갑자기 이름을 들었던 날과는 달랐다. 오늘은 내가 이 사람을 만나려고 나왔다.'),mono('그 생각은 메뉴보다 늦게 펼쳐졌다.')]],
