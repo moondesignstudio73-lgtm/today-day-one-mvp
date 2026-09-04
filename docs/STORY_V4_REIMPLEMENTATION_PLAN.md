@@ -110,3 +110,5 @@ SCENE01~08 및 09~24 누락 감사는 `DAY18_V4_SOURCE_AUDIT_01_08.md`, `DAY18_V
 22:50 실행 후속: SCENE11 열린 지갑과 pay_debt 거절 뒤 닫힌 지갑 CG를 원문 대사 사이에 연결했다(`DAY18_V4_WALLET_DIRECTION.md`). 실제 순서/19:00/유리 복귀/저장 재개 확인. game198, 자동 테스트 454 PASS. 다음은 **SCENE12 음식 나누기 행동**, 이후 남은 행동과 최종 검증. DAY18 PARTIAL 유지.
 
 22:59 실행 후속: 새 메모 UI에서 SKIP하면 패널이 남아 여행 선택을 덮는 HIGH 회귀를 실제 재현·수정했다(`DAY18_V4_NOTE_SKIP_FIX.md`). 일반 진행/SKIP/종료 정리 통합, 기존 저장에서 재검증. game199, 자동 테스트 455 PASS. 이 시험은 비-SKIP 원문 QA와 별도다. 다음은 **SCENE12 음식 나누기 행동**. DAY18 PARTIAL 유지.
+
+23:18 실행 후속: SCENE12 첫 평가 전에 한 입 나누는 CG를 연결했다(`DAY18_V4_FOOD_SHARING.md`). 세 메뉴별 대사는 유지하며 식사/연락 flag 추가 없음. 실제 비-SKIP 표시/자동 복귀/저장 Scene 재개/원래 저장 복원, 자동 테스트 456 PASS. game200. 다음은 **SCENE12 상대 음식 맛보기·각자 식사와 남은 원문 행동 대조**, 이후 최종 동일 버전 4경로/모바일·DAY15~17 감사. DAY18 PARTIAL, DAY19~30 미완료.

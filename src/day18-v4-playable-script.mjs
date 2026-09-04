@@ -165,7 +165,11 @@ function yuriPresentConversation(c) {
 
 function haeunMealConversation(c) {
   const menu = c.facts.menu;
-  return D(12).map(step => {
+  return D(12).flatMap(step => {
+    if (step.text === '어때?') return [
+      {type:'cgShow',source:'assets/events/day18-v4/food-sharing-v1.png',fit:'contain',duration:3000},
+      step
+    ];
     if (menu === 'menu_wait') return step;
     if (step.text === '메뉴판 앞에서 네 얼굴을 따라 했더니.') {
       return d('나',menu === 'menu_share' ? '나눠 먹자고 하길 잘했네.' : '한 입 먹어 볼래?');

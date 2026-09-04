@@ -18,6 +18,31 @@ function start(partner, known = true, context = {}) {
   beginDay18V4(s, context); return s;
 }
 
+test('food sharing is a silent action before tasting on all Haeun menu branches', () => {
+  for(const menu of ['menu_each','menu_share','menu_wait']) {
+    const s=start('HAEUN',true,{callScheduling:true,separateDinnerScheduling:true});
+    for(const id of ['morning_keep','disclose_together',menu]) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const before=JSON.stringify(s),segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const at=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('food-sharing'));
+    assert.ok(at>0);
+    assert.equal(segment[at+1].text,'어때?');
+    assert.equal(segment[at].text,undefined);
+    assert.equal(segment[at].fit,'contain');
+    assert.ok(existsSync(new URL(`../${segment[at].source}`,import.meta.url)));
+    assert.equal(segment.filter(x=>x.type==='cgShow'&&x.source.includes('food-sharing')).length,1);
+    assert.equal(JSON.stringify(s),before);
+    assert.deepEqual(getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4),segment);
+  }
+  for(const partner of ['YURI','SOLO']) {
+    const s=start(partner);
+    for(let count=0;s.storyFlags.day18V4.phase!=='ending';count++) {
+      assert.ok(count<25);
+      assert.ok(!getDay18V4PlayableSegment(s.storyFlags.day18V4).some(x=>x.type==='cgShow'&&x.source.includes('food-sharing')));
+      applyDay18V4Choice(s,getDay18V4Options(s.storyFlags.day18V4)[0].id);
+    }
+  }
+});
+
 test('directed source anchors exist and filename setup precedes the joke', () => {
   assert.equal(validateDay18V4BeatAnchors(), true);
   const s = start('HAEUN');
