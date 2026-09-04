@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {beginDay18V4, getDay18V4Entry, getDay18V4Options, applyDay18V4Choice,
-  validateDay18V4, completeDay18V4} from '../src/day18-v4-state-contract.mjs';
+  validateDay18V4, completeDay18V4, getDay18V4FollowUpContract} from '../src/day18-v4-state-contract.mjs';
 
 const seed = (appointment = 'YURI') => ({money: 42000, storyHistory: [], storyFlags: {
   day17V4Completed: true, day17V4Day18HookPending: true,
@@ -22,6 +22,42 @@ const afterYuriDinner = s => {
   yuriDinner(s);
   for (const key of ['relationship_haeun', 'next_time', 'pay_split']) choose(s, key);
 };
+
+test('follow-up promise is not a mutually agreed call time and does not migrate /1 saves', () => {
+  for (const [ending, status, day] of [
+    [['night_defer'], 'CONTACT_PROMISED', 19],
+    [['night_solo', 'night_correct'], 'DISCUSSION_PENDING', null],
+    [['night_tell', 'future_continue'], 'DISCUSSION_PENDING', null],
+    [['night_tell', 'future_unsure'], 'DISCUSSION_PENDING', null],
+    [['night_tell', 'future_others'], 'NONE', null],
+    [['night_solo', 'night_lie_cancel'], 'NONE', null]
+  ]) {
+    const s = start('YURI'); afterYuriDinner(s);
+    for (const key of ending) choose(s, key);
+    const before = JSON.stringify(c(s));
+    const contract = getDay18V4FollowUpContract(c(s));
+    assert.equal(contract.status, status);
+    assert.equal(contract.contactDay, day);
+    assert.equal(contract.promisedBy, day === 19 ? 'PLAYER' : null);
+    assert.equal(contract.agreedTime, null);
+    assert.equal(contract.sourceChoiceId, status === 'NONE' ? null : `day18_v4_${ending.at(-1)}`);
+    contract.contactDay = 99;
+    assert.equal(JSON.stringify(c(s)), before);
+    assert.equal(validateDay18V4(JSON.parse(before)), true);
+  }
+});
+
+test('follow-up contract never invents contact for fresh, paused or damaged saves', () => {
+  for (const context of [{}, {haeunContactAllowed: false}]) {
+    const s = start('SOLO', context);
+    assert.deepEqual(getDay18V4FollowUpContract(c(s)), {status:'NONE', promisedBy:null,
+      contactDay:null, agreedTime:null, sourceChoiceId:null});
+  }
+  const s = start('YURI'); c(s).facts.followUpContact = true;
+  const before = JSON.stringify(s);
+  assert.throws(() => getDay18V4FollowUpContract(c(s)), /INVALID_SAVE/);
+  assert.equal(JSON.stringify(s), before);
+});
 
 test('DAY18 refuses legacy, missing prerequisites, unaccepted proposals and damaged V4 without writes', () => {
   for (const [s, expected] of [

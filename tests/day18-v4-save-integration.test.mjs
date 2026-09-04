@@ -5,7 +5,7 @@ import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
 import {SaveManager} from '../src/save-manager.mjs';
 import {GAME_MODES} from '../src/scenario-state.mjs';
 import {prepareCampaignDayAdvance} from '../src/story-flow-guard.mjs';
-import {getDay18V4Options} from '../src/day18-v4-state-contract.mjs';
+import {getDay18V4Options, getDay18V4FollowUpContract} from '../src/day18-v4-state-contract.mjs';
 import {getDay18V4GameContext, prepareDay18V4GameEntry, getDay18V4GameSegment,
   applyDay18V4GameChoice, completeDay18V4GameChapter, DAY18_V4_CAMPAIGN_SLOT} from '../src/day18-v4-game-bridge.mjs';
 
@@ -42,6 +42,12 @@ test('DAY18 real SaveManager preserves every route checkpoint and completion adv
     const cue = getDay18V4GameSegment(s).at(-1);
     completeDay18V4GameChapter(s,cue); completeDay18V4GameChapter(s,cue);
     assert.equal(s.storyHistory.filter(h=>h.sceneId===DAY18_V4_CAMPAIGN_SLOT).length,1);
+    const followUp = getDay18V4FollowUpContract(s.storyFlags.day18V4);
+    assert.deepEqual(s.storyHistory.find(h=>h.sceneId===DAY18_V4_CAMPAIGN_SLOT).followUp,followUp);
+    SaveManager.save(s,storage);
+    const completedSave = SaveManager.load(storage,GAME_MODES.MARRIAGE_30);
+    assert.ok(completedSave);
+    assert.deepEqual(completedSave.storyHistory.find(h=>h.sceneId===DAY18_V4_CAMPAIGN_SLOT).followUp,followUp);
     assert.equal(s.money,money);
     assert.equal(s.storyFlags.day18AccessStrategy,undefined);
     assert.equal(s.storyFlags.day18V4Day19HookPending,true);
@@ -49,6 +55,20 @@ test('DAY18 real SaveManager preserves every route checkpoint and completion adv
     assert.equal(prepareCampaignDayAdvance(s,DAY18_V4_CAMPAIGN_SLOT),null);
     assert.equal(s.day,19);
   }
+});
+
+test('old completed DAY18 history is not silently backfilled on repeated completion', () => {
+  const s = seed('SOLO'); prepareDay18V4GameEntry(s);
+  while (s.storyFlags.day18V4.phase !== 'ending') {
+    applyDay18V4GameChoice(s,getDay18V4Options(s.storyFlags.day18V4)[0].id);
+  }
+  const cue = getDay18V4GameSegment(s).at(-1);
+  completeDay18V4GameChapter(s,cue);
+  delete s.storyHistory.find(h=>h.sceneId===DAY18_V4_CAMPAIGN_SLOT).followUp;
+  const before = JSON.stringify(s);
+  completeDay18V4GameChapter(s,cue);
+  assert.equal(JSON.stringify(s),before);
+  assert.equal(getDay18V4FollowUpContract(s.storyFlags.day18V4).agreedTime,null);
 });
 
 test('contact availability is not attraction or Haeun knowledge of Yuri', () => {

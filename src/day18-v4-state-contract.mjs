@@ -246,6 +246,24 @@ export function validateDay18V4(chapter) {
   } catch { return false; }
 }
 
+// Derived, not part of the replay-locked /1 save schema. A promise to contact
+// someone is not their consent to a call, nor an agreed appointment time.
+export function getDay18V4FollowUpContract(chapter) {
+  if (!validateDay18V4(chapter)) throw new Error('DAY18_INVALID_SAVE');
+  const result = {status: 'NONE', promisedBy: null, contactDay: null,
+    agreedTime: null, sourceChoiceId: null};
+  if (!chapter.input.contactAllowed) return result;
+  const record = chapter.choices.findLast(({id}) => [
+    'day18_v4_night_defer', 'day18_v4_night_correct',
+    'day18_v4_future_continue', 'day18_v4_future_unsure'
+  ].includes(id));
+  if (!record) return result;
+  const promised = record.id === 'day18_v4_night_defer';
+  return {...result, status: promised ? 'CONTACT_PROMISED' : 'DISCUSSION_PENDING',
+    promisedBy: promised ? 'PLAYER' : null, contactDay: promised ? 19 : null,
+    sourceChoiceId: record.id};
+}
+
 export function applyDay18V4Choice(state, id) {
   const chapter = state?.storyFlags?.day18V4;
   if (!validateDay18V4(chapter)) throw new Error('DAY18_INVALID_SAVE');

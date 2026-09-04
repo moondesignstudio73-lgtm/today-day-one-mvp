@@ -1,4 +1,4 @@
-import {getDay18V4Entry, beginDay18V4, applyDay18V4Choice, completeDay18V4} from './day18-v4-state-contract.mjs';
+import {getDay18V4Entry, beginDay18V4, applyDay18V4Choice, completeDay18V4, getDay18V4FollowUpContract} from './day18-v4-state-contract.mjs';
 import {getDay18V4PlayableSegment} from './day18-v4-playable-script.mjs';
 import {BACKGROUND_ASSETS, NPC_ASSETS} from './assets/asset-manifest.mjs';
 import {MAP_LOCATION_ASSETS} from './map-location-assets.mjs';
@@ -82,7 +82,7 @@ export function completeDay18V4GameChapter(state, cue) {
   if (!state.storyHistory.some(r => r.sceneId === DAY18_V4_CAMPAIGN_SLOT)) {
     state.storyHistory.push({sceneId: DAY18_V4_CAMPAIGN_SLOT, scenarioId: 'day18-notion-v4', day: 18,
       arc: '말하지 않은 저녁', choiceId: chapter.choices.at(-1).id, response: '오늘의 저녁과 실제로 나눈 말을 기록했다.',
-      facts: chapter.facts, choices: chapter.choices});
+      facts: chapter.facts, choices: chapter.choices, followUp: getDay18V4FollowUpContract(chapter)});
   }
   // Do not call the old safety choice: it grants unrelated access/clue effects.
   state.storyFlags.day18RuntimeComplete = true;
