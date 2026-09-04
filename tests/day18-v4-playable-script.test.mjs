@@ -40,6 +40,30 @@ test('an unpromised solo evening is not a declaration and creates no cancellatio
   }
 });
 
+test('morning clothes follow the kept appointment reply only, across saved schemas', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const partner of ['YURI','HAEUN','SOLO']) {
+      for(const id of (partner==='SOLO'?['morning_solo']:['morning_keep','morning_change','morning_solo'])) {
+        const s=start(partner,true,context);
+        applyDay18V4Choice(s,`day18_v4_${id}`);
+        const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+        const cuts=steps.filter(x=>x.source==='assets/events/day18-v4/morning-clothes-v1.png');
+        assert.equal(cuts.length,id==='morning_keep'?1:0);
+        if(cuts.length) {
+          const at=steps.indexOf(cuts[0]);
+          assert.equal(steps[at-1].type,'message');
+          assert.equal(steps[at-1].text,partner==='YURI'?'응. 늦으면 먼저 말해 줘. 나도 그러고.':'일이 끝나는 쪽. 내가 끝나는 쪽 말고.');
+          assert.equal(steps[at+1].text,'약속을 지킨다는 건 아침부터 멋진 사람으로 완성되어 있어야 한다는 뜻은 아니었다.');
+          assert.equal(cuts[0].type,'cgShow');assert.equal(cuts[0].text,undefined);
+          assert.ok(existsSync(new URL(`../${cuts[0].source}`,import.meta.url)));
+        }
+        assert.equal(JSON.stringify(s),before);
+        assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+      }
+    }
+  }
+});
+
 test('physical meal directions are not emitted as monologues', () => {
   const steps=[8,10,14].flatMap(n=>day18V4DirectedDialogue(n));
   const text=steps.filter(x=>x.type==='monologue').map(x=>x.text).join('\n');

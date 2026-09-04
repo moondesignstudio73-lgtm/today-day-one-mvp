@@ -51,6 +51,7 @@ function reaction(c) {
   switch (key) {
     case 'morning_keep': return [...msg(i.appointment === 'YURI' ? [d('유리', '응. 늦으면 먼저 말해 줘. 나도 그러고.')]
       : [d('하은', '나 오늘 일찍 끝날 줄 알고 밀린 것까지 잡으면 안 되겠다.'), d('나', '그럼 내가 일찍 끝나는 쪽을 응원할게.'), d('하은', '일이 끝나는 쪽. 내가 끝나는 쪽 말고.')]),
+      {type:'cgShow',source:'assets/events/day18-v4/morning-clothes-v1.png',fit:'contain',duration:2800},
       n('약속을 지킨다는 건 아침부터 멋진 사람으로 완성되어 있어야 한다는 뜻은 아니었다.')];
     case 'morning_change': return [...msg([d('나', '가서 계속 시계만 볼 것 같아서요. 미리 말하고 싶었어요.'),
       d(i.appointment === 'YURI' ? '유리' : '하은', i.appointment === 'YURI' ? '오늘 저녁은 취소하자. 다음을 정할지는 서로 생각해 보고.' : '알겠어. 오늘은 나도 집으로 갈게.')]),
