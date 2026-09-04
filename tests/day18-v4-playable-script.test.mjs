@@ -94,6 +94,22 @@ test('telling Haeun at noon is remembered by the night report', () => {
   assert.match(text,/네가 아는 그 저녁/);
 });
 
+test('ending after an unresolved confession does not summarize the night as merely keeping an appointment', () => {
+  const s=start('HAEUN',true,{otherInterest:true});
+  for(const id of ['morning_keep','disclose_together','menu_each','topic_other','night_good','future_others','travel_life']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const text=getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x=>x.text??'').join('\n');
+  assert.doesNotMatch(text,/그 정도로 끝나는 날도 있었다/);
+  assert.match(text,/이미 말한 마음/);
+});
+
+test('follow-up intent alone does not invent an agreed contact date', () => {
+  const s=start('YURI');
+  for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks','relationship_haeun','next_ask','pay_split','night_tell','future_unsure','travel_life']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const text=getDay18V4PlayableSegment(s.storyFlags.day18V4).map(x=>x.text??'').join('\n');
+  assert.doesNotMatch(text,/내일 연락하기로 한 약속/);
+  assert.match(text,/다시 이야기할 시간을 함께 정해야/);
+});
+
 test('cancelled dinner has a solo prompt and never claims the appointment was kept', () => {
   const s = start('YURI');
   for (const id of ['morning_change','disclose_solo']) applyDay18V4Choice(s,`day18_v4_${id}`);
