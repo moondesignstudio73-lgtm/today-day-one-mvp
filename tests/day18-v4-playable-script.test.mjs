@@ -162,6 +162,8 @@ test('Haeun arrival establishes the wind before the original joke', () => {
   const lines=segment.map(x=>x.text??'');
   const cause=lines.indexOf('밖에서 기다리려다가 바람이 불어서 먼저 들어왔어.');
   assert.ok(cause>=0);
+  assert.equal(segment.find(x=>x.text===lines[cause]).speaker,'나');
+  assert.equal(segment.find(x=>x.text===lines[cause+1]).speaker,'하은');
   assert.equal(lines[cause+1],'잘했네.');
   assert.ok(lines.findIndex(x=>x.includes('밖에 있었으면 더 멋있었을까'))>cause);
   const directions=segment.filter(x=>x.type==='sceneDirection');
