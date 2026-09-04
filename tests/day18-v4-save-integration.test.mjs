@@ -57,6 +57,29 @@ test('DAY18 real SaveManager preserves every route checkpoint and completion adv
   }
 });
 
+test('unanswered morning survives production save/load with alarm and water in order', () => {
+  for(const partner of ['YURI','HAEUN','SOLO']) {
+    const s=seed(partner);prepareDay18V4GameEntry(s);
+    const expected=getDay18V4GameSegment(s),before=structuredClone(s.storyFlags.day18V4);
+    const data=new Map(),storage={getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v)};
+    SaveManager.save(s,storage);
+    const restored=SaveManager.load(storage,GAME_MODES.MARRIAGE_30);
+    assert.ok(restored);
+    assert.equal(prepareDay18V4GameEntry(restored).mode,'V4');
+    assert.deepEqual(restored.storyFlags.day18V4,before);
+    const steps=getDay18V4GameSegment(restored);
+    assert.deepEqual(steps,expected);
+    assert.deepEqual(steps.filter(x=>x.type==='cgShow').map(x=>x.source),[
+      'assets/events/day18-v4/morning-alarm-off-v1.png',
+      'assets/events/day18-v4/morning-water-v1.png'
+    ]);
+    assert.equal(restored.storyFlags.day18V4.choices.length,0);
+    assert.equal(restored.storyFlags.day18V4.phase,'morning');
+    assert.equal(steps[0].backgroundId,'day4-bedroom-morning');
+    assert.equal(steps[0].storyClock,'08:00');
+  }
+});
+
 test('morning starts in the bedroom but selected replies resume at the living-room table', () => {
   for(const partner of ['YURI','HAEUN','SOLO']) {
     const s=seed(partner);prepareDay18V4GameEntry(s);
