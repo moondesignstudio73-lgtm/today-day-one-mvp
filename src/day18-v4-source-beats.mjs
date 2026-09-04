@@ -7,6 +7,7 @@ const mono = text => ({type:'monologue',text,origin:'source-directed'});
 const say = (speaker,text) => ({type:'dialogue',speaker,text,origin:'source-directed'});
 const pause = () => ({type:'storyPause',duration:600});
 const before = new Map([
+  ['4|조금은 좋아. 그런데 나 이거 꽤 먹을 거야.', [pause()]],
   ['15|리뷰가 아니라 증거네.', [{type:'cgShow',source:'assets/events/day18-v4/jihoon-finished-bowl-v1.png',fit:'contain',duration:3000}]],
   ['5|그 말이 반갑기도 한데, 좀 조심스럽다.', [{type:'sfx',sfxId:'SFX_CUP_SET_DOWN'},pause()]],
   ['12|그럼 다음 파일은?', [say('하은','오늘 파일을 하나 보냈는데, 내용은 맞고 이름이 잘못됐어.'), say('하은','파일 이름에 진짜마지막이라고 써 놨거든.')]],

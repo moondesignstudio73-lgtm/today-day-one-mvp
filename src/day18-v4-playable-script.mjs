@@ -1,4 +1,4 @@
-import {day18V4DirectedDialogue as D} from './day18-v4-source-beats.mjs?v=3';
+import {day18V4DirectedDialogue as D} from './day18-v4-source-beats.mjs?v=4';
 import {DAY18_V4_SOURCE_SCENES} from './day18-v4-source-registry.mjs';
 import {getDay18V4Options, validateDay18V4, getDay18V4FollowUpContract} from './day18-v4-state-contract.mjs?v=3';
 

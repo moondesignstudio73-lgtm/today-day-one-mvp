@@ -18,6 +18,24 @@ function start(partner, known = true, context = {}) {
   beginDay18V4(s, context); return s;
 }
 
+test('Yuri considers sharing before agreeing, without turning the pause into consent or narration', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const partner of ['YURI','HAEUN'])for(const menu of ['menu_each','menu_share','menu_wait']) {
+      const s=start(partner,true,context);
+      applyDay18V4Choice(s,'day18_v4_morning_keep');
+      applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':'day18_v4_disclose_together');
+      applyDay18V4Choice(s,`day18_v4_${menu}`);
+      const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+      const at=steps.findIndex(x=>x.text==='조금은 좋아. 그런데 나 이거 꽤 먹을 거야.');
+      assert.equal(at>=0,partner==='YURI'&&menu==='menu_share');
+      if(at>=0)assert.deepEqual(steps[at-1],{type:'storyPause',duration:600});
+      assert.equal(steps.some(x=>x.text==='유리 씨가 잠깐 생각했다.'),false);
+      assert.equal(JSON.stringify(s),before);
+      assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+    }
+  }
+});
+
 test('an unpromised solo evening is not a declaration and creates no cancellation', () => {
   const thought='오늘 저녁이 혼자라는 사실이 누군가에게 보여 줄 선언일 필요도 없었다.';
   assert.ok(DAY18_V4_SOURCE_SCENES[0].body.includes(thought));
