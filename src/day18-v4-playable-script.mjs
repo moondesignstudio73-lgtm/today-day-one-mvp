@@ -211,7 +211,8 @@ function opening(c) {
       n(i.appointment === 'YURI' ? '유리 씨와 장소와 시간을 확인한 두 줄.' : i.appointment === 'HAEUN' ? '하은과 퇴근하고 만나자는 짧은 대화.' : '저녁 칸은 비어 있었다.'),
       ...(i.appointment === 'SOLO' ? [n('빈칸을 보고 나니 묘하게 늦은 것 같았다. 누구보다 늦었는지는 알 수 없었다.')] : [])];
     case 'disclosure': return [scene(2, 'home-morning', 'afternoon'), ...msg([d('하은', '점심 먹었어? 나는 지금 먹으러 나왔어.'),
-      ...(f.dinner === 'YURI' && i.haeunKnowsAppointment ? [d('하은', '오늘 너무 늦지는 않을 거지?')] : [])])];
+      ...(f.dinner === 'YURI' && i.haeunKnowsAppointment ? [d('하은', '오늘 너무 늦지는 않을 거지?')] : [])]),
+      {type:'messageDraft',text:'저녁'}, {type:'messageDraft',text:''}];
     case 'menu': return [scene(3, place(c), 'evening', null),
       ...(f.dinner === 'YURI' ? [n('유리 씨는 아직 오지 않았다. 메뉴를 한 번 다 읽었는데 아무것도 고르지 않았다.'), n('상대를 기다리는 일에도 오래 해 본 사람 같은 자세가 있을까 싶었다.'), scene(3,place(c),'evening','yuri'), ...D(3, undefined, '하은과 약속한 저녁')]
         : f.dinner === 'HAEUN' ? [n('밖에서 기다리려던 마음이 바람 앞에서는 오래가지 못했다.'), scene(3,place(c),'evening','girlfriend'),

@@ -166,3 +166,5 @@ SCENE01~08 및 09~24 누락 감사는 `DAY18_V4_SOURCE_AUDIT_01_08.md`, `DAY18_V
 01:52 실행 후속(9/5): SCENE02 처음 유리 약속을 알릴 때만 하은 첫 답장 전 pause를 연결했다(`DAY18_V4_FIRST_DISCLOSURE_PAUSE.md`). 3schema×고지 여부 회귀 검사 추가, game217. 새 pause 실제 브라우저 확인은 NOT RUN. 다음은 **새 답장 간격 실제 QA와 문자 작성/삭제 행동**, 알람 입력/소리 및 기존 잔여 게이트. DAY18 PARTIAL 유지.
 
 01:56 QA 후속(9/5): 미고지 유리 경로를 아침부터 비-SKIP 진행해 첫 답장 전 대기→하은 응답/12:30/저장 재개를 확인했다(`DAY18_V4_FIRST_DISCLOSURE_PAUSE.md`). 사용자 저장 복원, 코드 변경 없이 game217. 다음은 **SCENE02 전송되지 않은 ‘저녁’ 초안 작성/삭제 연출**. 알람 입력/소리와 다른 게이트는 남아 DAY18 PARTIAL 유지.
+
+02:01 실행 후속(9/5): 미전송 ‘저녁’ 초안→입력으로 삭제→답장 선택 이벤트를 연결했다(`DAY18_V4_UNSENT_DRAFT.md`). 실제 SOLO/Enter/저장 재개/사용자 저장 복원, 종료 후 문자 스타일 문제 수정·재검증. game218. 다음은 **초안 SKIP/다른 분기 QA 및 SCENE02 잔여 행동**. DAY18 PARTIAL 유지.

@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 
 const source=readFileSync(new URL('../game.js',import.meta.url),'utf8');
-const start=source.indexOf('  if(step.type==="privateNote"){');
+const start=source.indexOf('  if(step.type==="privateNote"||step.type==="messageDraft"){');
 const end=source.indexOf('  if(step.type==="phoneCallCue")',start);
 assert.ok(start>=0&&end>start);
 test('private note uses a separate escaped document and ordinary story input without adding dialogue history',()=>{
@@ -25,6 +25,21 @@ test('private note uses a separate escaped document and ordinary story input wit
   }
   assert.match(source,/querySelector\("\.story-private-note"\)\?\.remove\(\)/);
   assert.match(source,/classList\.remove\("private-note-active"\)/);
+});
+
+test('unsent drafts show escaped composition text and deletion without sending or dialogue typing',()=>{
+  for(const text of ['<저녁>','']) {
+    const note={setAttribute(){}},attrs={},calls=[];
+    const stage={append:n=>calls.push(n),classList:{add(){}},setAttribute:(k,v)=>attrs[k]=v};
+    const context={step:{type:'messageDraft',text},document:{createElement:()=>note},$:()=>stage,
+      finishDialogueTyping(){},setStoryMessagePresentation:s=>{assert.equal(s.type,'message');assert.equal(s.sender,'하은');},escapeHtml:s=>s.replaceAll('<','&lt;').replaceAll('>','&gt;'),
+      immersiveScene:{index:4},eventRuntime:{active:{sceneId:'day18'},waitForInput:()=>true},persistEventRuntime(){},scheduleAutoAdvance(){}};
+    vm.runInNewContext(`(()=>{${source.slice(start,end)}})()`,context);
+    assert.match(note.innerHTML,/미전송/);
+    assert.match(note.innerHTML,text?/&lt;저녁&gt;/:/메시지를 입력하세요/);
+    assert.doesNotMatch(note.innerHTML,/<저녁>|내 메모/);
+    assert.equal(attrs['aria-label'],text?'단어 지우기':'답장 선택하기');
+  }
 });
 
 test('normal advance, skipped presentation and scene end all clear the private note idempotently',()=>{

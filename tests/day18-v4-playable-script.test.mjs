@@ -83,6 +83,18 @@ test('first disclosure gives Haeun a pause before her reply without inventing a 
   }
 });
 
+test('lunch composition deletes the unsent word before choosing a reply', () => {
+  for(const partner of ['YURI','HAEUN','SOLO'])for(const contact of [true,false]) {
+    if(partner==='HAEUN'&&!contact)continue; // An accepted Haeun dinner requires contact.
+    const s=start(partner,true,{haeunContactAllowed:contact,callScheduling:true,separateDinnerScheduling:true});
+    applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    assert.deepEqual(steps.filter(x=>x.type==='messageDraft').map(x=>x.text),contact?['저녁','']:[]);
+    assert.equal(JSON.stringify(s),before);
+    assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+  }
+});
+
 test('physical meal directions are not emitted as monologues', () => {
   const steps=[8,10,14].flatMap(n=>day18V4DirectedDialogue(n));
   const text=steps.filter(x=>x.type==='monologue').map(x=>x.text).join('\n');
