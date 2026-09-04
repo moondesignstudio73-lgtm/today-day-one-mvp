@@ -255,7 +255,11 @@ test('morning water is a visual action before the frozen appointment recap', () 
       const segment=getDay18V4PlayableSegment(chapter);
       const at=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('morning-water'));
       assert.ok(at>0);
-      assert.equal(segment[at-1].text,'어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.');
+      assert.equal(segment[0].location,'day4-bedroom-morning');
+      assert.equal(segment[at-2].text,'어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.');
+      assert.equal(segment[at-1].type,'sceneDirection');
+      assert.equal(segment[at-1].location,'home-morning');
+      assert.equal(segment[at-1].time,'morning');
       assert.equal(segment[at+1].text,partner==='SOLO'?'저녁 칸은 비어 있었다.':'휴대전화에는 어제 내가 보낸 답이 남아 있었다.');
       assert.equal(segment.some(x=>x.text==='휴대전화에는 어제 내가 보낸 답이 남아 있었다.'),partner!=='SOLO');
       assert.ok(existsSync(new URL(`../${segment[at].source}`,import.meta.url)));

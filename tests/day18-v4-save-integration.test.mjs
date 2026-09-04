@@ -57,6 +57,24 @@ test('DAY18 real SaveManager preserves every route checkpoint and completion adv
   }
 });
 
+test('morning starts in the bedroom but selected replies resume at the living-room table', () => {
+  for(const partner of ['YURI','HAEUN','SOLO']) {
+    const s=seed(partner);prepareDay18V4GameEntry(s);
+    const opening=getDay18V4GameSegment(s);
+    assert.equal(opening[0].backgroundId,'day4-bedroom-morning');
+    assert.equal(opening[0].characterId,null);
+    const water=opening.findIndex(x=>x.source?.includes?.('morning-water'));
+    assert.equal(opening[water-1].backgroundId,'home-morning');
+    for(const option of getDay18V4Options(s.storyFlags.day18V4)) {
+      const branch=structuredClone(s);applyDay18V4GameChoice(branch,option.id);
+      const segment=getDay18V4GameSegment(branch);
+      assert.equal(segment[0].backgroundId,'home-morning');
+      assert.equal(segment[0].storyClock,'08:00');
+      assert.deepEqual(segment,getDay18V4GameSegment(JSON.parse(JSON.stringify(branch))));
+    }
+  }
+});
+
 test('old completed DAY18 history is not silently backfilled on repeated completion', () => {
   const s = seed('SOLO'); prepareDay18V4GameEntry(s);
   while (s.storyFlags.day18V4.phase !== 'ending') {

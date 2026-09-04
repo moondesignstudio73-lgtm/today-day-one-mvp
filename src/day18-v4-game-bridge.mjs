@@ -1,5 +1,5 @@
 import {getDay18V4Entry, beginDay18V4, applyDay18V4Choice, completeDay18V4, getDay18V4FollowUpContract} from './day18-v4-state-contract.mjs?v=3';
-import {getDay18V4PlayableSegment} from './day18-v4-playable-script.mjs?v=25';
+import {getDay18V4PlayableSegment} from './day18-v4-playable-script.mjs?v=26';
 import {BACKGROUND_ASSETS, NPC_ASSETS} from './assets/asset-manifest.mjs';
 import {MAP_LOCATION_ASSETS} from './map-location-assets.mjs';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
@@ -50,6 +50,7 @@ function presentation(direction) {
 
 function priorDirection(chapter) {
   const previous = chapter.choices.at(-1)?.phase;
+  if (!previous && chapter.phase === 'morning') return {number: 1, title: '나의 방', location: 'day4-bedroom-morning', time: 'morning', character: null};
   const restaurant = ['menu', 'yuri_purpose', 'yuri_apology', 'yuri_relationship', 'yuri_correction', 'yuri_next', 'payment', 'haeun_topic', 'closeness', 'solo_contact', 'return'].includes(previous);
   if (restaurant) return {number: 3, title: '저녁', location: chapter.facts.dinner === 'YURI' ? 'rose-bistro' : chapter.facts.dinner === 'HAEUN' ? 'alley-pub' : 'gimbap-village',
     time: 'evening', character: chapter.facts.dinner === 'YURI' ? 'yuri' : chapter.facts.dinner === 'HAEUN' ? 'girlfriend' : null};
