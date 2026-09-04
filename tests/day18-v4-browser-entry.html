@@ -10,6 +10,7 @@
 <button data-route="YURI" data-yuri-deferred="true">유리 저녁 미고지 통화 연기 QA</button>
 <button data-route="SOLO" data-travel-photo="true">여행 사진 집중 QA</button>
 <button data-route="YURI" data-wallet="true">지갑 행동 집중 QA</button>
+<button data-route="YURI" data-arrival="true">유리 도착 전 메뉴 QA</button>
 <button data-route="HAEUN" data-food-sharing="true">음식 나누기 집중 QA</button>
 <button data-route="HAEUN" data-food-sharing="menu_each">음식 나누기 각자 메뉴 QA</button>
 <button data-route="HAEUN" data-food-sharing="menu_wait">음식 나누기 메뉴 고민 QA</button>
@@ -64,6 +65,10 @@ document.querySelectorAll('[data-route]').forEach(button => button.addEventListe
     s.storyFlags.day17V4HaeunContactPaused=true;
     prepareDay18V4GameEntry(s);
     for(const id of ['morning_solo','menu_familiar','solo_food','return_home','alone_stop']) applyDay18V4GameChoice(s,`day18_v4_${id}`);
+  }
+  if(button.dataset.arrival) {
+    prepareDay18V4GameEntry(s);
+    for(const id of ['morning_keep','disclose_yuri']) applyDay18V4GameChoice(s,`day18_v4_${id}`);
   }
   if(button.dataset.wallet) {
     prepareDay18V4GameEntry(s);
