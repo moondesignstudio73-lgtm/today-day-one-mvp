@@ -28,6 +28,32 @@ test('physical meal directions are not emitted as monologues', () => {
   assert.ok(DAY18_V4_SOURCE_SCENES[7].body.includes('나는 바로 한 입 먹었다.'));
 });
 
+test('Yuri makes table space after the pause without changing the next-meeting facts', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    const s=start('YURI',true,context);
+    for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_present','apology_thanks','relationship_haeun'])
+      applyDay18V4Choice(s,`day18_v4_${id}`);
+    const before=JSON.stringify(s),segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const at=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('table-space'));
+    assert.ok(at>=3);
+    assert.equal(segment[at-3].text,'응. 그렇네.');
+    assert.equal(segment[at-2].type,'storyPause');
+    assert.equal(segment[at-1].sfxId,'SFX_CUP_SET_DOWN');
+    assert.equal(segment[at].text,undefined);
+    assert.ok(existsSync(new URL(`../${segment[at].source}`,import.meta.url)));
+    assert.equal(JSON.stringify(s),before);
+    assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
+  }
+  for(const partner of ['HAEUN','SOLO']) {
+    const s=start(partner);
+    for(let count=0;s.storyFlags.day18V4.phase!=='ending';count++) {
+      assert.ok(count<25);
+      assert.ok(!getDay18V4PlayableSegment(s.storyFlags.day18V4).some(x=>x.type==='cgShow'&&x.source.includes('table-space')));
+      applyDay18V4Choice(s,getDay18V4Options(s.storyFlags.day18V4)[0].id);
+    }
+  }
+});
+
 test('food sharing is a silent action before tasting on all Haeun menu branches', () => {
   for(const menu of ['menu_each','menu_share','menu_wait']) {
     const s=start('HAEUN',true,{callScheduling:true,separateDinnerScheduling:true});

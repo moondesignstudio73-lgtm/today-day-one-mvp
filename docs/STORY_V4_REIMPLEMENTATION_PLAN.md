@@ -118,3 +118,5 @@ SCENE01~08 및 09~24 누락 감사는 `DAY18_V4_SOURCE_AUDIT_01_08.md`, `DAY18_V
 23:28 후속: SCENE12 누락된 “관계에 대한 교훈을 붙이지는 않았다” 내적 독백을 평가와 파일 대화 사이에 복구하고 실제 비-SKIP 재생 확인(`DAY18_V4_MEAL_MONOLOGUE.md`). game201, 457 PASS. 다음은 **SCENE08/10/14에 남은 물리 행동 독백 오염 분리 및 SCENE12 맛보기/각자 먹기 연출**, 이후 최종 QA. DAY18 PARTIAL 유지, 이 작은 복구를 DAY 완료로 집계하지 않는다.
 
 23:34 후속: SCENE08 먹기/웃기, SCENE10 접시·컵, SCENE14 어깨 접촉의 물리 행동 문장을 일반 독백에서 분리했다(`DAY18_V4_ACTION_TEXT_CLEANUP.md`). 원문과 내적 반응 보존, game202, 458 PASS. 실제 유리 SCENE08→10 비-SKIP 연결 확인. 행동 구현 완료가 아니라 오염 제거이며 에셋 필요 목록에 유지했다. 다음은 **SCENE12/08 맛보기 및 SCENE10 컵·접시 시각 이벤트**, 이후 어깨/다른 행동 감사와 최종 QA. DAY18 PARTIAL.
+
+23:41 후속: SCENE10 침묵 뒤 추가 접시를 위한 컵 이동 CG/SFX를 연결했다(`DAY18_V4_TABLE_SPACE.md`). 실제 표시/선택 복귀/저장 Scene 재개, 459 PASS, game203. 정지 CG이며 애니메이션 완료를 뜻하지 않는다. 다음은 **SCENE12/08 맛보기 및 SCENE14 어깨 접촉**, 그 외 행동 감사와 최종 QA. DAY18 PARTIAL 유지.
