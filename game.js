@@ -1,5 +1,6 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=16";
 import { SaveManager } from "./src/save-manager.mjs?v=20";
+import { getDialogueHistoryTime } from "./src/dialogue-history-time.mjs";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, getRuntimeEventDefinitions, rollRuntimeEvent } from "./src/event-manager.mjs?v=10";
 import { SITUATION_EVENTS } from "./src/situation-events-data.mjs?v=9";
@@ -485,7 +486,7 @@ function typeDialogue(text) {
   finishDialogueTyping();
   dialogueText = text;
   dialogueIndex = 0;
-  dialogueHistory.push({ day: state.day, phase: phases[state.phase].label, title: $("#sceneTitle").textContent, text });
+  dialogueHistory.push({ day: state.day, phase: getDialogueHistoryTime(immersiveScene?.presentation, phases[state.phase].label), title: $("#sceneTitle").textContent, text });
   if (dialogueHistory.length > 40) dialogueHistory.shift();
   const sceneText = $("#sceneText");
   const stage = $("#visualNovelStage");
