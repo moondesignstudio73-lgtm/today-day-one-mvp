@@ -320,6 +320,24 @@ test('Yuri report waits for a reply and uses short text only when the call is un
   }
 });
 
+test('wallet opens before payment discussion and closes only after the guilt-payment refusal',()=>{
+  const s=start('YURI');
+  for(const id of ['morning_keep','disclose_yuri','menu_each','purpose_past','apology_thanks','relationship_haeun','next_time'])applyDay18V4Choice(s,`day18_v4_${id}`);
+  const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  const opened=steps.findIndex(x=>x.type==='cgShow'&&x.source.includes('wallet-open'));
+  assert.ok(opened>=0);assert.equal(steps[opened+1].text,'왜 벌써 다 내려 그래?');
+  assert.ok(existsSync(new URL(`../${steps[opened].source}`,import.meta.url)));
+  assert.equal(JSON.stringify(s),before);
+  for(const choice of ['pay_split','pay_offer','pay_debt']) {
+    const branch=JSON.parse(before);applyDay18V4Choice(branch,`day18_v4_${choice}`);
+    const reaction=getDay18V4PlayableSegment(branch.storyFlags.day18V4);
+    const closed=reaction.findIndex(x=>x.type==='cgShow'&&x.source.includes('wallet-closed'));
+    assert.equal(closed>=0,choice==='pay_debt');
+    if(closed>=0){assert.equal(reaction[closed-1].text,'그 마음은 네가 조금 들고 가면 안 돼?');assert.equal(reaction[closed+1].text,'……나눠요.');assert.ok(existsSync(new URL(`../${reaction[closed].source}`,import.meta.url)));}
+    assert.deepEqual(reaction,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(branch.storyFlags.day18V4))));
+  }
+});
+
 test('putting the phone aside and washing a cup is confined to the stop-contact choice',()=>{
   for(const choice of ['alone_stop','alone_note','alone_jihoon']) {
     const s=start('SOLO',true,{haeunContactAllowed:false});

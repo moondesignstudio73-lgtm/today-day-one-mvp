@@ -10,6 +10,7 @@ const msg = steps => steps.map(s => s.type === 'dialogue'
   ? {...s, type: 'message', sender: s.speaker === '나' ? '나' : s.speaker, device: 'phone'} : s);
 const call = steps => steps.map(s => s.type === 'dialogue' ? {...s,device:'call'} : s);
 const travelPhoto = () => ({type:'cgShow',source:'assets/events/day18-v4/travel-window-sea-v1.png',fit:'contain',duration:3000});
+const wallet = state => ({type:'cgShow',source:`assets/events/day18-v4/wallet-${state}-v1.png`,fit:'contain',duration:2800});
 const chosen = c => c.choices.at(-1)?.id.replace('day18_v4_', '');
 const place = c => c.facts.dinner === 'YURI' ? 'rose-bistro' : c.facts.dinner === 'HAEUN' ? 'alley-pub' : 'gimbap-village';
 const companion = c => c.facts.dinner === 'YURI' ? 'yuri' : c.facts.dinner === 'HAEUN' ? 'girlfriend' : null;
@@ -87,7 +88,8 @@ function reaction(c) {
       n('유리 씨가 혼자라는 사실만으로 내 다음 저녁이 예약되는 건 아니었다.')];
     case 'pay_split': return [n('둘이 정한 만큼 나누고, 영수증은 필요한 사람이 받았다.')];
     case 'pay_offer': return part(11, '한 끼를 사고 싶다고 한다', '마음 편하려고 낸다');
-    case 'pay_debt': return D(11, '**마음 편하려고 낸다**', '밖으로 나오자');
+    case 'pay_debt': return D(11, '**마음 편하려고 낸다**', '밖으로 나오자').flatMap(step =>
+      step.text==='그 마음은 네가 조금 들고 가면 안 돼?' ? [step,wallet('closed')] : [step]);
     case 'topic_good': return part(13, '지금 좋은 마음을 말한다', '다른 마음을 말한다');
     case 'topic_other': return i.otherInterest ? [d('나','다른 사람을 더 알고 싶은 마음이 있어. 네가 기다려 주기로 한 것처럼 생각하고 싶지는 않아.'), ...D(13, '**다른 마음을 말한다**', '실제 관심이 없다면')]
       : [d('나', '아니, 지금 있는 마음은 너랑 더 만나고 싶다는 거야. 없는 고민까지 말하려 했네.'), d('하은', '없는 사람까지 저녁에 초대하지는 말자.')];
@@ -194,7 +196,7 @@ function opening(c) {
     case 'yuri_relationship': return [scene(8, place(c), 'evening', 'yuri'), ...yuriPresentConversation(c), scene(9, place(c), 'evening', 'yuri'), ...D(9, undefined, '### 선택 6')];
     case 'yuri_correction': return [d('유리', '지난번에는 여자친구가 있다고 했잖아. 그사이 헤어졌다는 뜻이야?')];
     case 'yuri_next': return [scene(10, place(c), 'evening', 'yuri'), ...D(10, undefined, '### 선택 7')];
-    case 'payment': return [scene(11, place(c), 'evening', 'yuri'), ...D(11, undefined, '### 선택 8')];
+    case 'payment': return [scene(11, place(c), 'evening', 'yuri'), wallet('open'), ...D(11, undefined, '### 선택 8')];
     case 'haeun_topic': return [scene(12, place(c), 'evening', 'girlfriend'), ...haeunMealConversation(c), scene(13, place(c), 'evening', 'girlfriend'),
       ...(i.yuriPastRelevant ? D(13, undefined, '유리와의 접점이 없거나') : D(13, '유리와의 접점이 없거나', '### 선택 9'))];
     case 'closeness': return [scene(14, place(c), 'evening', 'girlfriend'), ...D(14, undefined, '### 선택 10')];
