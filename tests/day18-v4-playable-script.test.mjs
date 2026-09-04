@@ -271,10 +271,29 @@ test('scheduled night stays in messages, preserves conflict, and recalls only th
   }
 });
 
+test('Yuri report waits for a reply and uses short text only when the call is unavailable', () => {
+  for(const known of [false,true]) for(const purpose of ['purpose_past','purpose_present','purpose_self']) for(const next of ['next_time','next_end','next_ask']) {
+    const s=start('YURI',known,{callScheduling:true,separateDinnerScheduling:true});
+    for(const id of ['morning_keep','disclose_withhold','menu_each',purpose,'apology_thanks','relationship_haeun',next,'pay_split','night_tell']) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const reply=segment.findIndex(x=>x.sender==='하은'&&(x.text.includes('지금 처음 들으니까')||x.text==='응. 지금은 이야기할 수 있어.'));
+    const details=segment.findIndex(x=>x.text?.includes(purpose==='purpose_past'?'예전에 둘이 어땠는지':purpose==='purpose_present'?'지금의 유리 씨가 궁금해서':'내가 왜 다시 만나고 싶은지'));
+    assert.ok(reply>=0&&details>reply);
+    assert.equal(segment[details].type,known?'dialogue':'message');
+    assert.equal(segment.some(x=>x.device==='call'),known);
+    assert.equal(segment.filter(x=>x.text==='지금 통화할 수 있어?').length,1);
+    if(next==='next_ask') assert.ok(segment.some(x=>x.text?.includes('아직 만나겠다고 한 건 아니라고')));
+    if(!known) {
+      assert.equal(segment.at(-1).choiceKey,'night_schedule');
+      assert.ok(!segment.some(x=>x.text==='듣고 있어.'));
+    }
+  }
+});
+
 test('source-locked dialogue and all choices resolve through deterministic route coverage', () => {
   const covered = new Set();
   for (const partner of ['YURI', 'HAEUN', 'SOLO']) for (let run = 0; run < 180; run++) {
-    const s = start(partner, run % 2 === 0, {callScheduling:run % 3 === 0}), all = [];
+    const s = start(partner, run % 2 === 0, {callScheduling:run % 3 !== 1,separateDinnerScheduling:run % 3 === 2}), all = [];
     let step = 0, random = run + 11;
     while (true) {
       const chapter = s.storyFlags.day18V4;

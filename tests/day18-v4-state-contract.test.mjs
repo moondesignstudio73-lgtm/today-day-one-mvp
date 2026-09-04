@@ -85,6 +85,29 @@ test('call scheduling is versioned: old saves retain the old night and new saves
   assert.equal(c(yuri).phase,'relationship_future');
 });
 
+test('separate-dinner scheduling preserves older graphs and recognizes real prior disclosure', () => {
+  for (const version of [1,2,3]) for (const disclosure of ['disclose_withhold','disclose_yuri']) {
+    const s=start('YURI',{callScheduling:version>=2,separateDinnerScheduling:version===3});
+    yuriDinner(s,disclosure);
+    for(const key of ['relationship_haeun','next_ask','pay_split','night_tell']) choose(s,key);
+    assert.equal(c(s).schema,`day18-notion-v4/${version}`);
+    assert.equal(c(s).phase,version===3&&disclosure==='disclose_withhold'?'night_schedule':'relationship_future');
+    assert.equal(c(s).facts.haeunKnowsDinner,true);
+    assert.equal(c(s).facts.statements.at(-1).claim,'ATE_WITH_YURI');
+    assert.equal(c(s).facts.yuriNext,'REQUESTED_NOT_ACCEPTED');
+    const saved=JSON.stringify(c(s));
+    assert.equal(validateDay18V4(JSON.parse(saved)),true);
+    const altered=JSON.parse(saved); altered.input.separateDinnerScheduling=version!==3;
+    assert.equal(validateDay18V4(altered),false);
+    assert.equal(JSON.stringify(c(s)),saved);
+  }
+  const s=seed('YURI'); s.storyFlags.day17V4HaeunDisclosure='TOLD';
+  beginDay18V4(s,{callScheduling:true,separateDinnerScheduling:true});
+  yuriDinner(s,'disclose_withhold');
+  for(const key of ['relationship_haeun','next_time','pay_split','night_tell']) choose(s,key);
+  assert.equal(c(s).phase,'relationship_future','DAY17 knowledge survives a withheld noon message');
+});
+
 test('DAY18 refuses legacy, missing prerequisites, unaccepted proposals and damaged V4 without writes', () => {
   for (const [s, expected] of [
     [{storyFlags: {}}, 'BLOCKED_PREREQUISITE'],

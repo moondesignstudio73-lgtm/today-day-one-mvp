@@ -2,6 +2,7 @@
 // Every consequence is replayed from a frozen entry snapshot and ordered choices.
 export const DAY18_V4_SCHEMA = 'day18-notion-v4/1';
 export const DAY18_V4_CALL_SCHEMA = 'day18-notion-v4/2';
+export const DAY18_V4_SEPARATE_CALL_SCHEMA = 'day18-notion-v4/3';
 const clone = value => JSON.parse(JSON.stringify(value));
 const option = (id, label) => ({id: `day18_v4_${id}`, label});
 const opts = pairs => pairs.map(([id, label]) => option(id, label));
@@ -39,12 +40,13 @@ export function getDay18V4Entry(state, context = {}) {
     yuriOwnBookKnown: context.yuriOwnBookKnown === true,
     handHoldingComfortable: context.handHoldingComfortable === true,
     source: {day17Choice9: f.day17V4Choice9 ?? null, day17Disclosure: f.day17V4HaeunDisclosure ?? null},
-    ...(context.callScheduling === true ? {callScheduling: true} : {})
+    ...(context.callScheduling === true ? {callScheduling: true,
+      ...(context.separateDinnerScheduling === true ? {separateDinnerScheduling: true} : {})} : {})
   }};
 }
 
 function initial(input) {
-  return {schema: input.callScheduling === true ? DAY18_V4_CALL_SCHEMA : DAY18_V4_SCHEMA, input: clone(input), choices: [], phase: 'morning', complete: false,
+  return {schema: input.separateDinnerScheduling === true ? DAY18_V4_SEPARATE_CALL_SCHEMA : input.callScheduling === true ? DAY18_V4_CALL_SCHEMA : DAY18_V4_SCHEMA, input: clone(input), choices: [], phase: 'morning', complete: false,
     facts: {dinner: null, appointmentCancelled: false, haeunKnowsDinner: input.haeunKnowsAppointment,
       statements: [], yuriRelationshipClaim: null, yuriNext: null, payment: null,
       haeunTopic: null, comfortableDinner: false, sharedSeat: false, walkTogether: false,
@@ -208,6 +210,9 @@ function reduce(c, id) {
       } else if (key === 'night_solo' && f.dinner === 'YURI') {
         statement(c, 'HAEUN', 'ATE_ALONE', false);
         f.nightRoute = 'UNRESOLVED'; c.phase = f.haeunKnowsDinner ? 'night_correction' : 'alone_end';
+      } else if (c.input.separateDinnerScheduling === true && f.dinner === 'YURI' && !f.haeunKnowsDinner) {
+        f.haeunKnowsDinner = true; statement(c, 'HAEUN', 'ATE_WITH_YURI', true);
+        f.callDeferred = true; f.nightRoute = 'DEFERRED'; c.phase = 'night_schedule';
       } else if (f.dinner === 'YURI' || (f.dinner === 'HAEUN' && !f.comfortableDinner)) {
         if (f.dinner === 'YURI') { f.haeunKnowsDinner = true; statement(c, 'HAEUN', 'ATE_WITH_YURI', true); }
         f.nightRoute = 'RELATIONSHIP'; c.phase = 'relationship_future';
@@ -237,9 +242,10 @@ function reduce(c, id) {
 
 export function validateDay18V4(chapter) {
   try {
-    if (![DAY18_V4_SCHEMA, DAY18_V4_CALL_SCHEMA].includes(chapter?.schema) || !Array.isArray(chapter.choices) || typeof chapter.complete !== 'boolean') return false;
+    if (![DAY18_V4_SCHEMA, DAY18_V4_CALL_SCHEMA, DAY18_V4_SEPARATE_CALL_SCHEMA].includes(chapter?.schema) || !Array.isArray(chapter.choices) || typeof chapter.complete !== 'boolean') return false;
     const i = chapter.input;
-    if (chapter.schema === DAY18_V4_CALL_SCHEMA ? i?.callScheduling !== true : Object.hasOwn(i ?? {}, 'callScheduling')) return false;
+    if (chapter.schema !== DAY18_V4_SCHEMA ? i?.callScheduling !== true : Object.hasOwn(i ?? {}, 'callScheduling')) return false;
+    if (chapter.schema === DAY18_V4_SEPARATE_CALL_SCHEMA ? i?.separateDinnerScheduling !== true : Object.hasOwn(i ?? {}, 'separateDinnerScheduling')) return false;
     if (!['YURI', 'HAEUN', 'SOLO'].includes(i?.appointment)) return false;
     for (const key of ['relationshipActive', 'contactAllowed', 'haeunKnowsAppointment', 'yuriKnowsRelationship', 'otherInterest', 'yuriPastRelevant', 'yuriOwnBookKnown', 'handHoldingComfortable']) {
       if (typeof i[key] !== 'boolean') return false;

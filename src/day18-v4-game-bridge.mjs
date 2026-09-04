@@ -1,5 +1,5 @@
-import {getDay18V4Entry, beginDay18V4, applyDay18V4Choice, completeDay18V4, getDay18V4FollowUpContract} from './day18-v4-state-contract.mjs?v=2';
-import {getDay18V4PlayableSegment} from './day18-v4-playable-script.mjs?v=2';
+import {getDay18V4Entry, beginDay18V4, applyDay18V4Choice, completeDay18V4, getDay18V4FollowUpContract} from './day18-v4-state-contract.mjs?v=3';
+import {getDay18V4PlayableSegment} from './day18-v4-playable-script.mjs?v=3';
 import {BACKGROUND_ASSETS, NPC_ASSETS} from './assets/asset-manifest.mjs';
 import {MAP_LOCATION_ASSETS} from './map-location-assets.mjs';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
@@ -11,6 +11,7 @@ export function getDay18V4GameContext(state) {
   const f = state.storyFlags ?? {};
   return {
     callScheduling: true,
+    separateDinnerScheduling: true,
     haeunContactAllowed: f.day17V4HaeunContactPaused !== true,
     // Not knowing one's feelings is not an affirmative romantic interest.
     otherInterest: f.day12V3SeojinIntent === 'SPARK',
