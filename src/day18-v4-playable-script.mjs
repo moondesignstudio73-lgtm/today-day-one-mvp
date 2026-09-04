@@ -75,7 +75,8 @@ function reaction(c) {
     case 'topic_other': return i.otherInterest ? [d('나','다른 사람을 더 알고 싶은 마음이 있어. 네가 기다려 주기로 한 것처럼 생각하고 싶지는 않아.'), ...D(13, '**다른 마음을 말한다**', '실제 관심이 없다면')]
       : [d('나', '아니, 지금 있는 마음은 너랑 더 만나고 싶다는 거야. 없는 고민까지 말하려 했네.'), d('하은', '없는 사람까지 저녁에 초대하지는 말자.')];
     case 'topic_score': return part(13, '확인받고 싶다고 한다');
-    case 'close_seat': return [...part(14, '옆자리를 묻는다', '산책을 제안한다'), n('맞은편에서 옆으로 옮겼다. 같은 방향으로 식당 안을 보니, 고개를 돌리는 거리가 달라졌다.')];
+    case 'close_seat': return part(14, '옆자리를 묻는다', '산책을 제안한다').flatMap(step => step.text === '와.'
+      ? [step, scene(14, 'day18-haeun-beside', 'evening')] : [step]);
     case 'close_walk': return [...part(14, '산책을 제안한다', '여기서 마친다'), scene(16, 'neighborhood-day', 'evening', 'girlfriend'),
       n(f.heldHands ? '손이 스친 다음 자연스럽게 이어졌다.' : '나란히 걷는 거리만 조금 좁아졌다.')];
     case 'close_home': return part(14, '여기서 마친다');

@@ -41,6 +41,23 @@ test('Haeun arrival establishes the wind before the original joke', () => {
   assert.equal(directions[1].character,'girlfriend');
 });
 
+test('beside-seat viewpoint follows consent and precedes the changed-distance dialogue', () => {
+  for(const id of ['close_seat','close_walk','close_home']) {
+    const s=start('HAEUN');
+    for(const key of ['morning_keep','disclose_together','menu_each','topic_good',id]) applyDay18V4Choice(s,`day18_v4_${key}`);
+    const segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    const at=segment.findIndex(x=>x.location==='day18-haeun-beside');
+    assert.equal(at>=0,id==='close_seat');
+    if(id==='close_seat') {
+      assert.equal(segment[at-1].text,'와.');
+      assert.equal(segment[at+1].text,'말하려면 이렇게 봐야 되네.');
+      assert.equal(segment[at].character,null);
+      assert.ok(segment.slice(at+1).some(x=>x.location==='home-evening'&&x.character===null));
+      assert.ok(!segment.some(x=>x.text?.includes('맞은편에서 옆으로 옮겼다')));
+    }
+  }
+});
+
 test('withheld noon disclosure lets Haeun leave for her own lunch', () => {
   const s=start('YURI',false);
   for(const id of ['morning_keep','disclose_withhold']) applyDay18V4Choice(s,`day18_v4_${id}`);

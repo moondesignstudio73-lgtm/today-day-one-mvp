@@ -91,6 +91,7 @@ export const BACKGROUND_ASSETS = {
   "neighborhood-night":"assets/backgrounds/street/BG_RELATIONSHIP_STREET_NIGHT_001.png",
   "day18-rose-bistro":"assets/backgrounds/map-locations/024_rose-bistro.png",
   "day18-alley-pub":"assets/backgrounds/map-locations/005_alley-pub.png",
+  "day18-haeun-beside":"assets/events/day18-v4/haeun-beside-seat-v1.png",
   "day18-gimbap-evening":"assets/backgrounds/map-locations/002_gimbap-village-evening-v1.png",
   "day1-hospital-ceiling":"assets/backgrounds/hospital/day1-hospital-pov-ceiling-v1.png",
   "day1-hospital-bedside":"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png",
