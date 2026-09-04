@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {existsSync} from 'node:fs';
+import {existsSync,readFileSync} from 'node:fs';
 import {beginDay18V4, applyDay18V4Choice, getDay18V4Options} from '../src/day18-v4-state-contract.mjs';
 import {getDay18V4PlayableSegment} from '../src/day18-v4-playable-script.mjs';
 import {DAY18_V4_SOURCE_SCENES} from '../src/day18-v4-source-registry.mjs';
@@ -19,6 +19,23 @@ function start(partner, known = true, context = {}) {
   beginDay18V4(s, context); return s;
 }
 
+test('runtime rejects the five photorealistic-hand v1 assets and documents the style gate', () => {
+  const runtime=[
+    readFileSync(new URL('../src/day18-v4-playable-script.mjs',import.meta.url),'utf8'),
+    readFileSync(new URL('../src/day18-v4-source-beats.mjs',import.meta.url),'utf8')
+  ].join('\n');
+  for(const file of ['yuri-menu-wait-water-v1.png','haeun-menu-slide-v1.png','menu-open-v1.png','menu-closed-v1.png','washing-cup-night-v1.png']) {
+    assert.equal(runtime.includes(file),false,file);
+  }
+  for(const file of ['yuri-menu-wait-water-v2.png','haeun-menu-slide-v2.png','menu-open-v2.png','menu-closed-v2.png','washing-cup-night-v2.png']) {
+    assert.ok(existsSync(new URL(`../assets/events/day18-v4/${file}`,import.meta.url)),file);
+  }
+  const rules=readFileSync(new URL('../docs/STORY_V4_IMAGE_STYLE_RULES.md',import.meta.url),'utf8');
+  assert.match(rules,/2D 애니메이션 셀 채색/);
+  assert.match(rules,/사진을 합성한 것처럼 보이면 불합격/);
+  assert.match(rules,/해부학 PASS.*화풍 PASS/s);
+});
+
 test('the solo protagonist clears the opposite chair for an arriving customer without narrating the direction', () => {
   const prior='대단한 허락을 받은 것도 아닌데 마음이 편해졌다. 처음부터 저녁 전체를 맞힐 필요는 없었다.';
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN','SOLO']) {
@@ -35,7 +52,7 @@ test('the solo protagonist clears the opposite chair for an arriving customer wi
 test('the protagonist drinks water only after the Yuri menu counting-unit joke', () => {
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN'])for(const menu of ['menu_each','menu_share','menu_wait']) {
     const s=start(partner,true,context);applyDay18V4Choice(s,'day18_v4_morning_keep');applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':'day18_v4_disclose_together');applyDay18V4Choice(s,`day18_v4_${menu}`);
-    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.source==='assets/events/day18-v4/yuri-menu-wait-water-v1.png');
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.source==='assets/events/day18-v4/yuri-menu-wait-water-v2.png');
     assert.equal(at>=0,partner==='YURI'&&menu==='menu_wait');
     if(at>=0){assert.equal(steps[at-1].text,'메뉴 기다리는 사람이 둘이나 더 생긴 줄.');assert.equal(steps[at+1].text,'두 분이 아니라 이 분. 단위를 잘못 말했다.');assert.ok(existsSync(new URL(`../${steps[at].source}`,import.meta.url)));}
     assert.equal(steps.some(x=>x.text?.includes('물을 마셨다')),false);assert.equal(JSON.stringify(s),before);assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
@@ -68,7 +85,7 @@ test('Haeun sets down her existing bag only after the chair line and only in her
     const s=start(partner,true,context);applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
     applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':partner==='HAEUN'?'day18_v4_disclose_together':'day18_v4_disclose_solo');
     const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.source==='assets/events/day18-v4/haeun-bag-down-v1.png');
-    assert.equal(at>=0,partner==='HAEUN');if(at>=0){assert.equal(steps[at-1].text,'의자 맡아 둔 사람이 더 좋아.');assert.equal(steps[at+1].source,'assets/events/day18-v4/haeun-menu-slide-v1.png');for(const x of steps.slice(at,at+2))assert.ok(existsSync(new URL(`../${x.source}`,import.meta.url)));}
+    assert.equal(at>=0,partner==='HAEUN');if(at>=0){assert.equal(steps[at-1].text,'의자 맡아 둔 사람이 더 좋아.');assert.equal(steps[at+1].source,'assets/events/day18-v4/haeun-menu-slide-v2.png');for(const x of steps.slice(at,at+2))assert.ok(existsSync(new URL(`../${x.source}`,import.meta.url)));}
     assert.equal(steps.some(x=>x.text?.includes('메뉴를 하은 쪽으로 밀었다')),false);
     assert.equal(steps.some(x=>x.text?.includes('가방을 내려놓자')),false);assert.equal(JSON.stringify(s),before);assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
   }
@@ -118,7 +135,7 @@ test('menu opens twice before Yuri arrives and never leaks into other dinner rou
     const cuts=steps.filter(x=>x.type==='cgShow'&&typeof x.source==='string'&&x.source.includes('/menu-'));
     assert.equal(cuts.length,partner==='YURI'?4:0);
     if(partner==='YURI') {
-      assert.deepEqual(cuts.map(x=>x.source.split('/').at(-1)),['menu-closed-v1.png','menu-open-v1.png','menu-closed-v1.png','menu-open-v1.png']);
+      assert.deepEqual(cuts.map(x=>x.source.split('/').at(-1)),['menu-closed-v2.png','menu-open-v2.png','menu-closed-v2.png','menu-open-v2.png']);
       for(const cut of cuts)assert.ok(existsSync(new URL(`../${cut.source}`,import.meta.url)));
       const arrival=steps.findIndex(x=>x.type==='sceneDirection'&&x.character==='yuri');
       assert.ok(cuts.every(x=>steps.indexOf(x)<arrival));

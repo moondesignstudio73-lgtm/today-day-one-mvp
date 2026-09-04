@@ -78,7 +78,7 @@ function reaction(c) {
         return steps.flatMap(step => key === 'menu_each' && step.text === '같은 것을 고르지 않았는데도 한 끼가 시작됐다.'
           ? [{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},{type:'storyPause',duration:180},{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},step]
           : key === 'menu_wait' && step.text === '메뉴 기다리는 사람이 둘이나 더 생긴 줄.'
-            ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-menu-wait-water-v1.png',fit:'contain',duration:3000}] : [step]);
+            ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-menu-wait-water-v2.png',fit:'contain',duration:3000}] : [step]);
       }
       return key === 'menu_each' ? [d('하은', '네 거 맛있으면 한 입만 구경할게.')]
         : key === 'menu_share' ? [d('하은', '먼저 먹어 보고, 내가 싫으면 네가 책임지는 건 아니야.')]
@@ -148,7 +148,7 @@ function reaction(c) {
     case 'calm_rest': return msg(part(19, '쉬는 모습을 보고 싶다', '같은 저녁을 원한다'));
     case 'calm_dinner': return msg(part(19, '같은 저녁을 원한다'));
     case 'alone_stop': return [{type:'sfx',sfxId:'SFX_PHONE_SOFT_DROP'},
-      {type:'cgShow',source:'assets/events/day18-v4/washing-cup-night-v1.png',fit:'contain',duration:3200},
+      {type:'cgShow',source:'assets/events/day18-v4/washing-cup-night-v2.png',fit:'contain',duration:3200},
       n(f.nightRoute==='UNRESOLVED'||f.callDeferred||f.contactTonight==='night_defer'
         ? '뭔가를 씻는다고 대화가 깨끗해지지는 않았다. 그래도 컵은 내일 쓸 수 있게 됐다.'
         : '씻은 컵은 내일 쓸 수 있게 됐다. 오늘은 그걸로 충분했다.')];
@@ -225,7 +225,7 @@ function opening(c) {
     case 'menu': return [scene(3, place(c), 'evening', null),
       ...(f.dinner === 'YURI' ? [n('유리 씨는 아직 오지 않았다.'), n('상대를 기다리는 일에도 오래 해 본 사람 같은 자세가 있을까 싶었다.'),
         ...[['closed',650],['open',2400],['closed',650],['open',1400]].map(([frame,duration]) =>
-          ({type:'cgShow',source:`assets/events/day18-v4/menu-${frame}-v1.png`,fit:'contain',duration})),
+          ({type:'cgShow',source:`assets/events/day18-v4/menu-${frame}-v2.png`,fit:'contain',duration})),
         {...scene(3,place(c),'evening','yuri'),outerwear:true},
         ...D(3, undefined, '하은과 약속한 저녁').flatMap(step => step.text==='지금 제목을 다 아는 단계예요.'
           ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-jacket-chair-v1.png',fit:'contain',duration:3000},scene(3,place(c),'evening','yuri')] : [step])]

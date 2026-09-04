@@ -16,7 +16,7 @@ const before = new Map([
 const after = new Map([
   ['3|의자 맡아 둔 사람이 더 좋아.',[
     {type:'cgShow',source:'assets/events/day18-v4/haeun-bag-down-v1.png',fit:'contain',duration:3000},
-    {type:'cgShow',source:'assets/events/day18-v4/haeun-menu-slide-v1.png',fit:'contain',duration:2600}]],
+    {type:'cgShow',source:'assets/events/day18-v4/haeun-menu-slide-v2.png',fit:'contain',duration:2600}]],
   ['4|저는 이걸로요.',[mono('같은 것을 고르지 않았는데도 한 끼가 시작됐다.')]],
   ['8|지금은 진짜예요.',[{type:'cgShow',source:'assets/events/day18-v4/vegetable-bite-v1.png',fit:'contain',duration:2600}]],
   ['3|지금 제목을 다 아는 단계예요.',[mono('카페에서 갑자기 이름을 들었던 날과는 달랐다. 오늘은 내가 이 사람을 만나려고 나왔다.'),mono('그 생각은 메뉴보다 늦게 펼쳐졌다.')]],
