@@ -92,3 +92,5 @@ SCENE01~08 및 09~24 누락 감사는 `DAY18_V4_SOURCE_AUDIT_01_08.md`, `DAY18_V
 21:36 후속: Friendly를 DAY18 아침부터 DAY19까지 비-SKIP 완주하고 저녁 저장 재개를 확인했다(`DAY18_V4_FULL_ROUTE_QA.md`). 나눠 먹기에도 얼굴 흉내 농담을 회수하는 오류를 발견하여 menu_wait 전용으로 수정하고 실제 재생 확인했다. 물건 연출 미완료로 전체 Fidelity PASS는 아니다. 다음은 **문서에 정한 Neutral 전체 경로**, 이후 Distant/Mixed다. DAY18 PARTIAL 유지.
 
 21:46 후속: Neutral을 아침부터 진행하며 식당의 유리 스프라이트 미표시 HIGH 오류를 발견했다. DAY18 명시적 인물 전환에 렌더 호출을 추가하고 유리/하은 실제 표시·귀가 후 숨김을 확인했다(`DAY18_V4_CHARACTER_TRANSITION_FIX.md`). 같은 저장에서 Neutral을 DAY19까지 완료, 저녁/밤 재개 확인. 자동 테스트 445 PASS, game191. 다음은 **Distant 전체 경로**, 이후 Mixed 및 남은 행동 연출. DAY18 PARTIAL.
+
+21:54 후속: game191에서 Distant(무연락/혼자)와 Mixed(미고지/현재 관심/통화 연기)를 각각 아침부터 DAY19까지 실제 완주, 밤 저장 재개와 사용자 저장 복원 확인(`DAY18_V4_FULL_ROUTE_QA.md`). 새 코드 오류는 관찰되지 않았다. 네 성향 첫 실행은 모였지만 최종 동일 버전 클린 완주/행동 연출은 아직 미완료다. 다음은 **SCENE21 여행 사진 실제 이벤트**, 이후 전화 종료·물건 행동과 최종 QA. DAY18 PARTIAL 유지.
