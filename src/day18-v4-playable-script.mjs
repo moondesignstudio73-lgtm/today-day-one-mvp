@@ -248,7 +248,14 @@ function opening(c) {
     case 'haeun_topic': return [scene(12, place(c), 'evening', 'girlfriend'), ...haeunMealConversation(c), scene(13, place(c), 'evening', 'girlfriend'),
       ...(i.yuriPastRelevant ? D(13, undefined, '유리와의 접점이 없거나') : D(13, '유리와의 접점이 없거나', '### 선택 9'))];
     case 'closeness': return [scene(14, place(c), 'evening', 'girlfriend'), ...D(14, undefined, '### 선택 10')];
-    case 'solo_contact': return [scene(15, place(c), 'evening'), n('김밥 한 줄을 다 먹었을 때 휴대전화를 한 번 봤다.'), n('아직 배가 고픈지 보기 전에 누가 연락했는지 먼저 보고 있었다.'), n('휴대전화를 뒤집었다. 조금 생각한 뒤 작은 식사를 하나 더 주문했다.')];
+    case 'solo_contact': return [scene(15, place(c), 'evening'),
+      n('아직 배가 고픈지 보기 전에 누가 연락했는지 먼저 보고 있었다.'),
+      {type:'sfx',sfxId:'SFX_PHONE_SCREEN_OFF'}, {type:'storyPause',duration:240},
+      {type:'cgShow',source:'assets/events/day18-v4/solo-phone-down-extra-food-v1.png',fit:'contain',duration:3000},
+      n('다른 사람과 먹었다면 그 사람의 속도에 맞춰 배부른 척했을 수도 있었다.'),
+      {type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'}, {type:'storyPause',duration:180}, {type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},
+      {type:'cgShow',source:'assets/events/day18-v4/solo-bag-mimic-v1.png',fit:'contain',duration:2200},
+      n('누가 보면 바쁜 사람의 손 연습 같았을 것이다.')];
     case 'return': return [scene(16, place(c), 'evening'), n('다 먹은 뒤에야 휴대전화를 들었다.')];
     case 'night': return [...departure(c), scene(17, 'home-evening', 'night'),
       n(f.dinner==='SOLO'&&['return_home','return_food'].includes(f.returnAction)

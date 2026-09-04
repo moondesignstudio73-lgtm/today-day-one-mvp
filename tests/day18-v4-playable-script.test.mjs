@@ -747,6 +747,25 @@ test('Jihoon meal photo appears before the evidence joke, only on his contact br
   }
 });
 
+test('solo dinner acts the phone, extra food and bag mimic before contact choice', () => {
+  const s=start('SOLO');
+  for(const id of ['morning_solo','disclose_solo','menu_new']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const before=JSON.stringify(s),segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  const phone=segment.findIndex(x=>x.source==='assets/events/day18-v4/solo-phone-down-extra-food-v1.png');
+  const mimic=segment.findIndex(x=>x.source==='assets/events/day18-v4/solo-bag-mimic-v1.png');
+  assert.ok(phone>=0&&mimic>phone);
+  assert.equal(segment[phone-2].sfxId,'SFX_PHONE_SCREEN_OFF');
+  assert.deepEqual(segment.slice(mimic-3,mimic).map(x=>x.type==='sfx'?x.sfxId:x.type),['SFX_DOCUMENT_RECEIVE','storyPause','SFX_DOCUMENT_RECEIVE']);
+  assert.equal(segment[mimic+1].text,'누가 보면 바쁜 사람의 손 연습 같았을 것이다.');
+  for(const at of [phone,mimic]) assert.ok(existsSync(new URL(`../${segment[at].source}`,import.meta.url)));
+  assert.ok(!segment.some(x=>x.text?.includes('휴대전화를 뒤집었다')));
+  assert.ok(!segment.some(x=>x.text?.includes('봉투를 펴다가')));
+  assert.ok(segment.some(x=>x.text==='다른 사람과 먹었다면 그 사람의 속도에 맞춰 배부른 척했을 수도 있었다.'));
+  assert.equal(segment.at(-1).type,'choice');
+  assert.equal(JSON.stringify(s),before);
+  assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(s.storyFlags.day18V4))));
+});
+
 test('actual interest is spoken before Haeun asks what it means, never invented otherwise', () => {
   for(const otherInterest of [true,false]) {
     const s=start('HAEUN',true,{otherInterest});
