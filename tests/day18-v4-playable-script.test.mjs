@@ -155,6 +155,26 @@ test('Haeun meal recalls the face joke only after actually discussing that face'
   }
 });
 
+test('cancelling Haeun dinner preserves her disappointment without inventing reassurance', () => {
+  for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const partner of ['YURI','HAEUN']) {
+      const s=start(partner,true,context);
+      applyDay18V4Choice(s,'day18_v4_morning_change');
+      const before=JSON.stringify(s),segment=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+      const at=segment.findIndex(x=>x.text==='취소한 사람이 먼저 상대의 기분을 달래 달라고 할 뻔하다가 멈췄다.');
+      assert.equal(at>=0,partner==='HAEUN');
+      if(at>=0) {
+        assert.equal(segment[at].type,'monologue');
+        assert.equal(segment[at-1].text,'실망하지 않았다는 말까지 덧붙이지는 않았다.');
+        assert.ok(segment.slice(0,at).some(x=>x.speaker==='하은'&&x.text==='알겠어. 오늘은 나도 집으로 갈게.'));
+      }
+      assert.equal(s.storyFlags.day18V4.facts.dinner,'SOLO');
+      assert.equal(s.storyFlags.day18V4.facts.appointmentCancelled,true);
+      assert.equal(JSON.stringify(s),before);
+    }
+  }
+});
+
 test('morning water is a visual action before the frozen appointment recap', () => {
   for(const schema of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
     for(const partner of ['YURI','HAEUN','SOLO']) {
