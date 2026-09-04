@@ -194,7 +194,9 @@ function haeunMealConversation(c) {
 function opening(c) {
   const f = c.facts, i = c.input;
   switch (c.phase) {
-    case 'morning': return [scene(1, 'home-morning', 'morning'), n('알람을 끄고 나서도 잠깐 누워 있었다.'), n('어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.'), n('식탁에 놓인 물을 마셨다. 휴대전화에는 어제 내가 보낸 답이 남아 있었다.'),
+    case 'morning': return [scene(1, 'home-morning', 'morning'), n('알람을 끄고 나서도 잠깐 누워 있었다.'), n('어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.'),
+      {type:'cgShow',source:'assets/events/day18-v4/morning-water-v1.png',fit:'contain',duration:2800},
+      n('휴대전화에는 어제 내가 보낸 답이 남아 있었다.'),
       n(i.appointment === 'YURI' ? '유리 씨와 장소와 시간을 확인한 두 줄.' : i.appointment === 'HAEUN' ? '하은과 퇴근하고 만나자는 짧은 대화.' : '저녁 칸은 비어 있었다.'),
       ...(i.appointment === 'SOLO' ? [n('빈칸을 보고 나니 묘하게 늦은 것 같았다. 누구보다 늦었는지는 알 수 없었다.')] : [])];
     case 'disclosure': return [scene(2, 'home-morning', 'afternoon'), ...msg([d('하은', '점심 먹었어? 나는 지금 먹으러 나왔어.'),

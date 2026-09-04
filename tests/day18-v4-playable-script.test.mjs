@@ -155,6 +155,27 @@ test('Haeun meal recalls the face joke only after actually discussing that face'
   }
 });
 
+test('morning water is a visual action before the frozen appointment recap', () => {
+  for(const schema of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}]) {
+    for(const partner of ['YURI','HAEUN','SOLO']) {
+      const s=start(partner,true,schema), before=JSON.stringify(s);
+      const chapter=JSON.parse(JSON.stringify(s.storyFlags.day18V4));
+      const segment=getDay18V4PlayableSegment(chapter);
+      const at=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('morning-water'));
+      assert.ok(at>0);
+      assert.equal(segment[at-1].text,'어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.');
+      assert.equal(segment[at+1].text,'휴대전화에는 어제 내가 보낸 답이 남아 있었다.');
+      assert.ok(existsSync(new URL(`../${segment[at].source}`,import.meta.url)));
+      assert.ok(!segment.some(x=>x.text?.includes('식탁에 놓인 물을 마셨다')));
+      assert.equal(segment.filter(x=>x.type==='cgShow'&&x.source.includes('morning-water')).length,1);
+      assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(chapter))));
+      assert.equal(JSON.stringify(s),before);
+      applyDay18V4Choice(s,getDay18V4Options(chapter)[0].id);
+      assert.ok(!getDay18V4PlayableSegment(s.storyFlags.day18V4).some(x=>x.type==='cgShow'&&x.source.includes('morning-water')));
+    }
+  }
+});
+
 test('Haeun arrival establishes the wind before the original joke', () => {
   const s=start('HAEUN');
   for(const id of ['morning_keep','disclose_together']) applyDay18V4Choice(s,`day18_v4_${id}`);
