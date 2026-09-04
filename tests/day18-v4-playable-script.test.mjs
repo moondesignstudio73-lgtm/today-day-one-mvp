@@ -199,6 +199,15 @@ test('closeness consent and hand-holding remain separate across saved schemas', 
         assert.equal(chapter.facts.walkTogether,choice==='close_walk');
         assert.equal(chapter.facts.heldHands,choice==='close_walk'&&handHoldingComfortable);
         assert.equal(segment.some(x=>x.location==='day18-haeun-beside'),choice==='close_seat');
+        const contact=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('shoulder-contact'));
+        assert.equal(contact>=0,choice==='close_seat');
+        if(contact>=0) {
+          assert.equal(segment[contact-1].text,'아니. 괜히 작은 소리로 말하게 돼.');
+          assert.equal(segment[contact+1].type,'storyPause');
+          assert.equal(segment[contact+2].text,'큰 사건은 아니었는데 물잔을 드는 손이 조금 조심스러워졌다.');
+          assert.equal(segment[contact].duration,3000);
+          assert.ok(existsSync(new URL(`../${segment[contact].source}`,import.meta.url)));
+        }
         assert.equal(segment.some(x=>x.text==='큰 사건은 아니었는데 물잔을 드는 손이 조금 조심스러워졌다.'),choice==='close_seat');
         assert.deepEqual(segment,getDay18V4PlayableSegment(JSON.parse(JSON.stringify(chapter))));
         assert.equal(JSON.stringify(s),before);
@@ -221,6 +230,7 @@ test('actual other interest blocks closeness and cannot be bypassed by a stale c
       assert.equal(JSON.stringify(s),before);
       const segment=getDay18V4PlayableSegment(JSON.parse(JSON.stringify(s.storyFlags.day18V4)));
       assert.ok(!segment.some(x=>x.location==='day18-haeun-beside'));
+      assert.ok(!segment.some(x=>x.type==='cgShow'&&x.source.includes('shoulder-contact')));
       assert.ok(!segment.some(x=>x.text==='아니. 괜히 작은 소리로 말하게 돼.'));
       assert.equal(s.storyFlags.day18V4.facts.sharedSeat,false);
     }
