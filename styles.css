@@ -1211,6 +1211,14 @@ body.campaign-story-mode:not(.ui-night-mode) .vn-stage.phone-call[data-call-cue=
 .vn-stage[data-room-action="desk-reset"] .vn-backdrop{background-position:18% 52%}
 .vn-stage[data-room-action="sleep-ready"] .vn-backdrop{background-position:62% 68%;filter:brightness(.72)}
 .vn-stage[data-room-action="alarm-set"] .vn-backdrop{background-position:28% 62%;filter:brightness(.65)}
+.vn-stage[data-room-action="entry-shoes"] .vn-backdrop{background-position:8% 68%}
+.vn-stage[data-room-action="wardrobe-hang"] .vn-backdrop{background-position:86% 48%}
+.vn-stage[data-room-action="fridge-check"] .vn-backdrop{background-position:75% 55%;filter:brightness(.8)}
+.vn-stage[data-story-action] .vn-backdrop{transition:background-position .8s ease,filter .8s ease;filter:brightness(.78)}
+.vn-stage[data-story-action] .vn-character{transition:transform .8s ease,filter .8s ease;transform:translateY(3px) scale(.995);filter:brightness(.86)}
+.vn-stage[data-story-action="crosswalk-wait"] .vn-backdrop{background-position:42% 50%}
+.vn-stage[data-story-action="crosswalk-cross"] .vn-backdrop{background-position:58% 50%}
+.vn-stage[data-story-action="ride-wait"] .vn-character{transform:translateX(3px) scale(.995)}
 .vn-stage[data-final-fade="active"] .vn-backdrop{filter:brightness(.16) saturate(.45);transition:filter 1.4s ease}
 .vn-stage[data-final-fade="active"] .vn-dialogue{background:#090a12eb;transition:background 1.4s ease}
 .vn-stage.private-note-active .vn-dialogue{visibility:hidden}

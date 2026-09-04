@@ -10,7 +10,8 @@
 
 ## 자산
 
-- 게임 경로: `assets/events/day18-v4/yuri-menu-wait-water-v1.png`
+- 최초 자산: `assets/events/day18-v4/yuri-menu-wait-water-v1.png` (손 화풍 반려)
+- 런타임 경로: `assets/events/day18-v4/yuri-menu-wait-water-v2.png` (전경 손을 2D 셀 채색으로 교체)
 - 참조: `menu-open-v1.png`, `yuri-ex-girlfriend-2d.png`, `yuri-jacket-chair-v1.png`
 - 생성 원본: `C:\Users\aaa\.codex\generated_images\01a06810-af54-7db0-a3f6-3764034ac137\exec-b27cfcc1-720d-480d-ab82-05cbf7957dc2.png`
 - 생성 방식: built-in imagegen.

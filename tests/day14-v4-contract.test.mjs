@@ -17,7 +17,7 @@ assert.equal(getDay14V4Compatibility({storyFlags:{}}).mode,"BLOCKED_PREREQUISITE
 const gameSource=readFileSync(new URL("../game.js",import.meta.url),"utf8");
 const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
 // Bump the game.js query whenever game.js changes; these new DAY 14 V4 modules use v=1 for their first public release and version independently afterward.
-assert.match(html,/game\.js\?v=241/);
+assert.match(html,/game\.js\?v=243/);
 assert.match(gameSource,/import \{ beginDay14V4, getDay14V4Compatibility \} from "\.\/src\/day14-v4-state-contract\.mjs\?v=1";/);
 assert.match(gameSource,/import \{ applyDay14V4Choice \} from "\.\/src\/day14-v4-runtime\.mjs\?v=1";/);
 assert.match(gameSource,/function getLockedDay14ResumePresentation\(currentState\)\{return getDay14V4Compatibility\(currentState\)\.mode==="V1_LEGACY"\?getLegacyDay14ResumePresentation\(currentState\):getDay14V4ResumePresentation\(currentState\);\}/);

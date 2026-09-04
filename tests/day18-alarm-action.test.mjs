@@ -12,7 +12,7 @@ test('DAY18 morning alarm waits for a player action before the toe movement',()=
   const steps=getDay18V4PlayableSegment(fresh().storyFlags.day18V4);
   const at=steps.findIndex(step=>step.type==='alarmAction');
   assert.ok(at>=0);
-  assert.deepEqual(steps[at],{type:'alarmAction',source:'assets/events/day18-v4/morning-alarm-off-v1.png',fit:'contain',sfxId:'SFX_DAY18_PHONE_ALARM',actionLabel:'눌러서 알람 끄기'});
+  assert.deepEqual(steps[at],{type:'alarmAction',source:'assets/events/day18-v4/morning-alarm-off-v2.png',fit:'contain',sfxId:'SFX_DAY18_PHONE_ALARM',actionLabel:'눌러서 알람 끄기'});
   assert.deepEqual(steps.slice(at+1,at+4).map(step=>step.source?.split('/').at(-1)),['morning-feet-rest-v1.png','morning-feet-flex-v1.png','morning-feet-rest-v1.png']);
   assert.equal(steps.some(step=>step.type==='cgShow'&&step.source?.includes('morning-alarm-off')),false);
 });

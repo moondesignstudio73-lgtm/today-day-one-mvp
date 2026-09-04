@@ -19,15 +19,15 @@ function start(partner, known = true, context = {}) {
   beginDay18V4(s, context); return s;
 }
 
-test('runtime rejects the five photorealistic-hand v1 assets and documents the style gate', () => {
+test('runtime rejects all nine audited photorealistic-hand v1 assets and documents the style gate', () => {
   const runtime=[
     readFileSync(new URL('../src/day18-v4-playable-script.mjs',import.meta.url),'utf8'),
     readFileSync(new URL('../src/day18-v4-source-beats.mjs',import.meta.url),'utf8')
   ].join('\n');
-  for(const file of ['yuri-menu-wait-water-v1.png','haeun-menu-slide-v1.png','menu-open-v1.png','menu-closed-v1.png','washing-cup-night-v1.png']) {
+  for(const file of ['yuri-menu-wait-water-v1.png','haeun-menu-slide-v1.png','menu-open-v1.png','menu-closed-v1.png','washing-cup-night-v1.png','morning-alarm-off-v1.png','wallet-open-v1.png','wallet-closed-v1.png','solo-bag-seat-move-v1.png']) {
     assert.equal(runtime.includes(file),false,file);
   }
-  for(const file of ['yuri-menu-wait-water-v2.png','haeun-menu-slide-v2.png','menu-open-v2.png','menu-closed-v2.png','washing-cup-night-v2.png']) {
+  for(const file of ['yuri-menu-wait-water-v2.png','haeun-menu-slide-v2.png','menu-open-v2.png','menu-closed-v2.png','washing-cup-night-v2.png','morning-alarm-off-v2.png','wallet-open-v2.png','wallet-closed-v2.png','solo-bag-seat-move-v2.png']) {
     assert.ok(existsSync(new URL(`../assets/events/day18-v4/${file}`,import.meta.url)),file);
   }
   const rules=readFileSync(new URL('../docs/STORY_V4_IMAGE_STYLE_RULES.md',import.meta.url),'utf8');
@@ -41,7 +41,7 @@ test('the solo protagonist clears the opposite chair for an arriving customer wi
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN','SOLO']) {
     const s=start(partner,true,context);applyDay18V4Choice(s,partner==='SOLO'?'day18_v4_morning_solo':'day18_v4_morning_keep');
     applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':partner==='HAEUN'?'day18_v4_disclose_together':'day18_v4_disclose_solo');
-    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.source==='assets/events/day18-v4/solo-bag-seat-move-v1.png');
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.source==='assets/events/day18-v4/solo-bag-seat-move-v2.png');
     assert.equal(at>=0,partner==='SOLO');
     if(at>=0){assert.equal(steps[at-1].text,prior);assert.equal(steps[at].type,'cgShow');assert.ok(existsSync(new URL(`../${steps[at].source}`,import.meta.url)));}
     assert.equal(steps.some(x=>x.text?.includes('맞은편에 가방을')||x.text?.includes('내 옆으로 옮겼다')),false);
@@ -447,7 +447,7 @@ test('morning water is a visual action before the frozen appointment recap', () 
       const at=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('morning-water'));
       assert.ok(at>0);
       assert.equal(segment[0].location,'day4-bedroom-morning');
-      assert.equal(segment[1].source,'assets/events/day18-v4/morning-alarm-off-v1.png');
+      assert.equal(segment[1].source,'assets/events/day18-v4/morning-alarm-off-v2.png');
       assert.equal(segment[1].type,'alarmAction');
       assert.equal(segment[1].sfxId,'SFX_DAY18_PHONE_ALARM');
       assert.equal(segment[1].actionLabel,'눌러서 알람 끄기');
@@ -684,6 +684,32 @@ test('home return and fridge actions happen after leaving the restaurant', () =>
     assert.equal(segment[0].location,'home-evening');
     assert.equal(segment[0].character,null);
   }
+});
+
+test('scene 16 performs walking, entry and fridge work outside narration',()=>{
+  const expected={
+    return_walk:[['storyActionCue','crosswalk-wait'],['storyActionCue','crosswalk-cross']],
+    return_home:[['roomActionCue','entry-shoes'],['roomActionCue','wardrobe-hang']],
+    return_food:[['roomActionCue','fridge-check']]
+  };
+  for(const [choice,cues] of Object.entries(expected)) {
+    const s=start('SOLO');
+    for(const id of ['morning_solo','disclose_solo','menu_familiar','solo_food',choice]) applyDay18V4Choice(s,`day18_v4_${id}`);
+    const steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+    for(const [type,status] of cues) assert.ok(steps.some(x=>x.type===type&&x.status===status),`${choice}:${status}`);
+    const narration=steps.filter(x=>x.type==='narration').map(x=>x.text).join('\n');
+    assert.doesNotMatch(narration,/신호등 앞에서 한 번 멈췄다|현관에서 신발을 벗자|옷을 의자에 던지려다|냉장고를 열었다/);
+  }
+});
+
+test('Haeun departure waits for her ride without inventing matching laughter',()=>{
+  const s=start('HAEUN');
+  for(const id of ['morning_keep','disclose_together','menu_each','topic_good','close_home']) applyDay18V4Choice(s,`day18_v4_${id}`);
+  const steps=getDay18V4PlayableSegment(s.storyFlags.day18V4);
+  const wait=steps.findIndex(x=>x.type==='storyActionCue'&&x.status==='ride-wait');
+  const night=steps.findIndex(x=>x.type==='sceneDirection'&&x.number===17);
+  assert.ok(wait>=0&&wait<night);
+  assert.match(steps[wait+1].text,/같은 대목에서 웃지 않더라도 같은 저녁을 먹은 건 변하지 않았다/);
 });
 
 test('telling Haeun at noon is remembered by the night report', () => {

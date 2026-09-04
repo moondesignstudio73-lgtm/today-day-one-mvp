@@ -10,7 +10,7 @@ const msg = steps => steps.map(s => s.type === 'dialogue'
   ? {...s, type: 'message', sender: s.speaker === '나' ? '나' : s.speaker, device: 'phone'} : s);
 const call = steps => steps.map(s => s.type === 'dialogue' ? {...s,device:'call'} : s);
 const travelPhoto = () => ({type:'cgShow',source:'assets/events/day18-v4/travel-window-sea-v1.png',fit:'contain',duration:3000});
-const wallet = state => ({type:'cgShow',source:`assets/events/day18-v4/wallet-${state}-v1.png`,fit:'contain',duration:2800});
+const wallet = state => ({type:'cgShow',source:`assets/events/day18-v4/wallet-${state}-v2.png`,fit:'contain',duration:2800});
 const chosen = c => c.choices.at(-1)?.id.replace('day18_v4_', '');
 const place = c => c.facts.dinner === 'YURI' ? 'rose-bistro' : c.facts.dinner === 'HAEUN' ? 'alley-pub' : 'gimbap-village';
 const companion = c => c.facts.dinner === 'YURI' ? 'yuri' : c.facts.dinner === 'HAEUN' ? 'girlfriend' : null;
@@ -123,9 +123,19 @@ function reaction(c) {
     case 'solo_jihoon': return msg(part(15, '지훈에게 연락한다', '하은에게 연락한다'));
     case 'solo_haeun': return msg(part(15, '하은에게 연락한다', '혼자 먹는 데 집중한다'));
     case 'solo_food': return [n('마지막 한 입을 천천히 먹었다. 지금은 그냥 내가 먹는 날이었다.')];
-    case 'return_walk': return [scene(16, 'neighborhood-day', 'evening'), n('신호등 앞에서 한 번 멈췄다. 다음 신호를 기다렸다.'), n('같이 출발한 적도 없는 사람에게 뒤처졌다고 생각하고 있었다.')];
-    case 'return_home': return [scene(16, 'home-evening', 'evening'), n('현관에서 신발을 벗자 발이 편해졌다. 옷을 의자에 던지려다 옷걸이에 걸었다.')];
-    case 'return_food': return [scene(16, 'home-evening', 'evening'), n('냉장고를 열었다. 남은 것을 앞쪽으로 옮기고 문을 닫았다. 지금 당장 살 필요가 없는 것은 사지 않았다.')];
+    case 'return_walk': return [scene(16, 'neighborhood-day', 'evening'),
+      {type:'storyActionCue',status:'crosswalk-wait',actionLabel:'건널 수 있는 신호를 보내고 다음 신호를 기다림',duration:900},
+      n('옆에 서 있던 사람이 먼저 건넜다. 같이 출발한 적도 없는 사람에게 뒤처졌다고 생각하고 있었다.'),
+      {type:'storyActionCue',status:'crosswalk-cross',actionLabel:'다음 신호에 길을 건넘',duration:750},
+      n('집에 도착하는 시간이 몇 분 늦어졌을 뿐이었다.')];
+    case 'return_home': return [scene(16, 'home-evening', 'evening'),
+      {type:'roomActionCue',status:'entry-shoes',actionLabel:'현관에서 신발을 벗음',duration:650},
+      n('외출을 잘 끝냈다는 느낌은 생각보다 여기서 왔다.'),
+      {type:'roomActionCue',status:'wardrobe-hang',actionLabel:'의자 대신 옷걸이에 오늘 입은 옷을 걸어 둠',duration:850},
+      n('내일 아침의 내가 오늘 저녁을 조금 덜 치워도 되게 해 놓았다.')];
+    case 'return_food': return [scene(16, 'home-evening', 'evening'),
+      {type:'roomActionCue',status:'fridge-check',actionLabel:'냉장고를 열어 남은 음식을 앞쪽으로 옮기고 문을 닫음',duration:1000},
+      n('지금 당장 살 필요가 없는 것은 사지 않았다. 계획이라고 부르기에는 작았지만 내일 한 번 덜 망설일 수는 있겠다 싶었다.')];
     case 'night_good': return msg(f.comfortableDinner ? D(17, '**좋았다고 말한다**', '**생각이 남았다고 말한다**')
       : [d('하은', '같이 먹은 시간이 다 싫었던 건 아니야. 그래도 아까 들은 마음은 아직 생각하고 있어.'), d('나', '응. 좋았다는 말로 그 이야기를 없애려는 건 아니야.')]);
     case 'night_thought': return [...msg(part(17, '생각이 남았다고 말한다', '짧게 인사한다')),
@@ -180,7 +190,10 @@ function departure(c) {
       d('유리', '잘 들어가.'), d('나', '유리 씨도요.'),
       {type:'storyPause',duration:450},{type:'sfx',sfxId:'SFX_FOOTSTEP_APPROACH'},
       scene(11,'neighborhood-day','evening'),{type:'storyPause',duration:350}]
-    : c.facts.dinner === 'HAEUN' ? [n('서로 집으로 가는 방향을 확인했다.')] : [];
+    : c.facts.dinner === 'HAEUN' ? [
+      {type:'storyActionCue',status:'ride-wait',actionLabel:'서로 갈 방향을 확인하고 하은이 탈 차를 함께 기다림',duration:900},
+      n('오늘 재미있었던 말을 꺼냈다. 같은 대목에서 웃지 않더라도 같은 저녁을 먹은 건 변하지 않았다.')
+    ] : [];
 }
 
 function yuriPresentConversation(c) {
@@ -218,7 +231,7 @@ function opening(c) {
   const f = c.facts, i = c.input;
   switch (c.phase) {
     case 'morning': return [scene(1, 'day4-bedroom-morning', 'morning'),
-      {type:'alarmAction',source:'assets/events/day18-v4/morning-alarm-off-v1.png',fit:'contain',sfxId:'SFX_DAY18_PHONE_ALARM',actionLabel:'눌러서 알람 끄기'},
+      {type:'alarmAction',source:'assets/events/day18-v4/morning-alarm-off-v2.png',fit:'contain',sfxId:'SFX_DAY18_PHONE_ALARM',actionLabel:'눌러서 알람 끄기'},
       ...['rest','flex','rest'].map(pose=>({type:'cgShow',source:`assets/events/day18-v4/morning-feet-${pose}-v1.png`,fit:'contain',duration:1000})),
       n('어제보다 몸이 가벼운지, 지금 누워 있는 것만으로 오늘을 다 알 수는 없었다.'),
       scene(1, 'home-morning', 'morning'),
@@ -239,7 +252,7 @@ function opening(c) {
         : f.dinner === 'HAEUN' ? [n('밖에서 기다리려던 마음이 바람 앞에서는 오래가지 못했다.'), scene(3,place(c),'evening','girlfriend'),
           d('나','밖에서 기다리려다가 바람이 불어서 먼저 들어왔어.'), d('하은','잘했네.'), ...D(3, '하은과 약속한 저녁', '혼자 먹는 저녁')]
         : [n('배고픈 것보다 눈이 바쁘다는 걸 깨달았다.'), ...D(3, '혼자 먹는 저녁'), n('대단한 허락을 받은 것도 아닌데 마음이 편해졌다. 처음부터 저녁 전체를 맞힐 필요는 없었다.'),
-          {type:'cgShow',source:'assets/events/day18-v4/solo-bag-seat-move-v1.png',fit:'contain',duration:3000}]),
+          {type:'cgShow',source:'assets/events/day18-v4/solo-bag-seat-move-v2.png',fit:'contain',duration:3000}]),
       scene(4, place(c), 'evening', companion(c)), ...(f.dinner === 'YURI' ? D(4, undefined, '### 선택 3') : [])];
     case 'yuri_purpose': return [scene(5, place(c), 'evening', 'yuri'), ...D(5, undefined, '### 선택 4')];
     case 'yuri_apology': return [scene(6, place(c), 'evening', 'yuri'), ...D(6), scene(7, place(c), 'evening', 'yuri'), ...D(7, undefined, '### 선택 5')];
@@ -307,7 +320,7 @@ function ending(c) {
       : f.appointmentCancelled ? '약속을 바꾼 사실과 그때 보낸 말을 다시 보았다. 취소를 없던 일로 만들지 않는 것도 오늘 내가 할 수 있는 일이었다.'
         : f.dinner === 'SOLO' ? '혼자 보내기로 한 저녁을 누구에게 벌처럼 돌리지 않은 것. 그 정도로 끝나는 날도 있었다.'
           : '오늘 내가 한 약속을 지킨 것. 나와 먹고 싶다는 사람에게 나도 먹고 싶다고 말한 것. 그 정도로 끝나는 날도 있었다.'),
-    {type:'roomActionCue',status:'sleep-ready',actionLabel:'오늘 입은 옷을 걸어 두고 침대에 누움',duration:1100},
+    {type:'roomActionCue',status:'sleep-ready',actionLabel:'의자 위에 옷이 남아 있지 않은 방에서 침대에 누움',duration:1100},
     scene(24, 'home-evening', 'night'),
     ...(f.travelTogetherDiscussed ? msg(D(24, undefined, '생각할 시간을 둔 밤')) : f.followUpContact
       ? [n(followUp.status === 'TIME_WINDOW_AGREED'

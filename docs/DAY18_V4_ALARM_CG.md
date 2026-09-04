@@ -13,6 +13,7 @@ imagegen 스킬의 built-in 생성 사용. 기존 침실은 스타일/침구/협
 - 참조: `assets/backgrounds/day4/day4-bedroom-morning-v1.png`
 - 생성 원본: `C:/Users/aaa/.codex/generated_images/01a06810-af54-7db0-a3f6-3764034ac137/exec-77688551-d45d-4dd0-94e8-002fd6f7f959.png`
 - 저장: `assets/events/day18-v4/morning-alarm-off-v1.png` (기존 자산 덮어쓰기 없음)
+- 화풍 재수정본: `assets/events/day18-v4/morning-alarm-off-v2.png` (런타임 사용; 손·팔만 2D 셀 채색으로 정밀 편집)
 
 최종 프롬프트:
 

@@ -13,6 +13,7 @@ DAY4 결제 CG를 시각 확인했지만 낮 카페/이미 카드 두 장을 내
 ## 결과
 
 - imagegen built-in 신규 생성 → 동일 이미지 편집으로 열린/닫힌 지갑 2장 생성. 프로젝트 경로: `assets/events/day18-v4/wallet-open-v1.png`, `assets/events/day18-v4/wallet-closed-v1.png`. 원본 generated_images 및 DAY4 자산 보존.
+- 손 화풍 재감사 후 런타임은 `wallet-open-v2.png`, `wallet-closed-v2.png`를 사용한다. 빈/닫힌 지갑과 구도는 유지하고 양손만 선화·평면 셀 채색으로 교체했다.
 - 실제 game198: 열린 지갑 → 유리 “왜 벌써 다 내려 그래?” → 계산 선택 → pay_debt → 유리 거절 → 닫힌 지갑 → “……나눠요.” 순서 확인. 19:00/유리 스프라이트 복귀 확인. 새로고침/이어하기에서도 닫는 반응 재생.
 - 콘솔 오류/경고 없음. 기존 사용자 저장 복원 확인. 집중 테스트 32 PASS, 전체 테스트 454 PASS / 0 FAIL. 구문/diff 검사 통과. 금전/관계/저장 스키마 변경 없음.
 - 다음은 SCENE12 음식 나누기 행동. 최종 4경로/모바일과 나머지 행동은 미완료이며 DAY18 PARTIAL.

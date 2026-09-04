@@ -11,6 +11,7 @@
 ## 자산
 
 - 게임 경로: `assets/events/day18-v4/solo-bag-seat-move-v1.png`
+- 손 화풍 수정 런타임 경로: `assets/events/day18-v4/solo-bag-seat-move-v2.png` (전경 손·팔·소매를 2D 셀 채색으로 교체)
 - 기준 배경: `assets/backgrounds/map-locations/002_gimbap-village-evening-v1.png`
 - 생성 원본: `C:\Users\aaa\.codex\generated_images\01a06810-af54-7db0-a3f6-3764034ac137\exec-72fa6b1c-f0de-43ea-a128-c4353a5ea4a6.png`
 
