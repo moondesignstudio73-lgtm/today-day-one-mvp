@@ -61,7 +61,7 @@ SCENE 12~18 친밀 장면은 갈등 경로에 붙이지 않는다. SCENE14의 �
 
 1. ~~누락된 SCENE12~18 원문을 완전히 복원하고 해시/문자 수를 기록한다.~~ 완료.
 2. ~~14개 대면 선택과 solo/conflict 대체 선택의 ID·정확한 라벨·반응을 source registry에 잠근다.~~ 완료. 14개 대면 + solo 4개 + conflict 1개를 서로 다른 variant로 보존한다.
-3. 현재 `day20-v4-state-contract.mjs`의 foundation을 replay-locked 선택 reducer로 확장한다.
+3. ~~현재 `day20-v4-state-contract.mjs`의 foundation을 replay-locked 선택 reducer로 확장한다.~~ 완료. 대면/짧은 차/갈등/solo 진행표와 접촉·숙박 명시 응답을 포함한다.
 4. opening / domestic / intimacy / ending playable 모듈과 game bridge를 구현한다. legacy DAY20 저장은 자동 변환하지 않는다.
 5. 원문 대조, Friendly/Neutral/Distant/Mixed, face/short/solo/conflict/stay/leave, 저장 재개, Story/Free 배타성, DAY21 후속을 검증한다.
 6. 실제 데스크톱·389×844 모바일 비-SKIP 완주와 콘솔·이미지·오디오·오버플로를 확인한 뒤에만 COMPLETE로 승격한다.
@@ -71,6 +71,7 @@ SCENE 12~18 친밀 장면은 갈등 경로에 붙이지 않는다. SCENE14의 �
 - 상태 계약 foundation 및 반례 테스트: 구현.
 - 원문 전체 잠금: COMPLETE. 24개 장면과 14개 선택의 연속 번호·해시·금지 메모 비포함 검사를 추가했다.
 - source registry: COMPLETE. 생성기는 잠근 Markdown만 읽어 24개 장면과 19개 선택 블록을 만들며, 중복 번호 C5~8/C10은 `FACE_TO_FACE`/`SOLO`/`CONFLICT`로 분리한다. 실제 대사·독백·연출 단계는 exact source ref 없이는 통과하지 않는다.
+- replay-locked reducer: COMPLETE. 대면 C1~14, solo C1~3→solo C5~8, 짧은 차 C1~3→C13 귀가, 공개 C5→conflict C10→귀가를 각각 재생 검증한다. 포옹/손잡기와 숙박은 플레이어 선택만으로 사실화하지 않고 `haeunContactResponse`/`haeunStayResponse`를 별도 기록하며, 숙박 수락은 준비와 잠자리 합의가 없으면 거부한다.
 - playable/runtime/game bridge/browser QA: NOT STARTED.
 - DAY20 COMPLETE: **아님**.
-- 다음 시작점: source registry의 variant를 소비하는 replay-locked reducer를 만든다. 대면 C5 공개 선택은 친밀 C6~12를 건너 conflict C10으로, solo는 C5~8만, 짧은 차는 약속된 귀가로 닫는다.
+- 다음 시작점: opening/domestic playable 모듈을 exact source ref로 만들고 대면·짧은 차·solo의 첫 경계까지 game bridge에 연결한다.

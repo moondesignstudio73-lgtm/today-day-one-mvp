@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {beginDay18V4, applyDay18V4Choice, completeDay18V4} from '../src/day18-v4-state-contract.mjs';
 import {beginDay19V4, applyDay19V4Choice, completeDay19V4, getDay19V4Options} from '../src/day19-v4-state-contract.mjs';
-import {beginDay20V4, getDay20V4Entry, validateDay20V4} from '../src/day20-v4-state-contract.mjs';
+import {
+  applyDay20V4Choice, beginDay20V4, completeDay20V4, getDay20V4Entry, getDay20V4Options,
+  resolveDay20V4Contact, resolveDay20V4Stay, validateDay20V4
+} from '../src/day20-v4-state-contract.mjs';
 
 function day19(shared = true) {
   const partner = shared ? 'HAEUN' : 'SOLO';
@@ -61,4 +64,61 @@ test('legacy and malformed saves fail closed without being rewritten',()=>{
   assert.equal(beginDay20V4(malformed).mode,'INVALID_V4');
   assert.deepEqual(malformed.storyFlags.day20V4,before);
   assert.equal(getDay20V4Entry({storyFlags:{}}).mode,'BLOCKED_PREREQUISITE');
+});
+
+test('face-to-face reducer requires explicit contact and stay responses',()=>{
+  const state=day19(true);beginDay20V4(state);
+  while(state.storyFlags.day20V4.phase!=='closeness') applyDay20V4Choice(state,getDay20V4Options(state.storyFlags.day20V4)[0].id);
+  applyDay20V4Choice(state,getDay20V4Options(state.storyFlags.day20V4).find(option=>option.id.endsWith('_hug')).id);
+  assert.equal(state.storyFlags.day20V4.phase,'contact_resolution');
+  assert.equal(state.storyFlags.day20V4.facts.firstHug,false);
+  assert.throws(()=>resolveDay20V4Contact(state,{type:'haeunContactResponse',contact:'HAND',accepted:true}),/MISMATCH/);
+  resolveDay20V4Contact(state,{type:'haeunContactResponse',contact:'HUG',accepted:true});
+  assert.equal(state.storyFlags.day20V4.facts.firstHug,true);
+  while(state.storyFlags.day20V4.phase!=='night_end') applyDay20V4Choice(state,getDay20V4Options(state.storyFlags.day20V4)[0].id);
+  applyDay20V4Choice(state,getDay20V4Options(state.storyFlags.day20V4).find(option=>option.id.endsWith('_offer_stay')).id);
+  assert.equal(state.storyFlags.day20V4.facts.stayedOver,false);
+  assert.throws(()=>resolveDay20V4Stay(state,{type:'haeunStayResponse',accepted:true,prepared:false, sleepingPlan:'SEPARATE_BEDDING'}),/REQUIRES_PREPARATION/);
+  resolveDay20V4Stay(state,{type:'haeunStayResponse',accepted:true,prepared:true,sleepingPlan:'SEPARATE_BEDDING'});
+  applyDay20V4Choice(state,getDay20V4Options(state.storyFlags.day20V4)[0].id);
+  assert.equal(state.storyFlags.day20V4.phase,'ending');
+  assert.equal(state.storyFlags.day20V4.facts.stayedOver,true);
+  assert.equal(validateDay20V4(state.storyFlags.day20V4),true);
+});
+
+test('short tea and solo routes cannot enter intimacy or lodging phases',()=>{
+  const tea=day19(true);beginDay20V4(tea);
+  applyDay20V4Choice(tea,getDay20V4Options(tea.storyFlags.day20V4)[2].id);
+  applyDay20V4Choice(tea,getDay20V4Options(tea.storyFlags.day20V4)[0].id);
+  applyDay20V4Choice(tea,getDay20V4Options(tea.storyFlags.day20V4)[0].id);
+  assert.equal(tea.storyFlags.day20V4.phase,'night_end');
+  assert.equal(getDay20V4Options(tea.storyFlags.day20V4).length,1);
+  applyDay20V4Choice(tea,getDay20V4Options(tea.storyFlags.day20V4)[0].id);
+  assert.equal(tea.storyFlags.day20V4.facts.stayedOver,false);
+  assert.equal(tea.storyFlags.day20V4.facts.closenessChoice,null);
+
+  const solo=day19(false);beginDay20V4(solo);
+  while(solo.storyFlags.day20V4.phase!=='ending') applyDay20V4Choice(solo,getDay20V4Options(solo.storyFlags.day20V4)[0].id);
+  assert.deepEqual(solo.storyFlags.day20V4.choices.filter(record=>record.kind==='choice').map(record=>record.number),[1,2,3,5,6,7,8]);
+  assert.equal(solo.storyFlags.day20V4.facts.firstHug,false);
+  assert.equal(solo.storyFlags.day20V4.facts.stayedOver,false);
+  assert.equal(solo.storyFlags.day20V4.facts.soloNextContact,'REST_TODAY');
+});
+
+test('disclosure skips intimate scenes and completion consumes only the DAY20 hook',()=>{
+  const state=day19(true);beginDay20V4(state);
+  state.storyFlags.day20V4.input.day18DiscussionPending=true;
+  assert.equal(validateDay20V4(state.storyFlags.day20V4),true);
+  while(state.storyFlags.day20V4.phase!=='dinner') applyDay20V4Choice(state,getDay20V4Options(state.storyFlags.day20V4)[0].id);
+  applyDay20V4Choice(state,getDay20V4Options(state.storyFlags.day20V4).find(option=>option.id.endsWith('_disclose')).id);
+  assert.equal(state.storyFlags.day20V4.phase,'conflict');
+  assert.equal(getDay20V4Options(state.storyFlags.day20V4)[0].label,'오늘은 여기까지 이야기하고 싶다면 그럴게.');
+  applyDay20V4Choice(state,getDay20V4Options(state.storyFlags.day20V4)[0].id);
+  assert.equal(state.storyFlags.day20V4.facts.closenessChoice,null);
+  assert.equal(state.storyFlags.day20V4.facts.nightEnd,'LEAVE_AFTER_CONFLICT');
+  assert.throws(()=>completeDay20V4(state,{type:'chapterCompletionCue',day:20}),/INVALID_COMPLETION/);
+  completeDay20V4(state,{type:'chapterCompletionCue',day:20,finalSceneReached:true});
+  assert.equal(state.storyFlags.day20V4.complete,true);
+  assert.equal(state.storyFlags.day19V4Day20HookPending,false);
+  assert.equal(state.storyFlags.day20V4Day21HookPending,true);
 });
