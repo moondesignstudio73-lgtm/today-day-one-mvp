@@ -297,3 +297,5 @@ DAY19 SCENE18~24 구현(9/5): 실제 C13 저녁, 명시적으로 수락된 내�
 14:28 DAY20 replay-locked reducer 완료(9/5): 대면 C1~14, solo 생활 대체 SCENE01/02/04→solo C5~8, 짧은 차 C1~3→C13 귀가, 남은 관계 공개 C5→conflict C10→귀가 진행표를 상태 계약에 구현했다. 포옹/손잡기 요청은 하은의 별도 접촉 응답 전에는 사실화하지 않고, 숙박 제안도 별도 수락·준비·잠자리 합의 전에는 `stayedOver`가 되지 않는다. 공개·짧은 차·solo는 친밀/숙박 단계에 진입하지 못하며 완료는 DAY19 hook만 소비하고 DAY21 hook을 연다. DAY20은 **PARTIAL**, 다음은 exact source 기반 opening/domestic playable과 bridge다.
 
 14:41 DAY20 opening playable 완료(9/5): exact source ref만 사용해 SCENE01~04의 준비·부탁·도착·컵 선택과 선택별 반응을 구현했다. 실제 DAY19 `CUPS_TOGETHER` 이력이 있을 때만 `가장 다양한 분야`를 말하고, 없으면 일반 컵 질문을 사용한다. solo는 하은 도착/대사와 공동 컵을 만들지 않으며 원문의 SCENE01/02/04 생활 대체 후 바로 SCENE23 solo C5로 들어간다. 짧은 차는 C3 뒤 친밀 장면이 아니라 약속된 짧은 귀가 경계로 간다. DAY20은 **PARTIAL**, 다음은 domestic SCENE05~11과 solo C5~8다.
+
+14:55 DAY20 domestic/solo playable 완료(9/5): exact source ref로 SCENE05~11의 주방 역할·포장·식사·정리·가만히 있기·각자 화면·남은 시간을 구현했다. 숙소 포장 농담은 실제 DAY19 여행 대화에만 나오고, 공개 C5는 SCENE08~18 없이 SCENE19로 간다. solo SCENE23~24와 C5~8도 구현해 연락 불가면 휴식 선택만 노출하고 하은 대사/메시지·공동 컵·포옹·숙박을 생성하지 않는다. DAY20은 **PARTIAL**, 다음은 intimacy/conflict/ending과 game bridge다.
