@@ -82,6 +82,6 @@ SCENE 12~18 친밀 장면은 갈등 경로에 붙이지 않는다. SCENE14의 �
 - automated QA: PASS. DAY19→DAY20 대면/solo 선택기, 24장면 bridge, 접촉/숙박 응답 정책, 저장 재개, 완료 1회 기록, legacy 보존과 100×30일 회귀를 통과했다.
 - six-route matrix QA: PASS. face/short/solo/conflict/stay/leave를 실제 DAY18→19→20 reducer, bridge, 런타임 응답 정책, 완료 처리로 끝까지 재생했다. 각 경로의 장면 포함/배제, 하은 비방문, 친밀 장면 차단, 숙박 준비와 별도 침구, 금지 내부 문구 비노출, history 1회 기록을 검증했다.
 - browser fixture: PASS. `tests/day20-v4-browser-entry.html`은 사용자 저장 3개 키를 세션에 한 번 백업하고 face/short/solo/conflict/stay/leave 6개 시작 상태를 실제 DAY18·19 reducer와 완료 bridge로 생성한다.
-- browser QA: **BLOCKED AFTER 3 RUNS**. 로컬 서버와 fixture HTTP 200은 매번 정상이었지만, 완전히 초기화한 Codex 인앱 브라우저 세션에서도 세 실행 연속 webview 연결 제한시간을 넘겨 실제 플레이 탭이 생성되지 않았다. 게임 오류나 fixture 오류로 판정하지 않는다. 동일 자동 재시도는 중단하고 사용자가 Codex 앱을 재시작하거나 `http://127.0.0.1:8000/tests/day20-v4-browser-entry.html`을 인앱 브라우저에서 한 번 연 뒤 재개해야 한다.
+- browser QA: **PARTIAL PASS**. 2026-09-05 새 브라우저 런타임에서 연결이 복구되어 데스크톱 face/short/solo/conflict/stay/leave 의미 경로를 SKIP 없이 DAY21까지 완주했다. short는 C1 `short_tea` 뒤 친밀 장면 없이 단일 귀가 선택으로 닫혔고, conflict는 공개 C5 뒤 전용 C10과 귀가로 닫혔으며, solo는 하은 현장 등장 없이 종료됐다. stay는 C8 `stay_longer`와 C11 `another_evening`이 모두 기록된 경우에만 숙박이 수락되고 C14와 별도 침구 장면이 노출됐다. Story 화면에는 Free Action이 섞이지 않았고 브라우저 경고·오류는 0건이었다. 389×844에서는 short 경로를 비-SKIP 완주했다. 상세 증거는 `DAY20_V4_BROWSER_QA_2026-09-05.md`에 기록했다.
 - DAY20 COMPLETE: **아님**.
-- 다음 시작점: 사용자 측 브라우저 연결 복구 후 fixture 탭을 이어 받아 데스크톱과 389×844의 face/short/solo/conflict/stay/leave를 SKIP 없이 완주하고 콘솔·레이아웃·Story/Free 배타성을 증거화한다. 이 관문 전에는 DAY21 원본 구현으로 넘어가지 않는다.
+- 다음 시작점: 389×844에서 남은 face/solo/conflict/stay/leave를 SKIP 없이 완주하고, 대표 대면 경로의 중간 저장·재개와 이미지·오디오·가로 오버플로를 증거화한다. 이 관문 전에는 DAY21 원본 구현으로 넘어가지 않는다.
