@@ -83,14 +83,14 @@ DAY21 완료 이력
 2. ~~source registry에서 24 Scene, 대면 C1~17, 미여행 C3~8의 정확 라벨·반응·variant를 생성한다.~~ 완료.
 3. ~~DAY19~21 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
 4. ~~출발/이동, 식사/속도, 사진/카페, 숙소/접촉/밤, 서울 귀가, 미여행/ending playable 모듈을 exact source ref로 구현한다.~~ 완료.
-5. game bridge, 저장 재개, 현재 접촉 응답, 사진 동의, 경제 중복 차감 방지, 시간·장소·인물 presentation을 실제 루프에 연결한다.
+5. ~~game bridge, 저장 재개, 현재 접촉 응답, 사진 동의, 경제 중복 차감 방지, 시간·장소·인물 presentation을 실제 루프에 연결한다.~~ 완료.
 6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
 7. Friendly/Neutral/Distant/Mixed 및 Busan/Seoul/no-travel 의미 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
 8. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY23 전환이 모두 PASS일 때만 DAY22 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-V4 game bridge, 저장 재개, 사진·접촉 resolution, Story/Free 배타성, 시간·장소·인물 presentation과 완료 이력 기록을 실제 게임 루프에 연결한다. DAY21 교통·숙박 결제를 중복 차감하지 않는 경제 회귀도 함께 고정한다.
+DAY22 실제 브라우저 진입 fixture와 QA 문서를 만들고, 우선 데스크톱 Friendly 부산 공유 숙소를 SCENE01부터 DAY23 전환까지 SKIP 없이 완주한다. 이어 부산 별실·서울·연락 가능/불가 미여행과 모바일 의미 경로를 같은 배포본에서 검증한다.
 
 ## Source registry 구현 기록
 
@@ -154,3 +154,13 @@ V4 game bridge, 저장 재개, 사진·접촉 resolution, Story/Free 배타성, 
 - 부산에서만 다음 날 귀환·빨래를 말하며 서울에는 낯선 숙소 아침이 없다.
 - SCENE24의 fade-out 뒤에만 `chapterCompletionCue(day=22)`를 내보낸다. 미완료 phase는 경계만 반환하고 DAY23 hook을 열 수 없다.
 - 24 Scene, 여행 C1~17, 미여행 C3~8의 source/state/playable 집중 검사 28/28 PASS. 실제 게임 bridge와 브라우저 QA 전이므로 DAY22는 계속 PARTIAL이다.
+
+## Game bridge · save · presentation 구현 기록
+
+- `day22-v4-game-bridge.mjs`가 여섯 playable 모듈의 내부 경계를 제거하고 scene direction을 실제 transition·배경·인물·시계로 변환한다. 부산역·해운대·밀면집·마린뷰 카페의 기존 지도 자산을 manifest에 명시적으로 등록했다.
+- `game.js`가 DAY22 V4 신규 진입/재개, 선택, 사진·접촉 resolution, SCENE24 completion, 시계와 legacy fallback을 실제 Story 루프에 연결한다.
+- `day22-v4-runtime-resolution.mjs`가 사진 보관과 현재 접촉 응답을 별도 처리한다. 공유 부산 숙소가 아닌 상태에서는 물리 접촉 응답이 수락될 수 없다.
+- 선택·resolution 실패는 chapter snapshot으로 원자 복원한다. SaveManager 왕복 뒤 중간 선택, 다음 segment, resume presentation이 동일하다.
+- DAY21에서 결제한 여행 purchase를 완료 이력에 읽기 전용으로 남기며 DAY22 bridge는 돈·경제 원장을 변경하지 않는다.
+- V4 완료 이력은 한 번만 기록하고 DAY23 hook을 한 번 연다. V4 Story 완료 뒤 legacy DAY22 Free Action은 열리지 않는다.
+- DAY22 source/state/playable/bridge 집중 검사 36/36 PASS. 실제 브라우저 QA 전이므로 DAY22는 계속 PARTIAL이다.

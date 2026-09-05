@@ -91,6 +91,8 @@ import { LOCKED_DAY21_SCENE_ID, applyLockedDay21ChoiceState, getLockedDay21Legac
 import { applyDay21V4GameChoice, applyDay21V4GameResolution, completeDay21V4GameChapter, getDay21V4GameCompatibility, getDay21V4GameResumePresentation, getDay21V4GameSegment, prepareDay21V4GameEntry } from "./src/day21-v4-game-bridge.mjs?v=1";
 import { getDay21V4RuntimeResolution } from "./src/day21-v4-runtime-resolution.mjs?v=1";
 import { LOCKED_DAY22_SCENE_ID, applyLockedDay22ChoiceState, getLockedDay22LegacyChoice, getLockedDay22ResumePresentation, getLockedDay22Segment } from "./src/day22-campaign-runtime.mjs?v=1";
+import { applyDay22V4GameChoice, applyDay22V4GameResolution, completeDay22V4GameChapter, getDay22V4GameCompatibility, getDay22V4GameResumePresentation, getDay22V4GameSegment, prepareDay22V4GameEntry } from "./src/day22-v4-game-bridge.mjs?v=1";
+import { getDay22V4RuntimeResolution } from "./src/day22-v4-runtime-resolution.mjs?v=1";
 import { LOCKED_DAY23_SCENE_ID, applyLockedDay23ChoiceState, getLockedDay23LegacyChoice, getLockedDay23ResumePresentation, getLockedDay23Segment } from "./src/day23-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY24_SCENE_ID, applyLockedDay24ChoiceState, getLockedDay24LegacyChoice, getLockedDay24ResumePresentation, getLockedDay24Segment } from "./src/day24-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY25_SCENE_ID, applyLockedDay25ChoiceState, getLockedDay25LegacyChoice, getLockedDay25ResumePresentation, getLockedDay25Segment } from "./src/day25-campaign-runtime.mjs?v=1";
@@ -634,6 +636,9 @@ function applyLockedDay20ChoiceState(currentState,id){if(!currentState.storyFlag
 function getDay21ResumePresentation(currentState){return currentState.storyFlags?.day21V4?getDay21V4GameResumePresentation(currentState):getLockedDay21ResumePresentation(currentState);}
 function getDay21Segment(currentState){return currentState.storyFlags?.day21V4?getDay21V4GameSegment(currentState):getLockedDay21Segment(currentState);}
 function applyDay21ChoiceState(currentState,id){if(!currentState.storyFlags?.day21V4)return applyLockedDay21ChoiceState(currentState,id);applyDay21V4GameChoice(currentState,id);return {stage:0};}
+function getDay22ResumePresentation(currentState){return currentState.storyFlags?.day22V4?getDay22V4GameResumePresentation(currentState):getLockedDay22ResumePresentation(currentState);}
+function getDay22Segment(currentState){return currentState.storyFlags?.day22V4?getDay22V4GameSegment(currentState):getLockedDay22Segment(currentState);}
+function applyDay22ChoiceState(currentState,id){if(!currentState.storyFlags?.day22V4)return applyLockedDay22ChoiceState(currentState,id);applyDay22V4GameChoice(currentState,id);return {stage:0};}
 
 function openStoryScene(scene) {
   if (!scene) return;
@@ -695,6 +700,9 @@ function openStoryScene(scene) {
   const day21Compatibility=lockedDay21?getDay21V4GameCompatibility(state):null;
   const day21Blocked=lockedDay21&&["BLOCKED_PREREQUISITE","INVALID_V4"].includes(day21Compatibility?.mode);
   const day21V4=lockedDay21&&["V4_NEW","V4"].includes(day21Compatibility?.mode);
+  const day22Compatibility=lockedDay22?getDay22V4GameCompatibility(state):null;
+  const day22Blocked=lockedDay22&&["BLOCKED_PREREQUISITE","INVALID_V4"].includes(day22Compatibility?.mode);
+  const day22V4=lockedDay22&&["V4_NEW","V4"].includes(day22Compatibility?.mode);
   if(day14Blocked){toast("DAY 13 V3 완료 기록과 꽃 계획을 확인한 뒤 DAY 14를 시작할 수 있습니다.");return;}
   if(day15Blocked){toast("DAY 14 V4 완료 기록과 갤러리 초대 상태를 확인한 뒤 DAY 15를 시작할 수 있습니다.");return;}
   if(day16Blocked){toast("DAY 15 V4 완료 기록과 DAY 16 연락 시작 상태를 확인한 뒤 진행할 수 있습니다.");return;}
@@ -702,6 +710,7 @@ function openStoryScene(scene) {
   if(day19Blocked){toast("DAY 18 V4 완료 기록과 DAY 19 연결 상태를 확인해야 합니다. 기존 저장은 변경하지 않았습니다.");return;}
   if(day20Blocked){toast("DAY 19 V4 완료 기록과 DAY 20 연결 상태를 확인해야 합니다. 기존 저장은 변경하지 않았습니다.");return;}
   if(day21Blocked){toast("DAY 20 V4 완료 기록과 DAY 21 연결 상태를 확인해야 합니다. 기존 저장은 변경하지 않았습니다.");return;}
+  if(day22Blocked){toast("DAY 21 V4 완료 기록과 DAY 22 연결 상태를 확인해야 합니다. 기존 저장은 변경하지 않았습니다.");return;}
   if(day6V3&&getDay6V3Compatibility(state).mode==="V3_NEW")beginDay6V3(state,{relationshipBand:getDay6V3RelationshipBand(state),touchBoundary:state.storyFlags?.day1ContactStrategy==="contact_boundary"});
   if(day7V3&&getDay7V3Compatibility(state).mode==="V3_NEW")beginDay7V3(state,{relationshipBand:getDay6V3RelationshipBand(state),touchBoundary:state.storyFlags?.day1ContactStrategy==="contact_boundary"});
   if(day8V3&&getDay8V3Compatibility(state).mode==="V3_NEW")beginDay8V3(state,{relationshipBand:getDay6V3RelationshipBand(state),priorHandContact:state.storyFlags?.day7V3HandContactEstablished===true});
@@ -718,6 +727,7 @@ function openStoryScene(scene) {
   if(day19V4)prepareDay19V4GameEntry(state);
   if(day20V4)prepareDay20V4GameEntry(state);
   if(day21V4)prepareDay21V4GameEntry(state);
+  if(day22V4)prepareDay22V4GameEntry(state);
   const presentation=resolveStoryPresentation(scene,state);
   const freeResume=isStoryFreeActionResume(state,scene.id);
   if(shouldClaimStoryPending(state,scene.id)&&!(lockedDay1&&state.storyFlags?.day1QuestionStrategy))state.pendingStoryId=scene.id;
@@ -744,7 +754,7 @@ function openStoryScene(scene) {
   const day19Resume=lockedDay19?getDay19ResumePresentation(state):null;
   const day20Resume=lockedDay20?getLockedDay20ResumePresentation(state):null;
   const day21Resume=lockedDay21?getDay21ResumePresentation(state):null;
-  const day22Resume=lockedDay22?getLockedDay22ResumePresentation(state):null;
+  const day22Resume=lockedDay22?getDay22ResumePresentation(state):null;
   const day23Resume=lockedDay23?getLockedDay23ResumePresentation(state):null;
   const day24Resume=lockedDay24?getLockedDay24ResumePresentation(state):null;
   const day25Resume=lockedDay25?getLockedDay25ResumePresentation(state):null;
@@ -755,8 +765,8 @@ function openStoryScene(scene) {
   const day30Resume=lockedDay30?getLockedDay30ResumePresentation(state):null;
   const day1ResumeBackground=state.storyFlags?.day1ContactStrategy?"day1-hospital-bedside":"day1-hospital-ceiling";
   const lockedPresentation=lockedDay1?{...presentation,backgroundId:day1ResumeBackground,backgroundUrl:getBackgroundAsset(day1ResumeBackground),expressionId:"resting-tired",poseId:"seated-dozing"}:lockedDay2?{...presentation,...day2Resume,backgroundUrl:getBackgroundAsset(day2Resume.backgroundId),expressionId:"calm-attentive",poseId:"standing"}:lockedDay4?{...presentation,...day4Resume,backgroundUrl:getBackgroundAsset(day4Resume.backgroundId),expressionId:"calm",poseId:"standing"}:lockedDay5?{...presentation,...day5Resume,backgroundUrl:getBackgroundAsset(day5Resume.backgroundId),expressionId:"calm",poseId:"standing"}:lockedDay6?{...presentation,...day6Resume,backgroundUrl:getBackgroundAsset(day6Resume.backgroundId)}:lockedDay7?{...presentation,...day7Resume,backgroundUrl:day7V3?day7Resume.backgroundUrl:getBackgroundAsset(day7Resume.backgroundId)}:lockedDay8?{...presentation,...day8Resume,backgroundUrl:day8V3?day8Resume.backgroundUrl:getBackgroundAsset(day8Resume.backgroundId)}:lockedDay9?{...presentation,...day9Resume,backgroundUrl:day9V3?day9Resume.backgroundUrl:getBackgroundAsset(day9Resume.backgroundId)}:lockedDay10?{...presentation,...day10Resume,backgroundUrl:day10V3?day10Resume.backgroundUrl:getBackgroundAsset(day10Resume.backgroundId)}:lockedDay11?{...presentation,...day11Resume,backgroundUrl:getBackgroundAsset(day11Resume.backgroundId)}:lockedDay12?{...presentation,...day12Resume,backgroundUrl:day12V3?day12Resume.backgroundUrl:getBackgroundAsset(day12Resume.backgroundId)}:lockedDay13?{...presentation,...day13Resume,backgroundUrl:day13V3?day13Resume.backgroundUrl:getBackgroundAsset(day13Resume.backgroundId)}:lockedDay14?{...presentation,...day14Resume,backgroundUrl:getBackgroundAsset(day14Resume.backgroundId)}:lockedDay15?{...presentation,...day15Resume,backgroundUrl:getBackgroundAsset(day15Resume.backgroundId)}:lockedDay16?{...presentation,...day16Resume,backgroundUrl:getBackgroundAsset(day16Resume.backgroundId)}:lockedDay17?{...presentation,...day17Resume,backgroundUrl:getBackgroundAsset(day17Resume.backgroundId)}:lockedDay18?{...presentation,...day18Resume,backgroundUrl:getBackgroundAsset(day18Resume.backgroundId)}:lockedDay19?{...presentation,...day19Resume,backgroundUrl:getBackgroundAsset(day19Resume.backgroundId)}:lockedDay20?{...presentation,...day20Resume,backgroundUrl:getBackgroundAsset(day20Resume.backgroundId)}:lockedDay21?{...presentation,...day21Resume,backgroundUrl:getBackgroundAsset(day21Resume.backgroundId)}:lockedDay22?{...presentation,...day22Resume,backgroundUrl:getBackgroundAsset(day22Resume.backgroundId)}:lockedDay23?{...presentation,...day23Resume,backgroundUrl:getBackgroundAsset(day23Resume.backgroundId)}:lockedDay24?{...presentation,...day24Resume,backgroundUrl:getBackgroundAsset(day24Resume.backgroundId)}:lockedDay25?{...presentation,...day25Resume,backgroundUrl:getBackgroundAsset(day25Resume.backgroundId)}:lockedDay26?{...presentation,...day26Resume,backgroundUrl:getBackgroundAsset(day26Resume.backgroundId)}:lockedDay27?{...presentation,...day27Resume,backgroundUrl:getBackgroundAsset(day27Resume.backgroundId)}:lockedDay28?{...presentation,...day28Resume,backgroundUrl:getBackgroundAsset(day28Resume.backgroundId)}:lockedDay29?{...presentation,...day29Resume,backgroundUrl:getBackgroundAsset(day29Resume.backgroundId)}:lockedDay30?{...presentation,...day30Resume,backgroundUrl:getBackgroundAsset(day30Resume.backgroundId)}:presentation;
-  startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:freeResume?[{type:"freeAction",id:state.storyFreeAction.windowId,phase:state.storyFreeAction.phase,location:state.storyFreeAction.location,maxActions:state.storyFreeAction.maxActions},{type:"sceneEnd"}]:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):lockedDay4?getLockedDay4Segment(state):lockedDay5?getLockedDay5Segment(state):lockedDay6?(day6V3?getDay6V3ImmersiveSegment(state).steps:getLockedDay6Segment(state)):lockedDay7?(day7V3?getDay7V3ImmersiveSegment(state).steps:getLockedDay7Segment(state)):lockedDay8?(day8V3?getDay8V3ImmersiveSegment(state).steps:getLockedDay8Segment(state)):lockedDay9?(day9V3?getDay9V3ImmersiveSegment(state).steps:getLockedDay9Segment(state)):lockedDay10?getLockedDay10Segment(state):lockedDay11?getLockedDay11Segment(state):lockedDay12?getLockedDay12Segment(state):lockedDay13?getLockedDay13Segment(state):lockedDay14?getLockedDay14Segment(state):lockedDay15?getLockedDay15Segment(state):lockedDay16?getLockedDay16Segment(state):lockedDay17?(day17V4?getDay17V4GameSegment(state):getLockedDay17Segment(state)):lockedDay18?getLockedDay18Segment(state):lockedDay19?getDay19Segment(state):lockedDay20?getLockedDay20Segment(state):lockedDay21?getDay21Segment(state):lockedDay22?getLockedDay22Segment(state):lockedDay23?getLockedDay23Segment(state):lockedDay24?getLockedDay24Segment(state):lockedDay25?getLockedDay25Segment(state):lockedDay26?getLockedDay26Segment(state):lockedDay27?getLockedDay27Segment(state):lockedDay28?getLockedDay28Segment(state):lockedDay29?getLockedDay29Segment(state):lockedDay30?getLockedDay30Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
-    const lateStoryDay=lockedDay19&&!day19V4?19:lockedDay20?20:lockedDay21&&!day21V4?21:lockedDay22?22:lockedDay23?23:lockedDay24?24:lockedDay25?25:lockedDay26?26:lockedDay27?27:lockedDay28?28:lockedDay29?29:lockedDay30?30:null;
+  startImmersiveScene({id:scene.id,type:"story",presentation:lockedPresentation,sequence:freeResume?[{type:"freeAction",id:state.storyFreeAction.windowId,phase:state.storyFreeAction.phase,location:state.storyFreeAction.location,maxActions:state.storyFreeAction.maxActions},{type:"sceneEnd"}]:lockedDay1?getLockedDay1Segment(state,lockedSegment):lockedDay2?getLockedDay2Segment(state):lockedDay4?getLockedDay4Segment(state):lockedDay5?getLockedDay5Segment(state):lockedDay6?(day6V3?getDay6V3ImmersiveSegment(state).steps:getLockedDay6Segment(state)):lockedDay7?(day7V3?getDay7V3ImmersiveSegment(state).steps:getLockedDay7Segment(state)):lockedDay8?(day8V3?getDay8V3ImmersiveSegment(state).steps:getLockedDay8Segment(state)):lockedDay9?(day9V3?getDay9V3ImmersiveSegment(state).steps:getLockedDay9Segment(state)):lockedDay10?getLockedDay10Segment(state):lockedDay11?getLockedDay11Segment(state):lockedDay12?getLockedDay12Segment(state):lockedDay13?getLockedDay13Segment(state):lockedDay14?getLockedDay14Segment(state):lockedDay15?getLockedDay15Segment(state):lockedDay16?getLockedDay16Segment(state):lockedDay17?(day17V4?getDay17V4GameSegment(state):getLockedDay17Segment(state)):lockedDay18?getLockedDay18Segment(state):lockedDay19?getDay19Segment(state):lockedDay20?getLockedDay20Segment(state):lockedDay21?getDay21Segment(state):lockedDay22?getDay22Segment(state):lockedDay23?getLockedDay23Segment(state):lockedDay24?getLockedDay24Segment(state):lockedDay25?getLockedDay25Segment(state):lockedDay26?getLockedDay26Segment(state):lockedDay27?getLockedDay27Segment(state):lockedDay28?getLockedDay28Segment(state):lockedDay29?getLockedDay29Segment(state):lockedDay30?getLockedDay30Segment(state):createStorySceneSequence(scene,presentation,getAvailableStoryChoices(state,scene)),onChoice:choiceId=>{
+    const lateStoryDay=lockedDay19&&!day19V4?19:lockedDay20?20:lockedDay21&&!day21V4?21:lockedDay22&&!day22V4?22:lockedDay23?23:lockedDay24?24:lockedDay25?25:lockedDay26?26:lockedDay27?27:lockedDay28?28:lockedDay29?29:lockedDay30?30:null;
     if(lateStoryDay)recordLateStoryV4Choice(state,lateStoryDay,choiceId);
     if(lockedDay1){const stage=applyLockedDay1ChoiceState(state,choiceId);if(!stage)return null;if(stage.stage==="contact"){SaveManager.save(state);return getLockedDay1Segment(state,1);}const result=resolveStoryChoice(state,scene.id,stage.legacyChoiceId);if(!result)return null;SaveManager.save(state);return getLockedDay1Segment(state,2);}
     if(lockedDay2){const result=applyLockedDay2ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay2Segment(state,result.stage);}
@@ -778,7 +788,7 @@ function openStoryScene(scene) {
     if(lockedDay19){if(day19V4){const {steps}=applyDay19V4GameChoice(state,choiceId);SaveManager.save(state);return steps;}const result=applyLockedDay19ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay19Segment(state,result.stage);}
     if(lockedDay20){const result=applyLockedDay20ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay20Segment(state,result.stage);}
     if(lockedDay21){const result=applyDay21ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getDay21Segment(state);}
-    if(lockedDay22){const result=applyLockedDay22ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay22Segment(state,result.stage);}
+    if(lockedDay22){const result=applyDay22ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getDay22Segment(state);}
     if(lockedDay23){const result=applyLockedDay23ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay23Segment(state,result.stage);}
     if(lockedDay24){const result=applyLockedDay24ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay24Segment(state,result.stage);}
     if(lockedDay25){const result=applyLockedDay25ChoiceState(state,choiceId);if(!result)return null;SaveManager.save(state);return getLockedDay25Segment(state,result.stage);}
@@ -868,7 +878,7 @@ function startImmersiveScene(session) {
   if(session.id===LOCKED_DAY19_SCENE_ID){const resumeVisual=getLockedDay19ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
   if(session.id===LOCKED_DAY20_SCENE_ID){const resumeVisual=getLockedDay20ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
   if(session.id===LOCKED_DAY21_SCENE_ID){const resumeVisual=getDay21ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
-  if(session.id===LOCKED_DAY22_SCENE_ID){const resumeVisual=getLockedDay22ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
+  if(session.id===LOCKED_DAY22_SCENE_ID){const resumeVisual=getDay22ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
   if(session.id===LOCKED_DAY23_SCENE_ID){const resumeVisual=getLockedDay23ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
   if(session.id===LOCKED_DAY24_SCENE_ID){const resumeVisual=getLockedDay24ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
   if(session.id===LOCKED_DAY25_SCENE_ID){const resumeVisual=getLockedDay25ResumePresentation(state);immersiveScene.presentation={...immersiveScene.presentation,...resumeVisual,backgroundUrl:getBackgroundAsset(resumeVisual.backgroundId)};immersiveScene.activeCharacterAssetUrl=resumeVisual.characterAssetUrl??immersiveScene.activeCharacterAssetUrl;}
@@ -1049,6 +1059,9 @@ function renderImmersiveStep() {
     return;
   }
   if(step.type==="contactConsentCue"||step.type==="lodgingConsentCue"||step.type==="travelConfirmationCue"){
+    if(immersiveScene?.id===LOCKED_DAY22_SCENE_ID){
+      try{const response=getDay22V4RuntimeResolution(state,step);const {steps}=applyDay22V4GameResolution(state,response);SaveManager.save(state);immersiveScene.sequence=steps;immersiveScene.index=0;immersiveScene.currentStep=null;queueSceneStep(0);}catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast("DAY 22의 현재 접촉 응답 상태를 확인할 수 없어 진행을 멈췄습니다.");}return;
+    }
     try{
       const response=getDay21V4RuntimeResolution(state,step);
       const {steps}=applyDay21V4GameResolution(state,response);
@@ -1056,8 +1069,11 @@ function renderImmersiveStep() {
     }catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast("DAY 21의 현재 동의·여행 확인 상태를 확인할 수 없어 진행을 멈췄습니다.");}
     return;
   }
+  if(step.type==="photoConsentCue"){
+    try{const response=getDay22V4RuntimeResolution(state,step);const {steps}=applyDay22V4GameResolution(state,response);SaveManager.save(state);immersiveScene.sequence=steps;immersiveScene.index=0;immersiveScene.currentStep=null;queueSceneStep(0);}catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast("DAY 22의 사진 보관 응답 상태를 확인할 수 없어 진행을 멈췄습니다.");}return;
+  }
   if(step.type==="chapterCompletionCue"){
-    try{const sceneEnd=step.day===21?completeDay21V4GameChapter(state,step):step.day===20?completeDay20V4GameChapter(state,step):step.day===19?completeDay19V4GameChapter(state,step):step.day===18?completeDay18V4GameChapter(state,step):step.day===17?completeDay17V4GameChapter(state,step):step.day===16?completeDay16V4GameChapter(state,step):completeDay15V4GameChapter(state,step);SaveManager.save(state);immersiveScene.sequence=[sceneEnd];immersiveScene.index=0;immersiveScene.currentStep=null;queueSceneStep(0);}catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast(`DAY ${step.day??""} 완료 상태를 확인할 수 없어 진행을 멈췄습니다.`);}
+    try{const sceneEnd=step.day===22?completeDay22V4GameChapter(state,step):step.day===21?completeDay21V4GameChapter(state,step):step.day===20?completeDay20V4GameChapter(state,step):step.day===19?completeDay19V4GameChapter(state,step):step.day===18?completeDay18V4GameChapter(state,step):step.day===17?completeDay17V4GameChapter(state,step):step.day===16?completeDay16V4GameChapter(state,step):completeDay15V4GameChapter(state,step);SaveManager.save(state);immersiveScene.sequence=[sceneEnd];immersiveScene.index=0;immersiveScene.currentStep=null;queueSceneStep(0);}catch(error){eventRuntime.fail(error,{sceneId:eventRuntime.active?.sceneId});persistEventRuntime(true);toast(`DAY ${step.day??""} 완료 상태를 확인할 수 없어 진행을 멈췄습니다.`);}
     return;
   }
   if(step.type==="checkpoint"){if(immersiveScene.id===LOCKED_DAY5_SCENE_ID)applyLockedDay5CheckpointState(state,step.checkpointId);persistEventRuntime(true);SaveManager.save(state);queueSceneStep(0);return;}
@@ -1303,12 +1319,13 @@ function skipImmersiveScene(event) {
     if(!eventRuntime.waitForInput("choice",{sceneId:eventRuntime.active?.sceneId,dialogueIndex:choiceIndex})){persistEventRuntime(true);return;}
     immersiveScene.index=choiceIndex+1;immersiveScene.currentStep=choice;eventRuntime.setProgress({sequenceIndex:immersiveScene.index-1,dialogueIndex:immersiveScene.index-1,backgroundId:immersiveScene.presentation?.backgroundId});persistEventRuntime(true);renderImmersiveChoices(choice.options);return;
   }
-  const resolution=immersiveScene.sequence.find(step=>step.type==="haeunContactResolution"||step.type==="haeunStayResolution"||step.type==="contactConsentCue"||step.type==="lodgingConsentCue"||step.type==="travelConfirmationCue");
+  const resolution=immersiveScene.sequence.find(step=>step.type==="haeunContactResolution"||step.type==="haeunStayResolution"||step.type==="contactConsentCue"||step.type==="lodgingConsentCue"||step.type==="travelConfirmationCue"||step.type==="photoConsentCue");
   if(resolution){immersiveScene.sequence=[resolution];immersiveScene.index=0;immersiveScene.currentStep=null;renderImmersiveStep();return;}
   const completionCue=immersiveScene.sequence.find(step=>step.type==="chapterCompletionCue");
   if(completionCue){
     try{
-      if(completionCue.day===21)completeDay21V4GameChapter(state,completionCue);
+      if(completionCue.day===22)completeDay22V4GameChapter(state,completionCue);
+      else if(completionCue.day===21)completeDay21V4GameChapter(state,completionCue);
       else if(completionCue.day===20)completeDay20V4GameChapter(state,completionCue);
       else if(completionCue.day===19)completeDay19V4GameChapter(state,completionCue);
       else if(completionCue.day===18)completeDay18V4GameChapter(state,completionCue);
@@ -1375,7 +1392,7 @@ function finishImmersiveScene() {
   if(completedSession?.id===LOCKED_DAY21_SCENE_ID&&state.storyFlags?.day21ExitStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY21_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY21_SCENE_ID,getLockedDay21LegacyChoice(state));state.storyFlags.day21RuntimeComplete=true;state.pendingStoryId=null;}
   if(completedSession?.id===LOCKED_DAY21_SCENE_ID&&!state.storyFlags?.day21V4&&state.storyFlags?.day21RuntimeComplete&&!state.storyFlags?.day21FreeActionComplete){const freeAction={type:"freeAction",id:"day21-office-evening",phase:"evening",location:"office",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(completedSession?.id===LOCKED_DAY22_SCENE_ID&&state.storyFlags?.day22ActivityStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY22_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY22_SCENE_ID,getLockedDay22LegacyChoice(state));state.storyFlags.day22RuntimeComplete=true;state.pendingStoryId=null;}
-  if(completedSession?.id===LOCKED_DAY22_SCENE_ID&&state.storyFlags?.day22RuntimeComplete&&!state.storyFlags?.day22FreeActionComplete){const freeAction={type:"freeAction",id:"day22-home-evening",phase:"evening",location:"home",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
+  if(completedSession?.id===LOCKED_DAY22_SCENE_ID&&!state.storyFlags?.day22V4&&state.storyFlags?.day22RuntimeComplete&&!state.storyFlags?.day22FreeActionComplete){const freeAction={type:"freeAction",id:"day22-home-evening",phase:"evening",location:"home",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(completedSession?.id===LOCKED_DAY23_SCENE_ID&&state.storyFlags?.day23FutureStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY23_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY23_SCENE_ID,getLockedDay23LegacyChoice(state));state.storyFlags.day23RuntimeComplete=true;state.pendingStoryId=null;}
   if(completedSession?.id===LOCKED_DAY23_SCENE_ID&&state.storyFlags?.day23RuntimeComplete&&!state.storyFlags?.day23FreeActionComplete){const freeAction={type:"freeAction",id:"day23-home-evening",phase:"evening",location:"home",maxActions:1};immersiveScene.sequence=[freeAction,{type:"sceneEnd"}];immersiveScene.index=1;immersiveScene.currentStep=freeAction;renderStoryFreeAction(freeAction);return;}
   if(completedSession?.id===LOCKED_DAY24_SCENE_ID&&state.storyFlags?.day24ConsentStrategy&&!state.storyHistory?.some(record=>record.sceneId===LOCKED_DAY24_SCENE_ID)){resolveStoryChoice(state,LOCKED_DAY24_SCENE_ID,getLockedDay24LegacyChoice(state));state.storyFlags.day24RuntimeComplete=true;state.pendingStoryId=null;}
@@ -1740,7 +1757,7 @@ function render() {
 }
 
 function applyScenePresentation(presentation) {
-  if(immersiveScene?.id===(state.storyFlags?.day21V4?LOCKED_DAY21_SCENE_ID:state.storyFlags?.day20V4?LOCKED_DAY20_SCENE_ID:state.storyFlags?.day19V4?LOCKED_DAY19_SCENE_ID:LOCKED_DAY18_SCENE_ID)&&presentation.storyClock){$("#clockLabel").textContent=presentation.storyClock;$("#phaseLabel").textContent=({morning:"아침",afternoon:"낮",evening:"저녁",night:"밤"})[presentation.timeOfDay]??"";}
+  if(immersiveScene?.id===(state.storyFlags?.day22V4?LOCKED_DAY22_SCENE_ID:state.storyFlags?.day21V4?LOCKED_DAY21_SCENE_ID:state.storyFlags?.day20V4?LOCKED_DAY20_SCENE_ID:state.storyFlags?.day19V4?LOCKED_DAY19_SCENE_ID:LOCKED_DAY18_SCENE_ID)&&presentation.storyClock){$("#clockLabel").textContent=presentation.storyClock;$("#phaseLabel").textContent=({morning:"아침",noon:"낮",day:"낮",afternoon:"낮",evening:"저녁",night:"밤"})[presentation.timeOfDay]??"";}
   state.currentBackground=presentation.backgroundId;
   const stage=$("#visualNovelStage");
   if(stage){stage.dataset.weather=presentation.weather;stage.dataset.timeOfDay=presentation.timeOfDay;}
