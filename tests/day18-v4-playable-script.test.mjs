@@ -24,18 +24,27 @@ test('runtime rejects legacy hand-art filenames and quarantines every shipped fa
     readFileSync(new URL('../src/day18-v4-playable-script.mjs',import.meta.url),'utf8'),
     readFileSync(new URL('../src/day18-v4-source-beats.mjs',import.meta.url),'utf8')
   ].join('\n');
-  for(const file of ['yuri-menu-wait-water-v1.png','yuri-menu-wait-water-v2.png','yuri-menu-wait-water-v3.png','yuri-menu-wait-water-v4.png','yuri-menu-wait-water-v5.png','haeun-menu-slide-v1.png','menu-open-v1.png','menu-closed-v1.png','washing-cup-night-v1.png','morning-alarm-off-v1.png','wallet-open-v1.png','wallet-closed-v1.png','solo-bag-seat-move-v1.png']) {
+  for(const file of ['yuri-menu-wait-water-v1.png','yuri-menu-wait-water-v2.png','yuri-menu-wait-water-v3.png','yuri-menu-wait-water-v4.png','yuri-menu-wait-water-v5.png','yuri-menu-wait-water-v6.png','food-sharing-v1.png','food-sharing-v2.png','haeun-tasting-v1.png','haeun-tasting-v2.png','own-meals-v1.png','own-meals-v2.png','table-space-v1.png','vegetable-bite-v1.png','haeun-menu-slide-v1.png','menu-open-v1.png','menu-closed-v1.png','washing-cup-night-v1.png','morning-alarm-off-v1.png','wallet-open-v1.png','wallet-closed-v1.png','solo-bag-seat-move-v1.png']) {
     assert.equal(runtime.includes(file),false,file);
   }
-  for(const file of ['yuri-menu-wait-water-v6.png','haeun-menu-slide-v2.png','menu-open-v2.png','menu-closed-v2.png','washing-cup-night-v2.png','morning-alarm-off-v2.png','wallet-open-v2.png','wallet-closed-v2.png','solo-bag-seat-move-v2.png']) {
+  for(const file of ['yuri-menu-wait-water-v7.png','food-sharing-v3.png','haeun-tasting-v3.png','own-meals-v3.png','table-space-v2.png','vegetable-bite-v2.png','haeun-menu-slide-v2.png','menu-open-v2.png','menu-closed-v2.png','washing-cup-night-v2.png','morning-alarm-off-v2.png','wallet-open-v2.png','wallet-closed-v2.png','solo-bag-seat-move-v2.png']) {
     assert.ok(existsSync(new URL(`../assets/events/day18-v4/${file}`,import.meta.url)),file);
   }
   for(const [legacy,approved] of [
-    ['yuri-menu-wait-water-v1.png','yuri-menu-wait-water-v6.png'],
-    ['yuri-menu-wait-water-v2.png','yuri-menu-wait-water-v6.png'],
-    ['yuri-menu-wait-water-v3.png','yuri-menu-wait-water-v6.png'],
-    ['yuri-menu-wait-water-v4.png','yuri-menu-wait-water-v6.png'],
-    ['yuri-menu-wait-water-v5.png','yuri-menu-wait-water-v6.png'],
+    ['yuri-menu-wait-water-v1.png','yuri-menu-wait-water-v7.png'],
+    ['yuri-menu-wait-water-v2.png','yuri-menu-wait-water-v7.png'],
+    ['yuri-menu-wait-water-v3.png','yuri-menu-wait-water-v7.png'],
+    ['yuri-menu-wait-water-v4.png','yuri-menu-wait-water-v7.png'],
+    ['yuri-menu-wait-water-v5.png','yuri-menu-wait-water-v7.png'],
+    ['yuri-menu-wait-water-v6.png','yuri-menu-wait-water-v7.png'],
+    ['food-sharing-v1.png','food-sharing-v3.png'],
+    ['food-sharing-v2.png','food-sharing-v3.png'],
+    ['haeun-tasting-v1.png','haeun-tasting-v3.png'],
+    ['haeun-tasting-v2.png','haeun-tasting-v3.png'],
+    ['own-meals-v1.png','own-meals-v3.png'],
+    ['own-meals-v2.png','own-meals-v3.png'],
+    ['table-space-v1.png','table-space-v2.png'],
+    ['vegetable-bite-v1.png','vegetable-bite-v2.png'],
     ['haeun-menu-slide-v1.png','haeun-menu-slide-v2.png'],
     ['menu-open-v1.png','menu-open-v2.png'],
     ['menu-closed-v1.png','menu-closed-v2.png'],
@@ -64,6 +73,9 @@ test('runtime rejects legacy hand-art filenames and quarantines every shipped fa
   assert.match(rules,/캐시 히트 여부와 무관하게.*내용 해시/s);
   assert.match(rules,/사용자 재신고.*같은 DAY의 손 포함 자산 전수 감사/s);
   assert.match(rules,/운영 차단 등급.*HIGH/s);
+  assert.match(rules,/평면 벡터 스티커.*화풍 FAIL/s);
+  assert.match(rules,/서사적으로 필수.*손을 화면에 넣지 않는다/s);
+  assert.match(rules,/손바닥의 화면 점유율.*과대 원근/s);
 });
 
 test('the solo protagonist clears the opposite chair for an arriving customer without narrating the direction', () => {
@@ -82,7 +94,7 @@ test('the solo protagonist clears the opposite chair for an arriving customer wi
 test('the protagonist drinks water only after the Yuri menu counting-unit joke', () => {
   for(const context of [{},{callScheduling:true},{callScheduling:true,separateDinnerScheduling:true}])for(const partner of ['YURI','HAEUN'])for(const menu of ['menu_each','menu_share','menu_wait']) {
     const s=start(partner,true,context);applyDay18V4Choice(s,'day18_v4_morning_keep');applyDay18V4Choice(s,partner==='YURI'?'day18_v4_disclose_yuri':'day18_v4_disclose_together');applyDay18V4Choice(s,`day18_v4_${menu}`);
-    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.source==='assets/events/day18-v4/yuri-menu-wait-water-v6.png');
+    const before=JSON.stringify(s),steps=getDay18V4PlayableSegment(s.storyFlags.day18V4),at=steps.findIndex(x=>x.source==='assets/events/day18-v4/yuri-menu-wait-water-v7.png');
     assert.equal(at>=0,partner==='YURI'&&menu==='menu_wait');
     if(at>=0){assert.equal(steps[at-1].text,'메뉴 기다리는 사람이 둘이나 더 생긴 줄.');assert.equal(steps[at+1].text,'두 분이 아니라 이 분. 단위를 잘못 말했다.');assert.ok(existsSync(new URL(`../${steps[at].source}`,import.meta.url)));}
     assert.equal(steps.some(x=>x.text?.includes('물을 마셨다')),false);assert.equal(JSON.stringify(s),before);assert.deepEqual(steps,getDay18V4PlayableSegment(JSON.parse(before).storyFlags.day18V4));
@@ -359,7 +371,7 @@ test('food sharing is a silent action before tasting on all Haeun menu branches'
     assert.equal(segment.filter(x=>x.type==='cgShow'&&x.source.includes('food-sharing')).length,1);
     const thought=segment.findIndex(x=>x.text==='멀쩡한 식사를 두고 굳이 관계에 대한 교훈을 붙이지는 않았다.');
     assert.equal(segment[thought].type,'monologue');
-    assert.equal(segment[thought-1].source,'assets/events/day18-v4/own-meals-v2.png');
+    assert.equal(segment[thought-1].source,'assets/events/day18-v4/own-meals-v3.png');
     assert.equal(segment[thought-2].text,'둘 다 맛이 나쁜 건 아니었다. 남의 접시가 처음에는 더 좋아 보였을 뿐이었다.');
     assert.equal(segment[thought+1].text,'오늘 파일을 하나 보냈는데, 내용은 맞고 이름이 잘못됐어.');
     const tasting=segment.findIndex(x=>x.type==='cgShow'&&x.source.includes('haeun-tasting'));

@@ -15,7 +15,7 @@
 
 ## 생성 기록
 
-imagegen 스킬, 내장 generate 모드. 기존 적합한 추가 접시 에셋이 없어 생성했다. 최종 저장: `C:/Users/aaa/OneDrive/Desktop/AI해커톤/game/assets/events/day18-v4/table-space-v1.png`. 원본 생성본 보존.
+imagegen 스킬, 내장 generate 모드. 기존 적합한 추가 접시 에셋이 없어 생성했다. 손 화풍 재감사 뒤 런타임 승인본은 `C:/Users/aaa/OneDrive/Desktop/AI해커톤/game/assets/events/day18-v4/table-space-v2.png`이며 v1은 같은 안전 비트맵으로 격리했다. 원본 생성본 보존.
 
 최종 프롬프트:
 

@@ -78,7 +78,7 @@ function reaction(c) {
         return steps.flatMap(step => key === 'menu_each' && step.text === '같은 것을 고르지 않았는데도 한 끼가 시작됐다.'
           ? [{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},{type:'storyPause',duration:180},{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},step]
           : key === 'menu_wait' && step.text === '메뉴 기다리는 사람이 둘이나 더 생긴 줄.'
-            ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-menu-wait-water-v6.png',fit:'contain',duration:3000}] : [step]);
+            ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-menu-wait-water-v7.png',fit:'contain',duration:3000}] : [step]);
       }
       return key === 'menu_each' ? [d('하은', '네 거 맛있으면 한 입만 구경할게.')]
         : key === 'menu_share' ? [d('하은', '먼저 먹어 보고, 내가 싫으면 네가 책임지는 건 아니야.')]
@@ -223,14 +223,14 @@ function haeunMealConversation(c) {
   const menu = c.facts.menu;
   return D(12).flatMap(step => {
     if (step.text === '둘 다 먹고 나서 실망하면 억울하지 않잖아.') return [
-      step, {type:'cgShow',source:'assets/events/day18-v4/haeun-tasting-v2.png',fit:'contain',duration:2600}
+      step, {type:'cgShow',source:'assets/events/day18-v4/haeun-tasting-v3.png',fit:'contain',duration:2600}
     ];
     if (step.text === '둘 다 맛이 나쁜 건 아니었다. 남의 접시가 처음에는 더 좋아 보였을 뿐이었다.') return [
-      step, {type:'cgShow',source:'assets/events/day18-v4/own-meals-v2.png',fit:'contain',duration:2600},
+      step, {type:'cgShow',source:'assets/events/day18-v4/own-meals-v3.png',fit:'contain',duration:2600},
       n('멀쩡한 식사를 두고 굳이 관계에 대한 교훈을 붙이지는 않았다.')
     ];
     if (step.text === '어때?') return [
-      {type:'cgShow',source:'assets/events/day18-v4/food-sharing-v2.png',fit:'contain',duration:3000},
+      {type:'cgShow',source:'assets/events/day18-v4/food-sharing-v3.png',fit:'contain',duration:3000},
       step
     ];
     if (menu === 'menu_wait') return step;

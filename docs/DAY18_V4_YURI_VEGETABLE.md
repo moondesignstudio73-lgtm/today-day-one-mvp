@@ -12,7 +12,7 @@
 
 ## 생성 기록
 
-imagegen 내장 generate 후 precise-object-edit. 초안의 빈 맞은편 의자는 유리가 떠난 듯 보일 수 있어 식탁 클로즈업으로 수정했다. 최종 `C:/Users/aaa/OneDrive/Desktop/AI해커톤/game/assets/events/day18-v4/vegetable-bite-v1.png`, 원본 생성본은 보존했다.
+imagegen 내장 generate 후 precise-object-edit. 초안의 빈 맞은편 의자는 유리가 떠난 듯 보일 수 있어 식탁 클로즈업으로 수정했다. 손 화풍 재감사 뒤 런타임 승인본은 `C:/Users/aaa/OneDrive/Desktop/AI해커톤/game/assets/events/day18-v4/vegetable-bite-v2.png`이며 v1은 같은 안전 비트맵으로 격리했다. 원본 생성본은 보존했다.
 
 생성 프롬프트:
 

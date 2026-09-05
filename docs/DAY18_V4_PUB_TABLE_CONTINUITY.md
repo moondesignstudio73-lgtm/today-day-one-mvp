@@ -8,9 +8,9 @@
 
 저장 위치 (저장소 루트 `C:/Users/aaa/OneDrive/Desktop/AI해커톤/game`):
 
-- `assets/events/day18-v4/food-sharing-v2.png`
-- `assets/events/day18-v4/haeun-tasting-v2.png`
-- `assets/events/day18-v4/own-meals-v2.png`
+- `assets/events/day18-v4/food-sharing-v3.png`
+- `assets/events/day18-v4/haeun-tasting-v3.png`
+- `assets/events/day18-v4/own-meals-v3.png`
 
 ## 프롬프트 세트 / 입력
 
