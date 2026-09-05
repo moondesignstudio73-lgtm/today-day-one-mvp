@@ -6,8 +6,8 @@ import {
 } from './day19-v4-state-contract.mjs';
 import {getDay19V4PlayableOpening} from './day19-v4-playable-opening.mjs';
 import {getDay19V4PlayableMiddle} from './day19-v4-playable-middle.mjs';
-import {getDay19V4PlayableCandidates} from './day19-v4-playable-candidates.mjs?v=2';
-import {getDay19V4PlayableEnding} from './day19-v4-playable-ending.mjs?v=2';
+import {getDay19V4PlayableCandidates} from './day19-v4-playable-candidates.mjs?v=3';
+import {getDay19V4PlayableEnding} from './day19-v4-playable-ending.mjs?v=3';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
 
 export const DAY19_V4_CAMPAIGN_SLOT = 'm30-day19-current-shared-chore';

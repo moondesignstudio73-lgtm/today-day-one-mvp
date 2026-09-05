@@ -45,4 +45,6 @@ Distant 데스크톱 첫 실행에서 연락 불가/solo인데 공동 C8·C11·C
 
 Mixed fixture의 DAY18 replay 누락을 합법 연락 가능/solo 이력으로 교정했다. 새 클린 탭에서 C3 복권 실제 1회 선택, C15 실제 서진 연락, solo C14/C16, 결과·상금 비노출과 DAY20 전환을 확인했다. 정확한 원장 차감은 자동 원자성 검사와 구분했으며 사용자 저장을 복원했다.
 
-DAY 19는 계속 `PARTIAL`. 다음은 Neutral 데스크톱 비-SKIP 완주다.
+Neutral 첫 실행에서 C8 각자 여행 뒤 C11 공동 재확인과 SCENE22 편안한 공동 통화가 남는 결함을 발견했다. game250은 `SEPARATE_DAY_OK`의 playable C11을 후보 유지로 제한하고 SCENE22를 거리 두기 원문으로 연결하되 기존 replay 저장은 계속 유효하게 둔다. 수정본을 비-SKIP 완주해 solo C14, C15 생략, 합의 범위의 비송금, 거리 두기 엔딩, 콘솔 오류 0과 저장 복원을 확인했다.
+
+DAY 19는 계속 `PARTIAL`. 다음은 390×844 모바일 네 경로다.

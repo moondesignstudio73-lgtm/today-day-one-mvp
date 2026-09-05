@@ -16,7 +16,7 @@ const choice=(chapter,number)=>{
   if(number===8&&!chapter.input.contactAllowed)options=options.filter(option=>option.id.endsWith('_separate_day'));
   // The source's solo branch only confirms that the protagonist stops without
   // booking.  Do not expose the explicitly two-person recheck/pressure options.
-  if(number===11&&!shared(chapter))options=options.filter(option=>option.id.endsWith('_candidate_only'));
+  if(number===11&&!togetherCandidate(chapter))options=options.filter(option=>option.id.endsWith('_candidate_only'));
   return {type:'choice',choiceNumber:number,prompt:DAY19_V4_SOURCE_SCENES.flatMap(item=>item.choices).find(item=>item.number===number).title,options};
 };
 const last=chapter=>chapter.choices.at(-1)?.id??'';

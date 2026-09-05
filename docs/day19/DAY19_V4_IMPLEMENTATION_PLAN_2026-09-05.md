@@ -155,3 +155,10 @@ DAY19는 계속 `PARTIAL`. 다음 작업은 **Mixed 데스크톱 비-SKIP 완주
 - 연락 가능/solo DAY18 fixture에 필수 `disclose_solo`, `night_defer`, `alone_stop`을 연결해 검증 가능한 실제 이력으로 교정했다.
 - 새 클린 탭에서 16개 선택을 비-SKIP 완주했다. C3 실제 복권 선택 1회, C15 서진 미완료 연락 노출, 내일 식사 비수락 뒤 solo C14, 합의 금액 없는 solo C16, DAY20 전환과 사용자 저장 복원 PASS다.
 - console warning/error 0, 대면 인물 오노출 0, 데스크톱 가로 넘침 0. 다음은 Neutral 데스크톱이다.
+
+### game250 Neutral 경계 보강
+
+- 실제 C8 각자 여행 뒤 C11 공동 재확인과 SCENE22 편안한 공동 통화가 남는 문제를 발견했다.
+- 상태 replay 호환성은 보존하고 presentation에서만 각자 여행 C11을 후보 유지로 좁혔으며, SCENE22를 `거리를 두고 있는 밤` 원문 분기로 연결했다.
+- 수정 후 15개 선택을 비-SKIP 완주했다. 각자 저녁→solo C14, C15 생략, C16 실제 합의 범위만 기록, 거리 두기 SCENE22/24, DAY20 전환, console warning/error 0, 사용자 저장 복원 PASS.
+- 데스크톱 네 경로가 모두 닫혔다. 다음은 유효 390×844 모바일 Friendly부터 순차 완주한다.
