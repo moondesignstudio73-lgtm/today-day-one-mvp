@@ -1,41 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {applyDay21V4Choice,completeDay21V4,getDay21V4Options,resolveDay21V4Contact,resolveDay21V4Lodging,resolveDay21V4Travel} from '../src/day21-v4-state-contract.mjs';
-import {applyDay22V4Choice,beginDay22V4,completeDay22V4,getDay22V4Entry,getDay22V4Options,resolveDay22V4Contact,resolveDay22V4Photo,validateDay22V4} from '../src/day22-v4-state-contract.mjs';
-import {day21State} from './day21-v4-fixture.mjs';
-
-function chooseDay21(state,suffix){
-  const options=getDay21V4Options(state.storyFlags.day21V4);
-  const selected=suffix?options.find(option=>option.id.endsWith(`_${suffix}`)):options[0];
-  assert.ok(selected,`DAY21 ${state.storyFlags.day21V4.phase}:${suffix}`);
-  applyDay21V4Choice(state,selected.id);
-}
-
-function completedDay21(route,{ara=false}={}){
-  const noTravel=route==='NO_TRAVEL';
-  const state=day21State(noTravel?{relationshipActive:false,contactAllowed:false,relationshipTone:'DIFFICULT',morningMode:'SOLO_MORNING',day20StayedOver:false,day20VisitMode:'SOLO',day20NightEnd:'LEFT'}:{});
-  state.breakup=noTravel?{day:20,reason:'fixture'}:null;
-  state.ended=false;
-  if(ara){state.storyFlags.day13V3AraMet=true;state.storyFlags.day13V3AraEarlyExit=false;state.storyFlags.day13V3PhotoContact='OCCASIONAL_EXCHANGE';}
-  while(state.storyFlags.day21V4.phase!=='ending'){
-    const chapter=state.storyFlags.day21V4,phase=chapter.phase;
-    if(phase==='contact_resolution'){resolveDay21V4Contact(state,{type:'haeunContactResponse',contact:chapter.facts.contactIntent,accepted:true});continue;}
-    if(phase==='lodging_resolution'){resolveDay21V4Lodging(state,{type:'haeunLodgingResponse',accepted:true});continue;}
-    if(phase==='travel_resolution'){resolveDay21V4Travel(state,{type:'travelConfirmation',confirmed:true,dateConfirmed:true,transportConfirmed:true,budgetConfirmed:true,lodgingConfirmed:true,mutualConsent:true});continue;}
-    const suffix={venue:noTravel?'defer':route==='SEOUL_DAY'?'phone':'park',contact:'hug',dinner:'talk_travel',travel:route==='SEOUL_DAY'?'seoul':'busan',lodging:route==='SEOUL_DAY'?'day_trip':'shared_room_wish'}[phase];
-    chooseDay21(state,suffix);
-  }
-  completeDay21V4(state,{type:'chapterCompletionCue',day:21,finalSceneReached:true});
-  if(route==='BUSAN_TRIP')state.storyFlags.day21V4TravelPurchase={day:21,quoteId:'day22-test-booking',playerCost:60000,partnerCostIncluded:false,ledgerIndex:0};
-  return state;
-}
-
-function chooseDay22(state,suffix){
-  const options=getDay22V4Options(state.storyFlags.day22V4);
-  const selected=suffix?options.find(option=>option.id.endsWith(`_${suffix}`)):options[0];
-  assert.ok(selected,`DAY22 ${state.storyFlags.day22V4.phase}:${suffix}`);
-  applyDay22V4Choice(state,selected.id);
-}
+import {beginDay22V4,completeDay22V4,getDay22V4Entry,getDay22V4Options,resolveDay22V4Contact,resolveDay22V4Photo,validateDay22V4} from '../src/day22-v4-state-contract.mjs';
+import {chooseDay22,completedDay21ForDay22 as completedDay21} from './day22-v4-fixture.mjs';
 
 test('DAY22 entry derives only verified BUSAN, SEOUL, or fail-closed NO_TRAVEL routes',()=>{
   const busan=completedDay21('BUSAN_TRIP');assert.equal(getDay22V4Entry(busan).input.route,'BUSAN_TRIP');
