@@ -82,14 +82,14 @@ SCENE24 → DAY21 completion cue → DAY22
 2. ~~source registry에서 24 Scene, 주경로 C1~16, 비대화 C4~8의 정확 라벨·반응·variant를 생성한다.~~ 완료.
 3. ~~DAY18~20 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
 4. ~~아침 / 이야기 / 감정·접촉 / 여행·예약 / 비대화·ending playable 모듈을 exact source ref로 구현한다.~~ 완료.
-5. game bridge, 저장 재개, 경제 원장, 시간·장소·인물·전화 presentation을 실제 루프에 연결한다.
+5. game bridge, 저장 재개, 경제 원장, 시간·장소·인물·전화 presentation을 실제 루프에 연결한다. **진행 중: 독립 bridge·저장·경제 완료, `game.js` 연결 대기.**
 6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
 7. Friendly/Neutral/Distant/Mixed 및 park/phone/deferred, Busan/Seoul/solo를 데스크톱과 389×844에서 SKIP 없이 검증한다.
 8. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY22 전환이 모두 PASS일 때만 DAY21 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-DAY21 V4 game bridge, 저장 재개, 경제 원장, 실제 UI의 시간·장소·인물·통화 presentation을 연결한다. 그 뒤 Story/Free 배타성과 경로 행렬을 검증하고 실제 브라우저 fixture를 만든다.
+DAY21 V4 runtime resolution과 `game.js` 진입·선택·응답·완료·SKIP 경로를 연결한다. 그 뒤 Story/Free 배타성과 경로 행렬을 검증하고 실제 브라우저 fixture를 만든다.
 
 ## Playable 구현 기록
 
@@ -101,6 +101,9 @@ DAY21 V4 game bridge, 저장 재개, 경제 원장, 실제 UI의 시간·장소�
 - SCENE17~24는 C11~16의 저녁, 여행 재검토, 숙박 공간, 예약 확인, 짐, 마지막 메시지와 회상을 구현했다. 부산은 숙박 동의와 날짜·이동·예산·숙박·상호 동의가 확인된 뒤에만 예약·결제로 표시한다. 서울·여행 미논의 경로는 열지 않은 예약 화면을 닫지 않으며 가짜 숙박을 만들지 않는다.
 - SCENE21 비대화 경로는 별도 C4~8로 끝난다. 실제 미룬 민호 답변이나 미완료 연락이 없으면 관련 선택 자체를 숨기고, 하은 연락을 쉬는 상태에서는 메시지를 만들지 않는다. 들지 않은 점심·업무·분노·양말은 SCENE24 회상에 들어가지 않는다.
 - DAY21 source/state/playable 및 인접 DAY19~20 bridge 집중 회귀 42/42 PASS. playable 원문 범위는 완료했지만 game bridge·실제 게임 루프·브라우저 QA가 남아 DAY21 전체는 **PARTIAL**이다.
+- 독립 game bridge는 다섯 playable 모듈의 boundary를 제거해 장면 전환으로 합치고, 공원·통화·집·여행 화면과 아침·낮·저녁·밤을 현재 phase에서 복원한다. 중간 SaveManager 왕복 뒤 동일 segment와 presentation을 재현한다.
+- 부산 확정 응답은 명시적 quote id와 본인 부담액, 날짜·이동·예산·숙박·상호 동의가 있어야 한다. 본인 부담액만 경제 원장에 1회 차감하며 하은 몫은 합산하지 않는다. 오류·잔액 변경·응답 불일치 시 chapter·돈·원장·구매 기록을 모두 롤백한다.
+- 무연락 C3 뒤에도 하은의 연기 응답 메시지가 나오던 누출을 제거했다. DAY21 bridge/playable/state와 Story/Free 집중 회귀 31/31 PASS. 실제 `game.js`와 브라우저 연결 전이므로 **PARTIAL**이다.
 
 ## 상태 계약 구현 기록
 
