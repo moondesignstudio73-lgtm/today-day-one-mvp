@@ -121,3 +121,28 @@ DAY18→21 production 이력으로 `Difficult · 서울 · 사진 거절`과 `Fr
 - 손잡기 응답은 관계 톤만 보지 않고 DAY20/21의 실제 동일 접촉 동의 이력까지 확인
 
 수정 후 부산 손잡기 거절 경로를 처음부터 다시 실행해 위 문장과 상태, DAY23 진입을 확인했다. 사용자 저장은 `테스트 전 저장을 복원했습니다.`로 원상 복구했다. 데스크톱의 거절 관문은 PASS이며 DAY22 전체는 389×844 Friendly/Neutral/Distant/Mixed 의미 경로가 남아 **PARTIAL**이다.
+
+## 389×844 모바일 의미 경로 — 2026-09-06
+
+브라우저 외곽 크기와 콘텐츠 viewport 차이를 보정해 실제 게임 콘텐츠가 `innerWidth=389`, `innerHeight=844`가 되는 조건에서 Friendly/Neutral/Distant/Mixed 네 의미 경로를 각각 처음부터 DAY23까지 실제 선택지로 완주했다. 정확한 콘텐츠 크기에 도달하지 못한 사전 조정 실행은 증거에서 제외했다.
+
+### 검증 경로
+
+- Friendly · 부산 · 공유 숙소: 실제 DAY21 공유 공간 합의가 있는 상태에서만 공유 숙소와 현재 접촉 선택을 열고 DAY23 진입
+- Neutral · 부산 · 별실: 공유방·침대 동석·얼굴 칭찬·현재 접촉을 만들지 않고 각자 공간과 통화로 종료
+- Distant · 미여행 · 연락 불가: 앨범 단일 사진 선택 뒤 C6과 하은 현장 인물·대사를 생략하고 생활 경로로 종료
+- Mixed · 서울 당일: 부산 장소·숙소·숙박 결제·현재 접촉 없이 서울 식사·산책·카페·귀가로 종료
+
+### 공통 모바일 관문
+
+- 네 경로 모두 실제 화면의 노출 선택지를 사용했으며 SKIP은 사용하지 않음
+- 각 경로 종료 시 `DAY 23 · 화요일` 전환 확인
+- 전 과정에서 Story 화면과 legacy `Free Action`이 동시에 노출되지 않음
+- `document.documentElement.scrollWidth === clientWidth === 389`로 가로 오버플로 0
+- 경로별 console warning/error 0
+- 테스트 종료 후 `테스트 전 저장을 복원했습니다.` 확인
+- 임시 viewport override 해제 완료
+
+## 최종 판정
+
+DAY22는 source/state/playable/bridge/저장/경제 관문과 데스크톱 및 실제 389×844 의미 경로를 모두 통과했다. **PASS / COMPLETE**로 승격한다. 다음 시작점은 DAY23 최종 Notion 원문 잠금과 DAY20~22 실제 이력 감사다.

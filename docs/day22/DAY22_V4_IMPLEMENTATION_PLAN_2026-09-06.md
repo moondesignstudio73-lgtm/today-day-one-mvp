@@ -2,7 +2,7 @@
 
 ## 판정과 원문
 
-- 현재 상태: PARTIAL / SOURCE + STATE LOCKED.
+- 현재 상태: PASS / COMPLETE.
 - 최종 원문: Notion `DAY 22 — 떠날 수 있는 사람 | SCENARIO V4`.
 - page id: `3c9c31f0-29a6-81f3-ba7f-eb07c6979d27`.
 - last edited snapshot: `2026-08-27T20:30:21.198Z`.
@@ -104,6 +104,10 @@ Friendly 부산 공유 숙소에 이어 Neutral 부산 별실과 Mixed 서울 �
 사진 보관 거절과 공유 숙소 손잡기 거절은 실제 UI에서 DAY23까지 PASS했다. 손잡기/포옹은 C14 전에는 절대 사실화하지 않고, 현재 응답과 동일 접촉의 실제 이전 동의가 모두 있을 때만 발생한다. 거절 뒤에는 존중 반응을 화면에 표시하고 `todayContact=NONE`을 유지한다. 공유 숙소·밤 식사도 양쪽 분기 설명을 노출하지 않고 확정된 사실만 출력한다.
 
 다음은 실제 389×844 viewport에서 Friendly/Neutral/Distant/Mixed 의미 경로를 SKIP 없이 검증한다. 모바일 레이아웃·Story/Free 배타성·console·저장 복원 관문 전까지 DAY22는 **PARTIAL**이다.
+
+실제 콘텐츠 viewport `389×844`에서 Friendly 부산 공유 숙소, Neutral 부산 별실, Distant 미여행 연락 불가, Mixed 서울 당일을 노출 선택지로 각각 DAY23까지 완주했다. 네 경로 모두 SKIP 미사용, 가로 오버플로 0, Story/Free 배타성, console warning/error 0, 사용자 저장 복원과 viewport reset을 확인했다.
+
+DAY22의 source/state/playable/bridge/저장/경제/데스크톱/모바일 관문이 모두 닫혀 **PASS / COMPLETE**로 승격한다. 다음 시작점은 **DAY23 최종 Notion 원문 잠금과 DAY20~22 실제 이력 감사**다.
 
 ## Source registry 구현 기록
 
