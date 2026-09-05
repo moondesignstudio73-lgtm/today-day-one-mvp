@@ -2,11 +2,12 @@
 
 ## 판정과 원문
 
-- 현재 상태: PARTIAL / NOTION SOURCE VERIFIED, PLAYER SNAPSHOT PENDING.
+- 현재 상태: PARTIAL / SOURCE LOCKED.
 - 최종 원문: Notion `DAY 24 — 끝내지 못한 문장 | SCENARIO V4`.
 - page id: `3c9c31f0-29a6-811e-9af0-cedccb66d1cf`.
 - last edited snapshot: `2026-08-27T20:41:08.035Z`.
-- 원문 응답 본문 17,546자, 24 Scene, 공통 C1~15와 유리·서진·아라 및 `정리할 사람 없음` 대체 선택을 확인했다.
+- 플레이어 공개 snapshot: `docs/scenarios/DAY24_SCENARIO_V4_NOTION.md`, UTF-8 17,656자, 24 Scene, 공통 C1~15와 유리·서진·아라 및 `정리할 사람 없음` 대체 선택.
+- SHA-256: `c0a59b11ceffa729a15b07da81a1ee7604035698406bba31ddf263a6debb2032`.
 - `INTERNAL EDITORIAL NOTES`, 구현 설명, 대체된 구버전은 플레이어 공개 source와 renderer에서 제외한다.
 
 ## 한 문장 정의
@@ -86,8 +87,8 @@ DAY23 완료 이력
 
 ## 구현 단계와 완료 관문
 
-1. Notion 최종 원문을 플레이어 공개 본문과 내부 메모로 분리해 source snapshot을 잠근다.
-2. source registry에서 24 Scene, 공통 C1~15, 유리·서진·아라 및 연락 없음 variant의 정확 라벨·반응을 생성하고 snapshot hash를 검증한다.
+1. ~~Notion 최종 원문을 플레이어 공개 본문과 내부 메모로 분리해 source snapshot을 잠근다.~~ 완료.
+2. ~~source registry에서 24 Scene, 공통 C1~15, 유리·서진·아라 및 연락 없음 variant의 정확 라벨·반응을 생성하고 snapshot hash를 검증한다.~~ 완료. 24 Scene·20 choice block·모든 3개 라벨과 exact source line을 검증한다.
 3. DAY21~23 실제 이력을 동결하는 `day24-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.
 4. SCENE01~10 대화 성사·현재 마음·이유·최종 관계 제안을 대면/통화/거절 presentation으로 구현한다.
 5. SCENE11~17 실제 연락 정리, 수신자별 truth/lie, 연락 없음 대체 playable을 구현한다.
@@ -99,4 +100,4 @@ DAY23 완료 이력
 
 ## 다음 시작점
 
-Notion 최종 페이지와 현재 runtime의 구조적 불일치, DAY21~23 입력, DAY24 출력, 분기 그래프와 QA 관문을 확정했다. 다음 작업은 **플레이어 공개 원문 snapshot 잠금과 source registry/exact-source validator 구현**이다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
+Notion 최종 플레이어 공개 원문 snapshot과 source registry/exact-source validator를 잠갔다. 다음 작업은 **DAY21~23 실제 이력을 동결하는 `day24-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
