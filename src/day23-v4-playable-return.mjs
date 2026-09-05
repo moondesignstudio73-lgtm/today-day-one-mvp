@@ -17,8 +17,8 @@ function scene8(chapter){
   const busan=chapter.input.route==='BUSAN_TRIP';
   const steps=[scene(8,chapter,busan?'train':'home',busan?'afternoon':'morning')];
   if(busan)steps.push(mono(8,'이동편에 앉자 몸이 먼저 편한 자세를 찾았다.'),mono(8,'하은은 창밖을 봤다가 나를 봤다.'),quoted(8,'**하은** “올 때보다 조용하네.”'),quoted(8,'**주인공** “많이 봐서 그런가.”'),quoted(8,'**하은** “많이 말하기도 했고.”'),mono(8,'나는 고개를 끄덕였다.'));
-  else if(chapter.input.contactAllowed)steps.push(grounded(8,'각자 집에서 통화가 이어졌다. 기차에 함께 있는 것처럼 꾸미지 않았다.','서울에서 이미 돌아온 경로라면 이 대화는 각자 집에서 가능한 통화로 나눴다. 돌아가는 기차에 있는 것처럼 배경을 만들지 않았다.'),quoted(8,'**하은** “올 때보다 조용하네.”'),quoted(8,'**주인공** “많이 봐서 그런가.”'),quoted(8,'**하은** “많이 말하기도 했고.”'));
-  else steps.push(grounded(8,'나는 이미 돌아온 집에서 조용히 쉬었다. 돌아가는 기차나 하은과의 통화를 만들지 않았다.','서울에서 이미 돌아온 경로라면 이 대화는 각자 집에서 가능한 통화로 나눴다. 돌아가는 기차에 있는 것처럼 배경을 만들지 않았다.'));
+  else if(chapter.input.contactAllowed)steps.push(grounded(8,'각자 집에서 통화가 이어졌다. 나는 소파에 앉아 하은의 목소리를 들었다.','서울에서 이미 돌아온 경로라면 이 대화는 각자 집에서 가능한 통화로 나눴다. 돌아가는 기차에 있는 것처럼 배경을 만들지 않았다.'),quoted(8,'**하은** “올 때보다 조용하네.”'),quoted(8,'**주인공** “많이 봐서 그런가.”'),quoted(8,'**하은** “많이 말하기도 했고.”'));
+  else steps.push(grounded(8,'나는 이미 돌아온 집에서 물을 마시고 조용히 쉬었다.','서울에서 이미 돌아온 경로라면 이 대화는 각자 집에서 가능한 통화로 나눴다. 돌아가는 기차에 있는 것처럼 배경을 만들지 않았다.'));
   return [...steps,choice(chapter,7)];
 }
 
@@ -72,7 +72,7 @@ function reaction9(chapter){
 function scene11(chapter){
   const busan=chapter.input.route==='BUSAN_TRIP',steps=[scene(11,chapter,busan?'station':'home',busan?'evening':'afternoon')];
   if(busan)steps.push(mono(11,'도착한 곳에서 길이 갈렸다.'),mono(11,'나는 하은의 가방을 보고 같이 가야 하는지 물으려 했다.'),quoted(11,'**하은** “난 오늘 혼자 집에 가서 정리 좀 할게.”'),quoted(11,'**주인공** “응.”'),mono(11,'대답은 쉽게 했는데 발걸음은 조금 늦어졌다. 하은이 그걸 보고 웃었다.'),quoted(11,'**하은** “아쉬워?”'),quoted(11,'**주인공** “응. 같이 가는 게 당연한 줄 알았나 봐.”'),quoted(11,'**하은** “같이 돌아왔잖아.”'),quoted(11,'**주인공** “그러네. 여기까지는.”'),mono(11,'나는 웃었다. 그녀의 집까지 가야만 끝나는 여행은 아니었다.'));
-  else steps.push(grounded(12,'어제 이미 나눈 작별을 오늘 다시 만들지 않았다. 나는 내 집에서 오늘의 남은 시간을 정했다.','서울 당일을 어제 마쳤다면 오늘 이 작별을 다시 겪지는 않았다. 대신 어제 나눈 인사를 떠올리거나 오늘 자기 집으로 돌아오는 짧은 길을 걸었다.'));
+  else steps.push(grounded(12,'나는 내 집에서 오늘의 남은 시간을 정했다.','서울 당일을 어제 마쳤다면 오늘 이 작별을 다시 겪지는 않았다. 대신 어제 나눈 인사를 떠올리거나 오늘 자기 집으로 돌아오는 짧은 길을 걸었다.'));
   return [...steps,choice(chapter,10)];
 }
 
@@ -85,7 +85,7 @@ function reaction10(chapter){
 
 function scene12(chapter){
   const busan=chapter.input.route==='BUSAN_TRIP',steps=[scene(12,chapter,busan?'station':'home',busan?'evening':'afternoon')];
-  if(!busan){steps.push(grounded(12,'오늘은 역의 인사나 포옹을 다시 겪지 않았다.','서울 당일을 어제 마쳤다면 오늘 이 작별을 다시 겪지는 않았다. 대신 어제 나눈 인사를 떠올리거나 오늘 자기 집으로 돌아오는 짧은 길을 걸었다.'));return steps;}
+  if(!busan){steps.push(grounded(12,'나는 집에서 어제 나눈 인사를 떠올린 뒤 오늘 할 일을 했다.','서울 당일을 어제 마쳤다면 오늘 이 작별을 다시 겪지는 않았다. 대신 어제 나눈 인사를 떠올리거나 오늘 자기 집으로 돌아오는 짧은 길을 걸었다.'));return steps;}
   steps.push(quoted(12,'**주인공** “잘 가라는 말이 오늘은 좀 아쉽네.”'),quoted(12,'**하은** “그럼 다음에 잘 왔다고 해.”'),mono(12,'나는 고개를 끄덕였다.'),mono(12,'그 말이 예뻐서 지금 당장 다음 날짜를 붙이고 싶어졌지만, 오늘 쉬자는 말을 먼저 지켰다.'),mono(12,'하은이 자기 방향으로 걸어갔다. 나는 내 방향으로 갔다.'),mono(12,'뒤돌아보았을 때 그녀가 꼭 나를 보고 있어야 하는 것은 아니었다.'),mono(12,'내 가방은 내가 들고 있었다.'),mono(12,'올 때보다 조금 가벼워진 것 같았다. 실제 물건은 거의 같았는데, 둘의 하루를 전부 내가 들고 가야 한다는 마음이 조금 줄어 있었다.'));
   return steps;
 }

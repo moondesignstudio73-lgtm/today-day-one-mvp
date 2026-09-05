@@ -52,10 +52,11 @@ test('runtime resolutions stay route, relationship, consent, and budget constrai
 
 test('main runtime connects DAY23 V4 entry, choices, resolutions, completion, clock, and legacy-only Free Action',()=>{
   const source=readFileSync(new URL('../game.js',import.meta.url),'utf8'),bridge=readFileSync(new URL('../src/day23-v4-game-bridge.mjs',import.meta.url),'utf8');
-  assert.match(source,/day23-v4-game-bridge\.mjs\?v=1/);assert.match(source,/day23-v4-runtime-resolution\.mjs\?v=1/);assert.match(bridge,/asset-manifest\.mjs\?v=24/);
-  for(const module of ['opening','return','home','no-travel','ending'])assert.match(bridge,new RegExp(`day23-v4-playable-${module}\\.mjs\\?v=1`));
+  assert.match(source,/day23-v4-game-bridge\.mjs\?v=2/);assert.match(source,/day23-v4-runtime-resolution\.mjs\?v=1/);assert.match(bridge,/asset-manifest\.mjs\?v=24/);assert.match(bridge,/day23-v4-playable-opening\.mjs\?v=2/);assert.match(bridge,/day23-v4-playable-return\.mjs\?v=2/);assert.match(bridge,/day23-v4-playable-home\.mjs\?v=2/);assert.match(bridge,/day23-v4-playable-ending\.mjs\?v=2/);
+  for(const module of ['opening','return','home','ending'])assert.match(bridge,new RegExp(`day23-v4-playable-${module}\\.mjs\\?v=2`));
+  assert.match(bridge,/day23-v4-playable-no-travel\.mjs\?v=1/);
   assert.match(source,/if\(day23V4\)prepareDay23V4GameEntry/);assert.match(source,/applyDay23V4GameChoice\(currentState,id\)/);assert.match(source,/getDay23V4RuntimeResolution\(state,step\)/);assert.match(source,/applyDay23V4GameResolution\(state,response\)/);
   assert.match(source,/step\.day===23\?completeDay23V4GameChapter/);assert.match(source,/completionCue\.day===23\)completeDay23V4GameChapter/);assert.match(source,/isDay23V4ResolutionStep\(step\)/);assert.match(source,/state\.storyFlags\?\.day23V4\?LOCKED_DAY23_SCENE_ID/);
   assert.match(source,/lockedDay23&&!day23V4\?23/);assert.match(source,/!state\.storyFlags\?\.day23V4&&state\.storyFlags\?\.day23RuntimeComplete/);assert.match(source,/isStoryFreeActionResume\(state,scene\.id\)&&!\(lockedDay23&&day23V4\)/);
-  assert.match(readFileSync(new URL('../index.html',import.meta.url),'utf8'),/game\.js\?v=266/);
+  assert.match(readFileSync(new URL('../index.html',import.meta.url),'utf8'),/game\.js\?v=267/);
 });

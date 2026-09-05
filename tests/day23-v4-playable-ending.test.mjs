@@ -36,7 +36,7 @@ test('difficult relationship skips SCENE19 and routes directly to the necessary 
 
 test('Seoul comfortable call says they did not meet today and never uses the Busan line',()=>{
   const state=completedDay22ForDay23('SEOUL_DAY');reachDinner(state,'CONTINUE');chooseDay23(state,'after_meal');
-  const steps=getDay23V4PlayableEnding(state.storyFlags.day23V4);assertSourced(steps);const rendered=steps.map(step=>step.text??'').join('\n');assert.match(rendered,/오늘은 만나지 않았으므로/);assert.doesNotMatch(rendered,/아까까지 봤는데/);assert.ok(steps.some(step=>step.type==='sceneDirection'&&step.number===19&&step.location==='home'));
+  const steps=getDay23V4PlayableEnding(state.storyFlags.day23V4);assertSourced(steps);const rendered=steps.map(step=>step.text??'').join('\n');assert.match(rendered,/오늘 못 봤으니 더 궁금한 거냐고/);assert.doesNotMatch(rendered,/오늘은 만나지 않았으므로|아까까지 봤는데|아까까지 함께 있었다는 말은 하지 않았다/);assert.ok(steps.some(step=>step.type==='sceneDirection'&&step.number===19&&step.location==='home'));
 });
 
 test('resting tonight skips SCENE19 without turning a calm relationship into a feared answer',()=>{

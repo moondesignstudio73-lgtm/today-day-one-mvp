@@ -1,11 +1,11 @@
 import {BACKGROUND_ASSETS} from './assets/asset-manifest.mjs?v=24';
 import {recordTransaction} from './economy-manager.mjs';
 import {applyDay23V4Choice,beginDay23V4,completeDay23V4,getDay23V4Entry,resolveDay23V4Conversation,resolveDay23V4FarewellContact,resolveDay23V4Meeting,resolveDay23V4Photo,resolveDay23V4Relationship,resolveDay23V4Souvenir,validateDay23V4} from './day23-v4-state-contract.mjs';
-import {getDay23V4PlayableOpening} from './day23-v4-playable-opening.mjs?v=1';
-import {getDay23V4PlayableReturn} from './day23-v4-playable-return.mjs?v=1';
-import {getDay23V4PlayableHome} from './day23-v4-playable-home.mjs?v=1';
+import {getDay23V4PlayableOpening} from './day23-v4-playable-opening.mjs?v=2';
+import {getDay23V4PlayableReturn} from './day23-v4-playable-return.mjs?v=2';
+import {getDay23V4PlayableHome} from './day23-v4-playable-home.mjs?v=2';
 import {getDay23V4PlayableNoTravel} from './day23-v4-playable-no-travel.mjs?v=1';
-import {getDay23V4PlayableEnding} from './day23-v4-playable-ending.mjs?v=1';
+import {getDay23V4PlayableEnding} from './day23-v4-playable-ending.mjs?v=2';
 import {DAY23_V4_SOURCE_SCENES} from './day23-v4-source-registry.mjs';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
 

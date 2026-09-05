@@ -47,7 +47,7 @@ function scene15(chapter){
   const available=photoAvailable(chapter),steps=[scene(15,chapter.input.contactAllowed&&available?'girlfriend':null,'afternoon')];
   if(chapter.input.contactAllowed&&available&&chapter.facts.returnRide==='ONE_PHOTO')steps.push(mono(15,'하은과 사진을 보기로 했다면 연락이 왔다.'),quoted(15,'**하은** “나는 한 장 골랐어.”','message','나'),quoted(15,'**주인공** “벌써?”','message','하은'),quoted(15,'**하은** “고르다가 빨래 생각나서 빨리 골랐어.”','message','나'),mono(15,'나는 웃었다.'),grounded(15,'하은은 실제로 남겨 둔 사진 중 하나를 보냈다.','그녀가 보낸 것은 실제로 남겨 둔 사진 중 하나였다. 풍경이 크게 나온 사진일 수도, 우리가 웃던 사진일 수도 있었다.'));
   else if(available)steps.push(grounded(15,'나는 실제로 남아 있는 사진을 열었다. 하은에게서 새 사진이 왔다고 만들지는 않았다.','나는 다른 사진을 더 좋아할 수 있었다.'));
-  else steps.push(grounded(15,'남아 있는 사진이 없어 오늘 기억에 남는 장면만 혼자 떠올렸다. 없던 사진은 도착하지 않았다.','사진이 없거나 같이 보기로 하지 않은 날에는 오늘 기억에 남는 장면을 혼자 떠올리거나 다음에 말할 수 있었다. 없던 사진이 도착하지 않았다.'));
+  else steps.push(grounded(15,'오늘 기억에 남는 장면 하나를 혼자 떠올렸다.','사진이 없거나 같이 보기로 하지 않은 날에는 오늘 기억에 남는 장면을 혼자 떠올리거나 다음에 말할 수 있었다. 없던 사진이 도착하지 않았다.'));
   return [...steps,choice(chapter,13)];
 }
 
@@ -69,7 +69,7 @@ function scene16or17(chapter){
 function reaction14(chapter){
   const id=lastChoice(chapter),pending=chapter.input.pendingContacts,recipient=pending[0];
   if(id.includes('_main_')){
-    if(id.endsWith('_align_relationship'))return [grounded(16,`실제로 말이 남은 ${recipient}에게만 전에 애매하게 말한 내용을 정정했다. 단순 사진 교류 상대에게 거창한 이별 문자를 만들지 않았다.`,'실제 애매하게 말한 내용이 있는 사람에게만 그렇게 시작했다. 상대의 답이 바로 오지 않아도 여행 사진을 다시 열어 기다림을 피하지 않았다.'),quoted(16,'**주인공** “내가 전에 애매하게 말한 게 있어서 정정하고 싶어요.”','message',recipient)];
+    if(id.endsWith('_align_relationship'))return [grounded(16,`${recipient}에게 전에 애매하게 말한 내용을 정정했다.`,'실제 애매하게 말한 내용이 있는 사람에게만 그렇게 시작했다. 상대의 답이 바로 오지 않아도 여행 사진을 다시 열어 기다림을 피하지 않았다.'),quoted(16,'**주인공** “내가 전에 애매하게 말한 게 있어서 정정하고 싶어요.”','message',recipient)];
     if(id.endsWith('_name_uncertainty'))return [grounded(16,'하은에게 이야기할 시간을 먼저 물었다. 지금 긴 설명을 강요하거나 기다림을 무기한으로 만들지 않았다.','나는 하은에게 이야기할 시간을 물어야 했다. 지금 바로 긴 설명을 읽으라고 보내기 전에, 오늘 그런 대화를 할 여유가 있는지 생각했다.')];
     return [mono(16,'나는 다른 사람에게 먼저 만나자고 보내려던 손을 멈췄다.'),mono(16,'하은이 여행에서 웃었다는 사실이 내가 계속 만날 마음을 대신 만들어 주지는 않았다. 그렇다고 새로운 사람이 나를 받아 줄 때까지 하은에게 모르는 척할 수는 없었다.'),mono(16,'나는 그녀에게 관계에 대해 말하고 싶다고 전할 준비를 했다.'),mono(16,'좋은 여행을 했다는 것과 지금 마음을 말해야 한다는 것은 같이 있었다.')];
   }

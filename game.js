@@ -94,7 +94,7 @@ import { LOCKED_DAY22_SCENE_ID, applyLockedDay22ChoiceState, getLockedDay22Legac
 import { applyDay22V4GameChoice, applyDay22V4GameResolution, completeDay22V4GameChapter, getDay22V4GameCompatibility, getDay22V4GameResumePresentation, getDay22V4GameSegment, prepareDay22V4GameEntry } from "./src/day22-v4-game-bridge.mjs?v=7";
 import { getDay22V4RuntimeResolution } from "./src/day22-v4-runtime-resolution.mjs?v=2";
 import { LOCKED_DAY23_SCENE_ID, applyLockedDay23ChoiceState, getLockedDay23LegacyChoice, getLockedDay23ResumePresentation, getLockedDay23Segment } from "./src/day23-campaign-runtime.mjs?v=1";
-import { applyDay23V4GameChoice, applyDay23V4GameResolution, completeDay23V4GameChapter, getDay23V4GameCompatibility, getDay23V4GameResumePresentation, getDay23V4GameSegment, isDay23V4ResolutionStep, prepareDay23V4GameEntry } from "./src/day23-v4-game-bridge.mjs?v=1";
+import { applyDay23V4GameChoice, applyDay23V4GameResolution, completeDay23V4GameChapter, getDay23V4GameCompatibility, getDay23V4GameResumePresentation, getDay23V4GameSegment, isDay23V4ResolutionStep, prepareDay23V4GameEntry } from "./src/day23-v4-game-bridge.mjs?v=2";
 import { getDay23V4RuntimeResolution } from "./src/day23-v4-runtime-resolution.mjs?v=1";
 import { LOCKED_DAY24_SCENE_ID, applyLockedDay24ChoiceState, getLockedDay24LegacyChoice, getLockedDay24ResumePresentation, getLockedDay24Segment } from "./src/day24-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY25_SCENE_ID, applyLockedDay25ChoiceState, getLockedDay25LegacyChoice, getLockedDay25ResumePresentation, getLockedDay25Segment } from "./src/day25-campaign-runtime.mjs?v=1";

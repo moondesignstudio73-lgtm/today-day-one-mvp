@@ -16,7 +16,7 @@ test('shared Busan morning plays curtain and cup only from actual shared lodging
 
 test('separate Busan morning never observes Haeun sleeping, curtain, or shared cup',()=>{
   const state=completedDay22ForDay23('BUSAN_TRIP',{shared:false});beginDay23V4(state);const all=[];all.push(...getDay23V4PlayableOpening(state.storyFlags.day23V4));chooseDay23(state);all.push(...getDay23V4PlayableOpening(state.storyFlags.day23V4));
-  const rendered=all.map(step=>step.text??'').join('\n');assert.match(rendered,/그녀의 커튼과 잠든 모습은 보지 못했다/);assert.doesNotMatch(rendered,/조금만 열었는데|어제 네가 여기 두었어|숙소 물건은 가져가면/);assertSourced(all);
+  const rendered=all.map(step=>step.text??'').join('\n');assert.match(rendered,/물을 마시고 하은과 만나기로 한 시간을 확인했다/);assert.doesNotMatch(rendered,/그녀의 커튼과 잠든 모습은 보지 못했다|조금만 열었는데|어제 네가 여기 두었어|숙소 물건은 가져가면/);assertSourced(all);
 });
 
 test('Busan opening reaches SCENE07 through separate photo and souvenir resolutions',()=>{
@@ -27,7 +27,7 @@ test('Busan opening reaches SCENE07 through separate photo and souvenir resoluti
 
 test('Seoul home morning creates no hotel, checkout, train, or absent Haeun staging',()=>{
   const state=completedDay22ForDay23('SEOUL_DAY');beginDay23V4(state);const all=playTo(state,'return_ride');const ending=getDay23V4PlayableOpening(state.storyFlags.day23V4);all.push(...ending);assertSourced(all);
-  const rendered=all.map(step=>`${step.location??''} ${step.text??''}`).join('\n');assert.doesNotMatch(rendered,/커튼을 조금 열|중간에 한 번 깼|어제 네가 여기 두었|기차|부산|숙소를 떠|하은이 기다리는 것을 보고|이동편/);assert.match(rendered,/익숙한 천장이었다|여행 짐을 푸는 척하지 않았다/);assert.equal(all.some(step=>step.type==='photoConsentCue'),false);
+  const rendered=all.map(step=>`${step.location??''} ${step.text??''}`).join('\n');assert.doesNotMatch(rendered,/커튼을 조금 열|중간에 한 번 깼|어제 네가 여기 두었|기차|부산|숙소를 떠|하은이 기다리는 것을 보고|이동편|여행 짐을 푸는 척하지 않았다/);assert.match(rendered,/익숙한 천장이었다|오늘 필요한 물건을 정리한 뒤 잠깐 쉬었다/);assert.equal(all.some(step=>step.type==='photoConsentCue'),false);
 });
 
 test('NO_TRAVEL common morning routes to SCENE21 after C2',()=>{
