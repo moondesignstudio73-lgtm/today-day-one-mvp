@@ -89,7 +89,7 @@ SCENE24 → DAY21 completion cue → DAY22
 
 ## 다음 시작점
 
-Friendly/Neutral/Distant/Mixed 의미 경로와 park/phone/deferred, Busan/Seoul/rest를 실제 bridge로 완주하는 행렬 테스트 및 브라우저 fixture를 만든다. 이후 데스크톱·389×844에서 SKIP 없이 플레이한다.
+준비된 `tests/day21-v4-browser-entry.html`에서 데스크톱과 389×844 모바일의 park/phone/deferred 및 Busan/Seoul/rest 의미 경로를 실제 선택으로 SKIP 없이 플레이한다. 원문 장면·인물·메시지·접촉·결제·회상·DAY22 전환과 콘솔/오버플로를 확인하고 사용자 저장을 복원한다.
 
 ## Playable 구현 기록
 
@@ -107,6 +107,8 @@ Friendly/Neutral/Distant/Mixed 의미 경로와 park/phone/deferred, Busan/Seoul
 - runtime resolution은 현재 관계 tone으로 접촉·숙박에 대한 하은의 별도 응답을 기록한다. 여행 확인은 저장된 검증 quote가 없으면 실패 폐쇄하여 예약·결제를 만들지 않고, quote가 있을 때도 본인 부담액만 bridge에 전달한다.
 - `game.js`의 DAY21 진입·재개·선택·접촉/숙박/여행 응답·완료·SKIP·시계를 V4로 연결했다. V4 선택은 legacy late expansion에 중복 기록하지 않으며, V4 완료 후 기존 전일 근무 Free Action을 열지 않는다. 레거시 저장은 기존 경로를 유지한다.
 - DAY21 runtime/bridge/playable/state, Story/Free, 브라우저 엔트리 정적 회귀 36/36 PASS. 실제 경로 행렬과 브라우저 QA 전이므로 DAY21은 **PARTIAL**이다.
+- Friendly Busan, Neutral park, Mixed phone+Seoul, Distant deferred, rest+separate의 다섯 의미 경로를 실제 bridge·runtime resolution·완료 처리로 완주하는 행렬을 추가했다. 통화의 현장 하은/접촉 비노출, 무연락의 이야기·메시지·결제 0, 부산의 검증 견적과 본인 부담액 1회, 서울의 숙박·결제 0, 휴식 경로의 별도 숙박을 검증한다.
+- 실제 DAY18→19→20 reducer와 완료 bridge로 DAY21 시작 상태를 만드는 브라우저 fixture에 park/phone/deferred/Busan/Seoul/rest 6개 진입점을 추가했다. 최초 실행 전 저장 키 3개를 세션에 백업하며 부산 fixture만 QA용 검증 견적을 명시적으로 넣고 상대 비용은 포함하지 않는다. DAY21 집중 검증 41/41 PASS지만 실제 데스크톱·모바일 비-SKIP 플레이 전이므로 **PARTIAL**이다.
 
 ## 상태 계약 구현 기록
 
