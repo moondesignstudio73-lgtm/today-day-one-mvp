@@ -80,7 +80,8 @@ SCENE 12~18 친밀 장면은 갈등 경로에 붙이지 않는다. SCENE14의 �
 - game bridge core: PASS. 다섯 playable 모듈의 경계를 제거해 현재 phase의 다음 선택/응답/완료까지 연결한다. 선택과 접촉·숙박 응답은 실패 시 chapter 전체를 원자적으로 복구한다. 완료는 V4 facts/choices를 history에 한 번만 기록하고 DAY19 hook을 소비해 DAY21 hook을 연다.
 - runtime integration: PASS. DAY19 V4 완료 hook으로 대면/solo DAY20 slot을 모두 선택하며, `game.js` 진입·재개·선택·별도 하은 응답·완료·SKIP을 bridge에 연결했다. SKIP도 접촉/숙박 응답 단계를 건너뛰지 않는다. 접촉 응답은 원문에 작성된 하은 수락만 기록하고, 숙박은 `MUTUAL_MORE_TIME`과 `MUTUAL_SIMILAR_EVENING`이 모두 실제 기록된 경우에만 별도 침구로 수락한다. V4 완료에는 legacy Free Action을 덧붙이지 않는다.
 - automated QA: PASS. DAY19→DAY20 대면/solo 선택기, 24장면 bridge, 접촉/숙박 응답 정책, 저장 재개, 완료 1회 기록, legacy 보존과 100×30일 회귀를 통과했다.
+- six-route matrix QA: PASS. face/short/solo/conflict/stay/leave를 실제 DAY18→19→20 reducer, bridge, 런타임 응답 정책, 완료 처리로 끝까지 재생했다. 각 경로의 장면 포함/배제, 하은 비방문, 친밀 장면 차단, 숙박 준비와 별도 침구, 금지 내부 문구 비노출, history 1회 기록을 검증했다.
 - browser fixture: PASS. `tests/day20-v4-browser-entry.html`은 사용자 저장 3개 키를 세션에 한 번 백업하고 face/short/solo/conflict/stay/leave 6개 시작 상태를 실제 DAY18·19 reducer와 완료 bridge로 생성한다.
-- browser QA: BLOCKED THIS RUN. 로컬 서버에서 fixture HTTP 200을 확인했지만 Codex 인앱 브라우저 webview가 숨김/표시 모드 모두 연결 제한시간을 넘겨 실제 플레이 탭이 생성되지 않았다. 게임 오류나 fixture 오류로 판정하지 않으며 다음 실행에서 새 브라우저 세션으로 재시도한다.
+- browser QA: BLOCKED FOR 2 RUNS. 로컬 서버에서 fixture HTTP 200을 재확인했지만 초기화한 새 Codex 인앱 브라우저 세션도 webview 연결 제한시간을 넘겨 실제 플레이 탭이 생성되지 않았다. 게임 오류나 fixture 오류로 판정하지 않으며 다음 실행에서 한 번 더 새 브라우저 세션으로 재시도한다.
 - DAY20 COMPLETE: **아님**.
 - 다음 시작점: 인앱 브라우저 새 세션에서 fixture를 열어 데스크톱과 389×844의 face/short/solo/conflict/stay/leave를 SKIP 없이 완주하고 콘솔·레이아웃·Story/Free 배타성을 증거화한다.
