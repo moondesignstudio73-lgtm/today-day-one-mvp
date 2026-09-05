@@ -77,7 +77,12 @@ export function beginDay21V4(state){const entry=getDay21V4Entry(state);if(entry.
 
 export function getDay21V4Options(chapter) {
   if(['ending','contact_resolution','lodging_resolution','travel_resolution'].includes(chapter?.phase))return [];
-  if(deferredPhases[chapter?.phase])return options(deferredPhases[chapter.phase],'DEFERRED');
+  if(deferredPhases[chapter?.phase]){
+    const number=deferredPhases[chapter.phase];let result=options(number,'DEFERRED');
+    if(number===4&&chapter.input.day19MinhoReply!=='REPLY_TOMORROW')result=result.filter(option=>!option.id.endsWith('_check_minho_date'));
+    if(number===7&&chapter.input.day19MinhoReply!=='REPLY_TOMORROW'&&chapter.input.day19ContactHandling!=='DEFERRED_UNRESOLVED')result=result.filter(option=>!option.id.endsWith('_finish_promised_reply'));
+    return result;
+  }
   const number=mainPhases[chapter?.phase];if(!number)throw new Error(`DAY21_INVALID_PHASE:${chapter?.phase}`);
   let result=options(number,'FACE_TO_FACE');
   if(number===3&&!chapter.input.contactAllowed)result=result.filter(option=>option.id.endsWith('_defer'));

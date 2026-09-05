@@ -81,7 +81,7 @@ SCENE24 → DAY21 completion cue → DAY22
 1. ~~Notion 최종 원문 플레이어 본문 잠금과 내부 메모 분리.~~ 완료.
 2. ~~source registry에서 24 Scene, 주경로 C1~16, 비대화 C4~8의 정확 라벨·반응·variant를 생성한다.~~ 완료.
 3. ~~DAY18~20 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
-4. 아침 / 이야기 / 감정·접촉 / 여행·예약 / 비대화·ending playable 모듈을 exact source ref로 구현한다. **진행 중: SCENE01~16 완료.**
+4. ~~아침 / 이야기 / 감정·접촉 / 여행·예약 / 비대화·ending playable 모듈을 exact source ref로 구현한다.~~ 완료.
 5. game bridge, 저장 재개, 경제 원장, 시간·장소·인물·전화 presentation을 실제 루프에 연결한다.
 6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
 7. Friendly/Neutral/Distant/Mixed 및 park/phone/deferred, Busan/Seoul/solo를 데스크톱과 389×844에서 SKIP 없이 검증한다.
@@ -89,7 +89,7 @@ SCENE24 → DAY21 completion cue → DAY22
 
 ## 다음 시작점
 
-SCENE17~24 저녁·여행·준비·ending 및 SCENE17~21 비대화 playable을 구현한다. C13 숙박 공간과 부산 예약은 각각의 resolution 전후 segment를 분리하며, 실제로 듣지 않은 이야기·양말 농담은 비대화 ending에 노출하지 않는다.
+DAY21 V4 game bridge, 저장 재개, 경제 원장, 실제 UI의 시간·장소·인물·통화 presentation을 연결한다. 그 뒤 Story/Free 배타성과 경로 행렬을 검증하고 실제 브라우저 fixture를 만든다.
 
 ## Playable 구현 기록
 
@@ -98,7 +98,9 @@ SCENE17~24 저녁·여행·준비·ending 및 SCENE17~21 비대화 playable을 �
 - C3 이후 `PARK`/`PHONE`/`DEFERRED`를 독립 presentation으로 나눴다. 전화 SCENE05~12는 음성 dialogue만 사용하고 하은 캐릭터 비주얼, 표정·손·공원 동작·접촉 연출을 차단한다.
 - 대화 연기는 SCENE05~12를 재생하지 않고 SCENE17 대체 경로로 보낸다. 따라서 점심·업무·분노·양말 이야기는 듣지 않은 상태로 남는다.
 - SCENE13~16은 C8~10의 감정·여지·접촉을 구현했다. 공원 포옹/손잡기는 오늘의 별도 동의 응답 뒤에만 성립하고, 거절·거리 두기·통화에는 접촉 사실이 생기지 않는다. 통화는 하은 캐릭터와 공원·표정·손 시각 연출 없이 각자 창밖을 보는 원문 경로로 닫힌다.
-- exact source step, 분기별 장면 번호, 선택 1~10, 통화 시각 정보 차단과 접촉 응답을 포함한 DAY21 집중 회귀 16/16 PASS. DAY21 전체는 bridge 및 나머지 장면이 남아 **PARTIAL**이다.
+- SCENE17~24는 C11~16의 저녁, 여행 재검토, 숙박 공간, 예약 확인, 짐, 마지막 메시지와 회상을 구현했다. 부산은 숙박 동의와 날짜·이동·예산·숙박·상호 동의가 확인된 뒤에만 예약·결제로 표시한다. 서울·여행 미논의 경로는 열지 않은 예약 화면을 닫지 않으며 가짜 숙박을 만들지 않는다.
+- SCENE21 비대화 경로는 별도 C4~8로 끝난다. 실제 미룬 민호 답변이나 미완료 연락이 없으면 관련 선택 자체를 숨기고, 하은 연락을 쉬는 상태에서는 메시지를 만들지 않는다. 들지 않은 점심·업무·분노·양말은 SCENE24 회상에 들어가지 않는다.
+- DAY21 source/state/playable 및 인접 DAY19~20 bridge 집중 회귀 42/42 PASS. playable 원문 범위는 완료했지만 game bridge·실제 게임 루프·브라우저 QA가 남아 DAY21 전체는 **PARTIAL**이다.
 
 ## 상태 계약 구현 기록
 
