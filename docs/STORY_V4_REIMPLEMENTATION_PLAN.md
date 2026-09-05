@@ -260,3 +260,5 @@ DAY18 모바일 최종 QA 및 종결(9/5): 전용 viewport capability로 모바�
 DAY19 원문 구현 시작(9/5): 최종 Notion page id/snapshot을 고정하고 공개 본문을 24 Scene/16 Choice로 기계 추출하는 source registry와 정확 문구 회귀 검사를 추가했다(`day19/DAY19_V4_IMPLEMENTATION_PLAN_2026-09-05.md`). 내부 편집 메모는 registry에서 제외했고, 기존 집안일 5장면·3선택 및 4막 expansion은 원문 구현이 아니라는 판정을 유지한다. DAY19는 PARTIAL이며 다음은 **전용 replay-locked 상태 계약과 legacy 진입 분리**다.
 
 DAY19 상태 계약(9/5): DAY18의 검증된 완료 chapter에서만 새 V4를 시작하고 관계 온도·연락·여행 대화·미완료 연락·오락비 자격을 entry input으로 동결하는 16단계 replay 계약을 추가했다. C5/C14 shared·solo 변형과 실제 연락이 없을 때 C15 생략을 저장 구조에 반영했다. 후보를 예약으로, 관심을 수락으로, 예산 의사를 송금으로, 민호 조율을 유급 업무로, 미확정 복권을 당첨금으로 승격하지 않으며 변조 저장은 거부한다. 기존 DAY19 키가 시작된 저장은 legacy를 유지한다. 집중 8/8 PASS. DAY19는 PARTIAL이며 다음은 **조건부 source selector와 SCENE01~05/C1~C4 playable script**다.
+
+DAY19 SCENE01~05 구현(9/5): exact source line selector와 C1~C4 전용 playable opening을 추가했다. 원문 행동은 비출력 `stageAction`, 직접 말은 대화/문자, 내면은 독백으로 나누고 일반 `narration` 및 조건 메모 출력을 금지했다. 연락 휴식 입력의 하은 연락 선택과 연락 불가 입력의 동반 식사를 fail-closed 했다. 복권은 오락비 자격에 따라 미확정 구매/중단만 표시하고 당첨금은 만들지 않으며, 민호 연락은 방문 조율 이상으로 승격하지 않는다. source/state/opening 집중 13/13 PASS. 아직 본선 미연결이므로 DAY19는 PARTIAL이며 다음은 **SCENE06~12/C5~C7 조건부 구현**이다.

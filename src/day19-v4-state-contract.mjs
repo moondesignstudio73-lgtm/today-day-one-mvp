@@ -104,7 +104,9 @@ export function getDay19V4Options(chapter) {
     if (chapter?.phase === 'ending') return [];
     throw new Error(`DAY19_INVALID_PHASE:${chapter?.phase}`);
   }
+  if (number === 1 && !chapter.input.contactAllowed) return options(1).filter(option => !option.id.endsWith('_ask_haeun'));
   if (number === 5 && !chapter.input.sharedPlanningEligible) return options(5, soloLabels[5], 'solo');
+  if (number === 13 && !chapter.input.contactAllowed) return options(13).filter(option => option.id.endsWith('_eat_separately'));
   if (number === 14 && chapter.facts.tomorrowMeal !== 'ACCEPTED') return options(14, soloLabels[14], 'solo');
   return options(number);
 }
@@ -116,7 +118,8 @@ function reduce(chapter, id) {
   if (!selected) throw new Error(`DAY19_CHOICE_UNAVAILABLE:${id}`);
   const phase = chapter.phase, number = phaseNumbers[phase], facts = chapter.facts;
   chapter.choices.push({number, phase, id});
-  const index = available.indexOf(selected);
+  const index = suffixes[number].findIndex(suffix => id.endsWith(`_${suffix}`));
+  if (index < 0) throw new Error(`DAY19_CHOICE_ID_INVALID:${id}`);
   switch (number) {
     case 1: facts.planStart = ['MONEY_FIRST', 'ASK_HAEUN', 'DRAFT_FIRST'][index]; chapter.phase = 'scope'; break;
     case 2: facts.tripScope = ['NEAR', 'SAVE_FOR_LATER', 'COMPARE_SHORT_TRIP'][index]; chapter.phase = 'expectation_spend'; break;
