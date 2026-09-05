@@ -93,6 +93,7 @@ export const BACKGROUND_ASSETS = {
   "day18-alley-pub":"assets/backgrounds/map-locations/005_alley-pub.png",
   "day18-haeun-beside":"assets/events/day18-v4/haeun-beside-seat-v1.png",
   "day18-gimbap-evening":"assets/backgrounds/map-locations/002_gimbap-village-evening-v1.png",
+  "gimbap-village":"assets/backgrounds/map-locations/002_gimbap-village.png",
   "day1-hospital-ceiling":"assets/backgrounds/hospital/day1-hospital-pov-ceiling-v1.png",
   "day1-hospital-bedside":"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png",
   "day2-hospital-bedside":"assets/backgrounds/hospital/day1-hospital-bedside-day-v1.png",

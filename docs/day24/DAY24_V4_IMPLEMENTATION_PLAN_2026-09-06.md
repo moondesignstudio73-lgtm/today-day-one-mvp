@@ -100,4 +100,4 @@ DAY23 완료 이력
 
 ## 다음 시작점
 
-SCENE01~24/C1~15의 exact-source playable을 구현했다. 지속 경로는 하은과의 저녁 메시지 및 별도 C14 현재 응답을, 유예·종료 경로는 혼자 저녁과 실제 가능한 지훈 통화를 사용한다. 관계가 실제 끝나고 상대가 현재 수락한 경우에만 C13 새 만남을 열며 새 연애로 확정하지 않는다. SCENE23 자기 밤 과제와 SCENE24는 실제 지속·유예·종료·거짓말 결과 하나만 투영한다. 다음 작업은 **game bridge·저장 재개·현재 응답·시간/장소/인물 presentation·Story/Free 배타성 연결**이다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
+SCENE01~24/C1~15의 exact-source playable과 game bridge 기반을 구현했다. 브리지는 네 playable 경계를 연결하고 대화 성사·하은 관계 응답·거짓 정정·다른 연락 응답·미래 대화 응답을 서로 다른 원자적 resolution으로 처리한다. 김밥마을 낮, 카페, 집, 메시지·통화 presentation과 중간 저장 재개, 완료 이력 단일 기록 및 DAY25 hook을 검증했다. 다음 작업은 **`game.js` 실제 Story 루프 연결과 Story/Free 배타성**이다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
