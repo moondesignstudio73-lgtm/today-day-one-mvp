@@ -98,7 +98,7 @@ function reduceMain(chapter,id){const phase=chapter.phase,number=mainPhases[phas
   if(number===12){facts.smallShare=['SHARE_HAEUN','TELL_JIHOON','KEEP_SELF'][index];chapter.phase='photo_review';return;}
   if(number===13){facts.photoReview=['ONE_PHOTO','NEXT_TIME','LEAVE_UNSORTED'][index];chapter.phase=chapter.input.pendingContacts.length?'pending_contact':'self_intent';return;}
   if(number===14){if(variant==='NO_PENDING_CONTACT')facts.selfIntent=['KEEP_MEETING','FUTURE_TALK','MISS_YOU'][index];else facts.pendingContactAction=['ALIGN_RELATIONSHIP','NAME_UNCERTAINTY','TELL_HAEUN_FIRST'][index];chapter.phase='dinner_call';return;}
-  if(number===15){facts.dinnerCall=['EAT_WHILE_CALLING','AFTER_MEAL','REST'][index];chapter.phase=index===2?'conversation_method':'wanted_presence';return;}
+  if(number===15){facts.dinnerCall=['EAT_WHILE_CALLING','AFTER_MEAL','REST'][index];const difficult=facts.haeunRelationshipOutcome!=='CONTINUE'||facts.relationshipIntent==='DISCUSS_MORE'||facts.pendingContactAction==='NAME_UNCERTAINTY'||facts.pendingContactAction==='TELL_HAEUN_FIRST'||facts.selfIntent==='FUTURE_TALK';chapter.phase=index===2||chapter.input.relationshipTone!=='CALM'||difficult?'conversation_method':'wanted_presence';return;}
   if(number===16){facts.wantedPresence=['SMILING_FACE','BESIDE_SEPARATE_TASKS','SPEECHLESS'][index];chapter.phase='conversation_method';return;}
   if(number===17){facts.conversationMethod=['MEET','PHONE','SCHEDULE_TOGETHER'][index];chapter.phase='conversation_resolution';return;}
 }

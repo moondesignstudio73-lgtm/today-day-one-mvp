@@ -85,7 +85,7 @@ DAY22 완료 이력
 1. ~~Notion 최종 원문 플레이어 본문 잠금과 내부 메모 분리.~~ 완료.
 2. ~~source registry에서 24 Scene, 대면 C1~17, 미여행 C3~8과 C14 variant의 정확 라벨·반응을 생성한다.~~ 완료.
 3. ~~DAY20~22 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
-4. 아침/남은 일정, 최고의 순간/사진/기념, 귀환/작별, 집 생활/연락, 남은 관계/저녁 통화, 미여행/ending playable을 exact source ref로 구현한다. SCENE01~17/C1~14과 SCENE21/C3~8은 완료했다.
+4. ~~아침/남은 일정, 최고의 순간/사진/기념, 귀환/작별, 집 생활/연락, 남은 관계/저녁 통화, 미여행/ending playable을 exact source ref로 구현한다.~~ SCENE01~24, MAIN C1~17, 미여행 C3~8 전체 완료.
 5. game bridge, 저장 재개, 연락·관계 응답, 선택 지출, 시간·장소·인물 presentation을 실제 Story 루프에 연결한다.
 6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
 7. Friendly/Neutral/Distant/Mixed 및 shared/separate/Seoul/no-travel/연락 거절 의미 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
@@ -93,4 +93,4 @@ DAY22 완료 이력
 
 ## 다음 시작점
 
-DAY23 SCENE01~17/C1~14 아침·기념·귀환·작별·집 생활·사진·남은 관계 playable과 SCENE21/C3~8 미여행 playable을 구현했다. 부산에서만 귀환 가방을 풀고 서울은 평소 물건을 정리한다. C12는 실제 연락 가능한 하은/지훈만 노출하고, C13은 실제 보존 사진만 보내며 얼굴 없는 풍경을 인물 사진처럼 말하지 않는다. C14는 DAY21에서 실제 이월된 유리·서진·아라 대화만 표시하고, 이월 연락이 없으면 SCENE17 자기 마음 variant로 전환한다. 모든 player-facing 문장은 잠근 snapshot의 exact line 또는 source-grounded projection으로 검증한다. 다음은 **SCENE18~24/C15~17 저녁 통화·DAY24 대화 합의·ending playable**이다. 이 관문 전까지 DAY23은 **PARTIAL**이다.
+DAY23 SCENE01~24, MAIN C1~17, 미여행 C3~8 playable 전체를 exact source ref로 구현했다. SCENE19는 관계가 편안한 통화에만 열리고 어려운 관계·추가 대화 필요 경로는 SCENE20으로 직행한다. 서울은 오늘 만나지 않은 사실을 사용하며 부산의 “아까까지 봤는데”를 재사용하지 않는다. C17의 DAY24 대화 방식과 시간은 하은의 별도 현재 응답 전에는 확정되지 않는다. SCENE22~24는 실제 이월 연락·기념품·연락 약속을 사용하고, 미여행 연락 불가 ending에는 하은 통화·여행 가방·기념품을 만들지 않는다. 다음은 **game bridge·저장 재개·현재 응답·선택 지출·시간/장소/인물 presentation 연결**이다. 이 관문 전까지 DAY23은 **PARTIAL**이다.
