@@ -87,3 +87,14 @@ test("solo call availability is truthful and forbidden schedule wording stays ab
   const bridge=readFileSync(new URL("../src/day17-v4-game-bridge.mjs",import.meta.url),"utf8");
   assert.equal(bridge.includes("힘들면 아예 안 가도 되죠?"),false,"authorial anti-example must never become player-facing text");
 });
+
+test("actual UI QA fixture preserves and explicitly restores the user's local save",()=>{
+  const fixture=readFileSync(new URL("./day17-v4-browser-entry.html",import.meta.url),"utf8");
+  for(const token of [
+    'const backupKey="day17-v4-qa-local-storage"',
+    "if(sessionStorage.getItem(backupKey)==null)",
+    "localStorage.clear()",
+    "sessionStorage.removeItem(backupKey)",
+    "QA 전 사용자 저장을 복원했습니다."
+  ])assert.ok(fixture.includes(token),token);
+});
