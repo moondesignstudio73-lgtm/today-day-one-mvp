@@ -62,7 +62,7 @@ SCENE 12~18 친밀 장면은 갈등 경로에 붙이지 않는다. SCENE14의 �
 1. ~~누락된 SCENE12~18 원문을 완전히 복원하고 해시/문자 수를 기록한다.~~ 완료.
 2. ~~14개 대면 선택과 solo/conflict 대체 선택의 ID·정확한 라벨·반응을 source registry에 잠근다.~~ 완료. 14개 대면 + solo 4개 + conflict 1개를 서로 다른 variant로 보존한다.
 3. ~~현재 `day20-v4-state-contract.mjs`의 foundation을 replay-locked 선택 reducer로 확장한다.~~ 완료. 대면/짧은 차/갈등/solo 진행표와 접촉·숙박 명시 응답을 포함한다.
-4. opening / domestic / intimacy / ending playable 모듈과 game bridge를 구현한다. **진행 중:** opening SCENE01~04, domestic SCENE05~11, solo SCENE23~24 구현. legacy DAY20 저장은 자동 변환하지 않는다.
+4. opening / domestic / intimacy / ending playable 모듈과 game bridge를 구현한다. **진행 중:** opening SCENE01~04, domestic SCENE05~11, intimacy SCENE12~18, solo SCENE23~24 구현. legacy DAY20 저장은 자동 변환하지 않는다.
 5. 원문 대조, Friendly/Neutral/Distant/Mixed, face/short/solo/conflict/stay/leave, 저장 재개, Story/Free 배타성, DAY21 후속을 검증한다.
 6. 실제 데스크톱·389×844 모바일 비-SKIP 완주와 콘솔·이미지·오디오·오버플로를 확인한 뒤에만 COMPLETE로 승격한다.
 
@@ -75,6 +75,7 @@ SCENE 12~18 친밀 장면은 갈등 경로에 붙이지 않는다. SCENE14의 �
 - playable: opening SCENE01~04 PASS. 초대 없는 날은 선택 C1~3을 억지로 제시하지 않고 생활 대체 원문 뒤 solo C5로 진입한다. 대면은 실제 DAY19 컵 대화 이력이 있을 때만 `가장 다양한 분야`를 회수한다.
 - playable: domestic SCENE05~11 PASS. 실제 DAY19 여행 대화가 있을 때만 숙소 포장 농담을 회수하며, 공개 C5는 SCENE08~18을 붙이지 않고 SCENE19 경계로 간다. 각자 화면은 하은이 공유한 부분만 보여 준다.
 - playable: solo SCENE23~24 PASS. solo C5~8의 실제 반응을 구현했고 연락 불가에서는 `오늘은 푹 쉬자`만 허용한다. 하은 대사·메시지·공동 컵·포옹·숙박은 생성하지 않는다.
+- playable: intimacy SCENE12~18 PASS. 실제 대여 사실이 없으므로 옷을 바꾸지 않는 원문 분기를 사용한다. C10 포옹/손잡기 요청은 `haeunContactResolution` 단계로 멈추며, 수락 기록 뒤에만 해당 SCENE14~15 반응과 `firstHug`/`heldHands`를 노출한다. 현재 거리 선택은 접촉 없이도 완전한 경로다.
 - runtime/game bridge/browser QA: NOT STARTED.
 - DAY20 COMPLETE: **아님**.
-- 다음 시작점: intimacy SCENE12~18, conflict SCENE19, ending SCENE20~24를 구현하고 접촉·숙박 명시 응답 단계를 game bridge에 연결한다.
+- 다음 시작점: conflict SCENE19와 ending SCENE20~22/24를 구현하고 접촉·숙박 명시 응답 단계를 game bridge에 연결한다.
