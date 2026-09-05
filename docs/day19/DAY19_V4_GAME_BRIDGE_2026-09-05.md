@@ -20,11 +20,12 @@
 - SCENE 24의 `chapterCompletionCue`만 DAY 19를 완료할 수 있다.
 - 완료 시 캠페인 slot `m30-day19-current-shared-chore`에는 `scenarioId: day19-notion-v4`, 실제 16단계 선택과 facts를 기록한다.
 - legacy 집안일 선택 효과와 legacy Free Action은 새 V4 경로에서 실행하지 않는다.
-- DAY 20 선택기는 기존과 같이 완료된 캠페인 slot 이력을 통해 다음 장면을 찾을 수 있다.
+- DAY 20의 기존 공동 식사 장면은 완료된 캠페인 slot만으로 열리지 않는다. DAY 19 V4의 `tomorrowMeal`이 실제 `ACCEPTED`일 때만 완료 브리지가 `day20CurrentSharedMealPending`을 세우며, 비수락/solo 완료는 오래된 표식도 제거한다.
+- 기존 DAY 19 런타임 저장은 원래의 pending 표식을 계속 사용할 수 있다. exact DAY 20 V4가 준비되기 전 비수락 V4 경로는 placeholder에서 fail-closed 하며 하은 방문·공동 식사를 생성하지 않는다.
 
 ## 자동 QA
 
-- 브리지 집중 검사 7/7 PASS.
+- 브리지 집중 검사 8/8 PASS.
 - shared/solo 전 구간이 16단계 끝까지 도달하고 내부 경계 표식이 플레이어 시퀀스에 남지 않음.
 - 실제 `SaveManager`로 C9 이후 중간 저장을 JSON 왕복한 뒤 다음 시퀀스가 동일함.
 - 복권 비용 1회 차감, 미확정 결과/상금 0, 실패 시 원장과 잔액 롤백 확인.
@@ -50,3 +51,5 @@ Neutral 첫 실행에서 C8 각자 여행 뒤 C11 공동 재확인과 SCENE22 �
 DAY 19는 계속 `PARTIAL`. 다음은 390×844 모바일 네 경로다.
 
 Mobile Friendly 후속에서 목표 390×844의 장치 배율 반올림값인 실제 `391×844` 모바일 미디어쿼리 영역을 확보했다. 15개 선택을 실제 버튼으로 눌러 DAY20 첫 Story 선택까지 SKIP 없이 완주했고, 수평 넘침 0, console warning/error 0, Free Action 비노출과 사용자 저장 복원을 확인했다. DAY19는 계속 `PARTIAL`이며 다음은 모바일 Distant다.
+
+Mobile Distant 후속에서 실제 `389×844` 모바일 영역을 15개 선택으로 비-SKIP 완주했다. 최초 실행은 내일 식사 비수락인데도 캠페인 slot 이력만으로 기존 DAY20 공동 식사가 열리는 경계 결함을 드러냈다. 완료 브리지가 `tomorrowMeal === 'ACCEPTED'`일 때만 `day20CurrentSharedMealPending`을 세우고 DAY20 선택기가 이를 요구하도록 수정한 뒤 재완주했으며, 하은 방문 대사·공동 식사 질문/선택이 모두 사라지고 placeholder에서 fail-closed 했다. 수평 넘침 0, console warning/error 0, 사용자 저장 복원과 viewport reset을 확인했다. DAY19는 계속 `PARTIAL`이며 다음은 모바일 Mixed다.

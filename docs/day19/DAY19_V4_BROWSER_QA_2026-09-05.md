@@ -56,7 +56,7 @@
 
 ## 남은 경로
 
-- 390×844 모바일 Distant/Mixed/Neutral 세 경로와 각 경로 사용자 저장 복원.
+- 390×844 모바일 Mixed/Neutral 두 경로와 각 경로 사용자 저장 복원.
 
 ## Mobile Friendly — PASS (game250)
 
@@ -67,4 +67,13 @@
 - DAY20의 세 Story 선택이 접근성 트리에 표시됐고 Free Action 조작은 나타나지 않았다. console warning/error는 0이었다.
 - 종료 뒤 fixture에서 `테스트 전 저장을 복원했습니다.`를 확인하고 임시 viewport를 기본 `1103×620`으로 되돌렸다.
 
-DAY 19는 계속 `PARTIAL`이다. 다음 시작점은 390×844 모바일 Distant 비-SKIP 완주다.
+## Mobile Distant — PASS (game251)
+
+- 연락 휴식/solo 입력으로 실제 CSS viewport `389×844`와 모바일 미디어쿼리를 확인했다. 15개 실제 선택(C15 조건부 생략)을 모두 화면 버튼으로 눌렀고 SKIP은 사용하지 않았다.
+- DAY19 전 구간에 하은 인물·대사 노출이 없었고, 각자 여행·후보 유지·각자 저녁·내 컵·추가 지출 중단으로 끝났다. 선택 경계 최대 수평 넘침은 0이었다.
+- 첫 완주에서 내일 식사를 수락하지 않았는데도 완료 이력만 보고 기존 `m30-day20-current-shared-meal`이 열려 하은의 방문과 공동 식사를 만든 DAY19→20 경계 결함을 발견했다.
+- 완료 브리지는 `tomorrowMeal === 'ACCEPTED'`인 경우에만 `day20CurrentSharedMealPending`을 세우고, 기존 DAY20 공동 식사 장면은 이 표식까지 요구하도록 수정했다. 비수락 Distant 재완주에서는 공동 식사 대사 `좋아. 나 진짜 내 취향으로 가져간다.`, 질문 `오늘 집에서 무엇을 준비할까?`, 관련 선택이 모두 나타나지 않았다.
+- exact DAY20 V4가 아직 구현되지 않았으므로 Distant의 DAY20은 `다음 장면을 준비하고 있습니다.`에서 fail-closed 한다. 이는 DAY20 구현 완료 판정이 아니며, 존재하지 않는 하은 방문을 만드는 것보다 안전한 경계다.
+- 종료 화면도 `clientWidth=scrollWidth=389`였고 console warning/error 0이었다. fixture에서 `테스트 전 저장을 복원했습니다.`를 확인한 뒤 viewport를 기본 `1103×620`으로 되돌렸다.
+
+DAY 19는 계속 `PARTIAL`이다. 다음 시작점은 390×844 모바일 Mixed 비-SKIP 완주다.

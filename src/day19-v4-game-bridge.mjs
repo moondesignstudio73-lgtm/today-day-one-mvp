@@ -124,6 +124,8 @@ export function completeDay19V4GameChapter(state, cue) {
       facts:structuredClone(chapter.facts), choices:structuredClone(chapter.choices),
       lotteryPurchase:structuredClone(state.storyFlags.day19V4LotteryPurchase ?? null)});
   }
+  if (chapter.facts.tomorrowMeal === 'ACCEPTED') state.storyFlags.day20CurrentSharedMealPending = true;
+  else delete state.storyFlags.day20CurrentSharedMealPending;
   state.storyFlags.day19RuntimeComplete = true;
   state.pendingStoryId = null;
   return {type:'sceneEnd', day:19, complete:true};
