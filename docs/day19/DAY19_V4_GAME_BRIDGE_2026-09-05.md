@@ -43,4 +43,6 @@ Friendly 데스크톱 경로를 SCENE01부터 DAY20까지 SKIP 없이 완주하�
 
 Distant 데스크톱 첫 실행에서 연락 불가/solo인데 공동 C8·C11·C16 선택 문구가 노출되는 결함을 발견했다. game249는 기존 replay state option을 삭제하지 않고 playable presentation만 원문상 가능한 선택으로 좁혀 저장 호환성과 지식 경계를 함께 지킨다. 수정 후 DAY20까지 비-SKIP 완주했고 하은 인물 노출 0, console warning/error 0, Story/Free 배타성, 가로 넘침 0, 사용자 저장 복원을 확인했다.
 
-DAY 19는 계속 `PARTIAL`. 다음은 Mixed 데스크톱 비-SKIP 완주다.
+Mixed fixture의 DAY18 replay 누락을 합법 연락 가능/solo 이력으로 교정했다. 새 클린 탭에서 C3 복권 실제 1회 선택, C15 실제 서진 연락, solo C14/C16, 결과·상금 비노출과 DAY20 전환을 확인했다. 정확한 원장 차감은 자동 원자성 검사와 구분했으며 사용자 저장을 복원했다.
+
+DAY 19는 계속 `PARTIAL`. 다음은 Neutral 데스크톱 비-SKIP 완주다.

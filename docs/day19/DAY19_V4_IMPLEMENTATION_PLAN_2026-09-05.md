@@ -149,3 +149,9 @@ DAY19는 계속 `PARTIAL`. 다음 작업은 **Mixed 데스크톱 비-SKIP 완주
 - 실제 Distant 플레이로만 드러난 공동 C8, 두 사람 C11, 합의 범위 C16 노출을 원문 조건 위반으로 판정했다.
 - 기존 저장 검증에 쓰는 replay option은 그대로 두고, 신규 화면에 그리는 playable option만 연락 가능/공동 계획 입력에 맞춰 좁혔다. 이미 선택된 구버전 저장은 유효하지만 새 Distant 플레이는 존재하지 않는 공동 의사나 합의를 선택할 수 없다.
 - 수정 후 DAY20까지 실제 비-SKIP 완주 및 저장 복원 PASS. DAY19 전체는 아직 `PARTIAL`이다.
+
+### Mixed 실제 QA 후속
+
+- 연락 가능/solo DAY18 fixture에 필수 `disclose_solo`, `night_defer`, `alone_stop`을 연결해 검증 가능한 실제 이력으로 교정했다.
+- 새 클린 탭에서 16개 선택을 비-SKIP 완주했다. C3 실제 복권 선택 1회, C15 서진 미완료 연락 노출, 내일 식사 비수락 뒤 solo C14, 합의 금액 없는 solo C16, DAY20 전환과 사용자 저장 복원 PASS다.
+- console warning/error 0, 대면 인물 오노출 0, 데스크톱 가로 넘침 0. 다음은 Neutral 데스크톱이다.
