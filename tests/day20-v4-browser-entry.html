@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DAY20 V4 실제 게임 QA</title>
+<style>body{font:18px system-ui;background:#181522;color:#fff;padding:40px}button{padding:16px;margin:8px}p{max-width:820px}</style>
+<h1>DAY20 V4 실제 게임 QA</h1>
+<p>검증된 DAY18·19 완료 상태에서 실제 DAY20 본선을 엽니다. 경로 버튼은 시작 상태만 만들며 DAY20 선택은 실제 게임 화면에서 SKIP 없이 진행합니다. 최초 실행 전 모든 게임 저장 키를 세션에 한 번 백업합니다.</p>
+<button data-route="face">Face · 일반 대면</button>
+<button data-route="short">Short · 짧은 차</button>
+<button data-route="solo">Solo · 방문 없음</button>
+<button data-route="conflict">Conflict · 미해결 대화</button>
+<button data-route="stay">Stay · 준비 조건 확인</button>
+<button data-route="leave">Leave · 귀가</button>
+<button id="restore">테스트 전 저장 복원</button><p role="status" id="status"></p>
+<script type="module">
+import {createInitialState} from '../src/game-core.mjs';
+import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
+import {SaveManager} from '../src/save-manager.mjs';
+import {GAME_MODES} from '../src/scenario-state.mjs';
+import {beginDay18V4,applyDay18V4Choice} from '../src/day18-v4-state-contract.mjs';
+import {completeDay18V4GameChapter} from '../src/day18-v4-game-bridge.mjs?v=57';
+import {getDay19V4Options} from '../src/day19-v4-state-contract.mjs';
+import {applyDay19V4GameChoice,completeDay19V4GameChapter,prepareDay19V4GameEntry} from '../src/day19-v4-game-bridge.mjs?v=4';
+const backupKey='day20-v4-qa-save-backup';
+const keys=[SaveManager.key,SaveManager.keyForMode(GAME_MODES.MARRIAGE_30),SaveManager.keyForMode(GAME_MODES.FREE_ROMANCE)];
+function backup(){if(sessionStorage.getItem(backupKey)===null)sessionStorage.setItem(backupKey,JSON.stringify(Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))));}
+function seed(route){
+  const shared=route!=='solo',s=createInitialState(createGirlfriendFromProfile('haeun',()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});
+  s.day=18;s.phase=0;s.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};
+  Object.assign(s.storyFlags,{day17V4Completed:true,day17V4Day18HookPending:true,day17V4TomorrowPlan:shared?'HAEUN':'SOLO',day17V4Choice9:shared?'day17_v4_life_haeun':'day17_v4_life_solo',day17V4DinnerAgreement:{day:18,partner:shared?'HAEUN':'SOLO',status:'ACCEPTED',sourceChoiceId:shared?'day17_v4_life_haeun':'day17_v4_life_solo'},day16V4YuriEncountered:false,day16V4YuriContact:'ENDED_HERE',day16V4YuriInvitation:'NONE'});
+  beginDay18V4(s,shared?{}:{haeunContactAllowed:false});
+  for(const id of shared?['morning_keep','disclose_together','menu_each','topic_good','close_home','night_good','calm_trip','travel_near']:['morning_solo','menu_familiar','solo_food','return_home','alone_stop','travel_life'])applyDay18V4Choice(s,`day18_v4_${id}`);
+  completeDay18V4GameChapter(s,{type:'chapterCompletionCue',day:18,finalSceneReached:true});
+  s.day=19;s.phase=0;s.pendingStoryId='m30-day19-current-shared-chore';prepareDay19V4GameEntry(s);
+  while(s.storyFlags.day19V4.phase!=='ending'){
+    const phase=s.storyFlags.day19V4.phase,options=getDay19V4Options(s.storyFlags.day19V4);
+    const index=shared&&phase==='dinner'?options.findIndex(option=>option.id.endsWith('_tomorrow_home')):0;
+    applyDay19V4GameChoice(s,options[Math.max(0,index)].id);
+  }
+  if(route==='conflict')s.storyFlags.day19V4.input.day18DiscussionPending=true;
+  completeDay19V4GameChapter(s,{type:'chapterCompletionCue',day:19,finalSceneReached:true});
+  s.day=20;s.phase=0;s.pendingStoryId='m30-day20-current-shared-meal';return s;
+}
+document.querySelectorAll('[data-route]').forEach(button=>button.addEventListener('click',()=>{backup();SaveManager.save(seed(button.dataset.route));location.href=`../index.html?qa=day20-v4&route=${button.dataset.route}`;}));
+document.querySelector('#restore').addEventListener('click',()=>{const data=sessionStorage.getItem(backupKey);if(data===null){document.querySelector('#status').textContent='이 탭에 백업이 없습니다.';return;}for(const [key,value] of Object.entries(JSON.parse(data)))value===null?localStorage.removeItem(key):localStorage.setItem(key,value);sessionStorage.removeItem(backupKey);document.querySelector('#status').textContent='테스트 전 저장을 복원했습니다.';});
+</script></html>
