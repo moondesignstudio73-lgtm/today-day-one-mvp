@@ -90,7 +90,7 @@ DAY21 완료 이력
 
 ## 다음 시작점
 
-SCENE15~21/C11~16의 숙소·사생활·현재 접촉·밤 식사를 부산 숙박과 서울 당일 경로로 분리해 구현한다. 서울에는 숙소가 없어야 하고, 포옹·손잡기는 별도 현재 응답 전에는 발생하지 않아야 한다.
+SCENE22/C17 서울 귀가와 SCENE24 공통 결말 playable을 구현한다. 부산 공유·부산 별실·서울 귀가·미여행의 실제 사실만 회수하고, 완료 cue 전에는 DAY23 hook을 열지 않는다.
 
 ## Source registry 구현 기록
 
@@ -136,3 +136,12 @@ SCENE15~21/C11~16의 숙소·사생활·현재 접촉·밤 식사를 부산 숙�
 - 삭제된 공동 사진은 SCENE13에서 다시 표시하지 않는다. 다른 실제 풍경 사진만 볼 수 있으며 저장 replay가 삭제 결과를 검증한다.
 - SCENE13의 부산 회상은 실제 부산에서만 바다를 말한다. 서울은 source-directed 산책 문장으로 제한해 존재하지 않은 부산 경험을 만들지 않는다.
 - source/state/opening/meal/cafe/no-travel 집중 검사 20/20 PASS.
+
+## Lodging · privacy · current contact · night meal playable 구현 기록
+
+- `day22-v4-playable-evening.mjs`가 SCENE15~21/C11~16을 exact source ref로 재생한다. 부산은 실제 예약한 숙소만, 서울은 귀가 전 휴식과 각자 공간만 사용하며 숙소 화면과 SCENE21을 열지 않는다.
+- 상태 입력에 `sharedLodgingSpace`를 추가해 DAY21의 실제 `SHARED_ROOM_AGREED`가 있는 부산에서만 공유 공간을 연다. 부산 별실과 서울에서는 보이지 않는 하은의 편한 차림·얼굴 칭찬 선택을 제거한다.
+- C13 이후 C14 포옹·손잡기는 공유 공간에서만 선택할 수 있고 `contactConsentCue`의 현재 응답 뒤에만 발생한다. 거절은 `todayContact=NONE`으로 replay되며 키스나 성적 동의를 이어 붙이지 않는다.
+- 별실은 침대 동석·손 내밀기·접촉을 만들지 않고 자기 방 인사로 끝낸다. 서울은 숙소 도착·숙박 야식을 말하지 않고 C16 뒤 SCENE22로 이동한다.
+- 저녁 식사는 실제 배고픔과 선택한 양만 기록하며 DAY21에 결제한 교통·숙박을 다시 차감하지 않는다.
+- DAY22 source/state/playable 집중 검사 24/24 PASS.

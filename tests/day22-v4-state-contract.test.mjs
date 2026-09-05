@@ -42,6 +42,12 @@ test('SEOUL day route has return choice and never gains an overnight purchase',(
   assert.equal(validateDay22V4(state.storyFlags.day22V4),true);
 });
 
+test('only an actually shared Busan room exposes face praise and physical contact',()=>{
+  const reachUnwind=state=>{while(state.storyFlags.day22V4.phase!=='unwind'){if(state.storyFlags.day22V4.phase==='photo_resolution')resolveDay22V4Photo(state,{type:'haeunPhotoResponse',keepAccepted:true});else chooseDay22(state);}};
+  const shared=completedDay21('BUSAN_TRIP');beginDay22V4(shared);reachUnwind(shared);assert.ok(getDay22V4Options(shared.storyFlags.day22V4).some(option=>option.id.endsWith('_like_relaxed_face')));chooseDay22(shared);chooseDay22(shared);assert.equal(getDay22V4Options(shared.storyFlags.day22V4).length,3);
+  const separate=completedDay21('BUSAN_TRIP',{shared:false});beginDay22V4(separate);reachUnwind(separate);assert.equal(getDay22V4Options(separate.storyFlags.day22V4).some(option=>option.id.endsWith('_like_relaxed_face')),false);chooseDay22(separate);chooseDay22(separate);const contact=getDay22V4Options(separate.storyFlags.day22V4);assert.equal(contact.length,1);assert.ok(contact[0].id.endsWith('_rest_as_is'));
+});
+
 test('NO_TRAVEL route filters unavailable contacts and never creates travel or photo facts',()=>{
   const state=completedDay21('NO_TRAVEL');beginDay22V4(state);
   chooseDay22(state);chooseDay22(state);

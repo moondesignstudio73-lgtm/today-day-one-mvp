@@ -10,7 +10,7 @@ function chooseDay21(state,suffix){
   applyDay21V4Choice(state,selected.id);
 }
 
-export function completedDay21ForDay22(route,{ara=false}={}){
+export function completedDay21ForDay22(route,{ara=false,shared=true}={}){
   const unavailable=route==='NO_TRAVEL';
   const state=day21State(unavailable?{relationshipActive:false,contactAllowed:false,relationshipTone:'DIFFICULT',morningMode:'SOLO_MORNING',day20StayedOver:false,day20VisitMode:'SOLO',day20NightEnd:'LEFT'}:{});
   state.breakup=unavailable?{day:20,reason:'fixture'}:null;
@@ -19,9 +19,9 @@ export function completedDay21ForDay22(route,{ara=false}={}){
   while(state.storyFlags.day21V4.phase!=='ending'){
     const chapter=state.storyFlags.day21V4,phase=chapter.phase;
     if(phase==='contact_resolution'){resolveDay21V4Contact(state,{type:'haeunContactResponse',contact:chapter.facts.contactIntent,accepted:true});continue;}
-    if(phase==='lodging_resolution'){resolveDay21V4Lodging(state,{type:'haeunLodgingResponse',accepted:true});continue;}
+    if(phase==='lodging_resolution'){resolveDay21V4Lodging(state,{type:'haeunLodgingResponse',accepted:shared});continue;}
     if(phase==='travel_resolution'){resolveDay21V4Travel(state,{type:'travelConfirmation',confirmed:true,dateConfirmed:true,transportConfirmed:true,budgetConfirmed:true,lodgingConfirmed:true,mutualConsent:true});continue;}
-    const suffix={venue:unavailable?'defer':route==='SEOUL_DAY'?'phone':'park',contact:'hug',dinner:'talk_travel',travel:route==='BUSAN_TRIP'?'busan':route==='SEOUL_DAY'?'seoul':'rest_separately',lodging:route==='BUSAN_TRIP'?'shared_room_wish':route==='SEOUL_DAY'?'day_trip':'separate_spaces'}[phase];
+    const suffix={venue:unavailable?'defer':route==='SEOUL_DAY'?'phone':'park',contact:'hug',dinner:'talk_travel',travel:route==='BUSAN_TRIP'?'busan':route==='SEOUL_DAY'?'seoul':'rest_separately',lodging:route==='BUSAN_TRIP'?(shared?'shared_room_wish':'separate_spaces'):route==='SEOUL_DAY'?'day_trip':'separate_spaces'}[phase];
     chooseDay21(state,suffix);
   }
   completeDay21V4(state,{type:'chapterCompletionCue',day:21,finalSceneReached:true});
