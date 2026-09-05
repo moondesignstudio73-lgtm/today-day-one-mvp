@@ -311,3 +311,5 @@ DAY19 SCENE18~24 구현(9/5): 실제 C13 저녁, 명시적으로 수락된 내�
 20:47 DAY20 browser fixture 추가(9/5): 실제 DAY18·19 reducer와 완료 bridge로 face/short/solo/conflict/stay/leave 6개 DAY20 시작 상태를 만들고 사용자 저장 3개 키를 세션 단위로 백업·복원하는 `tests/day20-v4-browser-entry.html`을 추가했다. fixture 정적 검증과 DAY20 bridge 8개 테스트 PASS, 로컬 HTTP 200 확인. 다만 Codex 인앱 브라우저 webview가 숨김/표시 모드 모두 연결 제한시간을 넘겨 실제 비-SKIP 플레이는 이번 실행에서 시작하지 못했다. DAY20은 **PARTIAL**, 다음은 새 브라우저 세션에서 동일 fixture로 6경로 실제 QA다.
 
 21:02 DAY20 6경로 bridge 행렬 QA(9/5): 브라우저 webview 새 세션 연결이 두 번째 실행에서도 실패해 실제 플레이는 보류하되, 동일 face/short/solo/conflict/stay/leave 경로를 DAY18→19→20 reducer와 실제 bridge·하은 응답 정책·완료 처리로 끝까지 재생하는 테스트를 추가했다. 6경로 장면 포함/배제, solo 하은 노출 0, short/conflict 친밀 장면 차단, 준비된 stay만 SCENE22 진입, history 1회 기록과 내부 문구 비노출을 포함한 DAY19/20 집중 42개 및 전체 100×30일 회귀 PASS. DAY20은 **PARTIAL**, 다음은 세 번째 새 브라우저 세션 재시도 후 가능 여부를 확정한다.
+
+21:11 DAY20 실제 브라우저 QA 환경 차단 확정(9/5): 로컬 서버와 fixture는 세 실행 모두 HTTP 200이었으나 완전 초기화한 Codex 인앱 브라우저 세션도 세 번째로 webview 연결 제한시간을 넘겼다. 동일 자동 재시도는 중단한다. 사용자 측 Codex 앱 재시작 또는 fixture URL의 인앱 브라우저 1회 수동 열기가 필요하며, 탭 연결이 복구되면 준비된 6경로 비-SKIP QA부터 재개한다. 원본 관문을 우회하지 않으므로 DAY20은 **PARTIAL**, DAY21 착수는 보류한다.
