@@ -9,6 +9,7 @@
 <button data-route="seoul-day">Mixed · 서울 당일</button>
 <button data-route="no-travel-contact">Neutral · 미여행 · 연락 가능</button>
 <button data-route="no-travel-unavailable">Distant · 미여행 · 연락 불가</button>
+<button data-route="busan-rejections">Distant · 부산 별실 · 현재 응답 거절</button>
 <button id="inspect">현재 QA 상태 확인</button>
 <button id="restore">테스트 전 저장 복원</button>
 <p role="status" id="status"></p>
@@ -24,10 +25,10 @@ const backupKey='day23-v4-qa-save-backup';
 const keys=[SaveManager.key,SaveManager.keyForMode(GAME_MODES.MARRIAGE_30),SaveManager.keyForMode(GAME_MODES.FREE_ROMANCE)];
 function backup(){if(sessionStorage.getItem(backupKey)===null)sessionStorage.setItem(backupKey,JSON.stringify(Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))));}
 function choose(options,suffix,label){const selected=suffix?options.find(option=>option.id.endsWith(`_${suffix}`)):options[0];if(!selected)throw new Error(`${label}:${suffix}`);return selected.id;}
-function completedDay22(route,{shared=true,contactAvailableNoTravel=false}={}){
+function completedDay22(route,{shared=true,contactAvailableNoTravel=false,difficult=false}={}){
   const unavailable=route==='NO_TRAVEL',state=createInitialState(createGirlfriendFromProfile('haeun',()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});
   state.day=21;state.money=240000;state.phase=0;state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};
-  const input={relationshipActive:!unavailable,contactAllowed:!unavailable,relationshipTone:unavailable?'DIFFICULT':'CALM',morningMode:unavailable?'SOLO_MORNING':'STAYED_MORNING',day20VisitMode:unavailable?'SOLO':'FACE_TO_FACE',day20StayedOver:!unavailable,day20SleepingPlan:unavailable?null:'SEPARATE_BEDDING',day20CupChoice:unavailable?null:'FITS_HAND',day20BorrowedClothes:false,day20FirstHug:false,day20HeldHands:false,day20SatSideBySide:!unavailable,day20EveningExtension:unavailable?null:'STAY_LONGER',day20NextInvitation:unavailable?null:'OPEN',day20DisclosureRoute:'NONE',day20NightEnd:unavailable?'LEFT':'STAYED',day19TravelCandidate:'BUSAN_NIGHT',day19ReservationStatus:'CANDIDATE_ONLY',day19BudgetMode:'SPLIT',day19ScheduleTrim:'LIGHT',day19PendingContacts:[],day19ContactHandling:'DONE',day19MinhoReply:null,source:{day20Schema:'day20-notion-v4/1',day20Choice13:'day20_v4_c13_x',day20Choice14:'day20_v4_c14_x'}};
+  const input={relationshipActive:!unavailable,contactAllowed:!unavailable,relationshipTone:unavailable||difficult?'DIFFICULT':'CALM',morningMode:unavailable?'SOLO_MORNING':'STAYED_MORNING',day20VisitMode:unavailable?'SOLO':'FACE_TO_FACE',day20StayedOver:!unavailable,day20SleepingPlan:unavailable?null:'SEPARATE_BEDDING',day20CupChoice:unavailable?null:'FITS_HAND',day20BorrowedClothes:false,day20FirstHug:false,day20HeldHands:false,day20SatSideBySide:!unavailable,day20EveningExtension:unavailable?null:'STAY_LONGER',day20NextInvitation:unavailable?null:'OPEN',day20DisclosureRoute:'NONE',day20NightEnd:unavailable?'LEFT':'STAYED',day19TravelCandidate:'BUSAN_NIGHT',day19ReservationStatus:'CANDIDATE_ONLY',day19BudgetMode:'SPLIT',day19ScheduleTrim:'LIGHT',day19PendingContacts:[],day19ContactHandling:'DONE',day19MinhoReply:null,source:{day20Schema:'day20-notion-v4/1',day20Choice13:'day20_v4_c13_x',day20Choice14:'day20_v4_c14_x'}};
   state.storyFlags.day21V4={schema:DAY21_V4_SCHEMA,input,choices:[],phase:'morning',complete:false,facts:{morningChoice:null,breakfastChoice:null,conversationMode:null,conversationAccepted:false,heardHaeunStory:false,heardLunchStory:false,heardWorkStory:false,heardAngerStory:false,heardSocksStory:false,listeningApproach:null,afternoonResponse:null,stayingResponse:null,storyContinuation:null,feelingStatement:null,opennessPlan:null,contactIntent:null,todayContact:null,dinnerPlan:null,travelDiscussion:false,travelIntent:null,travelResult:null,lodgingRequest:null,lodgingAgreement:null,travelChecks:null,bookingConfirmed:false,travelPaymentMade:false,preparationPlan:null,bagPlan:null,finalMessage:null,deferredReflection:null,deferredExplanation:null,deferredTomorrow:null,deferredTask:null,deferredGoodnight:null}};
   while(state.storyFlags.day21V4.phase!=='ending'){
     const chapter=state.storyFlags.day21V4,phase=chapter.phase;
@@ -50,13 +51,13 @@ function completedDay22(route,{shared=true,contactAvailableNoTravel=false}={}){
   completeDay22V4(state,{type:'chapterCompletionCue',day:22,finalSceneReached:true});return state;
 }
 function seed(route){
-  const unavailable=route==='no-travel-unavailable',noTravel=route.startsWith('no-travel'),separate=route==='busan-separate';
-  const state=completedDay22(noTravel?'NO_TRAVEL':route==='seoul-day'?'SEOUL_DAY':'BUSAN_TRIP',{shared:!separate,contactAvailableNoTravel:noTravel&&!unavailable});
+  const unavailable=route==='no-travel-unavailable',noTravel=route.startsWith('no-travel'),rejections=route==='busan-rejections',separate=route==='busan-separate'||rejections;
+  const state=completedDay22(noTravel?'NO_TRAVEL':route==='seoul-day'?'SEOUL_DAY':'BUSAN_TRIP',{shared:!separate,contactAvailableNoTravel:noTravel&&!unavailable,difficult:rejections});
   state.day=23;state.phase=0;state.money=Math.max(state.money,100000);state.pendingStoryId='m30-day23-current-family-contact';
   state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};
   return state;
 }
 document.querySelectorAll('[data-route]').forEach(button=>button.addEventListener('click',()=>{backup();const route=button.dataset.route,state=seed(route);SaveManager.save(state);location.href=`../index.html?qa=day23-v4&route=${route}`;}));
-document.querySelector('#inspect').addEventListener('click',()=>{const raw=localStorage.getItem(SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)),saved=raw?JSON.parse(raw):null,chapter=saved?.storyFlags?.day23V4,error=saved?.eventRuntime?.lastError;document.querySelector('#status').textContent=JSON.stringify({error:error??null,route:chapter?.input?.route??null,phase:chapter?.phase??null,complete:chapter?.complete??false,day:saved?.day??null,money:saved?.money??null,pendingStoryId:saved?.pendingStoryId??null,day24Hook:saved?.storyFlags?.day23V4Day24HookPending??false,freeAction:saved?.storyFreeAction??null});});
+document.querySelector('#inspect').addEventListener('click',()=>{const raw=localStorage.getItem(SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)),saved=raw?JSON.parse(raw):null,chapter=saved?.storyFlags?.day23V4,error=saved?.eventRuntime?.lastError;document.querySelector('#status').textContent=JSON.stringify({error:error??null,route:chapter?.input?.route??null,tone:chapter?.input?.relationshipTone??null,phase:chapter?.phase??null,complete:chapter?.complete??false,photoKept:chapter?.facts?.sharedPhotoToday??null,relationshipOutcome:chapter?.facts?.haeunRelationshipOutcome??null,farewellContact:chapter?.facts?.farewellContact??null,nextConversation:chapter?.facts?.nextConversation??null,day:saved?.day??null,money:saved?.money??null,pendingStoryId:saved?.pendingStoryId??null,day24Hook:saved?.storyFlags?.day23V4Day24HookPending??false,freeAction:saved?.storyFreeAction??null});});
 document.querySelector('#restore').addEventListener('click',()=>{const data=sessionStorage.getItem(backupKey);if(data===null){document.querySelector('#status').textContent='이 탭에 백업이 없습니다.';return;}for(const [key,value] of Object.entries(JSON.parse(data)))value===null?localStorage.removeItem(key):localStorage.setItem(key,value);sessionStorage.removeItem(backupKey);document.querySelector('#status').textContent='테스트 전 저장을 복원했습니다.';});
 </script></html>

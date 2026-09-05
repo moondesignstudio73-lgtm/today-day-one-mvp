@@ -56,8 +56,17 @@
 - DAY23 종료 후 DAY24 Story 진입을 확인했다. **PASS**.
 - 두 경로 종료 뒤 fixture의 `테스트 전 저장을 복원했습니다.`를 다시 확인했다.
 
-DAY23 전체는 미여행 연락 가능/불가, 거절 경로와 389×844 검증이 남아 **PARTIAL**이다.
+## 미여행·거절·모바일 종결
+
+- Neutral · 미여행 · 연락 가능: C1~C8을 SKIP 없이 진행했다. 여행·숙소·기차·역을 만들지 않고, 현재 가능한 연락과 실제로 합의한 다음 대화만 남긴 뒤 DAY24로 전환됐다.
+- Distant · 미여행 · 연락 불가: 유효 `389×844`에서 C1~C8을 SKIP 없이 진행했다. 하은 대사·문자·통화·만남, 여행 기억, 합의하지 않은 내일 대화가 나타나지 않았고 DAY24로 전환됐다.
+- Distant · 부산 별실 · 현재 응답 거절: `DIFFICULT`이지만 연락 가능한 검증 상태를 별도 fixture로 추가했다. 현재 사진 보관·작별 접촉은 거절되고 관계 답은 `UNSURE`로 남은 채 필요한 대화만 다음 날로 넘겼다. 공동 숙소 아침과 자동 접촉은 없었다.
+- 거절 경로 완료 저장: `error=null`, `route=BUSAN_TRIP`, `tone=DIFFICULT`, `complete=true`, `photoKept=false`, `relationshipOutcome=UNSURE`, `farewellContact=NONE`, `nextConversation=MEET`, `day=24`, `day24Hook=true`, `freeAction=null`.
+- 모바일 실측은 `innerWidth=389`, `innerHeight=844`, `scrollWidth=clientWidth=389`로 가로 넘침 0이다. 이 실행 전체의 console warning/error는 0이다.
+- 모든 경로 뒤 사용자 저장을 복원하고 임시 viewport를 reset했다.
+
+source/state/playable/bridge/저장/Story-Free 배타성/데스크톱·모바일 의미 경로가 모두 닫혔으므로 DAY23 V4는 **PASS / COMPLETE**다.
 
 ## 다음 시작점
 
-Neutral · 미여행 연락 가능/불가와 거절 경로를 데스크톱에서 SKIP 없이 완주하고 389×844 화면을 검증한다.
+DAY24 최종 원문을 잠그고 DAY21~23 실제 이력과 기존 DAY24 구현 차이를 감사한다.
