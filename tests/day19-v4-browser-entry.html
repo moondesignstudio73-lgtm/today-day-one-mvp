@@ -15,7 +15,7 @@ import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
 import {SaveManager} from '../src/save-manager.mjs';
 import {GAME_MODES} from '../src/scenario-state.mjs';
 import {beginDay18V4,applyDay18V4Choice} from '../src/day18-v4-state-contract.mjs';
-import {completeDay18V4GameChapter} from '../src/day18-v4-game-bridge.mjs?v=61';
+import {completeDay18V4GameChapter} from '../src/day18-v4-game-bridge.mjs?v=62';
 const backupKey='day19-v4-qa-save-backup';
 const keys=[SaveManager.key,SaveManager.keyForMode(GAME_MODES.MARRIAGE_30),SaveManager.keyForMode(GAME_MODES.FREE_ROMANCE)];
 function backup(){if(sessionStorage.getItem(backupKey)===null)sessionStorage.setItem(backupKey,JSON.stringify(Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))));}

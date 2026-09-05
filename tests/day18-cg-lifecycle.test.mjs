@@ -7,8 +7,9 @@ const source=readFileSync(new URL('../game.js',import.meta.url),'utf8');
 const cgStart=source.indexOf('  if(step.type==="cgShow"){');
 const cgEnd=source.indexOf('  if (step.type === "expressionChange")',cgStart);
 const skipStart=source.indexOf('function skipImmersiveScene(event)');
-const skipEnd=source.indexOf('\n',skipStart);
-assert.ok(cgStart>=0&&cgEnd>cgStart&&skipStart>=0);
+function functionEnd(text,start){let depth=0,opened=false;for(let i=start;i<text.length;i+=1){if(text[i]==='{'){depth+=1;opened=true;}else if(text[i]==='}'&&opened&&--depth===0)return i+1;}return -1;}
+const skipEnd=functionEnd(source,skipStart);
+assert.ok(cgStart>=0&&cgEnd>cgStart&&skipStart>=0&&skipEnd>skipStart);
 
 test('CG skip cancels its timer, releases the input owner and reaches the next choice',()=>{
   const layer={hidden:true,style:{}},timers=new Map(),locks=new Set(),calls=[];

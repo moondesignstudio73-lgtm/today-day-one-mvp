@@ -12,7 +12,7 @@
 
 - 최초 자산: `assets/events/day18-v4/yuri-menu-wait-water-v1.png` (손 화풍 반려)
 - 1차 수정본: `assets/events/day18-v4/yuri-menu-wait-water-v2.png` (재노출 신고 후 런타임 반려)
-- 최종 런타임 경로: `assets/events/day18-v4/yuri-menu-wait-water-v7.png` (손을 단순 평면화하는 데서 그치지 않고 유리의 손과 같은 선 밀도·테이퍼·색온도로 맞추고, 손바닥 부피와 원근 과장을 줄인 승인본)
+- 최종 런타임 경로: `assets/events/day18-v4/yuri-menu-wait-water-v8.png` (재신고 원본을 직접 편집해 전경 손의 사진식 피부를 제거하고 유리의 손·얼굴과 같은 선 밀도·단계식 명암으로 맞춘 승인본)
 - 참조: `menu-open-v1.png`, `yuri-ex-girlfriend-2d.png`, `yuri-jacket-chair-v1.png`
 - 최신 생성 원본: `C:\Users\aaa\.codex\generated_images\01a06810-af54-7db0-a3f6-3764034ac137\exec-2242954d-b3b6-4ad3-9046-340212a5d16f.png`
 - 생성 방식: built-in imagegen.
