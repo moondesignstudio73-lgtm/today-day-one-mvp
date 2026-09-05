@@ -1,0 +1,8 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {getDay21V4RuntimeResolution} from '../src/day21-v4-runtime-resolution.mjs';
+
+const state=(tone='CALM',quote=null)=>({storyFlags:{day21V4:{input:{contactAllowed:true,relationshipTone:tone}},...(quote?{day21V4TravelQuote:quote}:{})}});
+test('current relationship tone produces a separate contact and lodging response',()=>{assert.deepEqual(getDay21V4RuntimeResolution(state(),{type:'contactConsentCue',contact:'HUG'}),{type:'haeunContactResponse',contact:'HUG',accepted:true});assert.deepEqual(getDay21V4RuntimeResolution(state('DIFFICULT'),{type:'contactConsentCue',contact:'HAND'}),{type:'haeunContactResponse',contact:'HAND',accepted:false});assert.deepEqual(getDay21V4RuntimeResolution(state(),{type:'lodgingConsentCue'}),{type:'haeunLodgingResponse',accepted:true});});
+test('travel fails closed without a verified quote',()=>{assert.deepEqual(getDay21V4RuntimeResolution(state(),{type:'travelConfirmationCue',overnight:true}),{type:'travelConfirmation',confirmed:false,dateConfirmed:false,transportConfirmed:false,budgetConfirmed:false,lodgingConfirmed:false,mutualConsent:false});});
+test('verified quote carries only the player cost into confirmation',()=>{const quote={quoteId:'q-21',playerCost:65000,dateConfirmed:true,transportConfirmed:true,budgetConfirmed:true,lodgingConfirmed:true,mutualConsent:true,partnerCost:70000};assert.deepEqual(getDay21V4RuntimeResolution(state('CALM',quote),{type:'travelConfirmationCue',overnight:true}),{type:'travelConfirmation',confirmed:true,dateConfirmed:true,transportConfirmed:true,budgetConfirmed:true,lodgingConfirmed:true,mutualConsent:true,quoteId:'q-21',playerCost:65000});});
