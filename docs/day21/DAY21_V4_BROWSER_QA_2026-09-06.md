@@ -6,7 +6,10 @@
 - 데스크톱 Friendly · park · Busan · shared lodging: PASS.
 - 데스크톱 Mixed · Phone · Seoul day trip: PASS.
 - 데스크톱 Distant · no-contact · Deferred: PASS.
-- 나머지 데스크톱 의미 경로와 389×844 모바일: NOT RUN.
+- 데스크톱 Rest · separate lodging: PASS.
+- 데스크톱 Neutral · park: PASS.
+- 데스크톱 의미 경로: **CLOSED**.
+- 389×844 모바일: NOT RUN.
 
 ## 실행 환경과 보존
 
@@ -41,6 +44,20 @@
 - 대체 경로 화면 DOM에는 하은 현장 캐릭터가 없었고, 미청취 하루 이야기·접촉·예약·결제를 여는 선택도 없었다.
 - DAY22 전환, Story Free Action 비노출, 데스크톱 `scrollWidth = clientWidth = 1484`, console warning/error 0, 사용자 저장 복원 PASS.
 
+## 데스크톱 Rest · Separate
+
+- 귀가한 다음 아침에서 하은에게 대화를 요청하고 각자 쉬고 싶다는 의사를 밝힌 뒤 공원 대화를 선택했다.
+- 사과·경청·고마움과 좋아하는 마음의 분리·상대 마음을 단정하지 않기를 거쳐 접촉 없이 조금 떨어져 걸었다.
+- 여행 대화 뒤 C12 `이번에는 각자 쉬는 게 좋을 것 같아.`, C13 별도 공간, C14 오늘 준비 중단, C15 가방 가볍게 하기, C16 충분히 쉬기를 실제 선택했다.
+- 공유 숙박·예약·결제를 만들지 않고 DAY22로 전환했다. Story Free Action 비노출, `scrollWidth = clientWidth = 1484`, console warning/error 0, 사용자 저장 복원 PASS.
+
+## 데스크톱 Neutral · Park
+
+- 각자 일정 확인·천천히 식사·공원 만남 뒤 C4~9에서 말할 범위 존중, 상대 하루를 단정하지 않기, 현재 의사 존중, 현재의 하은에게 말하기, 고마움/좋아함 분리, 다음에 마음 말하기를 실제 선택했다.
+- C10 `조금 떨어져서 같이 걸어도 좋을 것 같아.`와 C11 가까운 저녁을 선택해 접촉 resolution과 여행·숙박·예약·결제를 열지 않았다.
+- C14 이동/몸 상태 공유, C15 필요한 물건 재검토, C16 피하지 않고 더 생각하기를 거쳐 DAY22로 전환했다.
+- Story Free Action 비노출, `scrollWidth = clientWidth = 1484`, console warning/error 0, 사용자 저장 복원 PASS.
+
 ## 다음 시작점
 
-동일 fixture에서 데스크톱 Rest+separate와 Neutral park를 SKIP 없이 완주한다. 이후 브라우저 viewport를 389×844로 고정해 Friendly/Neutral/Distant/Mixed 대표 경로와 경계 경로를 반복하고 이미지 로드·가로 넘침·콘솔·DAY22 전환을 기록한다.
+브라우저 viewport를 389×844로 고정해 Friendly/Neutral/Distant/Mixed 대표 경로와 경계 경로를 반복하고 이미지 로드·가로 넘침·콘솔·DAY22 전환을 기록한다.
