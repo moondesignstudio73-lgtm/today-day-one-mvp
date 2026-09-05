@@ -2,7 +2,7 @@
 
 ## 판정
 
-- DAY21 전체: **PARTIAL**.
+- DAY21 전체: **PASS / COMPLETE**.
 - 데스크톱 Friendly · park · Busan · shared lodging: PASS.
 - 데스크톱 Mixed · Phone · Seoul day trip: PASS.
 - 데스크톱 Distant · no-contact · Deferred: PASS.
@@ -11,7 +11,9 @@
 - 데스크톱 의미 경로: **CLOSED**.
 - 389×844 모바일 Friendly · park · Busan · shared lodging: PASS.
 - 389×844 모바일 Distant · no-contact · Deferred: PASS.
-- 389×844 모바일 Neutral · park 및 Mixed · Phone · Seoul: NOT RUN.
+- 389×844 모바일 Neutral · park: PASS.
+- 389×844 모바일 Mixed · Phone · Seoul day trip: PASS.
+- 389×844 모바일 의미 경로: **CLOSED**.
 
 ## 실행 환경과 보존
 
@@ -72,6 +74,25 @@
 - 이유 점검, 여행 보류, 충분한 휴식, 다음 연락 의사를 실제 선택해 하은의 미청취 이야기·접촉·예약·결제 없이 DAY22로 전환했다.
 - `innerWidth = 389`, `innerHeight = 844`, `scrollWidth = clientWidth = 389`, Story Free Action 비노출, console warning/error 0, 사용자 저장 복원 PASS. 임시 viewport override도 해제했다.
 
+## 모바일 Neutral · Park
+
+- viewport가 게임 진입 중 해제된 첫 실행은 증거에서 제외했다. 표시 탭에서 게임 화면 진입 뒤 override를 적용·재개해 실제 `innerWidth = 389`, `innerHeight = 844`를 유지한 상태로 처음부터 다시 플레이했다.
+- 각자 일정·천천히 식사·공원 대화, 말할 범위와 현재 의사 존중, 감정 분리, 거리 두기, 가까운 저녁, 준비 원칙까지 실제 선택했다. 접촉·여행·숙박·예약·결제 없이 DAY22로 전환했다.
+- `scrollWidth = clientWidth = 389`, Story Free Action 비노출, console warning/error 0 PASS.
+
+## 모바일 Mixed · Phone · Seoul
+
+- 통화 C3 뒤 하은 현장 캐릭터와 이벤트 CG는 각각 `hidden=true`, `aria-hidden=true`, `display:none`, 표시 크기 0임을 실제 DOM과 화면에서 확인했다.
+- 음성 대화 C4~9, 비접촉 C10, 여행 재논의, 서울 후보와 당일 변경, 준비·짐·마지막 메시지를 실제 선택했다. 숙박 response·예약·결제 없이 DAY22로 전환했다.
+- `innerWidth = 389`, `innerHeight = 844`, `scrollWidth = clientWidth = 389`, Story Free Action 비노출, console warning/error 0, 사용자 저장 복원 PASS. 임시 viewport override도 해제했다.
+
+## 종결 판정
+
+- source lock, replay-locked state, exact-source playable, game bridge, 저장/재개, 경제 rollback, Story/Free 배타성 집중 회귀 40/40 PASS.
+- 전체 `npm test`: 100회×30일 자동 시뮬레이션을 포함해 PASS.
+- 데스크톱 5개 의미 경로와 389×844 Friendly/Neutral/Distant/Mixed 대표 경로를 모두 실제 화면 선택으로 SKIP 없이 닫았다.
+- DAY21은 **PASS / COMPLETE**다.
+
 ## 다음 시작점
 
-브라우저 콘텐츠 viewport를 실제 389×844로 고정해 Neutral park와 Mixed Phone+Seoul을 SKIP 없이 완주하고 이미지 로드·가로 넘침·콘솔·DAY22 전환을 기록한다.
+DAY22 최종 Notion 원문을 잠그고 DAY19~21 실제 완료 이력을 입력 계약으로 감사한다. 기존 DAY22 runtime은 최종 원문과 일치 여부를 확인하기 전까지 교체하거나 COMPLETE로 보지 않는다.

@@ -2,7 +2,7 @@
 
 ## 판정과 원문
 
-- 현재 상태: PARTIAL / SOURCE LOCKED.
+- 현재 상태: PASS / COMPLETE.
 - 최종 원문: Notion `DAY 21 — 남겨 둔 자리 | SCENARIO V4`.
 - page id: `3c9c31f0-29a6-8138-9d37-e5b6c8b74a32`.
 - last edited snapshot: `2026-08-27T20:23:21.832Z`.
@@ -113,6 +113,7 @@ SCENE24 → DAY21 completion cue → DAY22
 - 데스크톱 Mixed · Phone · Seoul day trip과 Distant · no-contact · Deferred를 실제 선택으로 SKIP 없이 DAY22까지 완주했다. 통화의 하은 현장 캐릭터/CG 및 접촉 응답 비노출, 서울의 숙박·예약·결제 비생성, 무연락 C3 단일 연기 선택, 민호 선택·하은 메시지·미청취 이야기 비노출을 화면에서 확인했다. 두 경로 모두 Story/Free 배타성, 가로 넘침 0, console warning/error 0, 사용자 저장 복원 PASS다. Rest·Neutral과 모바일이 남아 **PARTIAL**이다.
 - 데스크톱 Rest · separate와 Neutral · park를 실제 선택으로 SKIP 없이 DAY22까지 완주했다. Rest는 별도 공간과 당일 준비 중단으로 공유 숙박·예약·결제를 만들지 않았고, Neutral은 접촉·여행 논의를 열지 않은 채 현재 의사 존중과 준비 원칙으로 닫혔다. 두 경로 모두 Story/Free 배타성, `1484px` 가로 넘침 0, console warning/error 0, 사용자 저장 복원 PASS다. 데스크톱 의미 경로는 닫혔고 389×844 모바일이 남아 DAY21은 **PARTIAL**이다.
 - 실제 콘텐츠 viewport 389×844에서 Friendly · Busan과 Distant · Deferred를 SKIP 없이 DAY22까지 완주했다. Friendly는 16개 선택과 별도 접촉/숙박 응답·검증 견적을, Distant는 단일 C3 연기·민호 선택 없음·미청취 이야기/메시지/접촉/예약/결제 비생성을 확인했다. 두 경로 모두 가로 넘침 0, Story/Free 배타성, console warning/error 0이며 사용자 저장 복원과 임시 viewport 해제 PASS다. Neutral·Mixed 모바일이 남아 DAY21은 **PARTIAL**이다.
+- 실제 콘텐츠 viewport 389×844에서 Neutral · park와 Mixed · Phone · Seoul도 SKIP 없이 DAY22까지 완주했다. Neutral은 접촉·여행·숙박·결제를 만들지 않았고, Mixed 통화는 하은 현장 캐릭터/CG 표시 크기 0과 서울 당일의 숙박·예약·결제 0을 확인했다. 두 경로 모두 가로 넘침 0, Story/Free 배타성, console warning/error 0이며 사용자 저장 복원과 임시 viewport 해제 PASS다. DAY21 집중 회귀 40/40과 전체 100회×30일 시뮬레이션도 PASS하여 DAY21을 **PASS / COMPLETE**로 승격한다.
 
 ## 상태 계약 구현 기록
 
