@@ -101,6 +101,10 @@ Friendly 부산 공유 숙소에 이어 Neutral 부산 별실과 Mixed 서울 �
 
 다음은 사진 보관 거절과 공유 숙소 접촉 거절을 데스크톱 실제 응답으로 검증한 뒤, 389×844 Friendly/Neutral/Distant/Mixed 의미 경로를 같은 배포본에서 검증한다. 이 관문 전까지 DAY22는 **PARTIAL**이다.
 
+사진 보관 거절과 공유 숙소 손잡기 거절은 실제 UI에서 DAY23까지 PASS했다. 손잡기/포옹은 C14 전에는 절대 사실화하지 않고, 현재 응답과 동일 접촉의 실제 이전 동의가 모두 있을 때만 발생한다. 거절 뒤에는 존중 반응을 화면에 표시하고 `todayContact=NONE`을 유지한다. 공유 숙소·밤 식사도 양쪽 분기 설명을 노출하지 않고 확정된 사실만 출력한다.
+
+다음은 실제 389×844 viewport에서 Friendly/Neutral/Distant/Mixed 의미 경로를 SKIP 없이 검증한다. 모바일 레이아웃·Story/Free 배타성·console·저장 복원 관문 전까지 DAY22는 **PARTIAL**이다.
+
 ## Source registry 구현 기록
 
 - `generate-day22-v4-source-registry.mjs`가 잠근 Markdown에서 24개 Scene과 23개 선택 블록을 기계 생성한다.

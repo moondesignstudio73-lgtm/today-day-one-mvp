@@ -3,7 +3,7 @@ import {applyDay22V4Choice,beginDay22V4,completeDay22V4,getDay22V4Entry,resolveD
 import {getDay22V4PlayableOpening} from './day22-v4-playable-opening.mjs?v=2';
 import {getDay22V4PlayableMealPhoto} from './day22-v4-playable-meal-photo.mjs?v=2';
 import {getDay22V4PlayableCafe} from './day22-v4-playable-cafe.mjs?v=2';
-import {getDay22V4PlayableEvening} from './day22-v4-playable-evening.mjs?v=3';
+import {getDay22V4PlayableEvening} from './day22-v4-playable-evening.mjs?v=4';
 import {getDay22V4PlayableNoTravel} from './day22-v4-playable-no-travel.mjs?v=2';
 import {getDay22V4PlayableEnding} from './day22-v4-playable-ending.mjs?v=2';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
