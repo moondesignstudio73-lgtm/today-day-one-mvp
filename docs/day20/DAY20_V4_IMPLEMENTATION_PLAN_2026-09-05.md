@@ -6,7 +6,7 @@
 - title: `DAY 20 — 같은 집, 다른 하루 | SCENARIO V4`
 - last edited: `2026-08-27T20:17:26.218Z`
 - 규모: 번호 장면 24개, 대면 선택 14개, 혼자 선택 4개, 갈등 경로 대체 선택 1개. 25~35분은 미측정 목표이며 경로별 동일 분량을 주장하지 않는다.
-- 상태: **SOURCE LOCK PARTIAL / IMPLEMENTATION FOUNDATION**. Notion fetch에서 SCENE 12~18 본문 일부가 응답 크기 제한으로 잘렸다. 장면 제목·선택 번호·분기 계약은 확인했지만 해당 원문을 추측해 대사로 만들지 않는다.
+- 상태: **SOURCE LOCK COMPLETE / IMPLEMENTATION FOUNDATION**. Notion connector의 전체 응답에서 플레이어 본문 경계를 다시 추출해 SCENE 01~24와 선택 1~14를 `docs/scenarios/DAY20_SCENARIO_V4_NOTION.md`에 잠갔다. 저장된 UTF-8 본문은 19,242자(마지막 개행 포함), SHA-256 `9db072f65fd3b0e0bf930628bbcb9e1601153413377baced59b0ae43ceeb3c1e`이며 내부 편집 메모는 제외했다.
 
 감정 목적: 하은을 잘 대접해야 한다는 긴장을 내려놓고, 아무것도 해 주지 않는 시간에도 서로 곁에 있고 싶어 하는 저녁을 선택한다.
 
@@ -59,7 +59,7 @@ SCENE 12~18 친밀 장면은 갈등 경로에 붙이지 않는다. SCENE14의 �
 
 ## 구현 단계와 관문
 
-1. 누락된 SCENE12~18 원문을 Notion 첨부 Markdown 또는 검색 조각으로 완전히 복원하고 해시/문자 수를 기록한다.
+1. ~~누락된 SCENE12~18 원문을 완전히 복원하고 해시/문자 수를 기록한다.~~ 완료.
 2. 14개 대면 선택과 solo/conflict 대체 선택의 ID·정확한 라벨·반응을 source registry에 잠근다.
 3. 현재 `day20-v4-state-contract.mjs`의 foundation을 replay-locked 선택 reducer로 확장한다.
 4. opening / domestic / intimacy / ending playable 모듈과 game bridge를 구현한다. legacy DAY20 저장은 자동 변환하지 않는다.
@@ -69,6 +69,7 @@ SCENE 12~18 친밀 장면은 갈등 경로에 붙이지 않는다. SCENE14의 �
 ## 현재 판정과 다음 시작점
 
 - 상태 계약 foundation 및 반례 테스트: 구현.
-- 원문 전체 잠금: PARTIAL. SCENE12~18의 잘린 본문을 먼저 복원한다.
+- 원문 전체 잠금: COMPLETE. 24개 장면과 14개 선택의 연속 번호·해시·금지 메모 비포함 검사를 추가했다.
 - playable/runtime/game bridge/browser QA: NOT STARTED.
 - DAY20 COMPLETE: **아님**.
+- 다음 시작점: 잠근 본문에서 14개 선택의 정확한 라벨·반응을 기계적으로 분리한 source registry와 경로별 reducer를 만든다.
