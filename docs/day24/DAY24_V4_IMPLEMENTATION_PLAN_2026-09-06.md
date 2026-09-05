@@ -89,7 +89,7 @@ DAY23 완료 이력
 
 1. ~~Notion 최종 원문을 플레이어 공개 본문과 내부 메모로 분리해 source snapshot을 잠근다.~~ 완료.
 2. ~~source registry에서 24 Scene, 공통 C1~15, 유리·서진·아라 및 연락 없음 variant의 정확 라벨·반응을 생성하고 snapshot hash를 검증한다.~~ 완료. 24 Scene·20 choice block·모든 3개 라벨과 exact source line을 검증한다.
-3. DAY21~23 실제 이력을 동결하는 `day24-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.
+3. ~~DAY21~23 실제 이력을 동결하는 `day24-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료. 검증된 DAY21~23 완료와 hook, 대화 합의, 관계 의사/응답, 실제 연락, 사진·접촉·지훈 이력만 동결한다.
 4. SCENE01~10 대화 성사·현재 마음·이유·최종 관계 제안을 대면/통화/거절 presentation으로 구현한다.
 5. SCENE11~17 실제 연락 정리, 수신자별 truth/lie, 연락 없음 대체 playable을 구현한다.
 6. SCENE18~24 지속/유예/종료, 지훈, 조건부 새 만남, DAY25 대화, 자기 밤 과제와 ending을 구현한다.
@@ -100,4 +100,4 @@ DAY23 완료 이력
 
 ## 다음 시작점
 
-Notion 최종 플레이어 공개 원문 snapshot과 source registry/exact-source validator를 잠갔다. 다음 작업은 **DAY21~23 실제 이력을 동결하는 `day24-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
+Notion 최종 플레이어 공개 원문 snapshot, source registry와 `day24-notion-v4/1` replay-locked 상태 계약을 잠갔다. 관계 대화 성사, 하은의 독립 관계 응답, 수신자별 연락·거짓말, 상대의 새 만남 수락, 지훈 가능성, DAY25 미래 대화를 독립 resolution으로 검증한다. 다음 작업은 **SCENE01~10/C1~7 대화 시작·현재 마음·최종 관계 제안 exact-source playable**이다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
