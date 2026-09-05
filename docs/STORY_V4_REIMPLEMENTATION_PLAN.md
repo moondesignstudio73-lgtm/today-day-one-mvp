@@ -271,3 +271,5 @@ DAY19 SCENE18~24 구현(9/5): 실제 C13 저녁, 명시적으로 수락된 내�
 01:17 후속(9/5): DAY19 SCENE18~24/C13~C16 순수 플레이를 완료하고 원격 `379c97d`까지 동기화했다. DAY19는 PARTIAL이며 다음은 본선 브리지/경제 원장/저장·브라우저 QA다.
 
 01:40 후속(9/5): DAY19 SCENE01~24 네 구간을 새 V4 본선 브리지로 연결하고 기존 축약 저장과 분리했다(`day19/DAY19_V4_GAME_BRIDGE_2026-09-05.md`). C3 복권은 결과·상금 없이 사전 오락비 5,000원만 원자적으로 기록하며 오류 시 장/잔액/원장을 롤백한다. 실제 SaveManager 중간 저장 왕복, shared/solo 16단계, 전체 자동 회귀와 100×30일 시뮬레이션 PASS. 다음은 **실제 브라우저 Friendly 비-SKIP 완주/저장 재개**, 이후 나머지 3경로와 모바일. DAY19 PARTIAL 유지.
+
+10:42 브라우저 후속(9/5): DAY19 Friendly shared를 SCENE01부터 DAY20까지 15개 실제 선택(C15 조건부 생략)으로 SKIP 없이 완주했다(`day19/DAY19_V4_BROWSER_QA_2026-09-05.md`). C5 뒤 새로고침 재개, 09/14/19/22시 전환, 후보≠예약, Story 선택/Free Action 배타성, 데스크톱 가로 넘침 0, console warning/error 0, 사용자 저장 복원 PASS. 다음은 **Distant 데스크톱 비-SKIP 완주**이며 DAY19 PARTIAL 유지.

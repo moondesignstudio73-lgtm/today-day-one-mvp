@@ -36,3 +36,9 @@
 DAY 19는 아직 `PARTIAL`이다. 본선 코드 연결과 자동 저장/회귀 검사는 완료했지만, 실제 브라우저에서 Friendly/Neutral/Distant/Mixed 비-SKIP 완주, 중간 저장 재개, 390×844 모바일, 콘솔 오류 0과 사용자 저장 복원이 남아 있다.
 
 다음 시작점: 로컬 서버의 실제 게임에서 DAY 18 완료 저장을 복제해 DAY 19 shared Friendly 경로를 비-SKIP 완주하고, 각 선택 뒤 저장·화면·시간·장소·인물·Story/Free 배타성을 기록한다.
+
+## 실제 브라우저 후속
+
+Friendly 데스크톱 경로를 SCENE01부터 DAY20까지 SKIP 없이 완주하고 C5 이후 새로고침 재개, C15 미노출, 시간·장소 전환, Story/Free 배타성, 가로 넘침 0, console warning/error 0, 사용자 저장 복원을 확인했다. 상세 선택과 증거는 `DAY19_V4_BROWSER_QA_2026-09-05.md`에 기록한다.
+
+DAY 19는 계속 `PARTIAL`. 다음은 Distant 데스크톱 비-SKIP 완주다.

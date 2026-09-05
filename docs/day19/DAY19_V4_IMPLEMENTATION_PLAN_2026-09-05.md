@@ -134,3 +134,12 @@ DAY19는 `PARTIAL`. 다음 작업은 **네 playable 구간을 통합하는 game 
 - 실제 `SaveManager` 중간 저장 왕복과 다음 segment 동일성, shared/solo 16단계 도달, legacy 비변조, 본선 라우팅, 전체 자동 회귀와 100×30일 시뮬레이션을 통과했다. 상세 증거는 `DAY19_V4_GAME_BRIDGE_2026-09-05.md`에 있다.
 
 DAY19는 계속 `PARTIAL`. 다음 작업은 **실제 브라우저 Friendly 비-SKIP 완주와 대표 중간 저장 재개**, 이후 Neutral/Distant/Mixed 및 390×844 모바일 QA다.
+
+### 실제 브라우저 Friendly 후속
+
+- 전용 fixture로 모든 저장 슬롯을 한 번 백업한 뒤 DAY18 평온한 하은 여행 대화 완료 상태에서 본선 DAY19를 시작했다.
+- 15개 실제 선택(C15 조건부 생략)과 SCENE01~24를 SKIP 없이 진행해 DAY20 선택 화면에 도달했다.
+- C5 직후 새로고침/이어하기가 반응 구간부터 재생되어 C6 선택으로 복귀했다. 네 구간 경계, 시간·장소, 후보≠예약, 미완료 연락 없음, Story/Free 배타성을 실제 화면에서 확인했다.
+- 데스크톱 1484×799에서 가로 넘침 0, console warning/error 0, 사용자 저장 복원 PASS. 상세 증거는 `DAY19_V4_BROWSER_QA_2026-09-05.md`에 있다.
+
+DAY19는 계속 `PARTIAL`. 다음 작업은 **Distant 데스크톱 비-SKIP 완주**다.
