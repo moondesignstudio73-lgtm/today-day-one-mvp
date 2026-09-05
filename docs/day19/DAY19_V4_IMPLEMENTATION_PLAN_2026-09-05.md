@@ -132,6 +132,13 @@ DAY19는 `PARTIAL`. 다음 작업은 **네 playable 구간을 통합하는 game 
 - 완료 브리지는 `tomorrowMeal === 'ACCEPTED'`일 때만 `day20CurrentSharedMealPending`을 세우며, 기존 DAY20 공동 식사는 이 표식까지 요구한다. 비수락 재완주에서는 공동 식사 대사·질문·선택이 모두 비노출되고 placeholder에서 fail-closed 했다.
 - 사용자 저장 복원과 viewport reset을 완료했다. DAY19는 계속 `PARTIAL`이며 다음은 **390×844 모바일 Mixed**, 그 다음 Neutral이다.
 
+### 모바일 Mixed 후속
+
+- 실제 `389×844`에서 연락 가능/solo/서진 미완료 연락/오락비 입력을 조건부 C15 포함 16개 선택으로 SKIP 없이 완주했다.
+- 복권 결과·상금, 예약·결제, 존재하지 않는 NPC 연락, 내일 식사 수락을 만들지 않았다. 대면 인물 스프라이트와 수평 넘침은 0이고 console warning/error도 0이었다.
+- 비수락 DAY20 공동 식사는 열리지 않고 placeholder에서 fail-closed 했다. 사용자 저장 복원과 viewport reset을 완료했다.
+- DAY19는 계속 `PARTIAL`이며 다음은 **390×844 모바일 Neutral 비-SKIP 완주**다.
+
 ### 본선 브리지 및 자동 저장 QA 후속
 
 - 네 playable 구간을 `day19-v4-game-bridge.mjs`에서 연결했다. C4/C7/C12 반응 뒤 내부 boundary를 화면에 보내지 않고 각각 다음 원본 장면까지 연속 재생한다.

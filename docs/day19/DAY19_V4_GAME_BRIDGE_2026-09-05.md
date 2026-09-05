@@ -53,3 +53,5 @@ DAY 19는 계속 `PARTIAL`. 다음은 390×844 모바일 네 경로다.
 Mobile Friendly 후속에서 목표 390×844의 장치 배율 반올림값인 실제 `391×844` 모바일 미디어쿼리 영역을 확보했다. 15개 선택을 실제 버튼으로 눌러 DAY20 첫 Story 선택까지 SKIP 없이 완주했고, 수평 넘침 0, console warning/error 0, Free Action 비노출과 사용자 저장 복원을 확인했다. DAY19는 계속 `PARTIAL`이며 다음은 모바일 Distant다.
 
 Mobile Distant 후속에서 실제 `389×844` 모바일 영역을 15개 선택으로 비-SKIP 완주했다. 최초 실행은 내일 식사 비수락인데도 캠페인 slot 이력만으로 기존 DAY20 공동 식사가 열리는 경계 결함을 드러냈다. 완료 브리지가 `tomorrowMeal === 'ACCEPTED'`일 때만 `day20CurrentSharedMealPending`을 세우고 DAY20 선택기가 이를 요구하도록 수정한 뒤 재완주했으며, 하은 방문 대사·공동 식사 질문/선택이 모두 사라지고 placeholder에서 fail-closed 했다. 수평 넘침 0, console warning/error 0, 사용자 저장 복원과 viewport reset을 확인했다. DAY19는 계속 `PARTIAL`이며 다음은 모바일 Mixed다.
+
+Mobile Mixed 후속에서 실제 `389×844` 모바일 영역을 조건부 C15까지 포함한 16개 선택으로 비-SKIP 완주했다. 복권은 오락비 안에서 한 번만 선택했고 결과·등급·상금 표현은 없었으며, 내일 식사 제안은 수락으로 승격되지 않아 solo C14와 DAY20 placeholder로 이어졌다. 대면 인물 스프라이트 0, 수평 넘침 0, console warning/error 0, 사용자 저장 복원과 viewport reset을 확인했다. DAY19는 계속 `PARTIAL`이며 다음은 모바일 Neutral다.
