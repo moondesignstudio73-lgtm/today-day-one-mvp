@@ -85,7 +85,7 @@ DAY22 완료 이력
 1. ~~Notion 최종 원문 플레이어 본문 잠금과 내부 메모 분리.~~ 완료.
 2. ~~source registry에서 24 Scene, 대면 C1~17, 미여행 C3~8과 C14 variant의 정확 라벨·반응을 생성한다.~~ 완료.
 3. ~~DAY20~22 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
-4. 아침/남은 일정, 최고의 순간/사진/기념, 귀환/작별, 집 생활/연락, 남은 관계/저녁 통화, 미여행/ending playable을 exact source ref로 구현한다.
+4. 아침/남은 일정, 최고의 순간/사진/기념, 귀환/작별, 집 생활/연락, 남은 관계/저녁 통화, 미여행/ending playable을 exact source ref로 구현한다. SCENE01~07/C1~6과 SCENE21/C3~8은 완료했다.
 5. game bridge, 저장 재개, 연락·관계 응답, 선택 지출, 시간·장소·인물 presentation을 실제 Story 루프에 연결한다.
 6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
 7. Friendly/Neutral/Distant/Mixed 및 shared/separate/Seoul/no-travel/연락 거절 의미 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
@@ -93,4 +93,4 @@ DAY22 완료 이력
 
 ## 다음 시작점
 
-DAY23 원문 snapshot과 source registry에 이어 replay-locked 상태 계약을 구현했다. DAY21/22 V4 완료와 DAY23 hook을 검증하고, 부산 공유/별실·서울 귀가 후·미여행 아침, 사진 보관/삭제, 실제 미완료 연락, 연락 가능성과 관계 tone을 immutable input으로 동결한다. 공동 사진·기념품·하은 관계 의사·미여행 만남·DAY24 대화는 별도 resolution 전에는 사실화하지 않으며, 저장은 전체 선택/응답 replay가 같을 때만 유효하다. 다음은 **SCENE01~07/C1~6 아침·남은 일정·사진·기념 playable과 SCENE21 미여행 C3~8 playable**이다. 이 관문 전까지 DAY23은 **PARTIAL**이다.
+DAY23 SCENE01~07/C1~6 아침·남은 일정·사진·기념 playable과 SCENE21/C3~8 미여행 playable을 구현했다. 부산 공유 숙소에서만 커튼·잠든 모습·컵 대화를 출력하고, 별실과 서울 귀가 후에는 실제 아침 사실만 출력한다. 공동 얼굴 사진, 기념품 구매, 미여행 만남은 현재 응답을 받은 뒤에만 확정하며, 연락 불가 미여행은 하은 대화나 여행 회상을 만들지 않는다. 모든 player-facing 문장은 잠근 snapshot의 exact line 또는 source-grounded projection으로 검증한다. 다음은 **SCENE08~12/C7~10 귀환·집 상상·관계 의사·역 작별 playable**이다. 이 관문 전까지 DAY23은 **PARTIAL**이다.
