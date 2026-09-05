@@ -19,7 +19,7 @@ function start(partner, known = true, context = {}) {
   beginDay18V4(s, context); return s;
 }
 
-test('runtime rejects every audited photorealistic-hand asset and documents the style gate', () => {
+test('runtime rejects legacy hand-art filenames and quarantines every shipped fallback URL', () => {
   const runtime=[
     readFileSync(new URL('../src/day18-v4-playable-script.mjs',import.meta.url),'utf8'),
     readFileSync(new URL('../src/day18-v4-source-beats.mjs',import.meta.url),'utf8')
@@ -30,12 +30,31 @@ test('runtime rejects every audited photorealistic-hand asset and documents the 
   for(const file of ['yuri-menu-wait-water-v3.png','haeun-menu-slide-v2.png','menu-open-v2.png','menu-closed-v2.png','washing-cup-night-v2.png','morning-alarm-off-v2.png','wallet-open-v2.png','wallet-closed-v2.png','solo-bag-seat-move-v2.png']) {
     assert.ok(existsSync(new URL(`../assets/events/day18-v4/${file}`,import.meta.url)),file);
   }
+  for(const [legacy,approved] of [
+    ['yuri-menu-wait-water-v1.png','yuri-menu-wait-water-v3.png'],
+    ['yuri-menu-wait-water-v2.png','yuri-menu-wait-water-v3.png'],
+    ['haeun-menu-slide-v1.png','haeun-menu-slide-v2.png'],
+    ['menu-open-v1.png','menu-open-v2.png'],
+    ['menu-closed-v1.png','menu-closed-v2.png'],
+    ['washing-cup-night-v1.png','washing-cup-night-v2.png'],
+    ['morning-alarm-off-v1.png','morning-alarm-off-v2.png'],
+    ['wallet-open-v1.png','wallet-open-v2.png'],
+    ['wallet-closed-v1.png','wallet-closed-v2.png'],
+    ['solo-bag-seat-move-v1.png','solo-bag-seat-move-v2.png']
+  ]) {
+    assert.deepEqual(
+      readFileSync(new URL(`../assets/events/day18-v4/${legacy}`,import.meta.url)),
+      readFileSync(new URL(`../assets/events/day18-v4/${approved}`,import.meta.url)),
+      `${legacy} must remain a byte-identical safe fallback for stale clients`
+    );
+  }
   const rules=readFileSync(new URL('../docs/STORY_V4_IMAGE_STYLE_RULES.md',import.meta.url),'utf8');
   assert.match(rules,/2D 애니메이션 셀 채색/);
   assert.match(rules,/사진을 합성한 것처럼 보이면 불합격/);
   assert.match(rules,/해부학 PASS.*화풍 PASS/s);
   assert.match(rules,/손 실루엣.*100% 확대/s);
   assert.match(rules,/새 버전 파일명.*캐시 버전/s);
+  assert.match(rules,/구버전 URL.*승인본과 바이트 단위로 동일/s);
 });
 
 test('the solo protagonist clears the opposite chair for an arriving customer without narrating the direction', () => {
