@@ -63,6 +63,8 @@ DAY 18 손 포함 CG를 전수 육안 감사했다. `yuri-menu-wait-water-v1`, `
 - 2026-09-06 재수정 생성 원본은 `exec-4ab83542-0d2c-48c3-bbaf-0b9213d8ae03.png`, 프로젝트 최종본은 `assets/events/day18-v4/yuri-menu-wait-water-v6.png`다. SHA-256은 `3b87a8f8a55bf2283d507f6eb4702864fea71de5cd059324c4755524cec7187d`이며 v1~v5도 동일하다.
 - 1672×941 원본에서 다섯 손가락, 잔의 접촉·가림, 손목 연속성은 `해부학 PASS`; 캐릭터와 같은 외곽선, 단순화한 관절, 평면 피부와 분리된 명암은 `화풍 PASS`다.
 - 배포 이력 v1~v5와 승인본 v6의 SHA-256은 모두 `3B87A8F8A55BF2283D507F6EB4702864FEA71DE5CD059324C4755524CEC7187D`로 동일하다.
+- 로컬 실제 브라우저의 일반 fixture 진입에서 `http://127.0.0.1:8000/assets/events/day18-v4/yuri-menu-wait-water-v6.png`가 1672×941 원본으로 로드되는 것을 확인했다. 실제 `contain` 화면에서 전경 손의 외곽선·평면 피부·분리 명암이 유리 얼굴/손의 묘사 문법과 일치해 `화풍 PASS`다.
+- CG 표시 중 새로고침 뒤 타이틀의 실제 이어하기로 Scene 시작점을 복구하고 같은 v6 URL이 다시 로드되는 것을 확인했다. 두 실행 모두 console warning/error 0이며 fixture가 백업한 사용자 저장을 복원했다.
 
 ## v3 실제 화면 재검증
 
