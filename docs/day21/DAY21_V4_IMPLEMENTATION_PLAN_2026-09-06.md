@@ -79,7 +79,7 @@ SCENE24 → DAY21 completion cue → DAY22
 ## 구현 단계와 완료 관문
 
 1. ~~Notion 최종 원문 플레이어 본문 잠금과 내부 메모 분리.~~ 완료.
-2. source registry에서 24 Scene, 주경로 C1~16, 비대화 C4~8의 정확 라벨·반응·variant를 생성한다.
+2. ~~source registry에서 24 Scene, 주경로 C1~16, 비대화 C4~8의 정확 라벨·반응·variant를 생성한다.~~ 완료.
 3. DAY18~20 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.
 4. 아침 / 이야기 / 감정·접촉 / 여행·예약 / 비대화·ending playable 모듈을 exact source ref로 구현한다.
 5. game bridge, 저장 재개, 경제 원장, 시간·장소·인물·전화 presentation을 실제 루프에 연결한다.
@@ -89,4 +89,4 @@ SCENE24 → DAY21 completion cue → DAY22
 
 ## 다음 시작점
 
-잠근 원문을 기계 파싱하는 source registry와 정확 선택 라벨 테스트를 추가한다. 동시에 DAY20 V4 완료 이력과 DAY19 여행 후보를 사실 그대로 보존하는 entry input을 구체화한다.
+DAY20 V4 완료 이력과 DAY19 여행 후보를 사실 그대로 보존하는 replay-locked entry input을 구현한다. C10의 오늘 접촉, C12의 부산 실제 확정, C13의 공유 공간은 각각 플레이어 선택만으로 성립시키지 않고 하은 응답·날짜/비용/이동/숙박 확인·별도 공간 합의를 기록하는 resolution phase로 분리한다.
