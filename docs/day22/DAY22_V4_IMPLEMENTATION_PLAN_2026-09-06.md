@@ -97,6 +97,10 @@ Friendly 부산 공유 숙소에 이어 Neutral 부산 별실과 Mixed 서울 �
 
 다음은 연락 가능/불가 미여행 데스크톱 경로와 사진 보관 거절·접촉 거절 경로를 실제 화면에서 검증하고, 이어 389×844 Friendly/Neutral/Distant/Mixed 의미 경로를 같은 배포본에서 검증한다. 이 관문 전까지 DAY22는 **PARTIAL**이다.
 
+연락 가능/불가 미여행 데스크톱 경로는 실제 UI에서 DAY23까지 PASS했다. 미여행 반응도 원문 분기 설명을 그대로 출력하지 않고 이미 선택된 산책·식사·사진 대상·연락·저녁·내일 행동의 사실형 문장으로 투영한다. C5의 앨범은 `photoMessageSent=false`, 실제 하은/교류 상대 전송은 `true`여야 한다는 replay 규칙도 고정했다.
+
+다음은 사진 보관 거절과 공유 숙소 접촉 거절을 데스크톱 실제 응답으로 검증한 뒤, 389×844 Friendly/Neutral/Distant/Mixed 의미 경로를 같은 배포본에서 검증한다. 이 관문 전까지 DAY22는 **PARTIAL**이다.
+
 ## Source registry 구현 기록
 
 - `generate-day22-v4-source-registry.mjs`가 잠근 Markdown에서 24개 Scene과 23개 선택 블록을 기계 생성한다.

@@ -63,6 +63,7 @@ test('Ara photo option requires an actual DAY13 exchange and replay rejects tamp
   const state=completedDay21('NO_TRAVEL',{ara:true});beginDay22V4(state);chooseDay22(state);chooseDay22(state);
   assert.ok(getDay22V4Options(state.storyFlags.day22V4).some(option=>option.id.endsWith('_send_exchange')));
   chooseDay22(state,'send_exchange');
+  assert.equal(state.storyFlags.day22V4.facts.photoMessageSent,true);
   const tampered=structuredClone(state.storyFlags.day22V4);tampered.input.araPhotoExchange=false;
   assert.equal(validateDay22V4(tampered),false);
   state.storyFlags.day22V4.facts.cafeVisited=true;

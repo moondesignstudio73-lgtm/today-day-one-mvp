@@ -61,7 +61,7 @@ function addChoice(chapter,number,variant,id){chapter.choices.push({kind:'choice
 function reduceNoTravel(chapter,id){const number=noTravelPhases[chapter.phase],index=noTravelSuffixes[number].findIndex(suffix=>id.endsWith(`_${suffix}`)),facts=chapter.facts;addChoice(chapter,number,'NO_TRAVEL',id);
   if(number===3){facts.noTravelDay=['WALK_NEARBY','SMALL_HOME_TASK','REST'][index];chapter.phase='no_travel_meal';}
   if(number===4){facts.noTravelMeal=['FAMILIAR','ONE_NEW','HOME_FOOD'][index];chapter.phase='no_travel_photo';}
-  if(number===5){facts.noTravelPhotoTarget=['ALBUM','HAEUN','EXCHANGE_CONTACT'][index];facts.photoMessageSent=false;chapter.phase=chapter.input.contactAllowed?'no_travel_contact':'no_travel_evening';}
+  if(number===5){facts.noTravelPhotoTarget=['ALBUM','HAEUN','EXCHANGE_CONTACT'][index];facts.photoMessageSent=index>0;chapter.phase=chapter.input.contactAllowed?'no_travel_contact':'no_travel_evening';}
   if(number===6){facts.noTravelContact=['ASK_DAY','SAY_RESTED','NAME_DISAPPOINTMENT'][index];chapter.phase='no_travel_evening';}
   if(number===7){facts.noTravelEvening=['PREPARE_CLOTHES','ANSWER_ONE_CONTACT','STOP_PLANNING'][index];chapter.phase='no_travel_tomorrow';}
   if(number===8){facts.noTravelTomorrow=['TALK_AGAIN','REST_TOMORROW','REPEAT_GOOD'][index];chapter.phase='ending';}
