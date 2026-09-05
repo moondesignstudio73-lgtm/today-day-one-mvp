@@ -112,6 +112,7 @@ SCENE24 → DAY21 completion cue → DAY22
 - 데스크톱 Friendly · park · Busan · shared lodging를 SCENE01부터 DAY22까지 16개 실제 선택으로 SKIP 없이 완주했다. 접촉·공유 숙박의 별도 현재 응답, DAY22 전환, Story/Free 배타성, 수평 넘침 0, console warning/error 0, 사용자 저장 복원 PASS다(`DAY21_V4_BROWSER_QA_2026-09-06.md`). 나머지 데스크톱 경로와 모바일은 NOT RUN이므로 DAY21은 **PARTIAL**이다.
 - 데스크톱 Mixed · Phone · Seoul day trip과 Distant · no-contact · Deferred를 실제 선택으로 SKIP 없이 DAY22까지 완주했다. 통화의 하은 현장 캐릭터/CG 및 접촉 응답 비노출, 서울의 숙박·예약·결제 비생성, 무연락 C3 단일 연기 선택, 민호 선택·하은 메시지·미청취 이야기 비노출을 화면에서 확인했다. 두 경로 모두 Story/Free 배타성, 가로 넘침 0, console warning/error 0, 사용자 저장 복원 PASS다. Rest·Neutral과 모바일이 남아 **PARTIAL**이다.
 - 데스크톱 Rest · separate와 Neutral · park를 실제 선택으로 SKIP 없이 DAY22까지 완주했다. Rest는 별도 공간과 당일 준비 중단으로 공유 숙박·예약·결제를 만들지 않았고, Neutral은 접촉·여행 논의를 열지 않은 채 현재 의사 존중과 준비 원칙으로 닫혔다. 두 경로 모두 Story/Free 배타성, `1484px` 가로 넘침 0, console warning/error 0, 사용자 저장 복원 PASS다. 데스크톱 의미 경로는 닫혔고 389×844 모바일이 남아 DAY21은 **PARTIAL**이다.
+- 실제 콘텐츠 viewport 389×844에서 Friendly · Busan과 Distant · Deferred를 SKIP 없이 DAY22까지 완주했다. Friendly는 16개 선택과 별도 접촉/숙박 응답·검증 견적을, Distant는 단일 C3 연기·민호 선택 없음·미청취 이야기/메시지/접촉/예약/결제 비생성을 확인했다. 두 경로 모두 가로 넘침 0, Story/Free 배타성, console warning/error 0이며 사용자 저장 복원과 임시 viewport 해제 PASS다. Neutral·Mixed 모바일이 남아 DAY21은 **PARTIAL**이다.
 
 ## 상태 계약 구현 기록
 

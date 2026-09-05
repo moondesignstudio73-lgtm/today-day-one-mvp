@@ -9,7 +9,9 @@
 - 데스크톱 Rest · separate lodging: PASS.
 - 데스크톱 Neutral · park: PASS.
 - 데스크톱 의미 경로: **CLOSED**.
-- 389×844 모바일: NOT RUN.
+- 389×844 모바일 Friendly · park · Busan · shared lodging: PASS.
+- 389×844 모바일 Distant · no-contact · Deferred: PASS.
+- 389×844 모바일 Neutral · park 및 Mixed · Phone · Seoul: NOT RUN.
 
 ## 실행 환경과 보존
 
@@ -58,6 +60,18 @@
 - C14 이동/몸 상태 공유, C15 필요한 물건 재검토, C16 피하지 않고 더 생각하기를 거쳐 DAY22로 전환했다.
 - Story Free Action 비노출, `scrollWidth = clientWidth = 1484`, console warning/error 0, 사용자 저장 복원 PASS.
 
+## 모바일 Friendly · Busan
+
+- 브라우저 외곽 크기와 콘텐츠 viewport 차이를 보정한 뒤 실제 `innerWidth = 389`, `innerHeight = 844`를 확인하고 처음부터 다시 플레이했다. 보정 전 실행은 모바일 증거에 포함하지 않았다.
+- 데스크톱과 같은 16개 선택을 화면에서 SKIP 없이 진행해 현재 포옹과 공유 숙박의 별도 응답, 검증된 부산 견적, 준비·짐·마지막 메시지를 거쳐 DAY22로 전환했다.
+- `scrollWidth = clientWidth = 389`, Story Free Action 비노출, console warning/error 0 PASS.
+
+## 모바일 Distant · Deferred
+
+- C1~2 뒤 C3에 연기 선택 하나만 노출되는 것을 확인했다. 대체 C4에는 민호 선택 없이 자기 점검/식사 두 선택만 있었다.
+- 이유 점검, 여행 보류, 충분한 휴식, 다음 연락 의사를 실제 선택해 하은의 미청취 이야기·접촉·예약·결제 없이 DAY22로 전환했다.
+- `innerWidth = 389`, `innerHeight = 844`, `scrollWidth = clientWidth = 389`, Story Free Action 비노출, console warning/error 0, 사용자 저장 복원 PASS. 임시 viewport override도 해제했다.
+
 ## 다음 시작점
 
-브라우저 viewport를 389×844로 고정해 Friendly/Neutral/Distant/Mixed 대표 경로와 경계 경로를 반복하고 이미지 로드·가로 넘침·콘솔·DAY22 전환을 기록한다.
+브라우저 콘텐츠 viewport를 실제 389×844로 고정해 Neutral park와 Mixed Phone+Seoul을 SKIP 없이 완주하고 이미지 로드·가로 넘침·콘솔·DAY22 전환을 기록한다.
