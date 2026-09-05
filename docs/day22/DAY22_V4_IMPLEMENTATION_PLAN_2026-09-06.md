@@ -75,6 +75,7 @@ DAY21 완료 이력
 - 카페 고유 농담은 실제 카페 방문과 해당 자리 상황이 있을 때만 회수한다.
 - 실제 먹은 음식과 실제 지출만 경제 원장에 남긴다. 이미 DAY21에서 결제한 교통·숙박을 중복 차감하지 않는다.
 - Renderer에는 dialogue, monologue, 필요한 playerNarration만 전달한다. stage/design/continuity/flag/metadata와 내부 편집 메모는 일반 대화창에 출력하지 않는다.
+- 원문 본문 안에 있더라도 `~라면`, `~경로에서는`, `장면이 생기지 않았다`, `묘사하지 않았다`, `사건을 만들지 않는다`처럼 여러 분기를 설명하는 조건문은 그대로 독백으로 보내지 않는다. 런타임이 먼저 경로를 결정한 뒤, 그 경로에서 실제로 일어난 대사·독백만 source-grounded projection으로 출력하고 제외 조건은 stageAction/상태 검증에 둔다.
 - Story Choice 진행 중 legacy DAY22 Free Action을 열지 않는다.
 
 ## 구현 단계와 완료 관문
@@ -92,7 +93,9 @@ DAY21 완료 이력
 
 Friendly 부산 공유 숙소 데스크톱 경로는 실제 브라우저에서 DAY23 전환까지 SKIP 없이 PASS했다. 첫 실행에서 발견한 `DAY22_BACKGROUND_MISSING:day22-busan-station`은 game/bridge asset manifest 캐시 세대를 `v=24`로 통일해 수정했고 같은 fixture 재실행으로 재발하지 않음을 확인했다. 상세 증거는 `DAY22_V4_BROWSER_QA_2026-09-06.md`에 기록했다.
 
-다음은 부산 별실·서울·연락 가능/불가 미여행 데스크톱 경로를 추가하고, 이어 389×844 Friendly/Neutral/Distant/Mixed 의미 경로를 같은 배포본에서 검증한다. 이 관문 전까지 DAY22는 **PARTIAL**이다.
+Friendly 부산 공유 숙소에 이어 Neutral 부산 별실과 Mixed 서울 당일 데스크톱 경로도 DAY23 전환까지 PASS했다. 별실·서울 QA 중 원문 안의 분기 조건문이 일반 독백으로 노출되는 HIGH 품질 문제를 발견해, 실제 선택된 경로의 사실 문장만 source-grounded projection으로 출력하도록 opening/meal/cafe/evening/ending을 보정했다. 서울 밤 C16 직전 새로고침→실제 이어하기에서도 수정 문장과 같은 선택 지점이 복구됐다.
+
+다음은 연락 가능/불가 미여행 데스크톱 경로와 사진 보관 거절·접촉 거절 경로를 실제 화면에서 검증하고, 이어 389×844 Friendly/Neutral/Distant/Mixed 의미 경로를 같은 배포본에서 검증한다. 이 관문 전까지 DAY22는 **PARTIAL**이다.
 
 ## Source registry 구현 기록
 

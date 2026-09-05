@@ -22,7 +22,7 @@ test('stop-photo route needs no keep response and never emits a kept-photo actio
 });
 
 test('SEOUL cafe uses the local difference instead of inventing an occupied marine-view seat',()=>{
-  const state=completedDay21ForDay22('SEOUL_DAY');reachCafe(state);const steps=getDay22V4PlayableCafe(state.storyFlags.day22V4);assert.equal(steps[0].location,'seoul-cafe');assert.equal(steps.some(step=>step.text==='창가 자리는 이미 차 있었다.'),false);assert.ok(steps.some(step=>step.text?.startsWith('실제로 선택한 카페에서 같은 일을 겪었다.')));assertSourced(steps);
+  const state=completedDay21ForDay22('SEOUL_DAY');reachCafe(state);const steps=getDay22V4PlayableCafe(state.storyFlags.day22V4);assert.equal(steps[0].location,'seoul-cafe');assert.equal(steps.some(step=>step.text==='창가 자리는 이미 차 있었다.'),false);assert.ok(steps.some(step=>step.text?.startsWith('카페는 사진과 조금 달랐다.')));assert.equal(steps.some(step=>/사건을 만들지|장면이었다/.test(step.text??'')),false);assertSourced(steps);
   chooseDay22(state);chooseDay22(state,'stop_photos');const expectations=getDay22V4PlayableCafe(state.storyFlags.day22V4);assert.equal(expectations.some(step=>step.text?.includes('바다 보고')),false);assert.ok(expectations.some(step=>step.text?.includes('산책하고')));assertSourced(expectations);
   const none=completedDay21ForDay22('NO_TRAVEL');beginDay22V4(none);assert.deepEqual(getDay22V4PlayableCafe(none.storyFlags.day22V4),[{type:'cafeBoundary',nextScene:23,route:'NO_TRAVEL'}]);
 });

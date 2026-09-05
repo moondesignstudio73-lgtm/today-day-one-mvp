@@ -10,15 +10,15 @@ function reachFinalPhase(state){beginDay22V4(state);while(!['ending','seoul_retu
 
 test('Seoul SCENE22 C17 returns home and completes only after SCENE24',()=>{
   const state=completedDay21ForDay22('SEOUL_DAY');reachFinalPhase(state);let steps=getDay22V4PlayableEnding(state.storyFlags.day22V4);assert.equal(steps[0].number,22);assert.equal(steps.at(-1).choiceNumber,17);assert.equal(steps.some(step=>step.type==='chapterCompletionCue'),false);assertSourced(steps);
-  chooseDay22(state,'choose_photo_tomorrow');steps=getDay22V4PlayableEnding(state.storyFlags.day22V4);assert.ok(steps.some(step=>step.text?.includes('함께 사진이 없다면 풍경이나 기억')));assert.ok(steps.some(step=>step.text==='서울의 밤이라면 내 집에 돌아와 있었다.'));assert.equal(steps.some(step=>step.text?.includes('부산의 밤')),false);assert.equal(steps.at(-1).type,'chapterCompletionCue');assertSourced(steps);
+  chooseDay22(state,'choose_photo_tomorrow');steps=getDay22V4PlayableEnding(state.storyFlags.day22V4);assert.ok(steps.some(step=>step.text?.includes('풍경이나 기억에 남은 순간')));assert.ok(steps.some(step=>step.text==='나는 서울의 내 집에 돌아와 있었다.'));assert.equal(steps.some(step=>/이 경로에는|서울의 밤이라면|부산의 밤/.test(step.text??'')),false);assert.equal(steps.at(-1).type,'chapterCompletionCue');assertSourced(steps);
 });
 
 test('Busan ending uses the booked space and has no Seoul return choice',()=>{
-  const state=completedDay21ForDay22('BUSAN_TRIP');reachFinalPhase(state);const steps=getDay22V4PlayableEnding(state.storyFlags.day22V4);assert.ok(steps.some(step=>step.text==='부산의 밤이라면 나는 실제 예약한 공간에 있었다.'));assert.equal(steps.some(step=>step.type==='choice'&&step.choiceNumber===17),false);assert.equal(steps.some(step=>step.text?.includes('서울의 밤')),false);assert.equal(steps.at(-1).type,'chapterCompletionCue');assertSourced(steps);
+  const state=completedDay21ForDay22('BUSAN_TRIP');reachFinalPhase(state);const steps=getDay22V4PlayableEnding(state.storyFlags.day22V4);assert.ok(steps.some(step=>step.text==='나는 실제 예약한 부산 숙소에 있었다.'));assert.equal(steps.some(step=>step.type==='choice'&&step.choiceNumber===17),false);assert.equal(steps.some(step=>step.text?.includes('서울의 밤')),false);assert.equal(steps.at(-1).type,'chapterCompletionCue');assertSourced(steps);
 });
 
 test('NO_TRAVEL ending recalls only the familiar room and own pace',()=>{
-  const state=completedDay21ForDay22('NO_TRAVEL');reachFinalPhase(state);const steps=getDay22V4PlayableEnding(state.storyFlags.day22V4);assert.ok(steps.some(step=>step.text==='떠나지 않은 날이면 익숙한 방에서 오늘의 작은 일을 떠올렸다.'));assert.ok(steps.some(step=>step.text?.startsWith('혼자 지낸 날이면')));assert.equal(steps.some(step=>/부산의 밤|서울의 밤|함께 여행한 하은|같이 온 사람/.test(step.text??'')),false);assert.equal(steps.at(-1).type,'chapterCompletionCue');assertSourced(steps);
+  const state=completedDay21ForDay22('NO_TRAVEL');reachFinalPhase(state);const steps=getDay22V4PlayableEnding(state.storyFlags.day22V4);assert.ok(steps.some(step=>step.text==='익숙한 방에서 오늘의 작은 일을 떠올렸다.'));assert.ok(steps.some(step=>step.text?.startsWith('나는 내 속도를 조금 더 알았다.')));assert.equal(steps.some(step=>/떠나지 않은 날이면|혼자 지낸 날이면|부산의 밤|서울의 밤|함께 여행한 하은|같이 온 사람/.test(step.text??'')),false);assert.equal(steps.at(-1).type,'chapterCompletionCue');assertSourced(steps);
 });
 
 test('unfinished chapters receive only a route boundary and no completion cue',()=>{

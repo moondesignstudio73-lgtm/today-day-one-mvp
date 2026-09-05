@@ -17,7 +17,7 @@ test('BUSAN C4-6 preserves separate-meeting agreement and records actual reunion
 
 test('SEOUL C4-6 uses a local restaurant and walk without positive Busan memories',()=>{
   const state=completedDay21ForDay22('SEOUL_DAY');reachMeal(state);const all=[];for(const suffix of ['just_eat','sit_together','album_only']){const steps=getDay22V4PlayableMealPhoto(state.storyFlags.day22V4);all.push(...steps);assertSourced(steps);chooseDay22(state,suffix);}const ending=getDay22V4PlayableMealPhoto(state.storyFlags.day22V4);all.push(...ending);assertSourced(ending);
-  assert.equal(all.some(step=>step.location==='busan-restaurant'||step.location==='haeundae'),false);const rendered=all.map(step=>step.text??'').join('\n');assert.doesNotMatch(rendered,/바다 쪽으로 나가자|부산역|표까지 샀는데/);assert.match(rendered,/실제로 고른 가까운 식당/);assert.deepEqual(ending.at(-1),{type:'mealPhotoBoundary',nextScene:11,route:'SEOUL_DAY'});
+  assert.equal(all.some(step=>step.location==='busan-restaurant'||step.location==='haeundae'),false);const rendered=all.map(step=>step.text??'').join('\n');assert.doesNotMatch(rendered,/바다 쪽으로 나가자|부산역|표까지 샀는데|밀면집에 가지 않았다면|부산 바다가 된 척/);assert.match(rendered,/가까운 식당에서 한 입씩/);assert.deepEqual(ending.at(-1),{type:'mealPhotoBoundary',nextScene:11,route:'SEOUL_DAY'});
 });
 
 test('photo exchange option is filtered before the playable and NO_TRAVEL routes away',()=>{

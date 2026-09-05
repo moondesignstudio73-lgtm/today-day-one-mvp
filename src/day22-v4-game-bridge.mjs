@@ -1,11 +1,11 @@
 import {BACKGROUND_ASSETS} from './assets/asset-manifest.mjs?v=24';
 import {applyDay22V4Choice,beginDay22V4,completeDay22V4,getDay22V4Entry,resolveDay22V4Contact,resolveDay22V4Photo,validateDay22V4} from './day22-v4-state-contract.mjs';
-import {getDay22V4PlayableOpening} from './day22-v4-playable-opening.mjs';
-import {getDay22V4PlayableMealPhoto} from './day22-v4-playable-meal-photo.mjs';
-import {getDay22V4PlayableCafe} from './day22-v4-playable-cafe.mjs';
-import {getDay22V4PlayableEvening} from './day22-v4-playable-evening.mjs';
+import {getDay22V4PlayableOpening} from './day22-v4-playable-opening.mjs?v=2';
+import {getDay22V4PlayableMealPhoto} from './day22-v4-playable-meal-photo.mjs?v=2';
+import {getDay22V4PlayableCafe} from './day22-v4-playable-cafe.mjs?v=2';
+import {getDay22V4PlayableEvening} from './day22-v4-playable-evening.mjs?v=3';
 import {getDay22V4PlayableNoTravel} from './day22-v4-playable-no-travel.mjs';
-import {getDay22V4PlayableEnding} from './day22-v4-playable-ending.mjs';
+import {getDay22V4PlayableEnding} from './day22-v4-playable-ending.mjs?v=2';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
 
 export const DAY22_V4_CAMPAIGN_SLOT='m30-day22-current-recovery-day';

@@ -4,6 +4,7 @@ import {getDay22V4Options,validateDay22V4} from './day22-v4-state-contract.mjs';
 
 const ref=(scene,line)=>day22V4SourceRef(scene,line);
 const mono=(scene,text)=>({type:'monologue',text,source:ref(scene,text)});
+const groundedMono=(scene,text,exact)=>({type:'monologue',text,source:ref(scene,exact)});
 const act=(scene,exact,status,actionLabel)=>({type:'stageAction',status,actionLabel,source:ref(scene,exact)});
 const quoted=(scene,exact)=>{const match=exact.match(/^\*\*([^*]+)\*\* “(.*)”$/);if(!match)throw new Error(`DAY22_DIALOGUE_LINE_INVALID:${scene}:${exact}`);return {type:'dialogue',speaker:match[1]==='주인공'?'나':match[1],text:match[2],source:ref(scene,exact)};};
 const location=(number,route)=>route==='BUSAN_TRIP'?(number===1?'travel-meeting':number<4?'train':'busan-station'):(number===1?'seoul-meeting':number<4?'seoul-transit':'seoul-start');
@@ -19,7 +20,7 @@ function scene1(chapter){
     mono(1,'하은은 만나기로 한 곳에서 나를 보고, 내 가방을 봤다.'),
     quoted(1,'**하은** “혹시 안에 사람 있어?”'),quoted(1,'**주인공** “없어.”'),quoted(1,'**하은** “그럼 왜 그렇게 많아?”'),quoted(1,'**주인공** “혹시 필요할까 봐.”'),quoted(1,'**하은** “혹시가 몇 명이야?”'),
     act(1,'나는 웃다가 가방을 내려놓았다.','set-bag-down','가방을 내려놓고 무게를 다시 확인함'));
-  else steps.push(mono(1,'가방은 작거나 없었다. 하은과 만났다면 그녀가 “오늘은 혹시가 한 명도 안 왔네”라고 농담할 수 있었다. 짐 농담을 나눈 적이 없다면 그냥 가볍게 왔다고 했다.'));
+  else {const exact='가방은 작거나 없었다. 하은과 만났다면 그녀가 “오늘은 혹시가 한 명도 안 왔네”라고 농담할 수 있었다. 짐 농담을 나눈 적이 없다면 그냥 가볍게 왔다고 했다.';steps.push(groundedMono(1,'가방은 가벼웠다.',exact));}
   return [...steps,choice(chapter,1)];
 }
 
