@@ -78,7 +78,7 @@ function reaction(c) {
         return steps.flatMap(step => key === 'menu_each' && step.text === '같은 것을 고르지 않았는데도 한 끼가 시작됐다.'
           ? [{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},{type:'storyPause',duration:180},{type:'sfx',sfxId:'SFX_DOCUMENT_RECEIVE'},step]
           : key === 'menu_wait' && step.text === '메뉴 기다리는 사람이 둘이나 더 생긴 줄.'
-            ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-menu-wait-water-v5.png',fit:'contain',duration:3000}] : [step]);
+            ? [step,{type:'cgShow',source:'assets/events/day18-v4/yuri-menu-wait-water-v6.png',fit:'contain',duration:3000}] : [step]);
       }
       return key === 'menu_each' ? [d('하은', '네 거 맛있으면 한 입만 구경할게.')]
         : key === 'menu_share' ? [d('하은', '먼저 먹어 보고, 내가 싫으면 네가 책임지는 건 아니야.')]
