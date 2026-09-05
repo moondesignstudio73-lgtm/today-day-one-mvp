@@ -264,3 +264,5 @@ DAY19 상태 계약(9/5): DAY18의 검증된 완료 chapter에서만 새 V4를 �
 DAY19 SCENE01~05 구현(9/5): exact source line selector와 C1~C4 전용 playable opening을 추가했다. 원문 행동은 비출력 `stageAction`, 직접 말은 대화/문자, 내면은 독백으로 나누고 일반 `narration` 및 조건 메모 출력을 금지했다. 연락 휴식 입력의 하은 연락 선택과 연락 불가 입력의 동반 식사를 fail-closed 했다. 복권은 오락비 자격에 따라 미확정 구매/중단만 표시하고 당첨금은 만들지 않으며, 민호 연락은 방문 조율 이상으로 승격하지 않는다. source/state/opening 집중 13/13 PASS. 아직 본선 미연결이므로 DAY19는 PARTIAL이며 다음은 **SCENE06~12/C5~C7 조건부 구현**이다.
 
 DAY19 SCENE06~12 구현(9/5): DAY18의 평온한 실제 여행 대화·연락 가능 입력만 `CALL_SHARED`로 선택해 하은과 후보/각자 예산/늦잠/빈칸을 이야기하고, 나머지는 solo·동행 미정 원문만 재생하는 중간 playable 구간을 추가했다. 새 대면 약속이나 하은의 승인·돈을 만들지 않으며 C5 shared/solo, C6 일정 축소, C7 준비 동기의 모든 반응을 exact source line에 연결했다. middle/state 집중 9/9 PASS. 본선 미연결이므로 DAY19는 PARTIAL이며 다음은 **SCENE13~17/C8~C12 구현**이다.
+
+DAY19 SCENE13~17 구현(9/5): 동행 태도·돈을 쓰는 이유·부산/서울/미루기 후보·예약 앞 반응·미확정 기대를 전용 candidates playable 구간으로 구현했다. shared/solo 출력을 분리하고, C11의 세 선택 모두 결제 없이 `CANDIDATE_ONLY`로 끝나며 먼저 잡고 싶은 경로도 손을 떼도록 했다. 미확정 복권/오지 않은 수입을 세지 않고 지훈에게 말하지 않은 복권 사실도 만들지 않는다. candidates/state 집중 9/9 PASS. 본선 미연결이므로 DAY19는 PARTIAL이며 다음은 **SCENE18~24/C13~C16 ending 구현**이다.
