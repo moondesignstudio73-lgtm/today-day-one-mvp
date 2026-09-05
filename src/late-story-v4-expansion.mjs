@@ -334,6 +334,7 @@ export function validateLateStoryV4(day){
 
 export function recordLateStoryV4Choice(state,day,choiceId){
   state.storyFlags??={};
+  if(day===20&&state.storyFlags.day20V4)return state.storyFlags.day20V4Choices??[];
   const key=`day${day}V4Choices`;
   const current=Array.isArray(state.storyFlags[key])?state.storyFlags[key]:[];
   if(!current.some(entry=>entry.choiceId===choiceId)){

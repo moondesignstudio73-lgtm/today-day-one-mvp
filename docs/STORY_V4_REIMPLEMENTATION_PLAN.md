@@ -305,3 +305,5 @@ DAY19 SCENE18~24 구현(9/5): 실제 C13 저녁, 명시적으로 수락된 내�
 15:20 DAY20 conflict/ending playable 완료(9/5): exact source ref로 SCENE19 갈등, SCENE20 밤 선택, SCENE21 귀가, SCENE22 준비된 숙박, SCENE24 후일담을 구현했다. 갈등 공개는 19→21→24로 닫히며, 숙박 제안은 하은 응답 전에 멈춘다. 거절은 21 귀가, 실제 준비와 잠자리 합의가 포함된 수락만 22/C14로 간다. 작별 포옹·다음 초대는 별도 현재 의사 기록이 없어 자동 생성하지 않는다. DAY20 플레이 원고 SCENE01~24는 구현됐지만 bridge/저장/브라우저 QA 전이므로 **PARTIAL**이다.
 
 15:31 DAY20 game bridge core 완료(9/5): opening/domestic/intimacy/conflict/ending/solo 모듈을 현재 phase에 맞춰 이어 붙이고 내부 boundary를 모두 제거하는 독립 브리지를 구현했다. 선택과 접촉·숙박 응답은 실패 시 chapter 전체를 원자 복구하며, 중간 저장/로드 뒤 같은 다음 segment를 재현한다. 완료 history는 V4 facts/choices를 한 번만 저장하고 DAY19 hook을 소비해 DAY21 hook을 연다. `game.js` 입력/완료/스킵 연결과 실제 브라우저 QA 전이므로 DAY20은 **PARTIAL**이다.
+
+20:30 DAY20 실제 게임 루프 연결(9/5): `day20-v4-game-bridge`를 `game.js`의 진입·재개·선택·하은의 접촉/숙박 응답·완료·SKIP 처리에 연결했다. SKIP도 별도 응답 단계를 건너뛰지 않는다. DAY19의 식사 비수락도 DAY20 slot에는 진입하되 `visitMode: SOLO`가 되어 하은 방문을 만들지 않는다. 숙박 수락은 앞선 `MUTUAL_MORE_TIME`과 `MUTUAL_SIMILAR_EVENING` 기록이 모두 있을 때만 별도 침구로 성립하고, V4 완료 뒤 legacy Free Action은 열리지 않는다. DAY19/20 집중 35개 테스트와 전체 100×30일 시뮬레이션 PASS. DAY20은 **PARTIAL**, 다음은 browser fixture와 데스크톱/389×844 비-SKIP 6경로 QA다.
