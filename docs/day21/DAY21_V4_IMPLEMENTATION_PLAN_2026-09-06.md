@@ -80,7 +80,7 @@ SCENE24 → DAY21 completion cue → DAY22
 
 1. ~~Notion 최종 원문 플레이어 본문 잠금과 내부 메모 분리.~~ 완료.
 2. ~~source registry에서 24 Scene, 주경로 C1~16, 비대화 C4~8의 정확 라벨·반응·variant를 생성한다.~~ 완료.
-3. DAY18~20 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.
+3. ~~DAY18~20 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
 4. 아침 / 이야기 / 감정·접촉 / 여행·예약 / 비대화·ending playable 모듈을 exact source ref로 구현한다.
 5. game bridge, 저장 재개, 경제 원장, 시간·장소·인물·전화 presentation을 실제 루프에 연결한다.
 6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
@@ -89,4 +89,13 @@ SCENE24 → DAY21 completion cue → DAY22
 
 ## 다음 시작점
 
-DAY20 V4 완료 이력과 DAY19 여행 후보를 사실 그대로 보존하는 replay-locked entry input을 구현한다. C10의 오늘 접촉, C12의 부산 실제 확정, C13의 공유 공간은 각각 플레이어 선택만으로 성립시키지 않고 하은 응답·날짜/비용/이동/숙박 확인·별도 공간 합의를 기록하는 resolution phase로 분리한다.
+exact source ref만 사용하는 아침 SCENE01~04와 이야기 SCENE05~12 playable부터 구현한다. `STAYED_MORNING`/`MESSAGE_MORNING`/`SOLO_MORNING`, `PARK`/`PHONE`/`DEFERRED` presentation을 분리하고 전화에서 시각 접촉을 만들지 않는다.
+
+## 상태 계약 구현 기록
+
+- schema: `day21-notion-v4/1`.
+- 검증된 `day20V4.complete`와 `day20V4Day21HookPending`만 신규 진입으로 인정하며 기존 `day21Runtime*` 저장은 legacy로 유지한다.
+- DAY20 숙박·별도 침구·컵·접촉·저녁 결과와 DAY19 여행 후보·미확정 예약·예산·연락을 entry input에 복제해 이후 원본 객체 변조와 분리했다.
+- 연락 불가 상태의 C3은 `다른 때 들어도 될까?`만 허용하고, 대화 연기 C4~8은 `heardHaeunStory=false`와 예약·접촉 없음으로 종료한다.
+- 공원 C10의 포옹/손잡기는 `haeunContactResponse`, 공유 숙박 의사는 `haeunLodgingResponse`, 부산 확정은 날짜·이동·예산·숙박·상호 동의를 모두 가진 `travelConfirmation` 뒤에만 사실화한다.
+- 선택·resolution 전체를 처음부터 replay해 변조 저장을 거부한다. 상태/source 집중 검증 9/9 PASS.
