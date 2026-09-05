@@ -93,11 +93,11 @@ DAY23 완료 이력
 4. ~~SCENE01~10 대화 성사·현재 마음·이유·최종 관계 제안을 대면/통화/거절 presentation으로 구현한다.~~ 완료. C1~7 반응과 대면/통화/오늘 거절, 하은의 독립 관계 resolution, 지속/유예/종료별 짧은 시간을 exact source로 분리했다.
 5. ~~SCENE11~17 실제 연락 정리, 수신자별 truth/lie, 연락 없음 대체 playable을 구현한다.~~ 완료. 실제 첫 수신자만 열고 유리·서진·아라 C9를 배타적으로 분리했으며, 관계 미종료 C10의 정정/중단/거짓과 연락 없음 C9~10을 구현했다.
 6. ~~SCENE18~24 지속/유예/종료, 지훈, 조건부 새 만남, DAY25 대화, 자기 밤 과제와 ending을 구현한다.~~ 완료. 관계 결과별 저녁, 실제 가능할 때만 지훈 통화, 관계 종료와 상대 수락이 모두 있을 때만 C13, 상호 지속일 때만 C14와 별도 현재 응답을 거쳐 자기 밤 과제·ending으로 닫는다.
-7. game bridge, 저장 재개, 현재 응답, 시간·장소·인물 presentation과 Story/Free 배타성을 실제 Story 루프에 연결한다.
+7. ~~game bridge, 저장 재개, 현재 응답, 시간·장소·인물 presentation과 Story/Free 배타성을 실제 Story 루프에 연결한다.~~ 완료. `game.js`가 검증된 DAY23 V4 완료에서만 신규 DAY24를 시작하고, 선택·현재 응답·완료 cue·시계·resume presentation을 실제 Story 진행에 연결한다. V4 진행·완료 중에는 legacy Free Action을 열지 않는다.
 8. source/state/bridge/저장/경제/전체 30일 시뮬레이션 회귀를 통과한다.
 9. Friendly/Neutral/Distant/Mixed와 대면/통화/거절, 지속/유예/종료, 각 연락 대상/없음/거짓말/새 만남 의미 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
 10. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY25 전환이 모두 PASS일 때만 DAY24 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-SCENE01~24/C1~15의 exact-source playable과 game bridge 기반을 구현했다. 브리지는 네 playable 경계를 연결하고 대화 성사·하은 관계 응답·거짓 정정·다른 연락 응답·미래 대화 응답을 서로 다른 원자적 resolution으로 처리한다. 김밥마을 낮, 카페, 집, 메시지·통화 presentation과 중간 저장 재개, 완료 이력 단일 기록 및 DAY25 hook을 검증했다. 다음 작업은 **`game.js` 실제 Story 루프 연결과 Story/Free 배타성**이다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
+SCENE01~24/C1~15, game bridge, 실제 `game.js` Story 루프를 연결했다. 검증된 V4만 신규 진입하며 legacy DAY24 저장은 기존 경로를 유지한다. 선택·다섯 현재 응답·완료 cue·시계·장소·인물·중간 저장 재개를 실제 진행에 연결했고 V4 중 legacy Free Action이 끼어들지 않는다. 다음 작업은 **DAY21~24 집중 회귀와 실제 브라우저 Friendly 대면 지속 경로 비-SKIP QA**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
