@@ -87,10 +87,10 @@ DAY22 완료 이력
 3. ~~DAY20~22 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
 4. ~~아침/남은 일정, 최고의 순간/사진/기념, 귀환/작별, 집 생활/연락, 남은 관계/저녁 통화, 미여행/ending playable을 exact source ref로 구현한다.~~ SCENE01~24, MAIN C1~17, 미여행 C3~8 전체 완료.
 5. ~~game bridge, 저장 재개, 연락·관계 응답, 선택 지출, 시간·장소·인물 presentation을 실제 Story 루프에 연결한다.~~ 브리지·runtime resolution·저장 재개·원자 결제와 `game.js` 실제 루프 연결을 완료했다.
-6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
-7. Friendly/Neutral/Distant/Mixed 및 shared/separate/Seoul/no-travel/연락 거절 의미 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
+6. ~~source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.~~ 브라우저 fixture 검증을 포함한 DAY22~23 집중 79/79와 전체 시뮬레이션 PASS.
+7. Friendly/Neutral/Distant/Mixed 및 shared/separate/Seoul/no-travel/연락 거절 의미 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다. Friendly 부산 공유 숙소 데스크톱은 PASS.
 8. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY24 전환이 모두 PASS일 때만 DAY23 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-DAY23 전체 playable을 묶는 game bridge와 runtime resolution을 실제 `game.js` Story 루프에 연결했다. 검증된 DAY22 V4 완료만 신규 DAY23 V4로 진입하며 legacy 저장은 기존 경로로 보존한다. 여섯 현재 응답, 선택별 segment, 저장 재개 presentation, 시계·장소·인물, SCENE24 완료와 DAY24 hook이 본선에서 동작한다. V4 진행·완료 중에는 legacy Free Action과 오래된 Free Resume가 끼어들지 않으며, 선택창은 legacy 가족 연락 문구 대신 원문 선택 제목을 사용한다. 로더 캐시는 `game.js?v=265`로 갱신했다. 다음은 **source/state/bridge/Story-Free/저장·경제 전체 회귀와 실제 브라우저 fixture·데스크톱 Friendly 부산 공유 숙소 비-SKIP 완주**다. 이 관문 전까지 DAY23은 **PARTIAL**이다.
+DAY23 전체 playable과 실제 Story 루프 연결 및 회귀를 마쳤다. Friendly 부산 공유 숙소를 데스크톱 실제 화면에서 C1~C17 전부 직접 선택해 SKIP 없이 DAY24까지 완주했다(`DAY23_V4_BROWSER_QA_2026-09-06.md`). 원문 선택 제목, 네 시간대 presentation, 공동 사진·관계·작별·다음 대화 response, 기념품 3,000원 단일 결제, 완료 저장과 DAY24 hook, Story/Free 배타성이 PASS다. 다음은 **Neutral 부산 별실과 Mixed 서울 당일 데스크톱 비-SKIP 완주**다. 이 관문 전까지 DAY23은 **PARTIAL**이다.
