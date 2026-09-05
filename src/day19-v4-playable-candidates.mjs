@@ -9,7 +9,16 @@ const act=(scene,exact,status,actionLabel)=>({type:'stageAction',status,actionLa
 const quoted=(scene,exact,device=null)=>{const match=exact.match(/^\*\*([^*]+)\*\* “(.*)”$/);if(!match)throw new Error(`DAY19_DIALOGUE_LINE_INVALID:${scene}:${exact}`);const speaker=match[1]==='주인공'?'나':match[1];return {type:device?'message':'dialogue',speaker,...(device?{sender:speaker,device}:{}),text:match[2],source:ref(scene,exact)}};
 const directedDialogue=(scene,speaker,text,exact)=>({type:'dialogue',speaker,text,origin:'source-directed',source:ref(scene,exact)});
 const scene=(number,location,time,character=null)=>({type:'sceneDirection',number,title:DAY19_V4_SOURCE_SCENES[number-1].title,location,time,character});
-const choice=(chapter,number)=>({type:'choice',choiceNumber:number,prompt:DAY19_V4_SOURCE_SCENES.flatMap(item=>item.choices).find(item=>item.number===number).title,options:getDay19V4Options(chapter)});
+const choice=(chapter,number)=>{
+  let options=getDay19V4Options(chapter);
+  // Keep replay compatibility for saves made before these presentation guards,
+  // but never offer joint-plan wording to a route that cannot contact Haeun.
+  if(number===8&&!chapter.input.contactAllowed)options=options.filter(option=>option.id.endsWith('_separate_day'));
+  // The source's solo branch only confirms that the protagonist stops without
+  // booking.  Do not expose the explicitly two-person recheck/pressure options.
+  if(number===11&&!shared(chapter))options=options.filter(option=>option.id.endsWith('_candidate_only'));
+  return {type:'choice',choiceNumber:number,prompt:DAY19_V4_SOURCE_SCENES.flatMap(item=>item.choices).find(item=>item.number===number).title,options};
+};
 const last=chapter=>chapter.choices.at(-1)?.id??'';
 const shared=chapter=>chapter.input.sharedPlanningEligible;
 const togetherCandidate=chapter=>shared(chapter)&&chapter.facts.companionStatus!=='SEPARATE_DAY_OK';

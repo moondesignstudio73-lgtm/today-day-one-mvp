@@ -142,4 +142,10 @@ DAY19는 계속 `PARTIAL`. 다음 작업은 **실제 브라우저 Friendly 비-S
 - C5 직후 새로고침/이어하기가 반응 구간부터 재생되어 C6 선택으로 복귀했다. 네 구간 경계, 시간·장소, 후보≠예약, 미완료 연락 없음, Story/Free 배타성을 실제 화면에서 확인했다.
 - 데스크톱 1484×799에서 가로 넘침 0, console warning/error 0, 사용자 저장 복원 PASS. 상세 증거는 `DAY19_V4_BROWSER_QA_2026-09-05.md`에 있다.
 
-DAY19는 계속 `PARTIAL`. 다음 작업은 **Distant 데스크톱 비-SKIP 완주**다.
+DAY19는 계속 `PARTIAL`. 다음 작업은 **Mixed 데스크톱 비-SKIP 완주**다.
+
+### game249 Distant 경계 보강
+
+- 실제 Distant 플레이로만 드러난 공동 C8, 두 사람 C11, 합의 범위 C16 노출을 원문 조건 위반으로 판정했다.
+- 기존 저장 검증에 쓰는 replay option은 그대로 두고, 신규 화면에 그리는 playable option만 연락 가능/공동 계획 입력에 맞춰 좁혔다. 이미 선택된 구버전 저장은 유효하지만 새 Distant 플레이는 존재하지 않는 공동 의사나 합의를 선택할 수 없다.
+- 수정 후 DAY20까지 실제 비-SKIP 완주 및 저장 복원 PASS. DAY19 전체는 아직 `PARTIAL`이다.

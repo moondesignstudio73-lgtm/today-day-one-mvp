@@ -41,4 +41,6 @@ DAY 19는 아직 `PARTIAL`이다. 본선 코드 연결과 자동 저장/회귀 �
 
 Friendly 데스크톱 경로를 SCENE01부터 DAY20까지 SKIP 없이 완주하고 C5 이후 새로고침 재개, C15 미노출, 시간·장소 전환, Story/Free 배타성, 가로 넘침 0, console warning/error 0, 사용자 저장 복원을 확인했다. 상세 선택과 증거는 `DAY19_V4_BROWSER_QA_2026-09-05.md`에 기록한다.
 
-DAY 19는 계속 `PARTIAL`. 다음은 Distant 데스크톱 비-SKIP 완주다.
+Distant 데스크톱 첫 실행에서 연락 불가/solo인데 공동 C8·C11·C16 선택 문구가 노출되는 결함을 발견했다. game249는 기존 replay state option을 삭제하지 않고 playable presentation만 원문상 가능한 선택으로 좁혀 저장 호환성과 지식 경계를 함께 지킨다. 수정 후 DAY20까지 비-SKIP 완주했고 하은 인물 노출 0, console warning/error 0, Story/Free 배타성, 가로 넘침 0, 사용자 저장 복원을 확인했다.
+
+DAY 19는 계속 `PARTIAL`. 다음은 Mixed 데스크톱 비-SKIP 완주다.
