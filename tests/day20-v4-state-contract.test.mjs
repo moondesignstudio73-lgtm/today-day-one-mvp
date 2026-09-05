@@ -99,7 +99,7 @@ test('short tea and solo routes cannot enter intimacy or lodging phases',()=>{
 
   const solo=day19(false);beginDay20V4(solo);
   while(solo.storyFlags.day20V4.phase!=='ending') applyDay20V4Choice(solo,getDay20V4Options(solo.storyFlags.day20V4)[0].id);
-  assert.deepEqual(solo.storyFlags.day20V4.choices.filter(record=>record.kind==='choice').map(record=>record.number),[1,2,3,5,6,7,8]);
+  assert.deepEqual(solo.storyFlags.day20V4.choices.filter(record=>record.kind==='choice').map(record=>record.number),[5,6,7,8]);
   assert.equal(solo.storyFlags.day20V4.facts.firstHug,false);
   assert.equal(solo.storyFlags.day20V4.facts.stayedOver,false);
   assert.equal(solo.storyFlags.day20V4.facts.soloNextContact,'REST_TODAY');

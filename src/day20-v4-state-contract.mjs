@@ -27,7 +27,7 @@ function deriveInput(state) {
   return {visitMode,relationshipActive,contactAllowed,invitation:{status:visitMode === 'FACE_TO_FACE'?'ACCEPTED':'NONE',sourceChoiceId:visitMode === 'FACE_TO_FACE'?previousChoiceId(day19,13):null},day19TomorrowMeal:day19.facts.tomorrowMeal,day19TomorrowTable:day19.facts.tomorrowTable,cupConversationExperienced:day19.facts.tomorrowTable === 'CUPS_TOGETHER',sharedTravelConversationExperienced:day19.input.sharedPlanningEligible === true,relationshipTone:day19.input.relationshipTone,day18DiscussionPending:day19.input.day18DiscussionPending,source:{day19Schema:day19.schema,day19Choice13:previousChoiceId(day19,13),day19Choice14:previousChoiceId(day19,14)}};
 }
 function initial(input) {
-  return {schema:DAY20_V4_SCHEMA,input:clone(input),choices:[],phase:'preparation',complete:false,facts:{visitMode:input.visitMode,preparation:null,broughtItem:null,requestedItem:null,cupChoice:null,kitchenPlan:null,dinnerConversation:null,disclosureRoute:null,quietTime:null,sharedScreenContent:null,eveningExtension:null,borrowedClothes:false,comfortResponse:null,closenessChoice:null,firstHug:false,satSideBySide:false,heldHands:false,nextInvitation:null,songResponse:null,nightEnd:null,stayedOver:false,sleepingPlan:null,soloStory:null,soloTime:null,soloTomorrow:null,soloNextContact:null}};
+  return {schema:DAY20_V4_SCHEMA,input:clone(input),choices:[],phase:input.visitMode==='SOLO'?'solo_story':'preparation',complete:false,facts:{visitMode:input.visitMode,preparation:null,broughtItem:null,requestedItem:null,cupChoice:null,kitchenPlan:null,dinnerConversation:null,disclosureRoute:null,quietTime:null,sharedScreenContent:null,eveningExtension:null,borrowedClothes:false,comfortResponse:null,closenessChoice:null,firstHug:false,satSideBySide:false,heldHands:false,nextInvitation:null,songResponse:null,nightEnd:null,stayedOver:false,sleepingPlan:null,soloStory:null,soloTime:null,soloTomorrow:null,soloNextContact:null}};
 }
 
 export function getDay20V4Entry(state) {
@@ -42,9 +42,6 @@ export function beginDay20V4(state){const entry=getDay20V4Entry(state);if(entry.
 export function getDay20V4Options(chapter) {
   if(['ending','contact_resolution','stay_resolution'].includes(chapter?.phase))return [];
   if(chapter?.input?.visitMode==='SOLO'){
-    if(chapter.phase==='preparation')return options(1,'FACE_TO_FACE');
-    if(chapter.phase==='request')return options(2,'FACE_TO_FACE');
-    if(chapter.phase==='cup')return options(3,'FACE_TO_FACE');
     const number=soloPhases[chapter.phase];if(!number)throw new Error(`DAY20_INVALID_SOLO_PHASE:${chapter?.phase}`);
     const result=options(number,'SOLO');return number===8&&!chapter.input.contactAllowed?result.filter(option=>option.id.endsWith('_rest_today')):result;
   }
@@ -63,7 +60,7 @@ function reduceChoice(chapter,id){
   switch(chapter.phase){
     case'preparation':facts.preparation=['SIMPLE_FOOD','COOK_TOGETHER','SHORT_TEA'][index];chapter.phase='request';break;
     case'request':facts.requestedItem=['HAEUN_OWN_FOOD','ONE_NEEDED_ITEM','NONE'][index];chapter.phase='cup';break;
-    case'cup':facts.cupChoice=['HAND_FIT','OWN_PREFERENCE','NO_PERMANENT_CUP'][index];chapter.phase=chapter.input.visitMode==='SOLO'?'solo_story':facts.preparation==='SHORT_TEA'?'night_end':'kitchen';break;
+    case'cup':facts.cupChoice=['HAND_FIT','OWN_PREFERENCE','NO_PERMANENT_CUP'][index];chapter.phase=facts.preparation==='SHORT_TEA'?'night_end':'kitchen';break;
     case'kitchen':facts.kitchenPlan=['SPLIT_ROLES','SWITCH_ROLES','USE_WHAT_EXISTS'][index];chapter.phase='dinner';break;
     case'dinner':facts.dinnerConversation=['SMALL_STORY','EAT_QUIETLY','DISCLOSURE'][index];if(index===2){facts.disclosureRoute='DISCLOSED_EXISTING_FACTS';chapter.phase='conflict';}else chapter.phase='quiet';break;
     case'conflict':facts.disclosureRoute=['STOP_FOR_TODAY','ANSWER_ACTUAL_FACTS','NAME_FEAR_WITHOUT_CONTROL'][index];facts.nightEnd='LEAVE_AFTER_CONFLICT';chapter.phase='ending';break;

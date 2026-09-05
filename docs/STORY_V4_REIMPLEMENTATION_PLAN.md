@@ -294,4 +294,6 @@ DAY19 SCENE18~24 구현(9/5): 실제 C13 저녁, 명시적으로 수락된 내�
 
 14:12 DAY20 source registry 완료(9/5): 잠근 Markdown에서 24개 장면과 선택 블록 19개를 기계 생성하는 `generate-day20-v4-source-registry.mjs`를 추가했다. 대면 선택1~14, solo 대체5~8, 갈등 대체10을 같은 번호라도 variant로 분리하고 모든 라벨 3개를 원문 그대로 검증한다. 플레이어 대사·독백·연출은 exact source line reference로만 허용하는 검증기도 추가했다. DAY20은 **PARTIAL**, 다음은 이 registry를 소비하는 replay-locked reducer다.
 
-14:28 DAY20 replay-locked reducer 완료(9/5): 대면 C1~14, solo C1~3→solo C5~8, 짧은 차 C1~3→C13 귀가, 남은 관계 공개 C5→conflict C10→귀가 진행표를 상태 계약에 구현했다. 포옹/손잡기 요청은 하은의 별도 접촉 응답 전에는 사실화하지 않고, 숙박 제안도 별도 수락·준비·잠자리 합의 전에는 `stayedOver`가 되지 않는다. 공개·짧은 차·solo는 친밀/숙박 단계에 진입하지 못하며 완료는 DAY19 hook만 소비하고 DAY21 hook을 연다. DAY20은 **PARTIAL**, 다음은 exact source 기반 opening/domestic playable과 bridge다.
+14:28 DAY20 replay-locked reducer 완료(9/5): 대면 C1~14, solo 생활 대체 SCENE01/02/04→solo C5~8, 짧은 차 C1~3→C13 귀가, 남은 관계 공개 C5→conflict C10→귀가 진행표를 상태 계약에 구현했다. 포옹/손잡기 요청은 하은의 별도 접촉 응답 전에는 사실화하지 않고, 숙박 제안도 별도 수락·준비·잠자리 합의 전에는 `stayedOver`가 되지 않는다. 공개·짧은 차·solo는 친밀/숙박 단계에 진입하지 못하며 완료는 DAY19 hook만 소비하고 DAY21 hook을 연다. DAY20은 **PARTIAL**, 다음은 exact source 기반 opening/domestic playable과 bridge다.
+
+14:41 DAY20 opening playable 완료(9/5): exact source ref만 사용해 SCENE01~04의 준비·부탁·도착·컵 선택과 선택별 반응을 구현했다. 실제 DAY19 `CUPS_TOGETHER` 이력이 있을 때만 `가장 다양한 분야`를 말하고, 없으면 일반 컵 질문을 사용한다. solo는 하은 도착/대사와 공동 컵을 만들지 않으며 원문의 SCENE01/02/04 생활 대체 후 바로 SCENE23 solo C5로 들어간다. 짧은 차는 C3 뒤 친밀 장면이 아니라 약속된 짧은 귀가 경계로 간다. DAY20은 **PARTIAL**, 다음은 domestic SCENE05~11과 solo C5~8다.
