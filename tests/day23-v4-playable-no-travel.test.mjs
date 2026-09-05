@@ -24,7 +24,7 @@ test('contact-available NO_TRAVEL meeting is rendered only after current respons
 test('pending-contact action uses only an actual carried contact and creates no fake romance cleanup',()=>{
   const state=completedDay22ForDay23('NO_TRAVEL',{pendingContacts:['YURI']});enter(state);for(const phase of ['no_travel_outing','no_travel_good','no_travel_record','no_travel_relationship']){assert.equal(state.storyFlags.day23V4.phase,phase);chooseDay23(state);}
   let steps=getDay23V4PlayableNoTravel(state.storyFlags.day23V4);assert.equal(steps.at(-1).choiceNumber,7);chooseDay23(state,'answer_one');steps=getDay23V4PlayableNoTravel(state.storyFlags.day23V4);assert.ok(steps.some(step=>step.text==='실제 남아 있는 대화 하나에만 답했다.'));assertSourced(steps);
-  const clean=completedDay22ForDay23('NO_TRAVEL');enter(clean);for(let i=0;i<4;i++)chooseDay23(clean);chooseDay23(clean,'answer_one');steps=getDay23V4PlayableNoTravel(clean.storyFlags.day23V4);assert.ok(steps.some(step=>step.text==='답할 실제 대화가 없어 새 연락을 만들지 않았다.'));assertSourced(steps);
+  const clean=completedDay22ForDay23('NO_TRAVEL');enter(clean);for(let i=0;i<4;i++)chooseDay23(clean);chooseDay23(clean,'answer_one');steps=getDay23V4PlayableNoTravel(clean.storyFlags.day23V4);assert.ok(steps.some(step=>step.text==='답할 대화가 없어 휴대전화를 내려놓았다.'));assertSourced(steps);
 });
 
 test('travel routes never enter the NO_TRAVEL playable',()=>{

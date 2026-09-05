@@ -86,11 +86,11 @@ DAY22 완료 이력
 2. ~~source registry에서 24 Scene, 대면 C1~17, 미여행 C3~8과 C14 variant의 정확 라벨·반응을 생성한다.~~ 완료.
 3. ~~DAY20~22 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
 4. ~~아침/남은 일정, 최고의 순간/사진/기념, 귀환/작별, 집 생활/연락, 남은 관계/저녁 통화, 미여행/ending playable을 exact source ref로 구현한다.~~ SCENE01~24, MAIN C1~17, 미여행 C3~8 전체 완료.
-5. game bridge, 저장 재개, 연락·관계 응답, 선택 지출, 시간·장소·인물 presentation을 실제 Story 루프에 연결한다.
+5. game bridge, 저장 재개, 연락·관계 응답, 선택 지출, 시간·장소·인물 presentation을 실제 Story 루프에 연결한다. 브리지·runtime resolution·저장 재개·원자 결제는 완료했고 `game.js` 실제 루프 연결이 남았다.
 6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
 7. Friendly/Neutral/Distant/Mixed 및 shared/separate/Seoul/no-travel/연락 거절 의미 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
 8. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY24 전환이 모두 PASS일 때만 DAY23 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-DAY23 SCENE01~24, MAIN C1~17, 미여행 C3~8 playable 전체를 exact source ref로 구현했다. SCENE19는 관계가 편안한 통화에만 열리고 어려운 관계·추가 대화 필요 경로는 SCENE20으로 직행한다. 서울은 오늘 만나지 않은 사실을 사용하며 부산의 “아까까지 봤는데”를 재사용하지 않는다. C17의 DAY24 대화 방식과 시간은 하은의 별도 현재 응답 전에는 확정되지 않는다. SCENE22~24는 실제 이월 연락·기념품·연락 약속을 사용하고, 미여행 연락 불가 ending에는 하은 통화·여행 가방·기념품을 만들지 않는다. 다음은 **game bridge·저장 재개·현재 응답·선택 지출·시간/장소/인물 presentation 연결**이다. 이 관문 전까지 DAY23은 **PARTIAL**이다.
+DAY23 전체 playable을 묶는 game bridge와 runtime resolution을 구현했다. 사진·기념품·관계·작별 접촉·미여행 만남·DAY24 대화 응답은 각각 허용된 cue에서만 처리하고 실패 시 chapter·money·ledger·구매 기록을 함께 원자 복원한다. 부산 기념품은 실제 3,000원 결제를 한 번만 기록하며 서울·미여행은 구매하지 않는다. 부산·서울·미여행 시간/장소/인물 presentation과 SaveManager 중간 저장 왕복을 검증했다. 미여행 아침과 내일 선택에 남은 하은 부재 설명도 실제 혼자 한 행동으로 교체했다. 다음은 **`game.js`의 DAY23 V4 진입·선택·응답·완료·시계·Story/Free 배타성 연결**이다. 이 관문 전까지 DAY23은 **PARTIAL**이다.

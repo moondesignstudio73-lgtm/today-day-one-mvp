@@ -1,0 +1,44 @@
+import {BACKGROUND_ASSETS} from './assets/asset-manifest.mjs?v=24';
+import {recordTransaction} from './economy-manager.mjs';
+import {applyDay23V4Choice,beginDay23V4,completeDay23V4,getDay23V4Entry,resolveDay23V4Conversation,resolveDay23V4FarewellContact,resolveDay23V4Meeting,resolveDay23V4Photo,resolveDay23V4Relationship,resolveDay23V4Souvenir,validateDay23V4} from './day23-v4-state-contract.mjs';
+import {getDay23V4PlayableOpening} from './day23-v4-playable-opening.mjs?v=1';
+import {getDay23V4PlayableReturn} from './day23-v4-playable-return.mjs?v=1';
+import {getDay23V4PlayableHome} from './day23-v4-playable-home.mjs?v=1';
+import {getDay23V4PlayableNoTravel} from './day23-v4-playable-no-travel.mjs?v=1';
+import {getDay23V4PlayableEnding} from './day23-v4-playable-ending.mjs?v=1';
+import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
+
+export const DAY23_V4_CAMPAIGN_SLOT='m30-day23-returning-place';
+const boundaries=new Set(['openingBoundary','returnBoundary','homeBoundary','noTravelBoundary','endingBoundary']);
+const clock=Object.freeze({morning:'09:00',afternoon:'15:00',evening:'19:00',night:'22:00',day:'13:00'});
+const backgrounds=Object.freeze({'busan-lodging':'day22-busan-lodging',train:'day22-busan-station',station:'day22-busan-station'});
+const resolutionTypes=new Set(['photoConsentCue','souvenirPurchaseCue','relationshipConsentCue','farewellContactConsentCue','meetingConsentCue','conversationConsentCue']);
+
+export function getDay23V4GameCompatibility(state){const entry=getDay23V4Entry(state);if(entry.mode==='BLOCKED_PREREQUISITE'&&state.storyFlags?.day22RuntimeComplete===true&&state.storyFlags?.day22V4?.complete!==true)return {mode:'LEGACY'};return entry;}
+export function prepareDay23V4GameEntry(state){const entry=getDay23V4GameCompatibility(state);return entry.mode==='V4_NEW'?beginDay23V4(state):entry;}
+
+function presentation(direction){let backgroundId=backgrounds[direction.location]??direction.location;if(direction.location==='home')backgroundId=direction.time==='morning'?'home-morning':direction.time==='afternoon'?'home-evening':'home-night';const backgroundUrl=BACKGROUND_ASSETS[backgroundId];if(!backgroundUrl)throw new Error(`DAY23_BACKGROUND_MISSING:${backgroundId}`);const characterId=direction.character==='girlfriend'?'girlfriend':null;return {backgroundId,backgroundUrl,characterId,characterAssetUrl:characterId?STORY_OUTFIT_ASSETS.day12:null,expressionId:'calm',poseId:'standing',timeOfDay:direction.time,storyClock:clock[direction.time],storyLocation:direction.location};}
+function rawSegment(chapter){
+  if(['morning_speed','morning_notice','remaining_time','favorite_moment','departure_record','photo_resolution','souvenir','souvenir_resolution'].includes(chapter.phase))return getDay23V4PlayableOpening(chapter);
+  if(chapter.phase==='return_ride')return [...getDay23V4PlayableOpening(chapter),...getDay23V4PlayableReturn(chapter)];
+  if(['home_imagination','relationship_intent','relationship_resolution','farewell_plan','farewell_resolution'].includes(chapter.phase))return getDay23V4PlayableReturn(chapter);
+  if(chapter.phase==='home_arrival')return [...getDay23V4PlayableReturn(chapter),...getDay23V4PlayableHome(chapter)];
+  if(['small_share','photo_review','pending_contact','self_intent'].includes(chapter.phase))return getDay23V4PlayableHome(chapter);
+  if(chapter.phase==='dinner_call')return [...getDay23V4PlayableHome(chapter),...getDay23V4PlayableEnding(chapter)];
+  if(chapter.input.route==='NO_TRAVEL'&&chapter.phase!=='ending')return getDay23V4PlayableNoTravel(chapter);
+  if(chapter.phase==='ending'&&chapter.input.route==='NO_TRAVEL')return [...getDay23V4PlayableNoTravel(chapter),...getDay23V4PlayableEnding(chapter)];
+  return getDay23V4PlayableEnding(chapter);
+}
+export function getDay23V4GameSegment(state){const chapter=state.storyFlags?.day23V4;if(!validateDay23V4(chapter))throw new Error('DAY23_INVALID_SAVE');return rawSegment(chapter).filter(step=>!boundaries.has(step.type)).map(step=>step.type==='sceneDirection'?{type:'transition',style:'crossfade',label:`SCENE ${String(step.number).padStart(2,'0')} · ${step.title}`,sceneNumber:step.number,bgmId:step.time==='night'?'theme':'daily',...presentation(step)}:step);}
+
+function resumeDirection(chapter){const phase=chapter.phase,route=chapter.input.route;if(route==='NO_TRAVEL')return {location:'home',time:phase==='ending'?'night':'day',character:null};if(['morning_speed','morning_notice','remaining_time','favorite_moment','departure_record','photo_resolution','souvenir','souvenir_resolution','return_ride'].includes(phase))return {location:route==='BUSAN_TRIP'?'busan-lodging':'home',time:'morning',character:route==='BUSAN_TRIP'?'girlfriend':null};if(['home_imagination','relationship_intent','relationship_resolution'].includes(phase))return {location:route==='BUSAN_TRIP'?'train':'home',time:'afternoon',character:chapter.input.contactAllowed?'girlfriend':null};if(['farewell_plan','farewell_resolution'].includes(phase))return {location:route==='BUSAN_TRIP'?'station':'home',time:route==='BUSAN_TRIP'?'evening':'afternoon',character:chapter.input.contactAllowed?'girlfriend':null};return {location:'home',time:['home_arrival','small_share','photo_review'].includes(phase)?'afternoon':phase==='ending'?'night':'evening',character:['dinner_call','wanted_presence','conversation_method','conversation_resolution'].includes(phase)&&chapter.input.contactAllowed?'girlfriend':null};}
+export function getDay23V4GameResumePresentation(state){const chapter=state.storyFlags?.day23V4;if(!validateDay23V4(chapter))throw new Error('DAY23_INVALID_SAVE');return presentation(resumeDirection(chapter));}
+
+export function applyDay23V4GameChoice(state,id){const snapshot=structuredClone(state.storyFlags?.day23V4);try{const result=applyDay23V4Choice(state,id);return {result,steps:getDay23V4GameSegment(state)};}catch(error){state.storyFlags.day23V4=snapshot;throw error;}}
+
+function recordSouvenir(state,response){if(response?.type!=='souvenirPurchaseResponse'||response.purchased!==true)return null;if(state.storyFlags.day23V4SouvenirPurchase)throw new Error('DAY23_SOUVENIR_ALREADY_RECORDED');if(!Number.isFinite(response.cost)||response.cost<=0||typeof response.itemId!=='string'||!response.itemId)throw new Error('DAY23_SOUVENIR_PURCHASE_INVALID');if(!Number.isFinite(state.money)||state.money<response.cost)throw new Error('DAY23_SOUVENIR_BUDGET_CHANGED');const entry=recordTransaction(state,{day:23,category:'shopping',label:'DAY 23 작은 여행 기념품',amount:-response.cost});state.storyFlags.day23V4SouvenirPurchase={day:23,itemId:response.itemId,cost:response.cost,ledgerIndex:state.economyLedger.length-1};return entry;}
+export function applyDay23V4GameResolution(state,response){const snapshot={chapter:structuredClone(state.storyFlags?.day23V4),money:state.money,ledger:structuredClone(state.economyLedger??[]),purchase:structuredClone(state.storyFlags?.day23V4SouvenirPurchase)};try{const purchase=recordSouvenir(state,response);const result=response?.type==='haeunPhotoResponse'?resolveDay23V4Photo(state,response):response?.type==='souvenirPurchaseResponse'?resolveDay23V4Souvenir(state,response):response?.type==='haeunRelationshipResponse'?resolveDay23V4Relationship(state,response):response?.type==='haeunFarewellContactResponse'?resolveDay23V4FarewellContact(state,response):response?.type==='haeunMeetingResponse'?resolveDay23V4Meeting(state,response):response?.type==='haeunConversationResponse'?resolveDay23V4Conversation(state,response):(()=>{throw new Error('DAY23_UNKNOWN_RESOLUTION')})();return {result,purchase,steps:getDay23V4GameSegment(state)};}catch(error){state.storyFlags.day23V4=snapshot.chapter;state.money=snapshot.money;state.economyLedger=snapshot.ledger;if(snapshot.purchase===undefined)delete state.storyFlags.day23V4SouvenirPurchase;else state.storyFlags.day23V4SouvenirPurchase=snapshot.purchase;throw error;}}
+
+export function completeDay23V4GameChapter(state,cue){const chapter=completeDay23V4(state,cue);state.storyHistory??=[];if(!state.storyHistory.some(record=>record.sceneId===DAY23_V4_CAMPAIGN_SLOT))state.storyHistory.push({sceneId:DAY23_V4_CAMPAIGN_SLOT,scenarioId:'day23-notion-v4',day:23,arc:'돌아갈 곳',choiceId:chapter.choices.filter(record=>record.kind==='choice').at(-1)?.id??null,response:chapter.input.route==='NO_TRAVEL'?'멀리 가지 않은 하루를 자기 속도로 마치고 실제로 합의한 내일만 남겼다.':chapter.input.route==='SEOUL_DAY'?'이미 돌아온 집에서 평범한 생활과 관계의 다음 말을 구분해 정했다.':'부산에서 각자 집으로 돌아와 좋은 기억과 남은 관계 대화를 섞어 지우지 않았다.',facts:structuredClone(chapter.facts),choices:structuredClone(chapter.choices),route:chapter.input.route,souvenirPurchase:structuredClone(state.storyFlags.day23V4SouvenirPurchase??null)});state.storyFlags.day23RuntimeComplete=true;state.pendingStoryId=null;return {type:'sceneEnd',day:23,complete:true};}
+
+export function isDay23V4ResolutionStep(step){return resolutionTypes.has(step?.type);}
