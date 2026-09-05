@@ -56,6 +56,15 @@
 
 ## 남은 경로
 
-- 390×844 모바일 네 경로와 각 경로 사용자 저장 복원.
+- 390×844 모바일 Distant/Mixed/Neutral 세 경로와 각 경로 사용자 저장 복원.
 
-DAY 19는 계속 `PARTIAL`이다. 다음 시작점은 390×844 모바일 Friendly 비-SKIP 완주다.
+## Mobile Friendly — PASS (game250)
+
+- viewport capability의 목표값을 390×844에 맞췄다. 브라우저 장치 배율 반올림으로 실제 CSS viewport는 `391×844`였고 모바일 미디어쿼리는 활성화됐다.
+- 데스크톱 Friendly와 같은 15개 실제 선택(C15 조건부 생략)을 모두 화면 버튼으로 눌렀다. SKIP은 사용하지 않았다.
+- SCENE01부터 Friendly 공동 계획, 후보만 유지, 내일 집 식사 수락, 생활비 보존 결말을 지나 DAY20 첫 선택 화면까지 도달했다.
+- 각 선택 경계에서 수평 넘침을 검사했으며 최대값은 0이었다. 종료 화면은 `clientWidth=391`, `scrollWidth=391`, stage 폭 `390.8046`이었다.
+- DAY20의 세 Story 선택이 접근성 트리에 표시됐고 Free Action 조작은 나타나지 않았다. console warning/error는 0이었다.
+- 종료 뒤 fixture에서 `테스트 전 저장을 복원했습니다.`를 확인하고 임시 viewport를 기본 `1103×620`으로 되돌렸다.
+
+DAY 19는 계속 `PARTIAL`이다. 다음 시작점은 390×844 모바일 Distant 비-SKIP 완주다.

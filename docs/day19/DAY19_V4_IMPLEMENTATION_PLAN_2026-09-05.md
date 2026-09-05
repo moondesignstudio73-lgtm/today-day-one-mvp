@@ -162,3 +162,10 @@ DAY19는 계속 `PARTIAL`. 다음 작업은 **Mixed 데스크톱 비-SKIP 완주
 - 상태 replay 호환성은 보존하고 presentation에서만 각자 여행 C11을 후보 유지로 좁혔으며, SCENE22를 `거리를 두고 있는 밤` 원문 분기로 연결했다.
 - 수정 후 15개 선택을 비-SKIP 완주했다. 각자 저녁→solo C14, C15 생략, C16 실제 합의 범위만 기록, 거리 두기 SCENE22/24, DAY20 전환, console warning/error 0, 사용자 저장 복원 PASS.
 - 데스크톱 네 경로가 모두 닫혔다. 다음은 유효 390×844 모바일 Friendly부터 순차 완주한다.
+
+### 모바일 Friendly 실제 QA 후속
+
+- 목표 390×844의 장치 배율 반올림값인 실제 `391×844`에서 모바일 미디어쿼리가 활성화된 상태로 SCENE01부터 DAY20 첫 선택까지 진행했다.
+- Friendly 15개 선택을 실제 버튼으로 눌렀고 C15는 실제 미완료 연락이 없어 나타나지 않았다. SKIP은 사용하지 않았다.
+- 선택 경계의 최대 수평 넘침 0, 최종 `scrollWidth=clientWidth=391`, console warning/error 0, DAY20 Story 선택 표시와 Free Action 비노출을 확인했다.
+- fixture의 사용자 저장을 복원하고 viewport를 reset했다. DAY19는 `PARTIAL`이며 다음은 모바일 Distant다.

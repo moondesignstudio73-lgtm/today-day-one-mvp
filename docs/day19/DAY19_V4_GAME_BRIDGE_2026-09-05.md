@@ -48,3 +48,5 @@ Mixed fixture의 DAY18 replay 누락을 합법 연락 가능/solo 이력으로 �
 Neutral 첫 실행에서 C8 각자 여행 뒤 C11 공동 재확인과 SCENE22 편안한 공동 통화가 남는 결함을 발견했다. game250은 `SEPARATE_DAY_OK`의 playable C11을 후보 유지로 제한하고 SCENE22를 거리 두기 원문으로 연결하되 기존 replay 저장은 계속 유효하게 둔다. 수정본을 비-SKIP 완주해 solo C14, C15 생략, 합의 범위의 비송금, 거리 두기 엔딩, 콘솔 오류 0과 저장 복원을 확인했다.
 
 DAY 19는 계속 `PARTIAL`. 다음은 390×844 모바일 네 경로다.
+
+Mobile Friendly 후속에서 목표 390×844의 장치 배율 반올림값인 실제 `391×844` 모바일 미디어쿼리 영역을 확보했다. 15개 선택을 실제 버튼으로 눌러 DAY20 첫 Story 선택까지 SKIP 없이 완주했고, 수평 넘침 0, console warning/error 0, Free Action 비노출과 사용자 저장 복원을 확인했다. DAY19는 계속 `PARTIAL`이며 다음은 모바일 Distant다.
