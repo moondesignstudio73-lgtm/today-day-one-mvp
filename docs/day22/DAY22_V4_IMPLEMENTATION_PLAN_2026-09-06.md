@@ -82,7 +82,7 @@ DAY21 완료 이력
 1. ~~Notion 최종 원문 플레이어 본문 잠금과 내부 메모 분리.~~ 완료.
 2. ~~source registry에서 24 Scene, 대면 C1~17, 미여행 C3~8의 정확 라벨·반응·variant를 생성한다.~~ 완료.
 3. ~~DAY19~21 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
-4. 출발/이동, 식사/속도, 사진/카페, 숙소/접촉/밤, 서울 귀가, 미여행/ending playable 모듈을 exact source ref로 구현한다.
+4. ~~출발/이동, 식사/속도, 사진/카페, 숙소/접촉/밤, 서울 귀가, 미여행/ending playable 모듈을 exact source ref로 구현한다.~~ 완료.
 5. game bridge, 저장 재개, 현재 접촉 응답, 사진 동의, 경제 중복 차감 방지, 시간·장소·인물 presentation을 실제 루프에 연결한다.
 6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
 7. Friendly/Neutral/Distant/Mixed 및 Busan/Seoul/no-travel 의미 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
@@ -90,7 +90,7 @@ DAY21 완료 이력
 
 ## 다음 시작점
 
-SCENE22/C17 서울 귀가와 SCENE24 공통 결말 playable을 구현한다. 부산 공유·부산 별실·서울 귀가·미여행의 실제 사실만 회수하고, 완료 cue 전에는 DAY23 hook을 열지 않는다.
+V4 game bridge, 저장 재개, 사진·접촉 resolution, Story/Free 배타성, 시간·장소·인물 presentation과 완료 이력 기록을 실제 게임 루프에 연결한다. DAY21 교통·숙박 결제를 중복 차감하지 않는 경제 회귀도 함께 고정한다.
 
 ## Source registry 구현 기록
 
@@ -145,3 +145,12 @@ SCENE22/C17 서울 귀가와 SCENE24 공통 결말 playable을 구현한다. 부
 - 별실은 침대 동석·손 내밀기·접촉을 만들지 않고 자기 방 인사로 끝낸다. 서울은 숙소 도착·숙박 야식을 말하지 않고 C16 뒤 SCENE22로 이동한다.
 - 저녁 식사는 실제 배고픔과 선택한 양만 기록하며 DAY21에 결제한 교통·숙박을 다시 차감하지 않는다.
 - DAY22 source/state/playable 집중 검사 24/24 PASS.
+
+## Seoul return · common ending playable 구현 기록
+
+- `day22-v4-playable-ending.mjs`가 SCENE22/C17과 SCENE24를 경로별로 재생한다. 서울만 C17을 거쳐 각자 집으로 돌아가며 부산은 C17 없이 실제 예약 공간의 밤에서 끝난다.
+- 사진 고르기는 공동 사진이 없거나 삭제됐을 때 풍경 또는 실제 기억만 사용한다. 삭제 사진을 복원하거나 모든 사진 검토를 숙제로 만들지 않는다.
+- 미여행 결말은 익숙한 방과 혼자 보낸 실제 속도만 회수하고 부산·서울 밤, 함께 여행한 하은, 같이 온 사람 문장을 출력하지 않는다.
+- 부산에서만 다음 날 귀환·빨래를 말하며 서울에는 낯선 숙소 아침이 없다.
+- SCENE24의 fade-out 뒤에만 `chapterCompletionCue(day=22)`를 내보낸다. 미완료 phase는 경계만 반환하고 DAY23 hook을 열 수 없다.
+- 24 Scene, 여행 C1~17, 미여행 C3~8의 source/state/playable 집중 검사 28/28 PASS. 실제 게임 bridge와 브라우저 QA 전이므로 DAY22는 계속 PARTIAL이다.
