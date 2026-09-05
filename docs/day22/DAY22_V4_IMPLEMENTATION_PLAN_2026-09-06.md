@@ -2,7 +2,7 @@
 
 ## 판정과 원문
 
-- 현재 상태: PARTIAL / SOURCE LOCKED.
+- 현재 상태: PARTIAL / SOURCE + STATE LOCKED.
 - 최종 원문: Notion `DAY 22 — 떠날 수 있는 사람 | SCENARIO V4`.
 - page id: `3c9c31f0-29a6-81f3-ba7f-eb07c6979d27`.
 - last edited snapshot: `2026-08-27T20:30:21.198Z`.
@@ -81,7 +81,7 @@ DAY21 완료 이력
 
 1. ~~Notion 최종 원문 플레이어 본문 잠금과 내부 메모 분리.~~ 완료.
 2. ~~source registry에서 24 Scene, 대면 C1~17, 미여행 C3~8의 정확 라벨·반응·variant를 생성한다.~~ 완료.
-3. DAY19~21 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.
+3. ~~DAY19~21 실제 이력을 동결하는 replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
 4. 출발/이동, 식사/속도, 사진/카페, 숙소/접촉/밤, 서울 귀가, 미여행/ending playable 모듈을 exact source ref로 구현한다.
 5. game bridge, 저장 재개, 현재 접촉 응답, 사진 동의, 경제 중복 차감 방지, 시간·장소·인물 presentation을 실제 루프에 연결한다.
 6. source/state/bridge/Story-Free/저장/경제 회귀와 100×30일 시뮬레이션을 통과한다.
@@ -90,7 +90,7 @@ DAY21 완료 이력
 
 ## 다음 시작점
 
-DAY19~21 실제 완료 이력을 동결하는 `day22-notion-v4/1` replay-locked 상태 계약을 구현한다. 신규 진입은 검증된 DAY21 완료 hook만 허용하고 legacy DAY22 저장은 기존 경로로 보존한다.
+exact source ref만 사용하는 출발·이동 SCENE01~05/C1~3과 미여행 SCENE23/C3~8 playable 모듈을 먼저 구현한다. 부산·서울·미여행의 장소, 동행 인물, 교통·숙박 표현이 서로 새지 않는지 모듈 경계에서 검증한다.
 
 ## Source registry 구현 기록
 
@@ -99,3 +99,13 @@ DAY19~21 실제 완료 이력을 동결하는 `day22-notion-v4/1` replay-locked 
 - 모든 선택은 원문 라벨 3개를 가져야 하며 Scene 번호와 각 variant의 선택 번호가 연속인지 검사한다.
 - source selection validator는 dialogue/message/monologue/stageAction의 exact source line만 허용한다.
 - snapshot SHA-256 재계산을 포함한 source 회귀 3/3 PASS.
+
+## 상태 계약 구현 기록
+
+- 신규 `day22-notion-v4/1`은 검증된 DAY21 V4 완료 hook에서만 시작하며, 기존 DAY22 진행 키가 있는 저장은 legacy 경로로 유지한다.
+- `BUSAN_TRIP`은 DAY21의 `BUSAN_CONFIRMED`, 날짜·이동·예산·숙박·상호 동의 check, 예약·결제, 검증 견적 id와 양수인 본인 부담액이 모두 있을 때만 연다. 어느 하나라도 손상되면 `NO_TRAVEL`로 닫는다.
+- `SEOUL_DAY`는 숙박·부산 결제 기록을 만들지 않고 C17 귀가 선택까지 진행한다. `NO_TRAVEL`은 대체 C3~8만 사용하며 부산 장소·음식·표·숙소·하은 대기를 만들지 않는다.
+- 사진 촬영, 전송 대상, 공동 사진 보관·삭제와 오늘의 포옹·손잡기 응답을 각각 독립 사실로 기록한다. 삭제 또는 거절 결과는 replay 뒤에도 되살아나지 않는다.
+- 잠깐 따로 보기에는 찾기 쉬운 장소·시간·연락 가능 여부와 실제 재회를 기록한다. 아라 전송 선택은 DAY13 실제 만남과 사진 교류가 모두 있을 때만 노출한다.
+- 17개 여행 선택, 6개 미여행 선택, 사진·접촉 resolution을 처음부터 재생해 중간 저장 변조를 거부한다. DAY22 완료 cue만 DAY21 hook을 소비하고 DAY23 hook을 한 번 연다.
+- DAY21 인접 회귀를 포함한 source/state 집중 검사 19/19 PASS.
