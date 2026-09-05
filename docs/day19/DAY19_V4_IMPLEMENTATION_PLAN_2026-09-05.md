@@ -124,3 +124,13 @@ candidates/state 집중 검사 9/9 PASS. 다음 작업은 **SCENE 18~24/C13~C16 
 - ending/state 집중 검사 9/9 PASS. SCENE01~24 순수 플레이 계층은 준비됐으나 본선 브리지, 경제 원장의 원자적 복권 처리, 저장/로드와 실제 브라우저 QA는 남아 있다.
 
 DAY19는 `PARTIAL`. 다음 작업은 **네 playable 구간을 통합하는 game bridge와 본선 교체, 저장/로드 자동 QA**다.
+
+### 본선 브리지 및 자동 저장 QA 후속
+
+- 네 playable 구간을 `day19-v4-game-bridge.mjs`에서 연결했다. C4/C7/C12 반응 뒤 내부 boundary를 화면에 보내지 않고 각각 다음 원본 장면까지 연속 재생한다.
+- 본선 `game.js`는 DAY 18 V4 완료·DAY 19 hook을 확인한 새 저장만 DAY 19 V4로 시작한다. 기존 DAY 19 축약 진행 키가 있는 저장은 계속 legacy로 재개한다.
+- C3 복권은 사전 오락비와 실제 잔액이 모두 있을 때만 5,000원을 경제 원장에 한 번 차감한다. 기존 즉석복권 API를 호출하지 않아 등급·결과·상금을 만들지 않으며 적용 실패 시 장/잔액/원장을 원자적으로 복구한다.
+- SCENE24 완료 cue는 실제 choices/facts와 미확정 복권 구매만 캠페인 history에 기록한다. legacy 집안일 선택 효과와 legacy DAY 19 Free Action은 실행하지 않는다.
+- 실제 `SaveManager` 중간 저장 왕복과 다음 segment 동일성, shared/solo 16단계 도달, legacy 비변조, 본선 라우팅, 전체 자동 회귀와 100×30일 시뮬레이션을 통과했다. 상세 증거는 `DAY19_V4_GAME_BRIDGE_2026-09-05.md`에 있다.
+
+DAY19는 계속 `PARTIAL`. 다음 작업은 **실제 브라우저 Friendly 비-SKIP 완주와 대표 중간 저장 재개**, 이후 Neutral/Distant/Mixed 및 390×844 모바일 QA다.
