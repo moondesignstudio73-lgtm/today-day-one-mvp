@@ -266,3 +266,5 @@ DAY19 SCENE01~05 구현(9/5): exact source line selector와 C1~C4 전용 playabl
 DAY19 SCENE06~12 구현(9/5): DAY18의 평온한 실제 여행 대화·연락 가능 입력만 `CALL_SHARED`로 선택해 하은과 후보/각자 예산/늦잠/빈칸을 이야기하고, 나머지는 solo·동행 미정 원문만 재생하는 중간 playable 구간을 추가했다. 새 대면 약속이나 하은의 승인·돈을 만들지 않으며 C5 shared/solo, C6 일정 축소, C7 준비 동기의 모든 반응을 exact source line에 연결했다. middle/state 집중 9/9 PASS. 본선 미연결이므로 DAY19는 PARTIAL이며 다음은 **SCENE13~17/C8~C12 구현**이다.
 
 DAY19 SCENE13~17 구현(9/5): 동행 태도·돈을 쓰는 이유·부산/서울/미루기 후보·예약 앞 반응·미확정 기대를 전용 candidates playable 구간으로 구현했다. shared/solo 출력을 분리하고, C11의 세 선택 모두 결제 없이 `CANDIDATE_ONLY`로 끝나며 먼저 잡고 싶은 경로도 손을 떼도록 했다. 미확정 복권/오지 않은 수입을 세지 않고 지훈에게 말하지 않은 복권 사실도 만들지 않는다. candidates/state 집중 9/9 PASS. 본선 미연결이므로 DAY19는 PARTIAL이며 다음은 **SCENE18~24/C13~C16 ending 구현**이다.
+
+DAY19 SCENE18~24 구현(9/5): 실제 C13 저녁, 명시적으로 수락된 내일 집 식사만 여는 shared C14, 실제 남은 연락이 있을 때만 여는 C15, 돈을 남기는 C16과 세 ending 경로를 구현했다. 통화 경로를 카페 동석으로 바꾸지 않고, 연락 불가 경로의 하은 대사·존재하지 않는 NPC 이름을 제거했다. 마지막은 SCENE24 원문 뒤 completion cue로 끝난다. ending/state 집중 9/9 PASS. 24 Scene/16 Choice 순수 스크립트는 준비됐지만 본선·경제·저장/로드·브라우저 미검증이므로 DAY19는 PARTIAL이며 다음은 **통합 game bridge와 본선 교체**다.

@@ -113,3 +113,14 @@ middle/state 집중 검사 9/9 PASS. 다음 작업은 **SCENE 13~17/C8~C12 playa
 - exact source ownership, solo 하은 비노출, 순수 재생과 후보≠예약 반례를 검증했다. 본선 브리지/브라우저는 아직 미연결이다.
 
 candidates/state 집중 검사 9/9 PASS. 다음 작업은 **SCENE 18~24/C13~C16 ending playable script**다.
+
+### SCENE 18~24 구현 후속
+
+- 통화로 계획한 경로는 같이 앉아 컵을 챙긴 것처럼 만들지 않고 각자 저녁으로 전환한다. 연락 불가 경로에서는 C13을 각자 식사 하나로 제한한다.
+- 내일 집 식사는 제안과 응답을 분리한다. 평온한 shared 입력에서 하은이 가능한 시간을 명시한 경우만 `ACCEPTED`가 되고 shared C14가 열린다. 그 외에는 solo 식탁 준비만 표시한다.
+- C15는 유리·서진·아라 중 실제 이어 온 연락이 entry input에 있을 때만 나타난다. 조건 설명이나 존재하지 않는 NPC 이름은 화면에 출력하지 않는다.
+- C16과 SCENE22~24는 하은 돈을 합산하지 않고, shared/거리 두기/solo 및 내일 식사 약속을 실제 facts로 분기한다.
+- 마지막 출력은 SCENE24 원문 독백 뒤 `chapterCompletionCue`이며 아직 상태 완료나 DAY20 이동을 직접 수행하지 않는다.
+- ending/state 집중 검사 9/9 PASS. SCENE01~24 순수 플레이 계층은 준비됐으나 본선 브리지, 경제 원장의 원자적 복권 처리, 저장/로드와 실제 브라우저 QA는 남아 있다.
+
+DAY19는 `PARTIAL`. 다음 작업은 **네 playable 구간을 통합하는 game bridge와 본선 교체, 저장/로드 자동 QA**다.

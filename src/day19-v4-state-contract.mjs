@@ -106,7 +106,8 @@ export function getDay19V4Options(chapter) {
   }
   if (number === 1 && !chapter.input.contactAllowed) return options(1).filter(option => !option.id.endsWith('_ask_haeun'));
   if (number === 5 && !chapter.input.sharedPlanningEligible) return options(5, soloLabels[5], 'solo');
-  if (number === 13 && !chapter.input.contactAllowed) return options(13).filter(option => option.id.endsWith('_eat_separately'));
+  if (number === 13 && !chapter.input.sharedPlanningEligible) return options(13).filter(option =>
+    option.id.endsWith('_eat_separately') || (chapter.input.contactAllowed && option.id.endsWith('_tomorrow_home')));
   if (number === 14 && chapter.facts.tomorrowMeal !== 'ACCEPTED') return options(14, soloLabels[14], 'solo');
   return options(number);
 }
@@ -136,7 +137,7 @@ function reduce(chapter, id) {
     case 11: facts.reservationStatus = 'CANDIDATE_ONLY'; facts.travelPaymentMade = false; chapter.phase = 'expectation'; break;
     case 12: facts.expectationHandling = ['CURRENT_MONEY_ONLY', 'NAME_DISAPPOINTMENT', 'JOKE_WITH_JIHOON'][index]; chapter.phase = 'dinner'; break;
     case 13:
-      facts.dinner = ['TOGETHER_IF_AVAILABLE', 'SEPARATE', 'TOMORROW_HOME_PROPOSAL'][index];
+      facts.dinner = [chapter.input.sharedPlanningEligible ? 'TOGETHER' : 'SEPARATE_UNAVAILABLE', 'SEPARATE', 'TOMORROW_HOME_PROPOSAL'][index];
       facts.tomorrowMeal = index === 2 ? (chapter.input.tomorrowMealAcceptancePossible ? 'ACCEPTED' : 'DECLINED_OR_REST') : 'NOT_PROPOSED';
       chapter.phase = 'tomorrow_table'; break;
     case 14:
