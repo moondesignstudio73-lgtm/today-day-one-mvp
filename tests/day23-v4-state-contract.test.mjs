@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {beginDay23V4,completeDay23V4,getDay23V4Entry,getDay23V4Options,resolveDay23V4Conversation,resolveDay23V4Meeting,resolveDay23V4Photo,resolveDay23V4Relationship,resolveDay23V4Souvenir,validateDay23V4} from '../src/day23-v4-state-contract.mjs';
+import {beginDay23V4,completeDay23V4,getDay23V4Entry,getDay23V4Options,resolveDay23V4Conversation,resolveDay23V4FarewellContact,resolveDay23V4Meeting,resolveDay23V4Photo,resolveDay23V4Relationship,resolveDay23V4Souvenir,validateDay23V4} from '../src/day23-v4-state-contract.mjs';
 import {chooseDay23,completedDay22ForDay23 as completedDay22} from './day23-v4-fixture.mjs';
 
 function resolvePending(state,{photo=true,purchase=false,relationship='CONTINUE',meeting=true,conversation=true}={}){
@@ -8,6 +8,7 @@ function resolvePending(state,{photo=true,purchase=false,relationship='CONTINUE'
   if(phase==='photo_resolution')return resolveDay23V4Photo(state,{type:'haeunPhotoResponse',accepted:photo});
   if(phase==='souvenir_resolution')return resolveDay23V4Souvenir(state,purchase?{type:'souvenirPurchaseResponse',purchased:true,itemId:'small-postcard',cost:3000}:{type:'souvenirPurchaseResponse',purchased:false});
   if(phase==='relationship_resolution')return resolveDay23V4Relationship(state,{type:'haeunRelationshipResponse',outcome:relationship});
+  if(phase==='farewell_resolution')return resolveDay23V4FarewellContact(state,{type:'haeunFarewellContactResponse',accepted:false});
   if(phase==='meeting_resolution')return resolveDay23V4Meeting(state,{type:'haeunMeetingResponse',accepted:meeting});
   if(phase==='conversation_resolution')return resolveDay23V4Conversation(state,{type:'haeunConversationResponse',accepted:conversation});
   return null;
