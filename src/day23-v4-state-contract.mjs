@@ -68,6 +68,7 @@ export function getDay23V4Options(chapter){
   if(number===7&&!chapter.input.contactAllowed)result=result.filter(option=>!option.id.endsWith('_ask_home'));
   if(number===10&&!chapter.input.contactAllowed)result=result.filter(option=>option.id.endsWith('_rest_later'));
   if(number===12){if(!chapter.input.contactAllowed)result=result.filter(option=>!option.id.endsWith('_share_haeun'));if(!chapter.input.jihoonAvailable)result=result.filter(option=>!option.id.endsWith('_tell_jihoon'));}
+  if(number===13&&!chapter.input.landscapePhotoExists&&!chapter.input.sharedPhotoKept&&!chapter.facts.sharedPhotoToday)result=result.filter(option=>option.id.endsWith('_leave_unsorted'));
   if(number===15&&!chapter.input.contactAllowed)result=result.filter(option=>option.id.endsWith('_rest'));
   return result;
 }
