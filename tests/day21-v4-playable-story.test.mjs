@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {getDay21V4PlayableStory} from '../src/day21-v4-playable-story.mjs';
+import {validateDay21V4SourceStep} from '../src/day21-v4-source-selection.mjs';
+import {chooseDay21,day21State} from './day21-v4-fixture.mjs';
+
+const assertSourced=steps=>{for(const step of steps)if(['dialogue','message','monologue','stageAction'].includes(step.type))assert.equal(validateDay21V4SourceStep(step),true,`${step.type}:${step.text??step.actionLabel}`);};
+const reachVenue=(state,venueIndex)=>{chooseDay21(state);chooseDay21(state);chooseDay21(state,venueIndex);};
+
+test('park story presents SCENE 05-12 and exact choices 4-7',()=>{const s=day21State();reachVenue(s,0);for(const expected of [[5,6,4],[7,8,5],[9,10,6],[11,12,7]]){const steps=getDay21V4PlayableStory(s.storyFlags.day21V4),scenes=steps.filter(step=>step.type==='sceneDirection').map(step=>step.number);assert.deepEqual(scenes,expected.slice(0,2));assert.equal(steps.at(-1).choiceNumber,expected[2]);assertSourced(steps);chooseDay21(s);}const end=getDay21V4PlayableStory(s.storyFlags.day21V4);assert.deepEqual(end.at(-1),{type:'storyBoundary',nextScene:13,route:'PARK'});assertSourced(end);assert.equal(s.storyFlags.day21V4.facts.heardLunchStory,true);assert.equal(s.storyFlags.day21V4.facts.heardWorkStory,true);assert.equal(s.storyFlags.day21V4.facts.heardAngerStory,true);assert.equal(s.storyFlags.day21V4.facts.heardSocksStory,true);});
+
+test('phone story is audio-only and contains no visual character or contact staging',()=>{const s=day21State({morningMode:'MESSAGE_MORNING',day20StayedOver:false});reachVenue(s,1);for(let i=0;i<4;i++){const steps=getDay21V4PlayableStory(s.storyFlags.day21V4);assert.equal(steps.filter(step=>step.type==='sceneDirection').some(step=>step.character==='girlfriend'),false);assert.equal(steps.some(step=>['hands-free','park-path','wait-passer','wind-hair','water-nearby'].includes(step.status)),false);assert.equal(steps.some(step=>/그녀가 (잠깐 )?(웃|보|손)|하은이 .*머리카락/.test(step.text??'')),false);assert.equal(steps.filter(step=>step.type==='dialogue').every(step=>step.device==='phone-call'),true);assertSourced(steps);chooseDay21(s,i===3?2:0);}const end=getDay21V4PlayableStory(s.storyFlags.day21V4);assert.deepEqual(end.at(-1),{type:'storyBoundary',nextScene:13,route:'PHONE'});assert.ok(end.some(step=>step.status==='call-water-break'));assert.equal(s.storyFlags.day21V4.choices.some(item=>item.kind==='resolution'),false);assertSourced(end);});
+
+test('deferred route never leaks unheard SCENE 05-12 story',()=>{const s=day21State();reachVenue(s,2);const steps=getDay21V4PlayableStory(s.storyFlags.day21V4);assert.deepEqual(steps,[{type:'storyBoundary',nextScene:17,route:'DEFERRED'}]);assert.equal(s.storyFlags.day21V4.facts.heardHaeunStory,false);assert.equal(s.storyFlags.day21V4.facts.heardLunchStory,false);assert.equal(s.storyFlags.day21V4.facts.heardAngerStory,false);});
