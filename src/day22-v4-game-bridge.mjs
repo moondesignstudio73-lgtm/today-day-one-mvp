@@ -1,4 +1,4 @@
-import {BACKGROUND_ASSETS} from './assets/asset-manifest.mjs';
+import {BACKGROUND_ASSETS} from './assets/asset-manifest.mjs?v=24';
 import {applyDay22V4Choice,beginDay22V4,completeDay22V4,getDay22V4Entry,resolveDay22V4Contact,resolveDay22V4Photo,validateDay22V4} from './day22-v4-state-contract.mjs';
 import {getDay22V4PlayableOpening} from './day22-v4-playable-opening.mjs';
 import {getDay22V4PlayableMealPhoto} from './day22-v4-playable-meal-photo.mjs';

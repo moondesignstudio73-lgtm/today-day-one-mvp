@@ -90,7 +90,9 @@ DAY21 완료 이력
 
 ## 다음 시작점
 
-DAY22 실제 브라우저 진입 fixture와 QA 문서를 만들고, 우선 데스크톱 Friendly 부산 공유 숙소를 SCENE01부터 DAY23 전환까지 SKIP 없이 완주한다. 이어 부산 별실·서울·연락 가능/불가 미여행과 모바일 의미 경로를 같은 배포본에서 검증한다.
+Friendly 부산 공유 숙소 데스크톱 경로는 실제 브라우저에서 DAY23 전환까지 SKIP 없이 PASS했다. 첫 실행에서 발견한 `DAY22_BACKGROUND_MISSING:day22-busan-station`은 game/bridge asset manifest 캐시 세대를 `v=24`로 통일해 수정했고 같은 fixture 재실행으로 재발하지 않음을 확인했다. 상세 증거는 `DAY22_V4_BROWSER_QA_2026-09-06.md`에 기록했다.
+
+다음은 부산 별실·서울·연락 가능/불가 미여행 데스크톱 경로를 추가하고, 이어 389×844 Friendly/Neutral/Distant/Mixed 의미 경로를 같은 배포본에서 검증한다. 이 관문 전까지 DAY22는 **PARTIAL**이다.
 
 ## Source registry 구현 기록
 
