@@ -46,7 +46,7 @@ export function getDay24V4Options(chapter){
   if(['conversation_resolution','relationship_resolution','contact_resolution','lie_resolution','future_resolution','ending'].includes(chapter?.phase))return [];
   if(chapter?.phase==='contact_path'){const recipient=chapter.facts.contactRecipient;if(!contactSuffixes[recipient])throw new Error(`DAY24_CONTACT_RECIPIENT_INVALID:${recipient}`);return optionSet(9,recipient,contactSuffixes[recipient]);}
   const spec=choicePhases[chapter?.phase];if(!spec)throw new Error(`DAY24_INVALID_PHASE:${chapter?.phase}`);let result=optionSet(spec[0],spec[1],suffixes[chapter.phase]);
-  if(chapter.phase==='short_time'&&relationshipEnded(chapter))result=result.filter(option=>!option.id.endsWith('_walk'));
+  if(chapter.phase==='short_time'&&(chapter.facts.haeunRelationshipOutcome!=='CONTINUE'||chapter.facts.conversationMode!=='MEET'))result=result.filter(option=>!option.id.endsWith('_walk'));
   if(chapter.phase==='contact_expectation'){if(!relationshipEnded(chapter))result=result.filter(option=>!option.id.endsWith('_relationship_ended'));else result=result.filter(option=>!option.id.endsWith('_relationship_active'));}
   if(chapter.phase==='empty_evening'&&!chapter.input.jihoonAvailable)result=result.filter(option=>!option.id.endsWith('_jihoon'));
   return result;
