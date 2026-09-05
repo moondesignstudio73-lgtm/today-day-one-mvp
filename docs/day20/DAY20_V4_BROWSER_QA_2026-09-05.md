@@ -2,7 +2,7 @@
 
 ## 판정
 
-PARTIAL PASS. 자동 route matrix와 별개로 실제 게임 UI에서 선택지를 눌러 데스크톱의 여섯 의미 경로를 DAY21까지 확인했고, 389×844 모바일은 short 경로를 완주했다. 모바일 나머지 경로와 저장 재개·미디어·오버플로 확인 전에는 DAY20을 COMPLETE로 올리지 않는다.
+PASS / COMPLETE. 자동 route matrix와 별개로 실제 게임 UI에서 선택지를 눌러 데스크톱과 실제 `innerWidth=389` 모바일의 여섯 의미 경로를 DAY21까지 확인했다. 대표 대면 저장 재개, 표시 이미지, Story/Free 배타성, 콘솔과 가로 오버플로 관문도 통과했다.
 
 ## 실행 환경
 
@@ -27,13 +27,19 @@ PARTIAL PASS. 자동 route matrix와 별개로 실제 게임 UI에서 선택지�
 
 ## 모바일 결과
 
-- 389×844 viewport에서 short 경로를 같은 선택으로 SKIP 없이 DAY21까지 완주했다.
-- 모바일에서도 DAY/시간/대화/선택 UI가 접근성 트리에 유지되고 선택 입력이 막히지 않았다.
-- 남은 face/solo/conflict/stay/leave의 전 구간 오버플로와 미디어 확인은 다음 QA에서 수행한다.
+- viewport capability를 보정해 실제 게임의 `innerWidth=389`와 모바일 미디어쿼리 활성 상태를 확인했다.
+- face/leave 13개 선택, short 4개, solo 4개, conflict 6개, stay 14개 선택을 각각 SKIP 없이 DAY21까지 완주했다.
+- short와 conflict는 친밀 장면을 건너뛰었고, solo는 하은 현장 등장 없이 닫혔다. stay만 준비 조건 뒤 C14와 별도 침구 결말을 노출했다.
+- 각 선택 경계와 종료 화면에서 `scrollWidth - innerWidth`의 최대값은 0이었다.
+- 각 경로의 console warning/error는 0건이었다. DAY/시간/대화/선택 UI가 접근성 트리에 유지되고 선택 입력이 막히지 않았다.
 
-## 남은 관문
+## 저장 재개와 미디어
 
-1. 389×844 face/solo/conflict/stay/leave 비-SKIP 완주.
-2. 대표 대면 경로 중간 저장 후 새로고침·재개 검증.
-3. 데스크톱·모바일 이미지 로드, 오디오, 가로 오버플로 최종 확인.
-4. 위 관문 통과 후 DAY20 COMPLETE 승격 및 DAY21 구현 시작.
+- 대표 대면 경로에서 C5까지 진행하고 SCENE07 도중 새로고침했다. 실제 타이틀의 `이어하기`를 거쳐 저장된 다섯 선택을 유지한 채 해당 장면 시작점의 C5 반응부터 재생됐다.
+- 현재 표시되는 하은·주인공 이미지는 `complete=true`, `naturalWidth>0`이었다. 자연 폭 0인 항목은 `hidden`이고 `src`가 없는 범용 NPC/선물/액세서리/이벤트 CG 재사용 레이어뿐이었다.
+- SND ON 상태로 전체 경로를 진행했고 브라우저 미디어 warning/error는 없었다. 현재 DAY20 장면은 독립 `<audio>` 요소를 만들지 않는다.
+- fixture의 `테스트 전 저장 복원` 성공 문구를 확인한 뒤 임시 viewport override를 reset했다.
+
+## 종결
+
+DAY20 V4는 source/state/playable/bridge/저장/Story-Free/데스크톱·모바일 경로 검증을 모두 통과해 PASS / COMPLETE다. 다음 작업은 DAY21 최종 원문 잠금과 DAY18~20 입력 이력 감사다.
