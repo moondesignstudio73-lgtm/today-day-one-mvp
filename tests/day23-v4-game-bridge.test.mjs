@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import {createInitialState} from '../src/game-core.mjs';
 import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
 import {GAME_MODES} from '../src/scenario-state.mjs';
@@ -15,10 +16,9 @@ function finish(state){let guard=0;while(state.storyFlags.day23V4.phase!=='endin
 function storage(){const data=new Map();return {setItem:(key,value)=>data.set(key,value),getItem:key=>data.get(key)??null,removeItem:key=>data.delete(key)};}
 
 test('bridge preserves legacy entry and starts V4 only from verified DAY22 history',()=>{
-  const fresh=state();assert.equal(getDay23V4GameCompatibility(fresh).mode,'V4_NEW');assert.equal(prepareDay23V4GameEntry(fresh).mode,'V4');assert.equal(getDay23V4GameSegment(fresh).at(-1).choiceNumber,1);
+  const fresh=state();assert.equal(getDay23V4GameCompatibility(fresh).mode,'V4_NEW');assert.equal(prepareDay23V4GameEntry(fresh).mode,'V4');const choice=getDay23V4GameSegment(fresh).at(-1);assert.equal(choice.choiceNumber,1);assert.equal(choice.prompt,'오늘의 첫 속도');
   const legacy={storyFlags:{day22RuntimeComplete:true,day23RuntimeStage:1}};assert.equal(getDay23V4GameCompatibility(legacy).mode,'LEGACY');assert.equal(legacy.storyFlags.day23V4,undefined);
 });
-
 test('Busan bridge stitches every playable, resolves current responses, and charges one souvenir once',()=>{
   const s=state();prepareDay23V4GameEntry(s);const before=s.money,all=[];let guard=0;
   while(s.storyFlags.day23V4.phase!=='ending'){
@@ -48,4 +48,14 @@ test('SaveManager round-trip preserves a mid-DAY23 checkpoint and resume present
 test('runtime resolutions stay route, relationship, consent, and budget constrained',()=>{
   const busan=state();prepareDay23V4GameEntry(busan);assert.equal(getDay23V4RuntimeResolution(busan,{type:'souvenirPurchaseCue'}).purchased,true);busan.money=0;assert.deepEqual(getDay23V4RuntimeResolution(busan,{type:'souvenirPurchaseCue'}),{type:'souvenirPurchaseResponse',purchased:false});assert.equal(getDay23V4RuntimeResolution(busan,{type:'relationshipConsentCue'}).outcome,'CONTINUE');assert.equal(getDay23V4RuntimeResolution(busan,{type:'farewellContactConsentCue'}).accepted,true);
   const solo=state('NO_TRAVEL');prepareDay23V4GameEntry(solo);assert.equal(getDay23V4RuntimeResolution(solo,{type:'meetingConsentCue'}).accepted,false);assert.equal(getDay23V4RuntimeResolution(solo,{type:'conversationConsentCue'}).accepted,false);assert.throws(()=>getDay23V4RuntimeResolution(solo,{type:'unknown'}),/UNKNOWN/);
+});
+
+test('main runtime connects DAY23 V4 entry, choices, resolutions, completion, clock, and legacy-only Free Action',()=>{
+  const source=readFileSync(new URL('../game.js',import.meta.url),'utf8'),bridge=readFileSync(new URL('../src/day23-v4-game-bridge.mjs',import.meta.url),'utf8');
+  assert.match(source,/day23-v4-game-bridge\.mjs\?v=1/);assert.match(source,/day23-v4-runtime-resolution\.mjs\?v=1/);assert.match(bridge,/asset-manifest\.mjs\?v=24/);
+  for(const module of ['opening','return','home','no-travel','ending'])assert.match(bridge,new RegExp(`day23-v4-playable-${module}\\.mjs\\?v=1`));
+  assert.match(source,/if\(day23V4\)prepareDay23V4GameEntry/);assert.match(source,/applyDay23V4GameChoice\(currentState,id\)/);assert.match(source,/getDay23V4RuntimeResolution\(state,step\)/);assert.match(source,/applyDay23V4GameResolution\(state,response\)/);
+  assert.match(source,/step\.day===23\?completeDay23V4GameChapter/);assert.match(source,/completionCue\.day===23\)completeDay23V4GameChapter/);assert.match(source,/isDay23V4ResolutionStep\(step\)/);assert.match(source,/state\.storyFlags\?\.day23V4\?LOCKED_DAY23_SCENE_ID/);
+  assert.match(source,/lockedDay23&&!day23V4\?23/);assert.match(source,/!state\.storyFlags\?\.day23V4&&state\.storyFlags\?\.day23RuntimeComplete/);assert.match(source,/isStoryFreeActionResume\(state,scene\.id\)&&!\(lockedDay23&&day23V4\)/);
+  assert.match(readFileSync(new URL('../index.html',import.meta.url),'utf8'),/game\.js\?v=265/);
 });

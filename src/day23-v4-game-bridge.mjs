@@ -6,9 +6,10 @@ import {getDay23V4PlayableReturn} from './day23-v4-playable-return.mjs?v=1';
 import {getDay23V4PlayableHome} from './day23-v4-playable-home.mjs?v=1';
 import {getDay23V4PlayableNoTravel} from './day23-v4-playable-no-travel.mjs?v=1';
 import {getDay23V4PlayableEnding} from './day23-v4-playable-ending.mjs?v=1';
+import {DAY23_V4_SOURCE_SCENES} from './day23-v4-source-registry.mjs';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
 
-export const DAY23_V4_CAMPAIGN_SLOT='m30-day23-returning-place';
+export const DAY23_V4_CAMPAIGN_SLOT='m30-day23-current-family-contact';
 const boundaries=new Set(['openingBoundary','returnBoundary','homeBoundary','noTravelBoundary','endingBoundary']);
 const clock=Object.freeze({morning:'09:00',afternoon:'15:00',evening:'19:00',night:'22:00',day:'13:00'});
 const backgrounds=Object.freeze({'busan-lodging':'day22-busan-lodging',train:'day22-busan-station',station:'day22-busan-station'});
@@ -29,7 +30,8 @@ function rawSegment(chapter){
   if(chapter.phase==='ending'&&chapter.input.route==='NO_TRAVEL')return [...getDay23V4PlayableNoTravel(chapter),...getDay23V4PlayableEnding(chapter)];
   return getDay23V4PlayableEnding(chapter);
 }
-export function getDay23V4GameSegment(state){const chapter=state.storyFlags?.day23V4;if(!validateDay23V4(chapter))throw new Error('DAY23_INVALID_SAVE');return rawSegment(chapter).filter(step=>!boundaries.has(step.type)).map(step=>step.type==='sceneDirection'?{type:'transition',style:'crossfade',label:`SCENE ${String(step.number).padStart(2,'0')} · ${step.title}`,sceneNumber:step.number,bgmId:step.time==='night'?'theme':'daily',...presentation(step)}:step);}
+function choicePrompt(step){const id=step.options?.[0]?.id??'',variant=id.includes('_no_pending_contact_')?'NO_PENDING_CONTACT':id.includes('_no_travel_')?'NO_TRAVEL':'MAIN';return DAY23_V4_SOURCE_SCENES.flatMap(item=>item.choices).find(item=>item.number===step.choiceNumber&&item.variant===variant)?.title??'어떻게 할까?';}
+export function getDay23V4GameSegment(state){const chapter=state.storyFlags?.day23V4;if(!validateDay23V4(chapter))throw new Error('DAY23_INVALID_SAVE');return rawSegment(chapter).filter(step=>!boundaries.has(step.type)).map(step=>step.type==='sceneDirection'?{type:'transition',style:'crossfade',label:`SCENE ${String(step.number).padStart(2,'0')} · ${step.title}`,sceneNumber:step.number,bgmId:step.time==='night'?'theme':'daily',...presentation(step)}:step.type==='choice'?{...step,prompt:choicePrompt(step)}:step);}
 
 function resumeDirection(chapter){const phase=chapter.phase,route=chapter.input.route;if(route==='NO_TRAVEL')return {location:'home',time:phase==='ending'?'night':'day',character:null};if(['morning_speed','morning_notice','remaining_time','favorite_moment','departure_record','photo_resolution','souvenir','souvenir_resolution','return_ride'].includes(phase))return {location:route==='BUSAN_TRIP'?'busan-lodging':'home',time:'morning',character:route==='BUSAN_TRIP'?'girlfriend':null};if(['home_imagination','relationship_intent','relationship_resolution'].includes(phase))return {location:route==='BUSAN_TRIP'?'train':'home',time:'afternoon',character:chapter.input.contactAllowed?'girlfriend':null};if(['farewell_plan','farewell_resolution'].includes(phase))return {location:route==='BUSAN_TRIP'?'station':'home',time:route==='BUSAN_TRIP'?'evening':'afternoon',character:chapter.input.contactAllowed?'girlfriend':null};return {location:'home',time:['home_arrival','small_share','photo_review'].includes(phase)?'afternoon':phase==='ending'?'night':'evening',character:['dinner_call','wanted_presence','conversation_method','conversation_resolution'].includes(phase)&&chapter.input.contactAllowed?'girlfriend':null};}
 export function getDay23V4GameResumePresentation(state){const chapter=state.storyFlags?.day23V4;if(!validateDay23V4(chapter))throw new Error('DAY23_INVALID_SAVE');return presentation(resumeDirection(chapter));}
