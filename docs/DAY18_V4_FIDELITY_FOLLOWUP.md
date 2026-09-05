@@ -32,3 +32,10 @@
 최종 프롬프트:
 
 > Use case: lighting-weather. Asset type: visual novel neighborhood evening background. Edit target: attached existing daytime neighborhood street. Change only time and illumination to after sunset, dark blue sky, warm street and shop lamps lighting a safe clearly visible pedestrian path. Preserve exact camera perspective, street and buildings, benches, trees, empty foreground, existing illustration style and 16:9 composition. Keep the ground dry. No river, no people, no new objects, no text or UI. The scene must unmistakably be the same neighborhood at night.
+
+## 종결 후속 — game248 / 2026-09-05
+
+- 이 문서의 PARTIAL 표기는 2026-09-04 원본 대조 후속 당시 기록이다. 이후 원문 행동 대응과 분기 경계를 보완하고 동일 버전 네 성향 데스크톱·모바일 비-SKIP 완주를 완료했다.
+- 모바일 유효 영역은 `389×844`, 모바일 미디어쿼리 활성, 가로 넘침 0이다. 네 경로 모두 DAY19 전환과 console warning/error 0을 확인했다.
+- DAY15~17 재감사도 모두 닫혔으므로 DAY18 V4는 **PASS / COMPLETE**로 승격한다.
+- DAY19~30과 NEW GAME→ENDING 네 경로는 아직 미완료이며 이 종결을 그 범위의 완료 증거로 사용하지 않는다.

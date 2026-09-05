@@ -61,3 +61,13 @@ PARTIAL. 「말하지 않은 저녁」의 새 런타임을 연결했다. DAY18 �
 최종 프롬프트:
 
 > Use case: lighting-weather. Edit target: attached existing Korean gimbap restaurant game background. Create one evening/night lighting variant for DAY18 story dinner. Change ONLY time of day and illumination: outside windows dark blue after sunset, no daylight beams; warm practical ceiling lights illuminate the restaurant naturally. Preserve exact restaurant architecture, camera composition, furniture, gimbap display, materials, illustration/render style, empty room without people, landscape 16:9 framing. No new objects, signage, lettering, UI or watermark. It must still be recognizably the same existing restaurant.
+
+## game248 종결 판정 — 2026-09-05
+
+- 이 문서 상단의 PARTIAL은 2026-09-04 최초 구현 시점 기록이다. 이후 SCENE01~24 행동 연출, 손 화풍 교정, 알람 입력·전용 소리, 겉옷 연속성, 네 성향 데스크톱 비-SKIP 완주와 세 대표 저장 재개를 완료했다.
+- DAY15·16·17 원문 충실도 재감사를 각각 PASS/COMPLETE로 닫았다.
+- 전용 viewport로 유효 `389×844`(목표 390×844의 1px 렌더링 반올림) 모바일 미디어쿼리를 활성화하고 Friendly/Neutral/Distant/Mixed를 각각 비-SKIP으로 DAY19까지 완주했다. 네 경로 가로 넘침 0, console warning/error 0이다.
+- 경로별 QA 저장은 매번 사용자 저장으로 복원했고 마지막에 임시 viewport도 reset했다.
+- 세부 증거: `DAY18_V4_ROUTE_FINAL_QA.md`.
+
+따라서 DAY18 V4는 **PASS / COMPLETE**다. 이 판정은 DAY19~30 완료를 뜻하지 않으며 다음 구현은 DAY19 원문 잠금·직전 3일 입력 감사부터 시작한다.
