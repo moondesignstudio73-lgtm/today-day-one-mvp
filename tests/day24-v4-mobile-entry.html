@@ -16,6 +16,7 @@ import {SaveManager} from '../src/save-manager.mjs';
 import {GAME_MODES} from '../src/scenario-state.mjs';
 import {createInitialState} from '../src/game-core.mjs';
 import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
+import {beginDay24V4} from '../src/day24-v4-state-contract.mjs';
 import {completedDay23ForDay24} from './day24-v4-fixture.mjs';
 
 const backupKey='day24-v4-mobile-qa-save-backup';
@@ -32,6 +33,7 @@ function seed(route){
   const fixture=completedDay23ForDay24(...config),state=createInitialState(createGirlfriendFromProfile('haeun',()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});
   Object.assign(state.storyFlags,fixture.storyFlags);state.breakup=fixture.breakup??null;state.ended=fixture.ended??false;
   state.day=24;state.phase=0;state.pendingStoryId='m30-day24-current-commitment-check';state.money=240000;
+  if(route==='distant'){beginDay24V4(state);state.breakup=null;}
   state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};return state;
 }
 document.querySelectorAll('[data-route]').forEach(button=>button.addEventListener('click',()=>{try{backup();const route=button.dataset.route;SaveManager.save(seed(route));location.href=`../index.html?qa=day24-v4-mobile&route=${route}`;}catch(error){document.querySelector('#status').textContent=String(error?.stack??error);}}));

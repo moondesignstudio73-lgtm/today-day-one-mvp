@@ -9,7 +9,7 @@
 - Mixed · 서울 · 유리 연락 사실 공개 데스크톱 경로: PASS.
 - Mixed · 서울 · 서진 연락 관계 상태 거짓말 데스크톱 경로: PASS.
 - Mixed · 서울 · 아라 연락 조건부 새 만남 데스크톱 경로: PASS.
-- DAY24 전체: PARTIAL. 389×844 Friendly/Neutral은 PASS이며 Distant/Mixed 검증이 남아 있다.
+- DAY24 전체: PARTIAL. 389×844 Friendly/Neutral/Distant는 PASS이며 Mixed 검증이 남아 있다.
 
 ## 환경과 진입
 
@@ -97,12 +97,23 @@
 - 완료 화면에서 `document.documentElement.scrollWidth === document.documentElement.clientWidth === document.body.scrollWidth === 389`를 확인해 가로 오버플로가 없었다.
 - QA 전 사용자 저장을 화면에서 복원했고 임시 viewport override도 해제했다.
 
+## Distant · 연락 불가 · 이미 종료된 관계 · 389×844 모바일
+
+- 실제 콘텐츠 `innerWidth=389`, `innerHeight=844`에서 관계와 연락이 이미 끝난 미여행 fixture로 DAY24에 진입했다.
+- 첫 시도에서 fixture의 과거 `breakup` 마커가 DAY20 이별 팝업을 재생하는 문제를 발견했다. DAY24 불변 입력을 먼저 동결한 다음 이미 처리된 팝업 마커만 제거하도록 모바일 harness를 수정하고 처음부터 재실행했다.
+- AUTO는 대사에만 사용하고 SKIP은 누르지 않았다. 화면에 실제 노출된 6개 선택지를 직접 진행해 DAY25까지 완주했다.
+- 하은의 메시지·대면·통화나 카페 현장 인물을 만들지 않았고, 부산 여행·숙박 및 유리·서진·아라 연락도 노출되지 않았다.
+- 완료 저장: `error=null`, `phase=ending`, `complete=true`, `conversation=null`, `relationship=null`, `futureAccepted=false`, `contactRecipient=null`, `contactDirection=null`, `day25Route=RELATIONSHIP_ENDED`.
+- 전환 저장: `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`, `freeAction=null`.
+- 완료 화면에서 `document.documentElement.scrollWidth === document.documentElement.clientWidth === document.body.scrollWidth === 389`를 확인해 가로 오버플로가 없었다. QA 전 사용자 저장과 viewport override도 복원했다.
+
 ## 발견 및 조치
 
 - DAY24 단독 fixture의 새 모듈 체인은 브라우저에서 불안정하게 로드될 수 있어, 이미 검증된 DAY23 브라우저 fixture에서 연속 플레이하는 harness로 바꿨다.
 - 브라우저 fixture에서 사용되는 DAY22/23 helper는 `node:assert` 의존을 제거하고 동일한 fail-fast 검사를 브라우저 호환 `ensure`로 유지했다.
+- 관계가 이미 종료된 모바일 fixture는 DAY24 입력을 만든 뒤 과거 `breakup` UI 마커를 제거해 DAY20 이별 팝업이 다시 재생되지 않도록 했다. 동결된 DAY24 입력의 `relationshipActive=false`와 `contactAllowed=false`는 유지된다.
 
 ## 다음 관문
 
-1. Distant/Mixed 대표 경로를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
+1. Mixed 대표 경로를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
 2. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.
