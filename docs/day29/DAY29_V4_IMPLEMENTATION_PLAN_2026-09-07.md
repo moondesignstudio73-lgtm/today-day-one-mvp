@@ -1,0 +1,67 @@
+# DAY29 V4 구현 계획 — 2026-09-07
+
+## 판정과 원문
+
+- 현재 상태: **PARTIAL / SOURCE LOCKED**.
+- 최종 원문: Notion `DAY 29 — 내일도 내가 고를게 | SCENARIO V4`.
+- page id: `3c9c31f0-29a6-8111-b76b-edb7bbadf790`.
+- last edited snapshot: `2026-08-27T21:11:30.663Z`.
+- 플레이어 공개 snapshot: `docs/scenarios/DAY29_SCENARIO_V4_NOTION.md`, 24 Scene, 23 choice block, SHA-256 `7346cee0f4f0ae27e22c174fdd9db3a07221117e4641e238d41cac61dc3ae186`.
+- 내부 편집 메모와 대체 V3는 snapshot과 renderer에서 제외한다.
+
+## 한 문장 정의
+
+지난 물건을 정리하며 과거의 정답을 찾는 대신, 오늘 좋아하는 것과 앞으로 지킬 약속을 실제 이력과 현재 상대의 답 안에서 다시 고르는 날.
+
+## 기존 구현 감사
+
+현재 `src/day29-campaign-runtime.mjs`는 결혼 전날 재확인을 다루는 5장면·3선택 legacy 구현이다. 최종 V4의 방 정리, 실제 소유물, 업무·지출, 하은/새 상대/혼자 저녁, 미래 재논의, 접촉·숙박 분리, 남은 거짓말과 DAY30 한 가지 약속을 구현하지 않는다. 검증된 DAY28 V4 완료 저장만 신규 schema로 진입시키고 legacy DAY29 저장은 보존한다.
+
+## DAY29 INPUT — DAY26~28 실제 이력 감사
+
+- DAY28 V4의 실제 route, meeting target/method, relationship state, 현재 접촉, 집 초대 응답, 다음 만남, 새 관계 응답, 공개 범위를 replay-lock 한다.
+- DAY26 친구 식사·새 만남·업무·지출과 DAY27 거짓말·거리·연락 결과를 실제 기록이 있을 때만 사용한다.
+- 구매하지 않은 옷, 받지 않은 카드, 찍지 않은 사진, 사지 않은 꽃, 맡기지 않은 물건, 합의하지 않은 약속을 만들지 않는다.
+- `NEED_TIME`, `GOODBYE`, 연락 중지, 관계 종료는 저녁 방문·연애·키스·숙박으로 승격하지 않는다.
+- DAY28의 키스와 오늘 접촉은 별도다. 집 방문과 숙박도 각각 현재의 독립 동의를 기다린다.
+- 미확정 업무 일정·수입·친구 편집 완료를 확정 사실로 바꾸지 않는다.
+
+## Scene Graph
+
+```text
+DAY28 V4 완료 → SCENE01~09 / C1~9 공통 생활·저녁 범위
+  ├─ 하은과 실제 약속 및 관계 지속 → SCENE10~17 / C10~17
+  │    ├─ 미래 대화 합의 유효 → SCENE13 / C13
+  │    ├─ 상호 가까움·신뢰·진실 유효 → SCENE14~16 / C14~16
+  │    └─ 실제 집 초대·현재 숙박 동의 → SCENE17 / C17
+  ├─ 하은 관계 종료 + 실제 새 관계/알아가기 → SCENE18 / C18
+  └─ 혼자 저녁 → SCENE19 / C19
+실제 미정정 거짓말이 남음 → SCENE20 / C20
+→ SCENE21~23 / C21~23 → SCENE24 → DAY30 handoff
+```
+
+## 핵심 불변식
+
+- 물건은 정답 엔딩 점수가 아니며 소유·수령·촬영 이력에만 존재한다.
+- 상대의 오늘 답 없이 만남, 접촉, 키스, 집 방문, 숙박, 다음 약속, 연애 이름을 만들지 않는다.
+- 달라진 미래 의사는 다정한 장면으로 덮지 않고 상대의 생각할 시간을 보존한다.
+- 숨긴 사실은 저절로 발각·용서되지 않으며 회피도 그대로 DAY30에 넘긴다.
+- 상호 배타 경로 설명과 편집 메모를 일반 대화창에 출력하지 않는다.
+- 손 포함 CG는 `docs/STORY_V4_IMAGE_STYLE_RULES.md`와 배포 커밋 일치 관문을 통과해야 한다.
+
+## 구현 단계와 완료 관문
+
+1. Notion 최종 원문을 플레이어 공개 snapshot으로 잠그고 24 Scene·23 choice registry와 SHA 검증을 고정한다.
+2. DAY26~28 실제 이력을 동결하는 `day29-notion-v4/1` 상태 계약과 legacy 진입 분리를 구현한다.
+3. SCENE01~09 공통 생활·실제 소유물·업무·지출·저녁 범위 C1~9를 구현한다.
+4. SCENE10~17 하은 집/바깥 분기, 미래 대화, 접촉·키스·귀가·숙박 C10~17을 구현한다.
+5. SCENE18 새 관계, SCENE19 혼자, SCENE20 미정정 거짓말 C18~20을 구현한다.
+6. SCENE21~24 내일의 한 가지·준비·인사·DAY30 handoff C21~23을 구현한다.
+7. game bridge, 저장 재개, 현재 NPC 응답, Story/Free 배타성, 화면 presentation을 연결한다.
+8. source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.
+9. Friendly/Neutral/Distant/Mixed를 실제 브라우저에서 AUTO OFF·SKIP 없이 DAY30까지 검증한다.
+10. 원문·런타임 텍스트·콘솔·자산·오버플로·DAY30 전환이 모두 PASS일 때만 DAY29 COMPLETE로 승격한다.
+
+## 다음 시작점
+
+DAY26~28 상태 계약과 실제 history 필드를 대조해 DAY29 input snapshot을 구현한다. legacy `day29CurrentEveReconfirmationPending` 저장과 신규 DAY28 V4 handoff를 혼합하지 않는다.
