@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {resolveStoryCgAsset} from '../src/story-cg-asset-policy.mjs';
 
 const source=readFileSync(new URL('../game.js',import.meta.url),'utf8');
 const cgStart=source.indexOf('  if(step.type==="cgShow"){');
@@ -22,6 +23,7 @@ test('CG skip cancels its timer, releases the input owner and reaches the next c
     setTimeout:fn=>{timers.set(1,fn);return 1;},clearTimeout:id=>timers.delete(id),
     renderImmersiveStep:()=>calls.push('advance'),applySkippedScenePresentation:()=>calls.push('presentation'),
     persistEventRuntime(){},renderImmersiveChoices:()=>calls.push('choices')};
+  Object.assign(context,{resolveStoryCgAsset,document:{baseURI:'https://example.test/game/index.html'}});
   vm.createContext(context);
   vm.runInContext(`(()=>{${source.slice(cgStart,cgEnd)}})()`,context);
   assert.equal(layer.hidden,false);assert.equal(locks.has('day18'),true);assert.equal(timers.size,1);
@@ -37,6 +39,7 @@ test('CG automatic end clears itself and cannot advance a different scene',()=>{
     const context={step:{type:'cgShow',source:'test.png'},sceneAdvanceTimer:null,immersiveScene:{id:'day18'},$:()=>layer,
       eventRuntime:{input:{lock(){},unlock:id=>calls.push(id)}},clearTimeout(){},setTimeout:fn=>{callback=fn;return 1;},
       renderImmersiveStep:()=>calls.push('advance')};
+    Object.assign(context,{resolveStoryCgAsset,document:{baseURI:'https://example.test/game/index.html'}});
     vm.createContext(context);vm.runInContext(`(()=>{${source.slice(cgStart,cgEnd)}})()`,context);
     if(!sameScene)context.immersiveScene={id:'day19'};
     callback();

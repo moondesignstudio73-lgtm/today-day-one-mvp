@@ -98,7 +98,11 @@ export function beginDay28V4(state){const entry=getDay28V4Entry(state);if(entry.
 export function getDay28V4Options(chapter){if(!phaseDefs[chapter?.phase])return [];const [number,variant,keys]=phaseDefs[chapter.phase];let options=optionSet(number,variant,keys);if(chapter.phase==='heard_meaning'){const allowed=chapter.input.source.day27Handoff.lieCorrected?'hidden_fact':chapter.input.haeunFutureOutcome!=null&&chapter.input.haeunFutureOutcome!=='PREPARE_MARRIAGE'?'future_difference':'self_suppression';options=options.filter(option=>option.id.endsWith(`_${allowed}`));}if(chapter.phase==='breakup_belongings'&&!chapter.input.entrustedBelongings.length)options=options.filter(option=>option.id.endsWith('_none'));return options;}
 export const applyDay28V4Choice=(state,id)=>mutate(state,reduceChoice,id);
 export const resolveDay28V4Meeting=(state,response)=>mutate(state,reduceMeeting,response);
-export const resolveDay28V4Relationship=(state,response)=>mutate(state,reduceRelationship,response);
+export const resolveDay28V4Relationship=(state,response)=>mutate(state,(chapter,currentResponse)=>{
+  // Enforce the player's boundary on new responses without rewriting historical replay.
+  if(chapter.facts.relationshipWish==='END_WELL'&&(currentResponse?.outcome!=='END'||currentResponse?.contactAllowed!==false))throw new Error('DAY28_RELATIONSHIP_END_BOUNDARY');
+  reduceRelationship(chapter,currentResponse);
+},response);
 export const resolveDay28V4Contact=(state,response)=>mutate(state,reduceContact,response);
 export const resolveDay28V4HomeInvitation=(state,response)=>mutate(state,reduceHomeInvitation,response);
 export const resolveDay28V4NextMeeting=(state,response)=>mutate(state,reduceNextMeeting,response);

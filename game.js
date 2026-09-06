@@ -1,6 +1,7 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=16";
 import { SaveManager } from "./src/save-manager.mjs?v=20";
 import { getDialogueHistoryTime } from "./src/dialogue-history-time.mjs";
+import { resolveStoryCgAsset } from "./src/story-cg-asset-policy.mjs?v=1";
 import { getStoryCommunicationPresentation } from "./src/story-communication-presentation.mjs";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, getRuntimeEventDefinitions, rollRuntimeEvent } from "./src/event-manager.mjs?v=10";
@@ -109,7 +110,7 @@ import { LOCKED_DAY27_SCENE_ID, applyLockedDay27ChoiceState, getLockedDay27Legac
 import { applyDay27V4GameChoice, applyDay27V4GameResolution, completeDay27V4GameChapter, getDay27V4GameCompatibility, getDay27V4GameResumePresentation, getDay27V4GameSegment, isDay27V4ResolutionStep, prepareDay27V4GameEntry } from "./src/day27-v4-game-bridge.mjs?v=1";
 import { getDay27V4RuntimeResolution } from "./src/day27-v4-runtime-resolution.mjs?v=1";
 import { LOCKED_DAY28_SCENE_ID, applyLockedDay28ChoiceState, getLockedDay28LegacyChoice, getLockedDay28ResumePresentation, getLockedDay28Segment as getLegacyDay28Segment } from "./src/day28-campaign-runtime.mjs?v=1";
-import { applyDay28V4GameChoice, applyDay28V4GameResolution, completeDay28V4GameChapter, getDay28V4GameCompatibility, getDay28V4GameResumePresentation, getDay28V4GameSegment, isDay28V4ResolutionStep, prepareDay28V4GameEntry } from "./src/day28-v4-game-bridge.mjs?v=1";
+import { applyDay28V4GameChoice, applyDay28V4GameResolution, completeDay28V4GameChapter, getDay28V4GameCompatibility, getDay28V4GameResumePresentation, getDay28V4GameSegment, isDay28V4ResolutionStep, prepareDay28V4GameEntry } from "./src/day28-v4-game-bridge.mjs?v=2";
 import { getDay28V4RuntimeResolution } from "./src/day28-v4-runtime-resolution.mjs?v=1";
 import { LOCKED_DAY29_SCENE_ID, applyLockedDay29ChoiceState, getLockedDay29LegacyChoice, getLockedDay29ResumePresentation, getLockedDay29Segment } from "./src/day29-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY30_SCENE_ID, applyLockedDay30ChoiceState, getLockedDay30LegacyChoice, getLockedDay30ResumePresentation, getLockedDay30Segment } from "./src/day30-campaign-runtime.mjs?v=1";
@@ -981,7 +982,7 @@ function startImmersiveScene(session) {
 function preloadImmersiveAssets(sequence=[]) {
   if(typeof Image==="undefined")return [];
   const urls=[...new Set(sequence.flatMap(step=>[step?.assetUrl,step?.source,step?.backgroundId?getBackgroundAsset(step.backgroundId):""]).filter(Boolean))];
-  urls.forEach(source=>{const image=new Image();image.decoding="async";image.src=source;});
+  urls.forEach(source=>{const image=new Image();image.decoding="async";image.src=resolveStoryCgAsset(source,document.baseURI);});
   return urls;
 }
 
@@ -1229,7 +1230,7 @@ function renderImmersiveStep() {
   if(step.type==="cgShow"){
     const layer=$("#vnEventCg");
     const owner=immersiveScene.id;
-    layer.src=step.source;layer.style.objectFit=step.fit??"contain";layer.style.objectPosition=step.objectPosition??"50% 50%";layer.hidden=false;
+    layer.src=resolveStoryCgAsset(step.source,document.baseURI);layer.style.objectFit=step.fit??"contain";layer.style.objectPosition=step.objectPosition??"50% 50%";layer.hidden=false;
     eventRuntime.input.lock(owner,"StoryCg");
     if(sceneAdvanceTimer)clearTimeout(sceneAdvanceTimer);
     sceneAdvanceTimer=setTimeout(()=>{layer.hidden=true;sceneAdvanceTimer=null;eventRuntime.input.unlock(owner);if(immersiveScene?.id===owner)renderImmersiveStep();},step.duration??1800);

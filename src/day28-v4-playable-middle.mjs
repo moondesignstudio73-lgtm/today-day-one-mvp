@@ -1,6 +1,6 @@
 import {DAY28_V4_SOURCE_SCENES} from './day28-v4-source-registry.mjs';
 import {day28V4SourceRef} from './day28-v4-source-selection.mjs';
-import {getDay28V4Options,validateDay28V4} from './day28-v4-state-contract.mjs';
+import {getDay28V4Options,validateDay28V4} from './day28-v4-state-contract.mjs?v=2';
 
 const ref=(scene,line)=>day28V4SourceRef(scene,line);
 const mono=(scene,text)=>({type:'monologue',text,source:ref(scene,text)});
@@ -11,7 +11,7 @@ const choice=(chapter,number,variant)=>{const source=DAY28_V4_SOURCE_SCENES.flat
 const last=(chapter,number,variant)=>chapter.choices.filter(record=>record.kind==='choice'&&record.number===number&&record.variant===variant).at(-1)?.id??'';
 const result=(chapter,number,variant,rows,scene=number)=>{const id=last(chapter,number,variant),row=rows.find(([suffix])=>id.endsWith(`_${suffix}`));return row?[grounded(scene,row[1],row[2])]:[];};
 
-function scene9(chapter){return [direction(9,chapter),quoted(9,'**주인공** “좋았던 날까지 없애고 싶지는 않아.”'),quoted(9,'**하은** “그건 내가 정할게. 지금은 조금 멀리 두고 싶을 수도 있어.”'),choice(chapter,9,'BREAKUP_CLOSE')];}
+function scene9(chapter){return [direction(9,chapter),...(chapter.facts.relationshipWish==='END_WELL'?[quoted(8,'**하은** “알겠어. 나도 오늘은 끝까지 이야기하고 싶었어.”')]:[]),quoted(9,'**주인공** “좋았던 날까지 없애고 싶지는 않아.”'),quoted(9,'**하은** “그건 내가 정할게. 지금은 조금 멀리 두고 싶을 수도 있어.”'),quoted(9,'**주인공** “응.”'),{type:'storyPause',duration:600},quoted(9,'**하은** “언젠가 좋게 생각할 수 있으면 좋겠어. 지금 약속은 못 하지만.”'),choice(chapter,9,'BREAKUP_CLOSE')];}
 function scene10(chapter){return [...result(chapter,9,'BREAKUP_CLOSE',[['memory_right','하은이 기억을 두는 방식까지 정하려 하지 않았다.','첫 선택이면 하은은 고개를 끄덕였다. 나에게 좋았던 순간을 그녀도 같은 방식으로 보관해야 하는 것은 아니었다.'],['thanks','끝까지 이야기해 준 데 고마움을 말하되 좋은 결말을 요구하지 않았다.','둘째면 하은은 자신도 말하고 싶었다고 하거나 짧게 인사했다.'],['pause_contact','실제로 필요한 연락과 쉬고 싶은 연락을 나누었다.','셋째면 실제로 어떤 연락이 필요한지, 무엇은 쉬고 싶은지 이야기했다.']]),direction(10,chapter),grounded(10,'실제로 맡긴 물건이 있을 때만 반환 방법을 정했다.','실제로 맡겨 둔 물건이 있으면 어떻게 돌려줄지 정했다.'),choice(chapter,10,'BREAKUP_CLOSE')];}
 function breakupEnd(chapter){return [...result(chapter,10,'BREAKUP_CLOSE',[['brief_transfer','실제 맡긴 물건은 편한 방식으로 짧게 전달하기로 했다.','잠깐 전달하거나 서로 편한 방식으로 받을 수 있었다. 물건을 받으려고 다시 긴 데이트를 해야 하는 것은 아니었다.'],['later','급하지 않은 실제 물건은 시간을 두고 정리하기로 했다.','실제로 맡겨 둔 물건이 있으면 어떻게 돌려줄지 정했다.'],['none','돌려줄 것이 없어 만날 이유가 될 물건을 만들지 않았다.','물건이 없으면 그 사실로 끝났다. 만날 이유를 만들려고 없는 옷이나 책을 떠올리지 않았다.']]),quoted(10,'**하은** “이렇게 이야기하니까 진짜 끝나는 것 같네.”'),quoted(10,'**주인공** “응.”'),{type:'day28Boundary',nextScene:19,route:'BREAKUP'}];}
 function scene11(chapter){return [direction(11,chapter),quoted(11,'**하은** “오늘은 어제보다 덜 잘하려고 하는 것 같아.”'),quoted(11,'**주인공** “티 나?”'),quoted(11,'**하은** “응. 그래서 말하기 쉬워.”'),choice(chapter,9,'HAEUN_CONTINUING')];}
