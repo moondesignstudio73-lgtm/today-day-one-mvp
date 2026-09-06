@@ -74,7 +74,7 @@ DAY27 완료 이력 → SCENE01 / C1
 3. ~~DAY25~27 실제 이력을 동결하는 `day28-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
 4. ~~SCENE01~08/C1~8 실제 재회·고쳐 듣기·관계 제안 playable을 구현한다.~~ 완료.
 5. ~~SCENE09~16 이별 C9~10, 지속 C9~14, 현재 접촉·집 초대 응답을 구현한다.~~ 완료.
-6. SCENE17~24 새 만남 C8·공개 C15·혼자 C2~8·밤 C16·ending을 구현한다.
+6. ~~SCENE17~24 새 만남 C8·공개 C15·혼자 C2~8·밤 C16·ending을 구현한다.~~ 완료.
 7. game bridge, 저장 재개, 현재 응답, presentation, Story/Free 배타성을 연결한다.
 8. source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.
 9. Friendly/Neutral/Distant/Mixed를 데스크톱과 실제 콘텐츠 389×844에서 SKIP 없이 검증한다.
@@ -82,4 +82,4 @@ DAY27 완료 이력 → SCENE01 / C1
 
 ## 다음 시작점
 
-SCENE17~24 새 만남 C8·공개 C15·혼자 C2~8·밤 C16·ending을 구현한다.
+game bridge, 저장 재개, 현재 응답, presentation, Story/Free 배타성을 연결한다.
