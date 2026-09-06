@@ -35,7 +35,7 @@ export function resolveStoryCgAsset(source, baseUrl) {
     if (!approved) return source;
     const result = new URL(approved, base);
     // A new cache key also bypasses cached bytes under an already-correct filename.
-    result.searchParams.set('art', 'hand-review-20260906-1');
+    result.searchParams.set('art', 'hand-review-20260907-1');
     return result.href;
   } catch {
     return source;

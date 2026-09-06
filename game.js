@@ -1,7 +1,7 @@
 import { advanceTime, applyEffects, clamp, createInitialState, determineEnding } from "./src/game-core.mjs?v=16";
 import { SaveManager } from "./src/save-manager.mjs?v=20";
 import { getDialogueHistoryTime } from "./src/dialogue-history-time.mjs";
-import { resolveStoryCgAsset } from "./src/story-cg-asset-policy.mjs?v=1";
+import { resolveStoryCgAsset } from "./src/story-cg-asset-policy.mjs?v=2";
 import { getStoryCommunicationPresentation } from "./src/story-communication-presentation.mjs";
 import { createGirlfriendFromProfile, generateGirlfriend, getVisibleTraitRows, observePersonality, rerollGirlfriendPersonality } from "./src/girlfriend-manager.mjs?v=8";
 import { getEventDiagnostics, getRuntimeEventDefinitions, rollRuntimeEvent } from "./src/event-manager.mjs?v=10";
