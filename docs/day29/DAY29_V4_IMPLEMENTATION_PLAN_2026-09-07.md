@@ -56,7 +56,7 @@ DAY28 V4 완료 → SCENE01~09 / C1~9 공통 생활·저녁 범위
 3. ~~SCENE01~09 공통 생활·실제 소유물·업무·지출·저녁 범위 C1~9를 구현한다.~~ 완료.
 4. ~~SCENE10~17 하은 집/바깥 분기, 미래 대화, 접촉·키스·귀가·숙박 C10~17을 구현한다.~~ 완료.
 5. ~~SCENE18 새 관계, SCENE19 혼자, SCENE20 미정정 거짓말 C18~20을 구현한다.~~ 완료.
-6. SCENE21~24 내일의 한 가지·준비·인사·DAY30 handoff C21~23을 구현한다.
+6. ~~SCENE21~24 내일의 한 가지·준비·인사·DAY30 handoff C21~23을 구현한다.~~ 완료.
 7. game bridge, 저장 재개, 현재 NPC 응답, Story/Free 배타성, 화면 presentation을 연결한다.
 8. source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.
 9. Friendly/Neutral/Distant/Mixed를 실제 브라우저에서 AUTO OFF·SKIP 없이 DAY30까지 검증한다.
@@ -64,7 +64,7 @@ DAY28 V4 완료 → SCENE01~09 / C1~9 공통 생활·저녁 범위
 
 ## 다음 시작점
 
-SCENE21~24/C21~23 공통 마무리와 DAY30 handoff를 구현한다. 실제 내일 약속·상대·현재 답에 맞춰 마지막 인사를 분리하고, 실제 소유물만 준비하며, SCENE24 뒤에만 완료 cue와 DAY30 hook을 연다.
+DAY29 V4 game bridge, 저장 재개, 현재 NPC 응답, Story/Free 배타성, 시간·장소·인물 presentation을 연결한다. SCENE01~24의 phase별 모듈을 실제 게임 루프에 결합하고 완료 전에는 legacy DAY29나 Free Action이 끼어들지 않게 한다.
 
 ## 상태 계약 완료 기록
 
@@ -89,3 +89,9 @@ SCENE16은 관계가 실제 `CONTINUE/CONTINUING`이고 거리 두기·미정정
 SCENE18은 DAY28 handoff에 봉인된 유리·서진·아라 중 실제 새 상대 한 사람만 렌더하고 C18의 다음 만남·느린 속도·오늘의 인사를 각각 상대의 별도 현재 응답과 연결했다. 연락처만 있거나 사업상 관계인 인물은 등장하지 않는다. SCENE19는 사람 응답 없이 자기 저녁을 완결하며, 지훈을 모르면 연락 선택을 숨기고 알고 있어도 오늘 바쁘면 메시지만 남겨 지훈 대사를 만들지 않는다.
 
 SCENE20은 실제 미정정 거짓말이 있을 때만 열고 실제 수신자만 cue 대상으로 삼는다. 정정 선택은 먼저 대화 가능 여부를 묻고 `LISTEN/NEED_TIME/END`를 기다리며, `NEED_TIME`을 용서나 다음 약속으로 바꾸지 않는다. 새 약속 중지와 계속 회피는 정정 완료로 기록하지 않는다. 실제 아라, 완전 Solo, 바쁜 지훈, 실제 서진 거짓말 수신자 경로의 whole-line source와 state replay 집중 검증을 통과했다. 실제 브라우저는 game bridge 전이라 **NOT RUN**이다. DAY29은 **PARTIAL**, 다음은 **SCENE21~24/C21~23 공통 마무리·DAY30 handoff playable**이다.
+
+## SCENE21~24 playable 완료 기록
+
+SCENE21은 확정 약속의 시간·장소와 아직 답을 기다리는 빈칸을 구분하고 C21의 한 가지 우선순위만 DAY30 handoff에 남긴다. 하은과 실제 함께 머무는 경우에만 그녀의 내일 우선순위 대사를 출력하며, 다른 상대의 일정과 혼자 경로는 각각 별도 서술로 유지한다. SCENE22는 실제 가진 옷과 실제 존재하는 사진·카드·꽃만 준비하며, 없는 물건은 빈 창가와 다른 물건으로 남긴다.
+
+SCENE23은 하은의 현재 미래 답이 `CONTINUE`이고 실제 다음 약속 또는 함께 머무름이 있을 때만, 새 상대는 C18 다음 만남 제안이 현재 `ACCEPTED`일 때만 연다. 혼자·거절·`NEED_TIME/END`는 사람에게 보내는 C23을 건너뛰고 알람을 확인한다. SCENE24 원문 뒤에만 completion cue를 내며 `tomorrowRecipient`를 DAY30 handoff에 봉인한다. 하은 숙박·Solo·아라 다음 약속·하은 `NEED_TIME`의 source/state/완료 경계를 집중 검증했다. 실제 브라우저는 game bridge 전이라 **NOT RUN**이다. DAY29은 **PARTIAL**, 다음은 **game bridge·저장·presentation·Story/Free 연결**이다.
