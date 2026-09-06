@@ -9,7 +9,7 @@
 - Mixed · 서울 · 유리 연락 사실 공개 데스크톱 경로: PASS.
 - Mixed · 서울 · 서진 연락 관계 상태 거짓말 데스크톱 경로: PASS.
 - Mixed · 서울 · 아라 연락 조건부 새 만남 데스크톱 경로: PASS.
-- DAY24 전체: PARTIAL. 389×844 Friendly는 PASS이며 Neutral/Distant/Mixed 검증이 남아 있다.
+- DAY24 전체: PARTIAL. 389×844 Friendly/Neutral은 PASS이며 Distant/Mixed 검증이 남아 있다.
 
 ## 환경과 진입
 
@@ -87,6 +87,16 @@
 - 완료 화면에서 `document.documentElement.scrollWidth === document.documentElement.clientWidth === document.body.scrollWidth === 389`를 확인해 가로 오버플로가 없었다.
 - QA 전 사용자 저장을 화면에서 복원했고 임시 viewport override도 해제했다.
 
+## Neutral · 통화 · 관계 유예 · 389×844 모바일
+
+- 실제 콘텐츠 `innerWidth=389`, `innerHeight=844`에서 부산 별실·DAY23 관계 불확실·통화 합의 fixture로 DAY24에 진입했다.
+- AUTO는 대사에만 사용하고 SKIP은 누르지 않았다. 화면에 노출된 11개 선택지를 직접 진행하되 C3 `좋아하는데 아직 대답 못 한 마음이 있어.`, C6 `나는 시간이 더 필요해. 네가 기다리지 않는 것도 받아들일게.`를 선택했다.
+- `15:00`은 통화 흐름으로만 진행됐고 카페 대면, 현장 하은 캐릭터, 유리·서진·아라 연락이나 부산 숙박 장면을 만들지 않았다. 관계 유예 뒤 하은 미래 대화도 열리지 않았다.
+- 완료 저장: `error=null`, `phase=ending`, `complete=true`, `conversation=PHONE`, `relationship=DEFER`, `futureAccepted=false`, `contactRecipient=null`, `contactDirection=null`, `day25Route=DEFERRED_RELATIONSHIP`.
+- 전환 저장: `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`, `freeAction=null`.
+- 완료 화면에서 `document.documentElement.scrollWidth === document.documentElement.clientWidth === document.body.scrollWidth === 389`를 확인해 가로 오버플로가 없었다.
+- QA 전 사용자 저장을 화면에서 복원했고 임시 viewport override도 해제했다.
+
 ## 발견 및 조치
 
 - DAY24 단독 fixture의 새 모듈 체인은 브라우저에서 불안정하게 로드될 수 있어, 이미 검증된 DAY23 브라우저 fixture에서 연속 플레이하는 harness로 바꿨다.
@@ -94,5 +104,5 @@
 
 ## 다음 관문
 
-1. Neutral/Distant/Mixed 대표 경로를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
+1. Distant/Mixed 대표 경로를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
 2. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.
