@@ -39,3 +39,10 @@
 - 공통 렌더러의 손 검수 캐시 키는 `hand-review-20260907-1`, 정책 모듈은 v2, 최상위 게임 스크립트는 v289로 갱신했다.
 - 회귀 테스트는 승인본 URL 정규화·과거 파일 바이트 격리뿐 아니라 Pages가 환경 보호에 허용된 `gh-pages`를 감시하고 공개 진입점에 새 최상위 리비전이 고정됐는지도 검사한다.
 - 완료 판정은 최종 커밋을 `publish/main`과 `publish/gh-pages`에 같은 SHA로 fast-forward한 뒤 공개 페이지가 v289를 제공하고 유리 장면이 v9 제거본을 요청하는 것을 확인한 다음에만 내린다.
+
+### 배포 후 검증 완료
+
+- 최종 코드·지침 커밋 `57b2905`를 `publish/main`과 `publish/gh-pages`에 force 없이 fast-forward했고 두 원격 HEAD가 같은 전체 SHA `57b290533baed9ce78bbc0c50e7c12abf8691a04`임을 확인했다.
+- GitHub Pages 실행 `34058228181`은 `success`로 완료됐고 공개 `index.html`은 `game.js?v=289`, 공개 `game.js`는 `story-cg-asset-policy.mjs?v=2`를 제공한다.
+- 공개 유리 컷의 과거 URL v1과 승인 URL v9는 모두 HTTP 200이며 제거본 SHA-256 `DEF6DBA66FFA0E3EA46380291A74341558C214551C4B5778BDB8C2A83EC00886`과 일치한다.
+- 함께 재확인한 음식 나누기 v1/v3와 하은 맛보기 v1/v3도 각 과거·승인 URL이 동일한 로컬 승인 해시를 반환했다. 공개 페이지의 배포 연결과 신고 장면 재노출 차단을 `PASS`로 판정한다.
