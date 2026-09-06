@@ -521,3 +521,5 @@ DAY28 C11 직접 작별 보강(9/6): 새 GOODBYE 선택은 `DIRECT_FAREWELL` 기
 DAY28 CALL 전용 흐름 보강(9/6): 새 수락 CALL에 `CALL_CONVERSATION`을 기록하고 C2 통화 질문·C3~5·C8만 진행한다. 걸음 선택과 SCENE06~07, SCENE11~16의 벤치·접촉·집 초대를 제거하고 스프라이트 없는 통화 cue/종료로 분리했다. 일반 대면 약속이 낮은 체력만으로 CALL로 바뀌지 않는다. 수정 전 표식 없는 CALL 저장은 기존 replay 유지, 전체 Node 859/859 PASS. 실제 브라우저는 NOT RUN이다. 캐시는 game282 → DAY28 bridge v4. DAY28은 **PARTIAL**, 다음은 **C3 거짓 존재·수신자·하은 고지·청취 근거 감사**다.
 
 DAY28 C3 고지·청취 근거 보강(9/6): `lieCorrected`만으로 하은이 거짓을 들었다고 간주하지 않는다. 신규 입력에 실제 거짓 수신자·정정·하은 고지·LISTEN proof를 봉인하고 모두 충족할 때만 `hidden_fact`를 연다. proof 모순은 재계산된 seal로도 거부하며 수정 전 proof 없는 저장은 기존 replay를 유지한다. 전체 Node 861/861 PASS, 실제 브라우저 NOT RUN. 캐시는 game283 → DAY28 bridge/state v5. DAY28은 **PARTIAL**, 다음은 **선행 사실 기반 독립 NPC 현재 응답과 원문 응답 대사**다.
+
+DAY28 독립 NPC 응답 보강(9/6): 관계 지속 선택은 신뢰·거리 사실에 따라 CONTINUE/KNOW_AGAIN/END로 독립 판정한다. 손·포옹·키스는 각각 현재 동의 조건을 두고 부분 수락과 거절을 실제 하은 대사로 표시한다. 집 초대·다음 만남·새 관계도 선행 사실 기반으로 분리하고 실제 새 상대별 응답 및 SCENE19 공개 문맥을 연결했다. 새 분기가 드러낸 SCENE15 source ref 두 곳도 교정했다. 전체 Node 866/866 PASS, 실제 브라우저 NOT RUN. 캐시는 game284 → DAY28 bridge v6. DAY28은 **PARTIAL**, 다음은 **SCENE03~16·20~21 요약 narration의 원문 대사·행동 확장과 문자열 감사**다.
