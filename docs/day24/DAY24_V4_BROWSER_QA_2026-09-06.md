@@ -5,7 +5,8 @@
 - Friendly · 대면 · 관계 지속 데스크톱 경로: PASS.
 - Neutral · 통화 · 관계 유예 데스크톱 경로: PASS.
 - Distant · 연락 불가 · 이미 종료된 관계 데스크톱 경로: PASS.
-- DAY24 전체: PARTIAL. 활성 관계의 명시적 종료, Mixed, 연락 대상·거짓말·새 만남, 389×844 검증이 남아 있다.
+- Distant · 대면 · 활성 관계 명시적 종료 데스크톱 경로: PASS.
+- DAY24 전체: PARTIAL. Mixed, 연락 대상·거짓말·새 만남, 389×844 검증이 남아 있다.
 
 ## 환경과 진입
 
@@ -32,6 +33,15 @@
 - 전환 저장: `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`, `freeAction=null`.
 - browser warning/error 0, 사용자 저장 복원 PASS.
 
+## Distant · 대면 · 활성 관계 명시적 종료
+
+- 연락 가능한 DIFFICULT 부산 별실 fixture에서 DAY23을 SKIP 없이 완주해 `relationshipOutcome=UNSURE`, `nextConversation=MEET`인 활성 관계 입력을 만들었다.
+- DAY24 대면 대화에서 C6 `좋았던 날 때문에 미뤘지만, 여기서 헤어지고 싶어.`를 직접 선택하고 나머지 노출 선택을 진행해 DAY25까지 완주했다.
+- 관계 종료 뒤 산책과 하은 미래 대화 수락은 열리지 않았고, 실제 다른 연락 상대가 없는 상태에서 새 만남을 보상처럼 확정하지 않았다.
+- 완료 저장: `error=null`, `phase=ending`, `complete=true`, `conversation=MEET`, `relationship=END`, `futureAccepted=false`, `day25Route=RELATIONSHIP_ENDED`.
+- 확인 시점에 존재한 Free Action은 DAY25 전환 뒤의 `day25-home-evening`이었으며 DAY24 legacy Free Action은 아니었다. `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`를 함께 확인했다.
+- browser warning/error 0, 사용자 저장 복원 PASS.
+
 ## Distant · 연락 불가 · 이미 종료된 관계
 
 - 관계·연락이 이미 끝난 DAY22 미여행 fixture에서 DAY23 C1~8과 DAY24의 실제 노출 선택 7개를 SKIP 없이 진행했다.
@@ -47,7 +57,6 @@
 
 ## 다음 관문
 
-1. 활성 관계에서 명시적으로 이별을 선택하는 Distant 경로를 데스크톱에서 SKIP 없이 완주한다.
-2. 유리·서진·아라·연락 없음, 관계 상태 거짓말 정정/지속, 조건부 새 만남을 의미 경로별로 검증한다.
-3. Friendly/Neutral/Distant/Mixed 대표 경로를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
-4. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.
+1. 유리·서진·아라·연락 없음, 관계 상태 거짓말 정정/지속, 조건부 새 만남을 의미 경로별로 검증한다.
+2. Mixed 대표 경로와 Friendly/Neutral/Distant를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
+3. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.
