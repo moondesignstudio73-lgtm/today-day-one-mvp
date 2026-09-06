@@ -4,6 +4,12 @@ export function isStoryFreeActionResume(state,sceneId){return Boolean(sceneId&&s
 
 export function shouldClaimStoryPending(state,sceneId){return !isStoryRecorded(state,sceneId)&&!isStoryFreeActionResume(state,sceneId);}
 
+export function shouldResumeCampaignStoryBeforeBreakup({state,pendingStory,contentAvailable=false,eventActive=false}={}){
+  if(state?.scenario?.enabled!==true||eventActive||contentAvailable!==true||!pendingStory?.id||state.pendingStoryId!==pendingStory.id)return false;
+  const match=String(pendingStory.id).match(/^m30-day(\d+)-/),storyDay=Number(match?.[1]);
+  return Number.isInteger(storyDay)&&storyDay===state.day&&storyDay<=30;
+}
+
 export function reconcileCompletedStoryFreeAction(state,sceneId=state.pendingStoryId){
   const complete=state.storyFreeAction?.status==="COMPLETE"&&state.storyFreeAction.storySceneId===sceneId;
   if(!complete||!isStoryRecorded(state,sceneId)||state.pendingStoryId!==sceneId)return false;

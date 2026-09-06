@@ -76,5 +76,5 @@ day8Campaign.storyHistory.push({day:7,sceneId:"m30-day7-first-present-date",choi
 assert.notEqual(selectNextStoryScene(day8Campaign)?.id,"ex-message","free-romance legacy stories must not leak into the campaign after DAY 7");
 
 const game=readFileSync(new URL("../game.js",import.meta.url),"utf8");
-for(const pattern of [/LOCKED_DAY7_SCENE_ID/,/applyLockedDay7ChoiceState\(state,choiceId\)/,/getLockedDay7LegacyChoice\(state\)/,/day7Prompts/,/getLockedDay7ResumePresentation/,/const story=eventsUnlocked\|\|isCampaignPrologueStory\(nextStory\?\.id\)\?nextStory:null/,/pendingStory&&!state\.eventRuntime\?\.activeEvent&&isContentAvailableForMode\(state,pendingStory\)/])assert.match(game,pattern);
+for(const pattern of [/LOCKED_DAY7_SCENE_ID/,/applyLockedDay7ChoiceState\(state,choiceId\)/,/getLockedDay7LegacyChoice\(state\)/,/day7Prompts/,/getLockedDay7ResumePresentation/,/const story=eventsUnlocked\|\|isCampaignPrologueStory\(nextStory\?\.id\)\?nextStory:null/,/if\(pendingStoryAvailable\)openStoryScene\(pendingStory\)/])assert.match(game,pattern);
 console.log("✓ DAY 7 잠금 시나리오 8 Scene·81경로·DAY 6 콜백·양축 보존·JSON 저장 복원 검증 통과");

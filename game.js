@@ -135,7 +135,7 @@ import { completeWorldFastTravel, discoverLocation, getNearbyLocation, getPlayer
 import { getMapLocationAsset } from "./src/map-location-assets.mjs";
 import { STORY_FEATURES, beginStoryFreeAction, completeStoryFreeAction, getStoryFeatureAvailability, getStoryFreeActionReport, getStoryFreeActions, getStoryFreeActionWindow, markStoryFreeActionEventComplete, resolveStoryFreeAction } from "./src/story-free-action-manager.mjs?v=33";
 import { getSharedEventById } from "./src/event-compatibility.mjs?v=31";
-import { STORY_UI_STATES, deriveStoryUiState, getStoryUiInvariantViolations, isStoryFreeActionResume, prepareCampaignDayAdvance, reconcileCompletedStoryFreeAction, shouldClaimStoryPending } from "./src/story-flow-guard.mjs?v=2";
+import { STORY_UI_STATES, deriveStoryUiState, getStoryUiInvariantViolations, isStoryFreeActionResume, prepareCampaignDayAdvance, reconcileCompletedStoryFreeAction, shouldClaimStoryPending, shouldResumeCampaignStoryBeforeBreakup } from "./src/story-flow-guard.mjs?v=3";
 import { EXTORTION_ENCOUNTER_CHANCE, JAEMIN_ENCOUNTER_CHANCE, JUNHO_ENCOUNTER_CHANCE, MINJUN_ENCOUNTER_CHANCE, YURI_REUNION_EVENT_ID, getNightOutingContext, hasCompletedYuriReunion, isYuriCafeEncounterAvailable, resolveRepeatWorldEncounter, rollRepeatWorldEncounter, shouldShowPartnerAtWorldLocation, WORLD_REPEAT_ENCOUNTER_CHANCE } from "./src/world-encounter-manager.mjs?v=7";
 import { formatEventProbability, getEventProbabilitySummary } from "./src/event-display.mjs?v=1";
 import { appendYujinConversationTurn, completeYujinRooftopMeeting, getPendingYujinRooftopInvitation, getYujinMessageSuggestions, isYujinRooftopInvitationReady, migrateYujinSecretRouteState, YUJIN_MESSAGE_CORPUS, YUJIN_NPC_ID, YUJIN_ROOFTOP_EVENT_IMAGE, YUJIN_ROOFTOP_INVITATION, YUJIN_ROOFTOP_LOCATION_ID, YUJIN_ROOFTOP_START_MINUTES } from "./src/yujin-secret-route.mjs?v=1";
@@ -2790,10 +2790,12 @@ function loadGame() {
   if(!loaded){toast("불러올 수 있는 저장 데이터가 없어요.");return;}
   resetActiveRuntimeForLoad(); state = loaded; showGame();
   const pendingStory=state.pendingStoryId?selectNextStoryScene(state):null;
-  if(state.breakup&&areGameplayEventsUnlocked())showBreakup(state.breakup);
+  const pendingStoryAvailable=Boolean(pendingStory&&isContentAvailableForMode(state,pendingStory)&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(pendingStory.id)));
+  const resumeStoryBeforeBreakup=shouldResumeCampaignStoryBeforeBreakup({state,pendingStory,contentAvailable:pendingStoryAvailable,eventActive:Boolean(state.eventRuntime?.activeEvent)});
+  if(state.breakup&&areGameplayEventsUnlocked()&&!resumeStoryBeforeBreakup)showBreakup(state.breakup);
   else if(state.day>30)showEnding();
   else if(state.pendingStoryId&&!state.eventRuntime?.activeEvent){
-    if(pendingStory&&!state.eventRuntime?.activeEvent&&isContentAvailableForMode(state,pendingStory)&&(areGameplayEventsUnlocked()||isCampaignPrologueStory(pendingStory.id)))openStoryScene(pendingStory);
+    if(pendingStoryAvailable)openStoryScene(pendingStory);
     else{SaveManager.save(state);toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`);}
   }else if(!state.eventRuntime?.activeEvent)toast(`DAY ${state.day} 저장 데이터를 불러왔어요.`);
 }

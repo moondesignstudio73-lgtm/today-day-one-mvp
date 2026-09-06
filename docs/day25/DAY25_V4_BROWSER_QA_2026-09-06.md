@@ -11,3 +11,31 @@
 - 보존: fixture 최초 준비에서 테스트용 shell의 `settings` 누락을 발견해 harness만 수정했다. 수정 후 처음부터 재진입해 DAY26까지 완주했고 새 오류·경고는 없었다. QA 종료 뒤 세션 백업으로 사용자 저장을 복원했다.
 
 판정: **PASS**. DAY25 전체 완료 판정은 Neutral/Distant/Mixed 데스크톱 및 389×844 모바일 의미 경로가 끝날 때까지 보류한다.
+
+## Neutral · 통화 유예 · 독립 생활 · 데스크톱
+
+- 진입: 검증된 DAY24 V4 `day25Route=DEFERRED_RELATIONSHIP`, `haeunRelationshipOutcome=DEFER`, 통화 대화 fixture.
+- 실행: 실제 게임에서 AUTO OFF를 유지하고 SKIP 없이 C1~6, C14, C16의 8개 노출 선택을 직접 눌러 DAY26까지 완주했다.
+- 결과: 하은의 결혼·접촉 동의를 만들지 않고 혼자 할 일·작은 일정·휴식·공개 경계를 완결했다.
+- 완료 저장: `error=null`, `complete=true`, `location=OWN_DINNER`, `future=null`, `contact=null`, `kiss=false`, `friends=false`, `day26Route=INDEPENDENT_LIFE`, `day=26`, `day26Hook=true`, `freeAction=null`.
+
+판정: **PASS**.
+
+## Distant · 관계 종료 · 새 만남 · 데스크톱
+
+- 진입: DAY24에서 관계를 명시적으로 끝내고 실제 아라 연락과 현재 만남 수락을 받은 fixture.
+- 실행: 실제 게임에서 AUTO OFF를 유지하고 SKIP 없이 C1~7, C14, C16의 9개 노출 선택을 직접 눌러 DAY26까지 완주했다.
+- 결과: 하은 대화·접촉·친구 식사를 만들지 않았고, 아라에게 천천히 가겠다는 현재 메시지 뒤 독립 응답 `RESCHEDULED`를 별도 처리했다. 새 연애로 확정하지 않았다.
+- 완료 저장: `error=null`, `complete=true`, `newMeetingRecipient=ARA`, `newMeetingMessage=SLOW_DOWN`, `newMeetingResponse=RESCHEDULED`, `kiss=false`, `friends=false`, `day26Route=INDEPENDENT_LIFE`, `day=26`, `day26Hook=true`, `freeAction=null`.
+
+판정: **PASS**.
+
+## Distant · 기종료 관계 · 혼자 · 데스크톱
+
+- 최초 불러오기에서 유효한 DAY25 pending Story보다 전역 `breakup` 엔딩을 먼저 띄워 `새로운 30일 시작하기`만 노출하는 HIGH 결함을 발견했다.
+- `loadGame()`이 현재 DAY와 일치하고 콘텐츠가 실제 존재하는 `m30-dayN-*` pending Story를 검증한 경우에만 그 Story를 이별 엔딩보다 우선 재개하도록 수정했다. 잘못된 DAY, 없는 콘텐츠, Free Mode, 활성 이벤트는 우회하지 않는다.
+- 수정 후 동일 fixture를 처음부터 다시 불러오자 SCENE01로 정상 진입했다. AUTO OFF·SKIP 미사용으로 C1~6, C14, C16의 8개 선택을 직접 눌러 DAY26까지 완주했다.
+- 완료 저장: `error=null`, `route=RELATIONSHIP_ENDED`, `tone=DIFFICULT`, `complete=true`, `location=OWN_DINNER`, `future=null`, `contact=null`, `kiss=false`, `newMeetingRecipient=null`, `friends=false`, `day26Route=INDEPENDENT_LIFE`, `day=26`, `day26Hook=true`, `freeAction=null`.
+- QA 종료 뒤 세션 백업으로 사용자 저장을 복원했다.
+
+판정: **PASS**. DAY25 전체 완료 판정은 Mixed 데스크톱과 `389×844` 모바일 의미 경로가 끝날 때까지 보류한다.
