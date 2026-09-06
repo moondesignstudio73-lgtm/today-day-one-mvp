@@ -26,3 +26,13 @@
 - 캐시는 game280 → DAY28 bridge v2 → state/middle v2다.
 
 다음 시작점: C11 GOODBYE 뒤 SCENE14~15를 건너뛰는 흐름을 기존 `day28-notion-v4/1` 저장을 손상시키지 않는 방식으로 설계·구현한다. 이후 CALL 장면 분리, 실제 고지/청취, 독립 NPC 응답과 원문 누락 보완을 이어간다. DAY28은 PARTIAL이다.
+
+## 후속: C11 직접 작별과 저장 호환성
+
+- 새 C11 `GOODBYE` 선택에는 `flow: DIRECT_FAREWELL`을 기록하고 `daily_listening`·집 초대를 건너뛰어 SCENE16 작별로 직접 이동한다. 선택 직후 원문의 `아쉬운 마음이 남아도 오늘의 거리를 지킬 수 있었다.`를 먼저 재생한다.
+- 이 경로에서 SCENE14 양말 대화, C12 일상 청취, 집 초대 cue, SCENE15 집 기억이 노출되지 않으며 `dailyListening`과 `homeInvitationResponse`도 생성하지 않는다.
+- 수정 전 저장의 C11 기록에는 flow 표식이 없다. replay 시 표식 없는 기록만 기존 `daily_listening` 전이를 사용하므로 유효한 중간 저장을 무효화하거나 자동 변경하지 않는다. 새 저장은 직접 작별 전이를 그대로 replay한다.
+- 직접 작별과 구저장 호환성, 중간 저장/브리지 회귀를 집중 검증했다. 실제 브라우저는 NOT RUN이다.
+- 캐시는 game281 → DAY28 bridge v3 → state/middle v3다.
+
+다음 시작점: CALL 경로에서 산책·벤치·대면 접촉 선택과 인물을 제거하고 통화에 맞는 원문 대사/종료 presentation으로 분리한다. 이후 실제 고지/청취, 독립 NPC 응답과 남은 원문 대사·행동을 보완한다. DAY28은 계속 PARTIAL이다.

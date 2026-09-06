@@ -1,6 +1,6 @@
 import {DAY28_V4_SOURCE_SCENES} from './day28-v4-source-registry.mjs';
 import {day28V4SourceRef} from './day28-v4-source-selection.mjs';
-import {getDay28V4Options,validateDay28V4} from './day28-v4-state-contract.mjs?v=2';
+import {getDay28V4Options,validateDay28V4} from './day28-v4-state-contract.mjs?v=3';
 
 const ref=(scene,line)=>day28V4SourceRef(scene,line);
 const mono=(scene,text)=>({type:'monologue',text,source:ref(scene,text)});
