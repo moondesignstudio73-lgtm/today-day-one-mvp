@@ -80,13 +80,13 @@ DAY24 완료 이력 → SCENE01~03 / C1~3 공통 도입
    - ~~SCENE17~19/C4~7 혼자/새 사람 대체 경로~~ 완료. 혼자 하는 일·내일의 작은 일·휴식 선택을 독립 생활로 유지하고, DAY24에서 실제 수락된 단일 연락 대상만 SCENE19에 투영한다. 상대의 현재 응답 전에는 약속 결과를 확정하지 않는다.
 5. ~~집·일·돈·거리·속도와 하은 독립 응답, 현재 접촉 동의를 구현한다.~~ 하은 미래 경로 완료. 입맞춤은 활성 관계·CALM 신뢰·거짓말 없음·현재 상호 동의가 모두 충족될 때만 SCENE15/C13을 연다. 손잡기 거절, 포옹, 바라보기, 작별은 키스로 승격하지 않는다.
 6. ~~친구 가능성·공개 범위·ending과 DAY26 hook을 구현한다.~~ playable/state 완료. 지훈·소라 모두의 현재 가능 응답이 있을 때만 네 사람 식사를 확정하며, 불가·비공개·다른 날·혼자 경로도 각각 완전한 결과로 닫는다. DAY26 hook은 최종 completion cue 뒤에만 상태 계약에서 열린다.
-7. game bridge, 저장 재개, 시간·장소·인물 presentation, Story/Free 배타성을 연결한다.
+7. ~~game bridge, 저장 재개, 시간·장소·인물 presentation, Story/Free 배타성을 연결한다.~~ 기반 완료.
    - ~~다섯 playable 모듈을 단일 bridge로 결합하고 현재 장소·미래·접촉·새 만남·친구 가능 응답, 원자 복원, 저장 왕복, DAY26 hook을 연결~~ 완료.
-   - 남은 범위: `game.js` 실제 Story 루프와 Story/Free 배타성 연결.
+   - ~~`game.js` 실제 Story 루프와 Story/Free 배타성 연결~~ 완료. V4 진행·완료 중 legacy DAY25 Free Action과 legacy choice 기록을 차단하고, 현재 응답·completion·시계·재개 배경을 실제 루프에 연결했다.
 8. source/state/bridge/저장/경제/전체 30일 시뮬레이션 회귀를 통과한다.
 9. Friendly/Neutral/Distant/Mixed와 하은/유예/혼자/새 만남/입맞춤 거절 및 수락 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
 10. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY26 전환이 모두 PASS일 때만 DAY25 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-`game.js`의 실제 Story 루프에 DAY25 V4 bridge와 runtime resolution을 연결하고 V4 진행·완료 중 legacy DAY25 Free Action을 차단한다. 이 관문 전까지 DAY25는 **PARTIAL**이다.
+DAY22~25 집중 회귀를 닫고 실제 브라우저에서 Friendly 대면 지속 경로를 SKIP 없이 완주한다. 이후 Neutral/Distant/Mixed와 389×844 의미 경로를 검증한다. 이 관문 전까지 DAY25는 **PARTIAL**이다.
