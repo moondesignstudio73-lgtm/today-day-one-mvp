@@ -1,6 +1,6 @@
 import {validateDay23V4} from './day23-v4-state-contract.mjs';
 import {validateDay24V4} from './day24-v4-state-contract.mjs';
-import {DAY25_V4_SCHEMA,validateDay25V4} from './day25-v4-state-contract.mjs';
+import {DAY25_V4_SCHEMA,validateDay25V4} from './day25-v4-state-contract.mjs?v=2';
 import {DAY26_V4_SOURCE_SCENES} from './day26-v4-source-registry.mjs';
 
 export const DAY26_V4_SCHEMA='day26-notion-v4/1';
@@ -19,7 +19,7 @@ const phaseDefs=Object.freeze({
 function sourceChoice(number,variant){const found=DAY26_V4_SOURCE_SCENES.flatMap(scene=>scene.choices).find(choice=>choice.number===number&&choice.variant===variant);if(!found)throw new Error(`DAY26_SOURCE_CHOICE_MISSING:${variant}:${number}`);return found;}
 function optionSet(number,variant,keys){const source=sourceChoice(number,variant);if(source.labels.length!==keys.length)throw new Error(`DAY26_OPTION_KEY_MISMATCH:${variant}:${number}`);return source.labels.map((label,index)=>Object.freeze({id:`day26_v4_c${number}_${variant.toLowerCase()}_${keys[index]}`,label}));}
 function relationshipActive(state,day25){return state.breakup==null&&state.ended!==true&&day25.facts.relationshipContinues===true;}
-function deriveInput(state){const flags=state.storyFlags,day23=flags.day23V4,day24=flags.day24V4,day25=flags.day25V4;const active=relationshipActive(state,day25),recipient=day25.input.newMeeting?.recipient??null,response=day25.facts.newMeetingResponse??null,newMeetingToday=!active&&recipient!=null&&response==='ACCEPTED';const groupMeal=active&&day25.facts.friendMealScheduled===true;return {
+function deriveInput(state){const flags=state.storyFlags,day23=flags.day23V4,day24=flags.day24V4,day25=flags.day25V4;const active=relationshipActive(state,day25),response=day25.facts.newMeetingResponse??null,recipient=response==null?null:day25.input.newMeeting?.recipient??null,newMeetingToday=!active&&recipient!=null&&response==='ACCEPTED';const groupMeal=active&&day25.facts.friendMealScheduled===true;return {
   day25Route:day25.facts.day26Route,relationshipContinues:active,haeunFutureOutcome:day25.facts.haeunFutureOutcome,groupMealScheduled:groupMeal,friendMealPlan:day25.facts.friendMealPlan,friendAvailability:clone(day25.facts.friendAvailability),socialScope:day25.facts.socialScope,publicBoundary:day25.facts.publicBoundary,
   newMeeting:recipient?{recipient,message:day25.facts.newMeetingMessage,response,todayConfirmed:newMeetingToday}:null,relationshipStatusLie:clone(day25.input.relationshipStatusLie),jihoonKnown:day25.input.jihoonKnown,soraKnown:day25.input.soraKnown,haeunNightEligible:active,
   lodgingJokeKnown:flags.day19V4?.facts?.jihoonLodgingJokeShared===true,ownedPinkOutfit:flags.day9V3PurchasedOutfit===true||flags.day10V3GreenShirtOwned===true,currentEnergy:Number.isFinite(state.energy)?Number(state.energy):70,currentStress:Number.isFinite(state.stress)?Number(state.stress):20,currentMoney:Number(state.money)||0,

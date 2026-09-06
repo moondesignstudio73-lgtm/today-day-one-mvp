@@ -9,7 +9,7 @@
 - 완료 저장: `error=null`, `phase=ending`, `complete=true`, 식비 settlement `route=GROUP_MEAL/cost=24000`, DAY26 food ledger 1건, `day=27`, `pendingStoryId=m30-day27-current-final-check`, `day27Hook=true`, `freeAction=null`.
 - 브라우저 warning/error 0. QA 종료 뒤 세션 백업으로 사용자 저장을 복원했다.
 
-판정: **PASS**. DAY26 전체 완료 판정은 Neutral/Distant/Mixed, 지훈 단독·새 만남·거짓말 정정/반복, 389×844 모바일 의미 경로가 끝날 때까지 보류한다.
+판정: **PASS**. DAY26 전체 완료 판정은 아래 대체 경로와 389×844 모바일 의미 경로가 끝날 때까지 보류한다.
 
 ## Neutral · 관계 재논의 · 혼자 · 데스크톱
 
@@ -45,4 +45,29 @@
 - 결과: 현장 인물은 아라만 등장했고 `route=NEW_MEETING`, 관계 의미 응답 `RECIPROCATE`를 별도로 받은 뒤에도 새 연애나 다음 약속을 자동 확정하지 않았다. `newLieResponse=null`, `newNextResponse=null`이다.
 - 완료 저장: 식비 `NEW_MEETING/22000` 1건, `error=null`, `complete=true`, `day=27`, `day27Hook=true`, `freeAction=null`. 브라우저 warning/error 0, 사용자 저장 복원 PASS.
 
-판정: **PASS**. 남은 데스크톱 관문은 지훈 단독 식사와 실제 동일 수신자 거짓말 정정/반복이다. 전체 완료 판정은 이 경로들과 389×844 모바일 의미 경로가 끝날 때까지 보류한다.
+판정: **PASS**.
+
+## Mixed · 지훈 단독 식사 · 데스크톱
+
+- 진입: DAY24의 서진 관련 미정정 이력과 DAY25 관계 재논의를 보존하되, 지훈·소라 단체 식사는 잡지 않은 검증 fixture.
+- 실행: 실제 화면에서 C1과 지훈 현재 응답을 받은 뒤 단독 식사 경로, 공통 C14까지 AUTO OFF·SKIP 미사용으로 완주했다.
+- 결과: `route=JIHOON_MEAL`, 기존 거짓말을 식사 자리의 새 폭로로 만들지 않았고 `day27Route=NEW_MEETING_TRUTH`로 이월했다.
+- 완료 저장: 식비 `JIHOON_MEAL/16000` 1건, `error=null`, `complete=true`, `day=27`, `pendingStoryId=m30-day27-current-final-check`, `day27Hook=true`, `freeAction=null`. 사용자 저장 복원 PASS.
+
+판정: **PASS**.
+
+## Mixed · 동일 수신자 서진 거짓말 정정 · 데스크톱
+
+- 발견·수정: 실제 DAY24→25 replay에서는 관계가 유지되는 동안 새 만남 후보를 버려, DAY25에 관계를 끝내도 같은 수신자 정정 장면에 도달할 수 없었다. DAY24에서 서진에게 관계 상태를 숨겼고 서진이 `THINK`로 답한 경우에만 후보를 보존하고, DAY25에서 관계 종료와 서진의 현재 `ACCEPTED` 응답이 모두 확인되어야 DAY26으로 전달하도록 상태 계약을 고쳤다. 반대로 DAY25에서 만나지 않은 후보는 DAY26 입력으로 승격하지 않는다.
+- 실행: 실제 화면에서 C1·C4·C5·C6·C8·C14를 AUTO OFF·SKIP 미사용으로 직접 선택했다. C6에서 “그렇게 들리게 말했어요”를 골라 같은 수신자 서진에게 정정했다.
+- 결과: `route=NEW_MEETING`, `newMeetingRecipient=SEOJIN`, `newMeaningResponse=RECIPROCATE`, `newLieResponse=END_TODAY`, `newNextResponse=null`, `day27Route=INDEPENDENT_LIFE`.
+- 완료 저장: 식비 `NEW_MEETING/22000` 1건, `error=null`, `complete=true`, `day=27`, `pendingStoryId=m30-day27-current-final-check`, `day27Hook=true`, `freeAction=null`. 사용자 저장 복원 PASS.
+- 반복 선택은 정상 실제 이력에서는 별도 관문이 아니다. DAY26의 오늘 새 만남은 기존 관계가 DAY25에 종료된 경우에만 유효하므로, C6의 “정리됐어요”는 그 시점에는 사실이며 반복 거짓말이 될 수 없다. 조작된 상태를 실제 브라우저 이력처럼 만들지 않는다.
+
+판정: **PASS**. 남은 관문은 389×844 모바일 의미 경로다.
+
+## 자동 회귀
+
+- `node --test tests/*.test.mjs`: **804/804 PASS**.
+- `npm test`: **100회 × 30일 자동 시뮬레이션 PASS**.
+- 신규 회귀는 실제 DAY25에서 사용하지 않은 연락 후보가 DAY26 새 만남으로 승격되지 않는지, 동일 수신자 후보가 관계 종료와 현재 수락 응답 뒤에만 전달되는지를 검증한다.

@@ -1,10 +1,10 @@
 import {BACKGROUND_ASSETS,getNpcSprite} from './assets/asset-manifest.mjs?v=25';
 import {MAP_LOCATION_ASSETS} from './map-location-assets.mjs';
 import {recordTransaction} from './economy-manager.mjs';
-import {applyDay26V4Choice,beginDay26V4,completeDay26V4,getDay26V4Entry,resolveDay26V4Attendance,resolveDay26V4Jihoon,resolveDay26V4NewLie,resolveDay26V4NewMeaning,resolveDay26V4NewNext,validateDay26V4} from './day26-v4-state-contract.mjs';
-import {getDay26V4PlayableGroup} from './day26-v4-playable-group.mjs?v=1';
-import {getDay26V4PlayableAlternates} from './day26-v4-playable-alternates.mjs?v=1';
-import {getDay26V4PlayableEnding} from './day26-v4-playable-ending.mjs?v=1';
+import {applyDay26V4Choice,beginDay26V4,completeDay26V4,getDay26V4Entry,resolveDay26V4Attendance,resolveDay26V4Jihoon,resolveDay26V4NewLie,resolveDay26V4NewMeaning,resolveDay26V4NewNext,validateDay26V4} from './day26-v4-state-contract.mjs?v=3';
+import {getDay26V4PlayableGroup} from './day26-v4-playable-group.mjs?v=3';
+import {getDay26V4PlayableAlternates} from './day26-v4-playable-alternates.mjs?v=3';
+import {getDay26V4PlayableEnding} from './day26-v4-playable-ending.mjs?v=3';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
 
 export const DAY26_V4_CAMPAIGN_SLOT='m30-day26-current-legal-preparation';

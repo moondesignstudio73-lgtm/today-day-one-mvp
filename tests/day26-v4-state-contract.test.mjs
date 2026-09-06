@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {day25ContinuedFixture,day25EndedFixture,day25NewMeetingFixture} from './day25-v4-playable-fixture.mjs';
+import {day25ContinuedFixture,day25EndedFixture,day25MixedFixture,day25NewMeetingFixture} from './day25-v4-playable-fixture.mjs';
 import {applyDay25V4Choice,beginDay25V4,completeDay25V4,getDay25V4Options,resolveDay25V4Contact,resolveDay25V4Friends,resolveDay25V4Future,resolveDay25V4Location,resolveDay25V4NewMeeting} from '../src/day25-v4-state-contract.mjs';
 import {applyDay26V4Choice,beginDay26V4,completeDay26V4,getDay26V4Entry,getDay26V4Options,resolveDay26V4Attendance,resolveDay26V4Jihoon,resolveDay26V4NewMeaning,resolveDay26V4NewNext,validateDay26V4} from '../src/day26-v4-state-contract.mjs';
 
@@ -16,6 +16,8 @@ test('group meal keeps overstatement, acknowledgement, promise and actual correc
 test('rest request waits for current attendance response before cancelling a real group meal',()=>{const state=complete25(day25ContinuedFixture());beginDay26V4(state);choose26(state,'rest');assert.equal(state.storyFlags.day26V4.phase,'attendance_resolution');assert.equal(state.storyFlags.day26V4.facts.route,null);resolveDay26V4Attendance(state,{type:'attendanceChangeResponse',accepted:true});assert.equal(state.storyFlags.day26V4.facts.route,'SOLO_DAY');assert.equal(state.storyFlags.day26V4.phase,'solo_life');});
 
 test('Jihoon being known does not create a separate meal without his current response',()=>{const state=complete25(day25ContinuedFixture(),{friend:'later'});beginDay26V4(state);choose26(state);assert.equal(state.storyFlags.day26V4.phase,'jihoon_resolution');assert.equal(state.storyFlags.day26V4.facts.jihoonMealAccepted,null);resolveDay26V4Jihoon(state,{type:'jihoonMealResponse',accepted:false});assert.equal(state.storyFlags.day26V4.facts.route,'SOLO_DAY');});
+
+test('an unused DAY25 contact candidate is not promoted into DAY26',()=>{const state=complete25(day25MixedFixture(),{friend:'later'});const entry=getDay26V4Entry(state);assert.equal(entry.mode,'V4_NEW');assert.equal(entry.input.relationshipContinues,true);assert.equal(entry.input.newMeeting,null);beginDay26V4(state);choose26(state);assert.equal(state.storyFlags.day26V4.phase,'jihoon_resolution');});
 
 test('accepted single new meeting keeps relationship intent and next appointment responses separate',()=>{const state=complete25(day25NewMeetingFixture(),{meeting:'ACCEPTED'});beginDay26V4(state);choose26(state);assert.equal(state.storyFlags.day26V4.facts.route,'NEW_MEETING');choose26(state);choose26(state,'romance');assert.equal(state.storyFlags.day26V4.phase,'new_meaning_resolution');resolveDay26V4NewMeaning(state,{type:'newMeetingIntentResponse',recipient:'ARA',outcome:'NEED_TIME'});assert.equal(state.storyFlags.day26V4.facts.newMeaningResponse,'NEED_TIME');choose26(state,'meet_again');assert.equal(state.storyFlags.day26V4.phase,'new_next_resolution');resolveDay26V4NewNext(state,{type:'newMeetingNextResponse',recipient:'ARA',outcome:'DECLINED'});assert.equal(state.storyFlags.day26V4.facts.newNextResponse,'DECLINED');choose26(state);choose26(state);assert.equal(state.storyFlags.day26V4.phase,'ending');assert.equal(state.storyFlags.day26V4.facts.day27Route,'INDEPENDENT_LIFE');});
 

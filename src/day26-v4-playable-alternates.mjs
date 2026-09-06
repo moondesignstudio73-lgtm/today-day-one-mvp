@@ -1,6 +1,6 @@
 import {DAY26_V4_SOURCE_SCENES} from './day26-v4-source-registry.mjs';
 import {day26V4SourceRef} from './day26-v4-source-selection.mjs';
-import {getDay26V4Options,validateDay26V4} from './day26-v4-state-contract.mjs';
+import {getDay26V4Options,validateDay26V4} from './day26-v4-state-contract.mjs?v=3';
 
 const ref=(scene,line)=>day26V4SourceRef(scene,line);
 const grounded=(scene,text,exact)=>({type:'playerNarration',text,source:ref(scene,exact)});
