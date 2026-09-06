@@ -64,7 +64,19 @@
 - 완료 저장: 식비 `NEW_MEETING/22000` 1건, `error=null`, `complete=true`, `day=27`, `pendingStoryId=m30-day27-current-final-check`, `day27Hook=true`, `freeAction=null`. 사용자 저장 복원 PASS.
 - 반복 선택은 정상 실제 이력에서는 별도 관문이 아니다. DAY26의 오늘 새 만남은 기존 관계가 DAY25에 종료된 경우에만 유효하므로, C6의 “정리됐어요”는 그 시점에는 사실이며 반복 거짓말이 될 수 없다. 조작된 상태를 실제 브라우저 이력처럼 만들지 않는다.
 
-판정: **PASS**. 남은 관문은 389×844 모바일 의미 경로다.
+판정: **PASS**.
+
+## Friendly · Neutral · Distant · Mixed · 389×844 모바일
+
+- 환경: 브라우저 viewport override를 보정해 실제 콘텐츠 `innerWidth=389`, `innerHeight=844`를 확인했다. 테스트 종료 후 override를 reset했다.
+- 실행: Friendly 네 사람 식사, Neutral 관계 재논의·혼자, Distant 기종료·혼자, Mixed 기존 거짓말 책임의 네 대표 경로를 AUTO OFF·SKIP 미사용으로 각각 DAY27까지 완주했다. 동일 수신자 서진 정정 의미 경로도 같은 크기에서 별도로 완주했다.
+- Friendly: `GROUP_MEAL/24000` 1건, `day27Route=HAEUN_VOICE`, `error=null`, `freeAction=null`.
+- Neutral·Distant: 모두 `SOLO_DAY`, 식비 0건, 현장에 하은·친구·새 상대를 만들지 않고 `day27Route=INDEPENDENT_LIFE`.
+- Mixed: `GROUP_MEAL/24000` 1건, 기존 미정정 사실을 새 폭로로 복제하지 않고 `day27Route=NEW_MEETING_TRUTH`.
+- 동일 수신자 정정: `NEW_MEETING/22000` 1건, `newMeetingRecipient=SEOJIN`, `newMeaningResponse=RECIPROCATE`, `newLieResponse=END_TODAY`, `newNextResponse=null`, `day27Route=INDEPENDENT_LIFE`.
+- 모든 직접 모바일 실행은 `complete=true`, `day=27`, `pendingStoryId=m30-day27-current-final-check`, `day27Hook=true`; 기준 시각 이후 신규 browser warning/error 0. 각 실행 뒤 세션 백업으로 사용자 저장을 복원했다.
+
+판정: **PASS / COMPLETE**. 원문·상태·playable·bridge·저장·경제·Story/Free·데스크톱 및 모바일 관문이 모두 닫혔다.
 
 ## 자동 회귀
 
