@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DAY26 V4 실제 게임 QA</title>
+<style>body{font:18px system-ui;background:#181522;color:#fff;padding:40px}button{padding:16px;margin:8px}p{max-width:900px;line-height:1.6}</style>
+<h1>DAY26 V4 실제 게임 QA</h1>
+<p>검증된 DAY25 완료 fixture에서 DAY26 실제 Story를 엽니다. 본편의 모든 장면과 선택은 SKIP 없이 진행하며, 최초 실행 전 사용자 저장을 이 탭 세션에 백업합니다.</p>
+<button data-route="friendly">Friendly · 네 사람 식사</button>
+<button data-route="neutral">Neutral · 재논의 · 혼자</button>
+<button data-route="distant">Distant · 관계 종료 · 혼자</button>
+<button data-route="mixed">Mixed · 거짓말 책임</button>
+<button data-route="new-meeting">Distant · 아라 새 만남</button>
+<button id="inspect">현재 QA 상태 확인</button>
+<button id="restore">테스트 전 저장 복원</button>
+<p role="status" id="status"></p>
+<script>function reportQaModuleError(message){sessionStorage.setItem('day26-v4-qa-module-error',message);document.querySelector('#status').textContent=`QA 모듈 실패: ${message}`;}window.addEventListener('error',event=>reportQaModuleError(event.message));window.addEventListener('unhandledrejection',event=>reportQaModuleError(String(event.reason?.message??event.reason)));</script>
+<script type="module">
+import {SaveManager} from '../src/save-manager.mjs';
+import {GAME_MODES} from '../src/scenario-state.mjs';
+import {createInitialState} from '../src/game-core.mjs';
+import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
+import {day25ContinuedFixture,day25DeferredFixture,day25EndedFixture,day25MixedFixture,day25NewMeetingFixture} from './day25-v4-playable-fixture.mjs?v=3';
+import {applyDay25V4Choice,beginDay25V4,completeDay25V4,getDay25V4Options,resolveDay25V4Contact,resolveDay25V4Friends,resolveDay25V4Future,resolveDay25V4Location,resolveDay25V4NewMeeting} from '../src/day25-v4-state-contract.mjs?v=1';
+
+const backupKey='day26-v4-qa-save-backup';
+const keys=[SaveManager.key,SaveManager.keyForMode(GAME_MODES.MARRIAGE_30),SaveManager.keyForMode(GAME_MODES.FREE_ROMANCE)];
+function backup(){if(sessionStorage.getItem(backupKey)===null)sessionStorage.setItem(backupKey,JSON.stringify(Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))));}
+function choose(state,suffix){const options=getDay25V4Options(state.storyFlags.day25V4),selected=suffix?options.find(option=>option.id.endsWith(`_${suffix}`)):options[0];if(!selected)throw new Error(`DAY26_FIXTURE:${state.storyFlags.day25V4.phase}:${suffix}`);applyDay25V4Choice(state,selected.id);}
+function completeDay25(state,route){beginDay25V4(state);let guard=0;while(state.storyFlags.day25V4.phase!=='ending'){if(guard++>50)throw new Error('DAY26_FIXTURE_GUARD');const phase=state.storyFlags.day25V4.phase;if(phase==='location_resolution'){resolveDay25V4Location(state,{type:'haeunMealLocationResponse',accepted:true,costTimeFit:true});continue;}if(phase==='future_resolution'){resolveDay25V4Future(state,{type:'haeunFutureResponse',outcome:route==='mixed'?'REDISCUSS':'PREPARE_MARRIAGE'});continue;}if(phase==='contact_resolution'){resolveDay25V4Contact(state,{type:'haeunContactResponse',contact:state.storyFlags.day25V4.facts.requestedContact,accepted:true});continue;}if(phase==='friend_resolution'){resolveDay25V4Friends(state,{type:'friendAvailabilityResponse',jihoonAvailable:true,soraAvailable:true});continue;}if(phase==='new_meeting_resolution'){resolveDay25V4NewMeeting(state,{type:'newMeetingResponse',recipient:state.storyFlags.day25V4.input.newMeeting.recipient,outcome:'ACCEPTED'});continue;}const suffix=phase==='future_proposal'&&route==='mixed'?'rediscuss':undefined;choose(state,suffix);}completeDay25V4(state,{type:'chapterCompletionCue',day:25,finalSceneReached:true});return state;}
+function seed(route){const fixtures={friendly:day25ContinuedFixture,neutral:day25DeferredFixture,distant:day25EndedFixture,mixed:day25MixedFixture,'new-meeting':day25NewMeetingFixture},fixture=completeDay25(fixtures[route](),route),state=createInitialState(createGirlfriendFromProfile('haeun',()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30}),scenario=state.scenario;Object.assign(state,fixture);state.scenario={...scenario,...fixture.scenario,enabled:true};state.day=26;state.phase=0;state.pendingStoryId='m30-day26-current-legal-preparation';state.settings??={};state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};return state;}
+document.querySelectorAll('[data-route]').forEach(button=>button.addEventListener('click',()=>{try{backup();const route=button.dataset.route;SaveManager.save(seed(route));location.href=`../index.html?qa=day26-v4&route=${route}`;}catch(error){document.querySelector('#status').textContent=`QA 준비 실패: ${error?.message??error}`;}}));
+document.querySelector('#inspect').addEventListener('click',()=>{const raw=localStorage.getItem(SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)),saved=raw?JSON.parse(raw):null,chapter=saved?.storyFlags?.day26V4,error=saved?.eventRuntime?.lastError,food=(saved?.economyLedger??[]).filter(entry=>entry.day===26&&entry.category==='food');document.querySelector('#status').textContent=JSON.stringify({error:error??null,day25Route:chapter?.input?.day25Route??null,phase:chapter?.phase??null,complete:chapter?.complete??false,route:chapter?.facts?.route??null,disclosurePlan:chapter?.facts?.disclosurePlan??null,publicOverstatement:chapter?.facts?.publicOverstatement??false,overstatementCorrected:chapter?.facts?.overstatementCorrected??false,newMeetingRecipient:chapter?.input?.newMeeting?.recipient??null,newMeaningResponse:chapter?.facts?.newMeaningResponse??null,newLieResponse:chapter?.facts?.newLieResponse??null,newNextResponse:chapter?.facts?.newNextResponse??null,day27Route:chapter?.facts?.day27Route??null,mealSettlement:saved?.storyFlags?.day26V4MealSettlement??null,foodCount:food.length,day:saved?.day??null,pendingStoryId:saved?.pendingStoryId??null,day27Hook:saved?.storyFlags?.day26V4Day27HookPending??false,freeAction:saved?.storyFreeAction??null});});
+document.querySelector('#restore').addEventListener('click',()=>{const data=sessionStorage.getItem(backupKey);if(data===null){document.querySelector('#status').textContent='이 탭에 QA 백업이 없습니다.';return;}for(const [key,value] of Object.entries(JSON.parse(data)))value===null?localStorage.removeItem(key):localStorage.setItem(key,value);sessionStorage.removeItem(backupKey);document.querySelector('#status').textContent='테스트 전 저장을 복원했습니다.';});
+document.querySelector('#status').textContent='DAY26 검증 경로를 선택하세요.';
+</script></html>
