@@ -2,7 +2,7 @@
 
 ## 판정과 원문
 
-- 현재 상태: **PARTIAL / SOURCE LOCKED**.
+- 현재 상태: **PASS / COMPLETE**.
 - 최종 원문: Notion `DAY 29 — 내일도 내가 고를게 | SCENARIO V4`.
 - page id: `3c9c31f0-29a6-8111-b76b-edb7bbadf790`.
 - last edited snapshot: `2026-08-27T21:11:30.663Z`.
@@ -59,12 +59,12 @@ DAY28 V4 완료 → SCENE01~09 / C1~9 공통 생활·저녁 범위
 6. ~~SCENE21~24 내일의 한 가지·준비·인사·DAY30 handoff C21~23을 구현한다.~~ 완료.
 7. ~~game bridge, 저장 재개, 현재 NPC 응답, Story/Free 배타성, 화면 presentation을 연결한다.~~ 완료.
 8. ~~source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.~~ 완료.
-9. Friendly/Neutral/Distant/Mixed를 실제 브라우저에서 AUTO OFF·SKIP 없이 DAY30까지 검증한다.
-10. 원문·런타임 텍스트·콘솔·자산·오버플로·DAY30 전환이 모두 PASS일 때만 DAY29 COMPLETE로 승격한다.
+9. ~~Friendly/Neutral/Distant/Mixed를 실제 브라우저에서 AUTO OFF·SKIP 없이 DAY30까지 검증한다.~~ 완료.
+10. ~~원문·런타임 텍스트·콘솔·자산·오버플로·DAY30 전환이 모두 PASS일 때만 DAY29 COMPLETE로 승격한다.~~ 완료.
 
 ## 다음 시작점
 
-실제 브라우저에서 Neutral/Distant/Mixed 데스크톱을 AUTO OFF·SKIP 없이 DAY30까지 검증한다. 그다음 Friendly/Neutral/Distant/Mixed 389×844 모바일 관문을 닫는다.
+DAY30 최종 Notion 원문을 플레이어 공개 snapshot으로 잠그고 DAY27~29 실제 이력을 감사한다. DAY29은 완료됐으므로 같은 경로를 반복하지 않는다.
 
 ## 상태 계약 완료 기록
 
@@ -105,3 +105,9 @@ completion은 단일 `day29-notion-v4` 이력과 DAY30 hook만 기록하고 DAY2
 ## Friendly 실제 Chrome QA 기록
 
 격리된 Chrome 152에서 Friendly를 AUTO OFF·SKIP 클릭 0회로 DAY30까지 완주했다(`DAY29_V4_BROWSER_QA_2026-09-07.md`). 하은 집 저녁, 미래 `CONTINUE`, 현재 `KISS`, 숙박 수락을 독립 응답으로 확인했고 최종 `complete=true/day=30/day30Hook=true/tomorrowRecipient=HAEUN`이다. SCENE15/C15에서는 reload 전후 `19:00 / girlfriend-home / 선행 선택 13개 / 하은 표시`가 동일했다. Story/Free 중첩과 조치 가능한 browser console error·runtime exception은 0건이며 임시 프로필 저장을 복구했다. DAY29은 **PARTIAL**, 다음은 **Neutral/Distant/Mixed 데스크톱 비-SKIP QA**다.
+
+## 실제 Chrome 네 경로·모바일 종결 기록
+
+동일 `game.js?v=290`에서 Neutral 하은 바깥 저녁, Distant Solo, Mixed 실제 아라를 데스크톱으로 추가 완주했다. Neutral은 현재 키스가 성립해도 선행 다음 만남·숙박이 없어 `tomorrowRecipient=null`, Distant는 사람 응답 전체가 비어 있고, Mixed는 아라의 C18 `ACCEPTED` 뒤에만 `tomorrowRecipient=ARA`가 됐다.
+
+389×844 모바일에서는 Friendly/Neutral/Distant/Mixed를 다시 완주했고 모든 프레임에서 `scrollWidth=clientWidth=389`, 최대 수평 넘침 0이었다. 네 경로 모두 AUTO OFF·SKIP 클릭 0회, Story/Free 중첩 0, 조치 가능한 console error/runtime exception 0건, `complete=true/day=30/day30Hook=true`와 격리 저장 복원 PASS다. source/state/playable/bridge/저장/전체 회귀/데스크톱/모바일 관문이 모두 닫혀 DAY29을 **PASS / COMPLETE**로 승격한다. 다음은 **DAY30 최종 Notion 원문 잠금과 DAY27~29 실제 이력 감사**다.

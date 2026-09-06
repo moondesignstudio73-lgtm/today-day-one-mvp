@@ -1,6 +1,6 @@
 # DAY29 V4 실제 브라우저 QA
 
-판정: **PARTIAL**. 실제 Chrome 152 렌더링 엔진에서 Friendly를 AUTO OFF, SKIP 클릭 0회로 DAY30까지 완주했다. Neutral/Distant/Mixed 데스크톱과 네 모바일 경로는 아직 실행하지 않았다.
+판정: **PASS / COMPLETE**. 실제 Chrome 152 렌더링 엔진에서 Friendly/Neutral/Distant/Mixed 데스크톱과 389×844 모바일을 AUTO OFF, SKIP 클릭 0회로 각각 DAY30까지 완주했다.
 
 ## 실행 조건
 
@@ -17,6 +17,20 @@
 - 최종 상태는 `day=30`, DAY29 `phase=ending`, `complete=true`, `tomorrowRecipient=HAEUN`, `day29V4Day30HookPending=true`다.
 - DAY29 Free Action은 끼어들지 않았고 Story 선택과 Free Action 선택의 동시 노출은 0건이다.
 
+## Neutral / Distant / Mixed 데스크톱 결과
+
+- Neutral: DAY28 CALL 이력 뒤 하은과 바깥 저녁을 보냈다. 미래 `CONTINUE`와 현재 `KISS`는 각각 성립했지만 집 초대·숙박·다음 만남은 없으므로 `tomorrowRecipient=null`을 유지했다.
+- Distant: `eveningTarget/location/futureResponse/currentContact/newResponse/tomorrowRecipient`가 모두 `null`인 Solo 경로로 사람 응답을 만들지 않았다.
+- Mixed: 실제 단일 상대 아라만 바깥 저녁에 등장했고 C18 현재 답 `ACCEPTED` 뒤에만 `tomorrowRecipient=ARA`가 됐다. 하은·유리·서진의 현재 응답은 만들지 않았다.
+- 세 경로 모두 `day=30`, DAY29 `phase=ending`, `complete=true`, DAY30 hook이 켜졌고 Story/Free 선택 UI 동시 노출과 runtime exception은 0건이다.
+
+## 389×844 모바일 네 경로
+
+- Friendly/Neutral/Distant/Mixed를 동일 의미 선택으로 다시 완주했다.
+- 모든 진행 프레임에서 `innerWidth=clientWidth=scrollWidth=389`, `innerHeight=844`, 최대 수평 넘침 0을 확인했다.
+- Friendly SCENE15 저장 재개도 모바일에서 다시 통과했다.
+- 네 경로 모두 데스크톱과 같은 최종 사실 및 DAY30 hook을 보존했고 조치 가능한 console error와 runtime exception은 0건이다.
+
 ## SCENE15 저장 재개
 
 - 하은과 음악을 듣는 C15 노출 직전 `phase=haeun_music`, `choiceCount=13`, `19:00`, `girlfriend-home`, 하은 DAY12 의상 표시를 확인했다.
@@ -29,4 +43,4 @@
 - `node --check tests/day29-v4-browser-qa.mjs`: PASS.
 - DAY29 bridge 집중 검사 5/5 및 전체 Node·100회×30일 회귀는 본 브라우저 관문 직전에 PASS했다.
 
-다음 시작점: 동일 `game.js?v=290`에서 Neutral 데스크톱을 실제 하은 바깥 저녁 또는 가능한 짧은 만남으로 완주한 뒤 Distant Solo, Mixed 아라 순으로 검증한다. 세 경로와 389×844 모바일 네 경로 전에는 DAY29을 COMPLETE로 승격하지 않는다.
+다음 시작점: DAY29을 **PASS / COMPLETE**로 닫고 DAY30 최종 Notion 원문 잠금과 DAY27~29 실제 이력 감사를 시작한다.
