@@ -6,7 +6,8 @@
 - Neutral · 통화 · 관계 유예 데스크톱 경로: PASS.
 - Distant · 연락 불가 · 이미 종료된 관계 데스크톱 경로: PASS.
 - Distant · 대면 · 활성 관계 명시적 종료 데스크톱 경로: PASS.
-- DAY24 전체: PARTIAL. Mixed, 연락 대상·거짓말·새 만남, 389×844 검증이 남아 있다.
+- Mixed · 서울 · 유리 연락 사실 공개 데스크톱 경로: PASS.
+- DAY24 전체: PARTIAL. 서진/아라 연락, 거짓말·새 만남, 389×844 검증이 남아 있다.
 
 ## 환경과 진입
 
@@ -33,6 +34,14 @@
 - 전환 저장: `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`, `freeAction=null`.
 - browser warning/error 0, 사용자 저장 복원 PASS.
 
+## Mixed · 서울 · 유리 연락 사실 공개
+
+- DAY19에서 실제 유리 연락을 미완료로 남긴 서울 당일 fixture를 추가하고 DAY22→23→24 이력으로 전달했다. DAY23에서는 남은 연락을 지우지 않고 현재 흔들림을 숨기지 않는 선택으로 DAY24까지 보존했다.
+- DAY24 대면·관계 지속 뒤 C8 `아직 끝내지 않은 관계가 있어요. 더 만나자는 말은 지금 하지 않을게요.`를 직접 선택하고, 유리 C9에서는 오늘의 유리 이야기를 듣는 선택으로 진행했다.
+- 완료 저장: `contactRecipient=YURI`, `contactCleanup=RELATIONSHIP_ACTIVE`, `contactDirection=LISTEN_TODAY`, `relationshipStatusLie=null`, `newMeetingAccepted=false`.
+- 관계 결과는 `CONTINUE`, 미래 대화는 별도 수락되어 `day25Route=HAEUN_FUTURE`로 전환됐다. 유리 연락을 새 연애나 새 만남으로 승격하지 않았다.
+- browser warning/error 0, 사용자 저장 복원 PASS. 확인 시점의 Free Action은 DAY25 전환 뒤의 `day25-home-evening`이었다.
+
 ## Distant · 대면 · 활성 관계 명시적 종료
 
 - 연락 가능한 DIFFICULT 부산 별실 fixture에서 DAY23을 SKIP 없이 완주해 `relationshipOutcome=UNSURE`, `nextConversation=MEET`인 활성 관계 입력을 만들었다.
@@ -57,6 +66,6 @@
 
 ## 다음 관문
 
-1. 유리·서진·아라·연락 없음, 관계 상태 거짓말 정정/지속, 조건부 새 만남을 의미 경로별로 검증한다.
+1. 서진/아라 연락, 관계 상태 거짓말 정정/지속, 조건부 새 만남을 의미 경로별로 검증한다.
 2. Mixed 대표 경로와 Friendly/Neutral/Distant를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
 3. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.

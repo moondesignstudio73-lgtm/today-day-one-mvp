@@ -100,4 +100,4 @@ DAY23 완료 이력
 
 ## 다음 시작점
 
-SCENE01~24/C1~15, game bridge, 실제 `game.js` Story 루프를 연결했고 Friendly 대면·지속, Neutral 통화·유예, Distant 연락 불가·기종료와 활성 관계 명시적 종료 데스크톱 경로를 검증된 DAY23 연속 이력에서 SKIP 없이 DAY25까지 완주했다. 명시적 이별은 `conversation=MEET`, `relationship=END`, `futureAccepted=false`, `day25Route=RELATIONSHIP_ENDED`로 닫혔고 산책·미래 대화·가짜 새 만남을 열지 않았다. 다음 작업은 **실제 연락·거짓말·새 만남 의미 경로와 Mixed/389×844 모바일 QA**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
+SCENE01~24/C1~15, game bridge, 실제 `game.js` Story 루프를 연결했고 Friendly 대면·지속, Neutral 통화·유예, Distant 연락 불가·기종료/명시적 종료, Mixed 서울·유리 연락 데스크톱 경로를 검증된 DAY23 연속 이력에서 SKIP 없이 DAY25까지 완주했다. 유리 경로는 `contactRecipient=YURI`, `contactCleanup=RELATIONSHIP_ACTIVE`, `contactDirection=LISTEN_TODAY`, `relationshipStatusLie=null`, `newMeetingAccepted=false`로 닫혀 실제 연락을 새 연애로 만들지 않았다. 다음 작업은 **서진/아라 연락·거짓말·새 만남 의미 경로와 389×844 모바일 QA**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
