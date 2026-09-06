@@ -110,7 +110,7 @@ import { LOCKED_DAY27_SCENE_ID, applyLockedDay27ChoiceState, getLockedDay27Legac
 import { applyDay27V4GameChoice, applyDay27V4GameResolution, completeDay27V4GameChapter, getDay27V4GameCompatibility, getDay27V4GameResumePresentation, getDay27V4GameSegment, isDay27V4ResolutionStep, prepareDay27V4GameEntry } from "./src/day27-v4-game-bridge.mjs?v=1";
 import { getDay27V4RuntimeResolution } from "./src/day27-v4-runtime-resolution.mjs?v=1";
 import { LOCKED_DAY28_SCENE_ID, applyLockedDay28ChoiceState, getLockedDay28LegacyChoice, getLockedDay28ResumePresentation, getLockedDay28Segment as getLegacyDay28Segment } from "./src/day28-campaign-runtime.mjs?v=1";
-import { applyDay28V4GameChoice, applyDay28V4GameResolution, completeDay28V4GameChapter, getDay28V4GameCompatibility, getDay28V4GameResumePresentation, getDay28V4GameSegment, isDay28V4ResolutionStep, prepareDay28V4GameEntry } from "./src/day28-v4-game-bridge.mjs?v=4";
+import { applyDay28V4GameChoice, applyDay28V4GameResolution, completeDay28V4GameChapter, getDay28V4GameCompatibility, getDay28V4GameResumePresentation, getDay28V4GameSegment, isDay28V4ResolutionStep, prepareDay28V4GameEntry } from "./src/day28-v4-game-bridge.mjs?v=5";
 import { getDay28V4RuntimeResolution } from "./src/day28-v4-runtime-resolution.mjs?v=2";
 import { LOCKED_DAY29_SCENE_ID, applyLockedDay29ChoiceState, getLockedDay29LegacyChoice, getLockedDay29ResumePresentation, getLockedDay29Segment } from "./src/day29-campaign-runtime.mjs?v=1";
 import { LOCKED_DAY30_SCENE_ID, applyLockedDay30ChoiceState, getLockedDay30LegacyChoice, getLockedDay30ResumePresentation, getLockedDay30Segment } from "./src/day30-campaign-runtime.mjs?v=1";

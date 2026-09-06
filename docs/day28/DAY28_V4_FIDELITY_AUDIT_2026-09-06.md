@@ -47,3 +47,14 @@
 - 캐시는 game282 → DAY28 bridge v4 → state/middle v4, opening/ending v2, runtime-resolution v2다.
 
 다음 시작점: C3 `hidden_fact`가 실제 거짓 존재·수신자·하은 고지·청취를 모두 요구하도록 DAY25~27 입력 근거를 재감사한다. 그 뒤 NPC의 독립 현재 응답과 남은 원문 대사·행동을 보완한다. DAY28은 PARTIAL이다.
+
+## 후속: C3 거짓 고지·청취 증거
+
+- DAY27의 `lieCorrected`는 거짓의 실제 수신자에게 정정했다는 뜻이며 하은이 들었다는 뜻이 아니다. DAY28 신규 입력에 `haeunTruthKnowledge`를 추가해 실제 거짓 수신자, 정정 여부, 하은 고지 선택, 하은의 현재 청취 응답을 함께 봉인한다.
+- C3 `hidden_fact`는 거짓이 실제 존재하고 정정됐으며, DAY27에서 `DISCLOSE` 또는 `REPORT_CORRECTION`을 골랐고 하은이 `LISTEN`으로 답한 경우에만 노출한다. 고지 숨김, 청취 유예/종료, 거짓 없음에는 해당 선택을 열지 않는다.
+- proof 내부의 `heard` 값을 고지·청취 기록과 다르게 조작하면 seal을 다시 계산해도 검증을 통과하지 못한다.
+- 수정 전 DAY28 저장에는 proof 필드가 없다. 해당 저장은 당시 선택 기록을 계속 replay할 수 있도록 기존 `lieCorrected` 판정을 유지하며 자동 재작성하지 않는다.
+- 실제 SEOJIN 거짓 정정→하은 고지→LISTEN 이력과 고지 숨김 대조를 포함해 전체 Node 861/861 PASS다. 실제 브라우저는 NOT RUN이다.
+- 캐시는 game283 → DAY28 bridge/state v5, opening/ending v3, middle v5다.
+
+다음 시작점: `day28-v4-runtime-resolution.mjs`의 관계·접촉·새 관계 응답이 주인공 희망을 그대로 수락하는 문제를 선행 사실 기반 독립 NPC 응답으로 바꾸고, 응답별 원문 대사를 표시한다. DAY28은 PARTIAL이다.
