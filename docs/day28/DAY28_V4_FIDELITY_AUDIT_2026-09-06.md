@@ -97,3 +97,13 @@
 - 캐시는 game286 → DAY28 bridge v8 → ending v6다.
 
 다음 시작점: 데스크톱 Friendly 대면·관계 지속 경로를 실제 Story 화면에서 AUTO OFF·SKIP 없이 DAY29까지 완주하고, 중간 저장 재개·시간/장소/인물·콘솔·Story/Free 배타성을 기록한다. DAY28은 계속 PARTIAL이다.
+
+## 후속: 저장 재개 presentation 교정
+
+- Friendly 경로를 실제 SaveManager 체크포인트 단위로 추적하면서 `daily_listening`, 집 초대 응답 대기, 집/공원 작별, 다음 만남 응답 대기의 재개 화면이 장면과 달리 `집 · 22:00 · 인물 없음`으로 복원되는 결함을 찾았다.
+- DAY28 재개 presentation을 현재 phase에 맞춰 분리했다. 대면 대화는 공원 낮, SCENE14 및 집 초대 대기는 공원 저녁, 수락한 집 장면과 그곳의 작별은 실제 선택한 집 저녁, 외부 작별은 공원 저녁, SCENE22 대면 지속은 집 밤의 하은으로 복원한다. CALL에서는 보이지 않는 하은 스프라이트를 만들지 않는다.
+- Solo 경로도 SCENE20 두 체크포인트는 카페 오후, SCENE21 체크포인트는 집 저녁을 유지한다. 새 상대·사회 공개·밤·ending의 인물/시간 경계는 기존 분기와 분리했다.
+- Friendly의 공원→집→밤 6개 체크포인트와 Solo의 카페→집 3개 체크포인트를 실제 SaveManager 저장/로드로 검증했다. 집중 9/9, 전체 Node 874/874, `node --check game.js`, `git diff --check` PASS다. 캐시는 game287 → DAY28 bridge v9다.
+- 실제 브라우저는 Codex 인앱 브라우저가 초기화 후에도 로컬 탭 attach timeout으로 연결되지 않아 **NOT RUN**이다. 자동 저장 검사는 실제 UI·AUTO OFF·비-SKIP·콘솔 관문을 대신하지 않으며 브라우저 PASS를 기록하지 않았다. QA용 로컬 서버는 종료했고 사용자 저장은 건드리지 않았다.
+
+다음 시작점: 인앱 브라우저 연결이 가능해지면 데스크톱 Friendly 대면·관계 지속 경로를 실제 Story 화면에서 AUTO OFF·SKIP 없이 DAY29까지 완주한다. 특히 SCENE14 공원 저녁에서 저장·새로고침·이어하기 후 장소/19:00/하은과 선택 진행을 재확인한다. DAY28은 계속 PARTIAL이며 DAY29 V4 원본 구현으로 넘어가지 않는다.
