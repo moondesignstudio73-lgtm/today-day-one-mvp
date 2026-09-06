@@ -12,14 +12,14 @@
 
 - 최초 자산: `assets/events/day18-v4/yuri-menu-wait-water-v1.png` (손 화풍 반려)
 - 1차 수정본: `assets/events/day18-v4/yuri-menu-wait-water-v2.png` (재노출 신고 후 런타임 반려)
-- 최종 런타임 경로: `assets/events/day18-v4/yuri-menu-wait-water-v8.png` (재신고 원본을 직접 편집해 전경 손의 사진식 피부를 제거하고 유리의 손·얼굴과 같은 선 밀도·단계식 명암으로 맞춘 승인본)
+- 최종 런타임 경로: `assets/events/day18-v4/yuri-menu-wait-water-v9.png` (반복 재신고된 전경 POV 손·손목·소매를 완전히 제거하고, 테이블 위 물잔과 잔잔한 물결로 직전 행동을 전달하는 승인본)
 - 참조: `menu-open-v1.png`, `yuri-ex-girlfriend-2d.png`, `yuri-jacket-chair-v1.png`
-- 최신 생성 원본: `C:\Users\aaa\.codex\generated_images\01a06810-af54-7db0-a3f6-3764034ac137\exec-2242954d-b3b6-4ad3-9046-340212a5d16f.png`
+- 최신 생성 원본: `C:\Users\aaa\.codex\generated_images\01a06810-af54-7db0-a3f6-3764034ac137\exec-abe0e3e9-596f-4b90-b753-c5a2d7e56394.png`
 - 생성 방식: built-in imagegen.
 
 최종 프롬프트:
 
-> Use case: precise-object-edit. Asset type: DAY18 Korean visual-novel event CG. Change only the foreground protagonist hand, exposed wrist, and sleeve boundary. Match Yuri's own hand and face: controlled line art, tapered fingers, simplified joints, warm flat skin, and 2–3 broad cel-shadow shapes. Reduce the foreground palm's bulk and visual dominance while preserving five fingers, the glass contact point, water, composition, character identity, props and crop. No photoreal skin or flat pasted vector hand.
+> Use case: precise-object-edit. Asset type: DAY18 Korean visual-novel event CG. Remove the entire large foreground protagonist hand, exposed wrist, black sleeve, and held water glass. Reconstruct the table and restaurant background, then place one ordinary water glass on the left foreground of the table with a subtle ripple suggesting it was just set down. Preserve Yuri's identity, face, expression, pose, hands, clothes, chair, restaurant, roses, candles, cutlery, menu, lighting, perspective and crop. No foreground hand, wrist, arm, sleeve, fingers, skin, text, logo or watermark.
 
 ## 검증
 
