@@ -75,10 +75,10 @@ DAY26 완료 이력 → SCENE01 / C1
 5. ~~SCENE10~17/C8~12 정직한 자기억제·공개 정정·관계 종료/지속 경로를 구현한다.~~ 완료. 숨긴 관계가 없는 경우에만 하은의 자기억제와 주인공의 삼킨 말을 열어 C8~10의 선택별 대화와 물병 장면을 exact-source로 투영한다. DAY26 실제 공개 선행 발언이 아직 정정되지 않은 입력에만 SCENE15/C11을 열고, C12의 지속·유예는 하은의 별도 현재 응답을 기다린다. 주인공이 명확히 종료하면 상대의 동의를 종료 조건으로 요구하지 않고 연락을 닫으며, 대면·통화에 맞는 SCENE17 작별만 출력한다.
 6. ~~SCENE18~24/C13~16 및 이별·비대화 대체 C3~8을 구현한다.~~ 완료. 지훈은 현재 가능 응답 뒤에만 C13으로 등장하고, C14 저녁 뒤 정직·진실 고지·관계 지속·연락 허용을 모두 만족할 때만 SCENE20/C15와 C16을 연다. 다음 만남은 별도 현재 응답 전에는 일정이 되지 않는다. 이별·연락 중지에는 대체 C15만, 대화 미성립에는 SCENE23 대체 C3~8만 노출하며 듣지 못한 반응을 만들지 않는다. SCENE22는 실제 남은 수신자별 정정만 유지하고 SCENE24 뒤에만 completion cue와 DAY28 handoff를 낸다.
 7. ~~game bridge, 저장 재개, 현재 응답, presentation, Story/Free 배타성을 연결한다.~~ 완료. 세 playable 모듈을 현재 phase와 경로로 결합하고 대화 성립·실제 수신자의 지속·하은 청취·관계 결과·지훈 가능 여부·다음 약속의 여섯 응답을 runtime resolution으로 연결했다. 선택·응답 오류는 chapter와 history/pending을 원자 복원하며 중간 저장은 동일 segment·시간·장소·인물을 재현한다. 완료는 단일 DAY27 history와 DAY28 hook만 만들고 V4 진행·완료에는 legacy 선택 기록이나 Free Action이 끼어들지 않는다. 캐시는 `game.js?v=277`이다.
-8. source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.
-9. Friendly/Neutral/Distant/Mixed의 거짓 정정·정직 대화·관계 종료·비대화를 데스크톱과 389×844에서 SKIP 없이 검증한다.
+8. ~~source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.~~ 완료. DAY27 집중 24/24, 전체 Node 827/827, 100회×30일 시뮬레이션이 통과했다.
+9. Friendly/Neutral/Distant/Mixed의 거짓 정정·정직 대화·관계 종료·비대화를 데스크톱과 389×844에서 SKIP 없이 검증한다. 데스크톱 네 경로와 Mixed 중간 저장 재개는 완료했다.
 10. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY28 전환이 모두 PASS일 때만 DAY27 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-DAY24~27 집중 회귀와 전체 30일 시뮬레이션을 통과시킨 뒤 Friendly 데스크톱 비-SKIP 실제 플레이부터 검증한다.
+Friendly/Neutral/Distant/Mixed를 실제 콘텐츠 389×844에서 SKIP 없이 검증하고 overflow·자산·콘솔·DAY28 전환을 닫는다.
