@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createInitialState} from '../src/game-core.mjs';
+import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
+import {GAME_MODES} from '../src/scenario-state.mjs';
+import {SaveManager} from '../src/save-manager.mjs';
+import {applyDay25V4GameChoice,applyDay25V4GameResolution,completeDay25V4GameChapter,getDay25V4GameCompatibility,getDay25V4GameResumePresentation,getDay25V4GameSegment,isDay25V4ResolutionStep,prepareDay25V4GameEntry} from '../src/day25-v4-game-bridge.mjs';
+import {getDay25V4RuntimeResolution} from '../src/day25-v4-runtime-resolution.mjs';
+import {getDay25V4Options} from '../src/day25-v4-state-contract.mjs';
+import {day25ContinuedFixture,day25EndedFixture} from './day25-v4-playable-fixture.mjs';
+
+const choose=(state,index=0)=>applyDay25V4GameChoice(state,getDay25V4Options(state.storyFlags.day25V4)[index].id);
+function finish(state){const all=[];let guard=0;while(state.storyFlags.day25V4.phase!=='ending'){assert.ok(guard++<50);const steps=getDay25V4GameSegment(state);all.push(...steps);const cue=steps.find(isDay25V4ResolutionStep);if(cue)applyDay25V4GameResolution(state,getDay25V4RuntimeResolution(state,cue));else choose(state);}all.push(...getDay25V4GameSegment(state));return all;}
+const storage=()=>{const data=new Map();return {setItem:(key,value)=>data.set(key,value),getItem:key=>data.get(key)??null,removeItem:key=>data.delete(key)};};
+
+test('bridge starts from verified DAY24 V4 and preserves legacy DAY25',()=>{const state=day25ContinuedFixture();assert.equal(getDay25V4GameCompatibility(state).mode,'V4_NEW');assert.equal(prepareDay25V4GameEntry(state).mode,'V4');assert.equal(getDay25V4GameSegment(state).at(-1).choiceNumber,1);const legacy={storyFlags:{day24RuntimeComplete:true,day25RuntimeStage:1}};assert.equal(getDay25V4GameCompatibility(legacy).mode,'LEGACY');});
+
+test('continued route stitches all five playables and keeps resolutions separate',()=>{const state=day25ContinuedFixture();state.storyHistory=[];prepareDay25V4GameEntry(state);const all=finish(state);for(const number of [1,4,11,15,20,24])assert.ok(all.some(step=>step.type==='transition'&&step.sceneNumber===number),`scene ${number}`);for(const type of ['haeunFutureCue','haeunContactCue','friendAvailabilityCue'])assert.ok(all.some(step=>step.type===type),type);assert.equal(state.storyFlags.day25V4.facts.kissOccurred,true);assert.equal(state.storyFlags.day25V4.facts.friendMealScheduled,true);for(const step of all.filter(step=>step.type==='transition')){assert.ok(step.backgroundUrl);assert.ok(step.storyClock);}});
+
+test('ended route never fabricates Haeun, contact, or friend meal',()=>{const state=day25EndedFixture();prepareDay25V4GameEntry(state);const all=finish(state);assert.ok(all.some(step=>step.type==='transition'&&step.sceneNumber===17));assert.equal(all.some(step=>step.type==='transition'&&[4,11,15,21].includes(step.sceneNumber)),false);assert.equal(all.some(step=>step.type==='haeunContactCue'||step.type==='friendAvailabilityCue'),false);assert.equal(state.storyFlags.day25V4.facts.relationshipContinues,null);assert.equal(state.storyFlags.day25V4.facts.friendMealScheduled,false);});
+
+test('resolution failure restores the whole DAY25 chapter atomically',()=>{const state=day25ContinuedFixture();prepareDay25V4GameEntry(state);choose(state,1);const before=structuredClone(state.storyFlags.day25V4);assert.throws(()=>applyDay25V4GameResolution(state,{type:'haeunMealLocationResponse',accepted:true,costTimeFit:false}),/NOT_FIT/);assert.deepEqual(state.storyFlags.day25V4,before);});
+
+test('runtime declines special dining when the frozen current budget does not fit',()=>{const state=day25ContinuedFixture();state.money=50000;prepareDay25V4GameEntry(state);choose(state,1);const cue=getDay25V4GameSegment(state).find(isDay25V4ResolutionStep),response=getDay25V4RuntimeResolution(state,cue);assert.deepEqual(response,{type:'haeunMealLocationResponse',accepted:false,costTimeFit:false});applyDay25V4GameResolution(state,response);assert.equal(state.storyFlags.day25V4.facts.mealLocation,'COMFORTABLE');});
+
+test('mid-day save round-trip preserves segment and resume presentation',()=>{const state=day25ContinuedFixture();prepareDay25V4GameEntry(state);for(let i=0;i<12;i++){const steps=getDay25V4GameSegment(state),cue=steps.find(isDay25V4ResolutionStep);if(cue)applyDay25V4GameResolution(state,getDay25V4RuntimeResolution(state,cue));else choose(state);}const expected=getDay25V4GameSegment(state),store=storage(),shell=createInitialState(createGirlfriendFromProfile('haeun',()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});Object.assign(shell,state);SaveManager.save(shell,store);const loaded=SaveManager.load(store,GAME_MODES.MARRIAGE_30);assert.deepEqual(loaded.storyFlags.day25V4,state.storyFlags.day25V4);assert.deepEqual(getDay25V4GameSegment(loaded),expected);assert.deepEqual(getDay25V4GameResumePresentation(loaded),getDay25V4GameResumePresentation(state));});
+
+test('completion records one DAY25 history and opens only the DAY26 hook',()=>{const state=day25ContinuedFixture();state.storyHistory=[];prepareDay25V4GameEntry(state);const cue=finish(state).at(-1);completeDay25V4GameChapter(state,cue);completeDay25V4GameChapter(state,cue);assert.equal(state.storyFlags.day25V4.complete,true);assert.equal(state.storyFlags.day24V4Day25HookPending,false);assert.equal(state.storyFlags.day25V4Day26HookPending,true);assert.equal(state.storyHistory.length,1);assert.equal(state.storyHistory[0].scenarioId,'day25-notion-v4');assert.equal(state.storyFlags.day25RuntimeComplete,true);assert.equal(state.storyFlags.day25FreeActionComplete,undefined);});
