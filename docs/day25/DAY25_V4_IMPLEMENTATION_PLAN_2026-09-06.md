@@ -89,8 +89,10 @@ DAY24 완료 이력 → SCENE01~03 / C1~3 공통 도입
    - ~~Neutral 통화 유예·독립 생활 데스크톱~~ PASS. C1~6/C14/C16 8개 선택과 DAY26 `INDEPENDENT_LIFE` 전환을 확인했다.
    - ~~Distant 기종료 관계 혼자·DAY24 실제 새 만남 데스크톱~~ PASS. 각각 8개/9개 선택을 완주했고 새 만남은 현재 응답 `RESCHEDULED`까지만 기록했다.
    - 기종료 fixture 불러오기에서 전역 이별 엔딩이 DAY25 pending Story를 가로채는 HIGH를 발견해, 유효한 당일 Campaign Story만 안전하게 우선 재개하도록 교정했다.
+   - ~~Mixed 관계 지속·DAY24 관계 상태 거짓말 책임 데스크톱~~ PASS. C1~11/C14~16 14개 선택을 완주했고 신뢰 불충족 경로에서 C12~13 접촉이 열리지 않음을 확인했다. REDISCUSS 직후 축약 독백의 exact-source 누락으로 발생한 안전 중단은 전체 원문 source를 보존하는 projection으로 교정 후 처음부터 재검증했다.
+   - ~~Friendly 현재 입맞춤 거절 데스크톱~~ PASS. 현재 신체 상태가 불편하면 별도 동의 응답에서 입맞춤을 거절하고 C13을 건너뛰되 관계와 결혼 준비 합의는 유지하는 15선택 경로를 완주했다.
 10. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY26 전환이 모두 PASS일 때만 DAY25 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-Mixed 데스크톱과 Friendly/Neutral/Distant/Mixed의 `389×844` 의미 경로를 SKIP 없이 확인한다. 하은 미래 경로의 입맞춤 거절도 별도 저장으로 검증한다. 이 관문 전까지 DAY25는 **PARTIAL**이다.
+Friendly/Neutral/Distant/Mixed의 `389×844` 의미 경로를 SKIP 없이 확인한다. 이 관문 전까지 DAY25는 **PARTIAL**이다.

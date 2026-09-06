@@ -9,7 +9,10 @@ export function getDay25V4RuntimeResolution(state,step){
     const outcome=proposal==='PREPARE_MARRIAGE'?(chapter?.input?.trustEligible?'PREPARE_MARRIAGE':'REDISCUSS'):proposal==='LONG_DATING'?(chapter?.input?.relationshipTone==='CALM'?'LONG_DATING':'REDISCUSS'):proposal==='FUTURES_DIFFER'?'END':'REDISCUSS';
     return {type:'haeunFutureResponse',outcome};
   }
-  if(step?.type==='haeunContactCue')return {type:'haeunContactResponse',contact:step.contact,accepted:chapter?.facts?.relationshipContinues===true&&(step.contact!=='KISS'||chapter?.input?.trustEligible===true)};
+  if(step?.type==='haeunContactCue'){
+    const kissComfort=step.contact!=='KISS'||((!Number.isFinite(state?.energy)||state.energy>=35)&&(!Number.isFinite(state?.stress)||state.stress<70));
+    return {type:'haeunContactResponse',contact:step.contact,accepted:chapter?.facts?.relationshipContinues===true&&(step.contact!=='KISS'||chapter?.input?.trustEligible===true)&&kissComfort};
+  }
   if(step?.type==='newMeetingCue')return {type:'newMeetingResponse',recipient:step.recipient,outcome:chapter?.facts?.newMeetingMessage==='SLOW_DOWN'?'RESCHEDULED':'ACCEPTED'};
   if(step?.type==='friendAvailabilityCue')return {type:'friendAvailabilityResponse',jihoonAvailable:chapter?.input?.jihoonKnown===true,soraAvailable:chapter?.input?.soraKnown===true};
   throw new Error('DAY25_RUNTIME_RESOLUTION_UNKNOWN');

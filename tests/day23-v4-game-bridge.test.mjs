@@ -58,5 +58,5 @@ test('main runtime connects DAY23 V4 entry, choices, resolutions, completion, cl
   assert.match(source,/if\(day23V4\)prepareDay23V4GameEntry/);assert.match(source,/applyDay23V4GameChoice\(currentState,id\)/);assert.match(source,/getDay23V4RuntimeResolution\(state,step\)/);assert.match(source,/applyDay23V4GameResolution\(state,response\)/);
   assert.match(source,/step\.day===23\?completeDay23V4GameChapter/);assert.match(source,/completionCue\.day===23\)completeDay23V4GameChapter/);assert.match(source,/isDay23V4ResolutionStep\(step\)/);assert.match(source,/state\.storyFlags\?\.day23V4\?LOCKED_DAY23_SCENE_ID/);
   assert.match(source,/lockedDay23&&!day23V4\?23/);assert.match(source,/!state\.storyFlags\?\.day23V4&&state\.storyFlags\?\.day23RuntimeComplete/);assert.match(source,/isStoryFreeActionResume\(state,scene\.id\)&&!\(lockedDay23&&day23V4\)/);
-  assert.match(readFileSync(new URL('../index.html',import.meta.url),'utf8'),/game\.js\?v=271/);
+  assert.match(readFileSync(new URL('../index.html',import.meta.url),'utf8'),/game\.js\?v=272/);
 });

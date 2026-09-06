@@ -39,3 +39,22 @@
 - QA 종료 뒤 세션 백업으로 사용자 저장을 복원했다.
 
 판정: **PASS**. DAY25 전체 완료 판정은 Mixed 데스크톱과 `389×844` 모바일 의미 경로가 끝날 때까지 보류한다.
+
+## Mixed · 관계 지속 · DAY24 거짓말 책임 · 데스크톱
+
+- 진입: DAY24에서 하은과 관계는 지속했지만 서진에게 `지금은 혼자야`라고 말하고 정정하지 않은 실제 이력을 DAY25 input seal로 전달한 fixture다.
+- 실행: 실제 게임에서 AUTO OFF를 유지하고 SKIP 없이 C1~11, C14~16의 14개 노출 선택을 직접 눌러 DAY26까지 완주했다. 신뢰 조건이 충족되지 않아 C12~13 접촉·입맞춤 선택은 열리지 않았다.
+- 최초 실행에서 C10 `다시 이야기할 때를 정하고, 지금은 연인으로 지내고 싶어` 뒤 SCENE12의 축약 독백이 exact source line으로 등록되지 않아 `DAY25_SOURCE_LINE_MISSING:12`로 안전 중단되는 HIGH 결함을 발견했다. 전체 원문 문장을 source로 보존하는 grounded projection으로 교정하고 동일 fixture를 처음부터 다시 완주했다.
+- 완료 저장: `error=null`, `route=HAEUN_FUTURE`, `tone=CALM`, `complete=true`, `location=COMFORTABLE`, `future=REDISCUSS`, `contact=null`, `kiss=false`, `friends=false`, `day26Route=RELATIONSHIP_REDISCUSSION`, `day=26`, `day26Hook=true`, `freeAction=null`.
+
+판정: **PASS**.
+
+## Friendly · 현재 입맞춤 거절 · 데스크톱
+
+- 기존 runtime이 신뢰 조건만 충족하면 C12 `키스하고 싶어`를 항상 수락해 원문의 명시적 거절 경로가 실제 플레이에서 도달 불가능한 것을 확인했다.
+- 활성 관계와 신뢰는 유지하되 현재 신체 상태가 불편한 fixture(`energy=20`, `stress=85`)에서는 하은의 별도 현재 응답이 입맞춤을 거절하도록 resolution을 보강했다. 이는 관계 종료나 미래 합의 취소로 승격하지 않는다.
+- 실제 게임에서 AUTO OFF를 유지하고 SKIP 없이 C1~12, C14~16의 15개 노출 선택을 직접 눌렀다. C12 뒤 C13 키스 반응 선택을 열지 않고 C14로 이동하는 것을 확인했다.
+- 완료 저장: `error=null`, `route=HAEUN_FUTURE`, `tone=CALM`, `complete=true`, `location=COMFORTABLE`, `future=PREPARE_MARRIAGE`, `contact=NONE`, `kiss=false`, `friends=false`, `day26Route=MARRIAGE_PREPARATION`, `day=26`, `day26Hook=true`, `freeAction=null`.
+- Mixed 교정 재실행과 거절 경로 모두 브라우저 warning/error 0이었다. 종료 뒤 세션 백업으로 사용자 저장을 복원했다.
+
+판정: **PASS**. DAY25 데스크톱 의미 경로는 모두 닫혔다. 전체 완료 판정은 Friendly/Neutral/Distant/Mixed `389×844` 모바일 경로가 끝날 때까지 보류한다.

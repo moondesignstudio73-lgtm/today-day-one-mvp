@@ -3,7 +3,7 @@ import {MAP_LOCATION_ASSETS} from './map-location-assets.mjs';
 import {applyDay25V4Choice,beginDay25V4,completeDay25V4,getDay25V4Entry,resolveDay25V4Contact,resolveDay25V4Friends,resolveDay25V4Future,resolveDay25V4Location,resolveDay25V4NewMeeting,validateDay25V4} from './day25-v4-state-contract.mjs';
 import {getDay25V4PlayableOpening} from './day25-v4-playable-opening.mjs?v=1';
 import {getDay25V4PlayableFuture} from './day25-v4-playable-future.mjs?v=1';
-import {getDay25V4PlayableRelationship} from './day25-v4-playable-relationship.mjs?v=1';
+import {getDay25V4PlayableRelationship} from './day25-v4-playable-relationship.mjs?v=2';
 import {getDay25V4PlayableSolo} from './day25-v4-playable-solo.mjs?v=1';
 import {getDay25V4PlayableEnding} from './day25-v4-playable-ending.mjs?v=1';
 import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';

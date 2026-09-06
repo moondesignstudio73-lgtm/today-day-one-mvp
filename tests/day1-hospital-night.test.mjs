@@ -15,5 +15,5 @@ assert.match(game,/button\.dataset\.roomAction==="bed"/);
 assert.match(game,/completeStoryFreeAction\(state\)/);
 assert.match(css,/\.day1-hospital-night \.room-phone,[\s\S]*?\.room-exit\{display:none!important\}/);
 assert.match(html,/styles\.css\?v=99/);
-assert.match(html,/game\.js\?v=271/);
+assert.match(html,/game\.js\?v=272/);
 console.log("✓ 스토리 DAY 1 병실 NIGHT TIME · 리포트/침대 전용 화면 계약 PASS");
