@@ -517,3 +517,5 @@ DAY28 game bridge·실제 Story 루프 연결 완료(9/6): opening·middle·endi
 DAY28 종료 경계 보강 및 손 이미지 재노출 방지(9/6): C8의 명시적 END_WELL 뒤 새 CONTINUE/KNOW_AGAIN 응답을 거부하고 SCENE08~09 원문 이별 대사를 복원했다. 기존 replay 검증은 보존한다. 직전 사용자 요청의 손 이미지 정책은 프리로드·CG 표시 직전에 승인 URL/검수 캐시 키로 정규화하며 기존 저장을 변경하지 않는다. 전체 Node 854/854, 문법·diff 검사 PASS. 실제 브라우저 검증은 이번 작업에서 NOT RUN이다. 캐시는 game280 → DAY28 bridge v2 → state/middle v2. DAY28은 **PARTIAL**이며 다음은 **C11 GOODBYE 뒤 일상/집 장면 우회와 기존 저장 호환성**, 이후 CALL·고지/청취·독립 NPC 응답·원문 누락 보완이다.
 
 DAY28 C11 직접 작별 보강(9/6): 새 GOODBYE 선택은 `DIRECT_FAREWELL` 기록과 함께 SCENE14 양말 일상·C12·집 초대·SCENE15를 건너뛰고 SCENE16 작별로 이동한다. 수정 전 표식 없는 중간 저장은 기존 replay 전이를 유지해 유효성을 보존한다. 집중 12/12 PASS. 실제 브라우저는 NOT RUN이다. 캐시는 game281 → DAY28 bridge v3 → state/middle v3. DAY28은 **PARTIAL**, 다음은 **CALL 전용 장면·선택·presentation 분리**다.
+
+DAY28 CALL 전용 흐름 보강(9/6): 새 수락 CALL에 `CALL_CONVERSATION`을 기록하고 C2 통화 질문·C3~5·C8만 진행한다. 걸음 선택과 SCENE06~07, SCENE11~16의 벤치·접촉·집 초대를 제거하고 스프라이트 없는 통화 cue/종료로 분리했다. 일반 대면 약속이 낮은 체력만으로 CALL로 바뀌지 않는다. 수정 전 표식 없는 CALL 저장은 기존 replay 유지, 전체 Node 859/859 PASS. 실제 브라우저는 NOT RUN이다. 캐시는 game282 → DAY28 bridge v4. DAY28은 **PARTIAL**, 다음은 **C3 거짓 존재·수신자·하은 고지·청취 근거 감사**다.

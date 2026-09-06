@@ -1,12 +1,12 @@
 import {DAY28_V4_SOURCE_SCENES} from './day28-v4-source-registry.mjs';
 import {day28V4SourceRef} from './day28-v4-source-selection.mjs';
-import {getDay28V4Options,validateDay28V4} from './day28-v4-state-contract.mjs?v=3';
+import {getDay28V4Options,validateDay28V4} from './day28-v4-state-contract.mjs?v=4';
 
 const ref=(scene,line)=>day28V4SourceRef(scene,line);
 const mono=(scene,text)=>({type:'monologue',text,source:ref(scene,text)});
 const grounded=(scene,text,exact)=>({type:'playerNarration',text,source:ref(scene,exact)});
 const quoted=(scene,exact)=>{const match=exact.match(/^\*\*([^*]+)\*\* “(.*)”$/);if(!match)throw new Error(`DAY28_DIALOGUE_LINE_INVALID:${scene}`);return {type:'dialogue',speaker:match[1]==='주인공'?'나':match[1],text:match[2],source:ref(scene,exact)};};
-const direction=(number,chapter,characters=['girlfriend'])=>({type:'sceneDirection',number,title:DAY28_V4_SOURCE_SCENES[number-1].title,location:chapter.facts.meetingMethod==='CALL'?'home':chapter.facts.homeInvitationResponse==='ACCEPTED'?(chapter.facts.homeInvitation==='HAEUN_HOME'?'haeun-home':'home'):'memory-park',time:number>=14?'evening':'daytime',characters});
+const direction=(number,chapter,characters=['girlfriend'])=>({type:'sceneDirection',number,title:DAY28_V4_SOURCE_SCENES[number-1].title,location:chapter.facts.meetingMethod==='CALL'?'home':chapter.facts.homeInvitationResponse==='ACCEPTED'?(chapter.facts.homeInvitation==='HAEUN_HOME'?'haeun-home':'home'):'memory-park',time:number>=14?'evening':'daytime',characters:chapter.facts.meetingMethod==='CALL'?[]:characters});
 const choice=(chapter,number,variant)=>{const source=DAY28_V4_SOURCE_SCENES.flatMap(item=>item.choices).find(item=>item.number===number&&item.variant===variant);return {type:'choice',choiceNumber:number,variant,prompt:source.title,options:getDay28V4Options(chapter)};};
 const last=(chapter,number,variant)=>chapter.choices.filter(record=>record.kind==='choice'&&record.number===number&&record.variant===variant).at(-1)?.id??'';
 const result=(chapter,number,variant,rows,scene=number)=>{const id=last(chapter,number,variant),row=rows.find(([suffix])=>id.endsWith(`_${suffix}`));return row?[grounded(scene,row[1],row[2])]:[];};
