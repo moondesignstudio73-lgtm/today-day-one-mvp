@@ -29,7 +29,7 @@ const scenes=sceneMatches.map((match,index)=>{
   const body=raw.slice(start,end).trim(),sceneNumber=Number(match[1]);
   const choices=[...body.matchAll(/^### (?:(?:(?:이|이별 또는 비대화) 경로의 )?)선택 (\d+) — (.+)$/gm)].map(choiceMatch=>{
     const afterHeading=body.slice(choiceMatch.index+choiceMatch[0].length+1),labels=[];
-    for(const line of afterHeading.split('\n')){const bullet=line.match(/^- “(.+)”$/);if(!bullet)break;labels.push(bullet[1]);}
+    for(const line of afterHeading.split('\n')){const bullet=line.match(/^- (.+)$/);if(!bullet)break;const label=bullet[1];labels.push(/^“.*”$/.test(label)?label.slice(1,-1):label);}
     const number=Number(choiceMatch[1]);
     return {number,variant:variantFor(sceneNumber,number),title:choiceMatch[2].trim(),labels};
   });
