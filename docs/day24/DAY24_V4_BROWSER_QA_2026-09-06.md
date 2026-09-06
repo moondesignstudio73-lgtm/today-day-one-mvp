@@ -9,7 +9,7 @@
 - Mixed · 서울 · 유리 연락 사실 공개 데스크톱 경로: PASS.
 - Mixed · 서울 · 서진 연락 관계 상태 거짓말 데스크톱 경로: PASS.
 - Mixed · 서울 · 아라 연락 조건부 새 만남 데스크톱 경로: PASS.
-- DAY24 전체: PARTIAL. 389×844 Friendly/Neutral/Distant는 PASS이며 Mixed 검증이 남아 있다.
+- DAY24 전체: PASS / COMPLETE. 데스크톱 의미 경로와 389×844 Friendly/Neutral/Distant/Mixed 검증을 모두 완료했다.
 
 ## 환경과 진입
 
@@ -107,6 +107,15 @@
 - 전환 저장: `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`, `freeAction=null`.
 - 완료 화면에서 `document.documentElement.scrollWidth === document.documentElement.clientWidth === document.body.scrollWidth === 389`를 확인해 가로 오버플로가 없었다. QA 전 사용자 저장과 viewport override도 복원했다.
 
+## Mixed · 서울 당일 · 유리 연락 사실 공개 · 389×844 모바일
+
+- 실제 콘텐츠 `innerWidth=389`, `innerHeight=844`에서 서울 당일·DAY23 관계 지속·대면 합의·유리 미완료 연락 fixture로 DAY24에 진입했다.
+- AUTO는 대사에만 사용하고 SKIP은 누르지 않았다. C8 `아직 끝내지 않은 관계가 있어요. 더 만나자는 말은 지금 하지 않을게요.`, 유리 C9 `그날은 유리 씨 오늘 얘기를 듣고 싶어요.`를 포함한 노출 선택지를 직접 진행해 DAY25까지 완주했다.
+- 유리는 DAY23에서 실제 남은 연락 상대일 때만 등장했고 서진·아라, 부산 여행·숙박 장면은 섞이지 않았다. 유리 연락은 새 연애나 새 만남으로 승격되지 않았고 하은과의 현재 관계 결과를 덮어쓰지 않았다.
+- 완료 저장: `error=null`, `phase=ending`, `complete=true`, `conversation=MEET`, `relationship=CONTINUE`, `futureAccepted=true`, `contactRecipient=YURI`, `contactDirection=LISTEN_TODAY`, `day25Route=HAEUN_FUTURE`.
+- 전환 저장: `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`, `freeAction=null`.
+- 완료 화면에서 `document.documentElement.scrollWidth === document.documentElement.clientWidth === document.body.scrollWidth === 389`, browser warning/error 0을 확인했다. QA 전 사용자 저장과 viewport override도 복원했다.
+
 ## 발견 및 조치
 
 - DAY24 단독 fixture의 새 모듈 체인은 브라우저에서 불안정하게 로드될 수 있어, 이미 검증된 DAY23 브라우저 fixture에서 연속 플레이하는 harness로 바꿨다.
@@ -115,5 +124,4 @@
 
 ## 다음 관문
 
-1. Mixed 대표 경로를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
-2. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.
+DAY24는 source snapshot/registry, replay-locked state, SCENE01~24 playable, bridge·저장 재개·현재 응답, Story/Free 배타성, 데스크톱 의미 분기와 389×844 네 성향 모바일 관문을 모두 통과했다. 집중 회귀와 전체 시뮬레이션도 PASS이므로 **PASS / COMPLETE**로 승격한다. 다음은 DAY25 최종 원문 잠금과 DAY22~24 실제 이력 감사다.
