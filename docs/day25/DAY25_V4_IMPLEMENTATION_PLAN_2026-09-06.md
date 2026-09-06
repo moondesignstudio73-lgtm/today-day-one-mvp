@@ -73,7 +73,7 @@ DAY24 완료 이력 → SCENE01~03 / C1~3 공통 도입
 
 1. ~~Notion 최종 원문을 플레이어 공개 본문과 내부 메모로 분리해 source snapshot을 잠근다.~~ 완료.
 2. ~~24 Scene·20 choice block·선택 10의 4개와 나머지 각 3개 라벨을 기계 생성 source registry와 SHA 검증으로 고정한다.~~ 완료.
-3. DAY22~24 실제 이력을 동결하는 `day25-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.
+3. ~~DAY22~24 실제 이력을 동결하는 `day25-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료. DAY24 route·관계 결과·미래 대화 수락·새 만남·거짓말, 친구 인지, 현재 잔액·최근 지출과 source schema를 input seal로 고정한다.
 4. 공통 도입과 하은 미래 대화, 유예/혼자/새 사람 대체 경로를 exact source ref로 구현한다.
 5. 집·일·돈·거리·속도와 하은 독립 응답, 현재 접촉 동의를 구현한다.
 6. 친구 가능성·공개 범위·ending과 DAY26 hook을 구현한다.
@@ -84,4 +84,4 @@ DAY24 완료 이력 → SCENE01~03 / C1~3 공통 도입
 
 ## 다음 시작점
 
-`day25-notion-v4/1` 상태 계약을 만들고 DAY24 완료 hook, route, 관계 결과, 미래 대화 수락, 새 만남 수락, 거짓말·정정, 지훈/소라 가능 상태를 replay-locked 입력으로 고정한다. 이 관문 전까지 DAY25는 **PARTIAL**이다.
+공통 SCENE01~03/C1~3과 하은 SCENE04~10/C4~9를 exact source ref로 playable에 투영한다. 장소는 특별식당을 자동 예약하지 않고, 집은 양쪽 현재 수락이 있을 때만 사용하며, 돈 장면은 동결된 현재 잔액·최근 실제 지출을 지우지 않는다. 이 관문 전까지 DAY25는 **PARTIAL**이다.
