@@ -7,7 +7,8 @@
 - Distant · 연락 불가 · 이미 종료된 관계 데스크톱 경로: PASS.
 - Distant · 대면 · 활성 관계 명시적 종료 데스크톱 경로: PASS.
 - Mixed · 서울 · 유리 연락 사실 공개 데스크톱 경로: PASS.
-- DAY24 전체: PARTIAL. 서진/아라 연락, 거짓말·새 만남, 389×844 검증이 남아 있다.
+- Mixed · 서울 · 서진 연락 관계 상태 거짓말 데스크톱 경로: PASS.
+- DAY24 전체: PARTIAL. 아라 연락·조건부 새 만남, 389×844 검증이 남아 있다.
 
 ## 환경과 진입
 
@@ -42,6 +43,14 @@
 - 관계 결과는 `CONTINUE`, 미래 대화는 별도 수락되어 `day25Route=HAEUN_FUTURE`로 전환됐다. 유리 연락을 새 연애나 새 만남으로 승격하지 않았다.
 - browser warning/error 0, 사용자 저장 복원 PASS. 확인 시점의 Free Action은 DAY25 전환 뒤의 `day25-home-evening`이었다.
 
+## Mixed · 서울 · 서진 연락 관계 상태 거짓말
+
+- DAY19에서 실제 서진 연락을 미완료로 남긴 서울 당일 fixture를 추가하고 DAY23에서 현재 흔들림을 숨기지 않는 선택으로 DAY24까지 보존했다.
+- DAY24 대면·관계 지속 뒤 C8은 실제 관계가 남아 있음을 밝히는 경로, 서진 C9은 개인적으로 더 알고 싶은 마음, C10은 `지금은 혼자야.`를 실제 화면에서 선택했다.
+- 현재 재질문에 자동 정정하지 않는 runtime 응답 뒤 완료 저장은 `contactRecipient=SEOJIN`, `contactCleanup=RELATIONSHIP_ACTIVE`, `contactDirection=PERSONAL_INTEREST`, `relationshipStatusLie={recipient:SEOJIN, statement:SINGLE, truth:RELATIONSHIP_NOT_ENDED, corrected:false}`였다.
+- 거짓말은 하은에게 자동 폭로되거나 자동 용서되지 않았고, 현재 관계가 끝나지 않았으므로 `newMeetingAccepted=false`를 유지했다. 하은과의 실제 결과는 `CONTINUE`, `day25Route=HAEUN_FUTURE`였다.
+- browser warning/error 0, 사용자 저장 복원 PASS.
+
 ## Distant · 대면 · 활성 관계 명시적 종료
 
 - 연락 가능한 DIFFICULT 부산 별실 fixture에서 DAY23을 SKIP 없이 완주해 `relationshipOutcome=UNSURE`, `nextConversation=MEET`인 활성 관계 입력을 만들었다.
@@ -66,6 +75,6 @@
 
 ## 다음 관문
 
-1. 서진/아라 연락, 관계 상태 거짓말 정정/지속, 조건부 새 만남을 의미 경로별로 검증한다.
+1. 아라 연락과 관계 종료 뒤 조건부 새 만남을 의미 경로로 검증한다.
 2. Mixed 대표 경로와 Friendly/Neutral/Distant를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
 3. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.

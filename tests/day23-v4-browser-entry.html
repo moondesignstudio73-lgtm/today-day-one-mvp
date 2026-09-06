@@ -8,6 +8,8 @@
 <button data-route="busan-separate">Neutral · 부산 별실</button>
 <button data-route="seoul-day">Mixed · 서울 당일</button>
 <button data-route="seoul-yuri">Mixed · 서울 · 유리 연락</button>
+<button data-route="seoul-seojin">Mixed · 서울 · 서진 연락</button>
+<button data-route="seoul-ara">Mixed · 서울 · 아라 연락</button>
 <button data-route="no-travel-contact">Neutral · 미여행 · 연락 가능</button>
 <button data-route="no-travel-unavailable">Distant · 미여행 · 연락 불가</button>
 <button data-route="busan-rejections">Distant · 부산 별실 · 현재 응답 거절</button>
@@ -53,8 +55,8 @@ function completedDay22(route,{shared=true,contactAvailableNoTravel=false,diffic
   completeDay22V4(state,{type:'chapterCompletionCue',day:22,finalSceneReached:true});return state;
 }
 function seed(route){
-  const unavailable=route==='no-travel-unavailable',noTravel=route.startsWith('no-travel'),rejections=route==='busan-rejections',yuri=route==='seoul-yuri',separate=route==='busan-separate'||rejections;
-  const state=completedDay22(noTravel?'NO_TRAVEL':route==='seoul-day'||yuri?'SEOUL_DAY':'BUSAN_TRIP',{shared:!separate,contactAvailableNoTravel:noTravel&&!unavailable,difficult:rejections,pendingContacts:yuri?['YURI']:[]});
+  const unavailable=route==='no-travel-unavailable',noTravel=route.startsWith('no-travel'),rejections=route==='busan-rejections',recipient=route==='seoul-yuri'?'YURI':route==='seoul-seojin'?'SEOJIN':route==='seoul-ara'?'ARA':null,separate=route==='busan-separate'||rejections;
+  const state=completedDay22(noTravel?'NO_TRAVEL':route==='seoul-day'||recipient?'SEOUL_DAY':'BUSAN_TRIP',{shared:!separate,contactAvailableNoTravel:noTravel&&!unavailable,difficult:rejections,pendingContacts:recipient?[recipient]:[]});
   state.day=23;state.phase=0;state.money=Math.max(state.money,100000);state.pendingStoryId='m30-day23-current-family-contact';
   state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};
   return state;
