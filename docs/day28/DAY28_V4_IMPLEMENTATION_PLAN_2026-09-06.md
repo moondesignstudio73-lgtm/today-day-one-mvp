@@ -75,11 +75,11 @@ DAY27 완료 이력 → SCENE01 / C1
 4. ~~SCENE01~08/C1~8 실제 재회·고쳐 듣기·관계 제안 playable을 구현한다.~~ 완료.
 5. ~~SCENE09~16 이별 C9~10, 지속 C9~14, 현재 접촉·집 초대 응답을 구현한다.~~ 완료.
 6. ~~SCENE17~24 새 만남 C8·공개 C15·혼자 C2~8·밤 C16·ending을 구현한다.~~ 완료.
-7. game bridge, 저장 재개, 현재 응답, presentation, Story/Free 배타성을 연결한다.
+7. ~~game bridge, 저장 재개, 현재 응답, presentation, Story/Free 배타성을 연결한다.~~ 완료.
 8. source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.
 9. Friendly/Neutral/Distant/Mixed를 데스크톱과 실제 콘텐츠 389×844에서 SKIP 없이 검증한다.
 10. 원문·런타임 텍스트·콘솔·자산·오버플로·DAY29 전환이 모두 PASS일 때만 DAY28 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-game bridge, 저장 재개, 현재 응답, presentation, Story/Free 배타성을 연결한다.
+source/state/playable/bridge/저장과 전체 30일 회귀를 통과한 뒤 데스크톱 Friendly 비-SKIP QA를 시작한다.

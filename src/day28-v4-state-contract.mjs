@@ -74,7 +74,7 @@ function reduceChoice(chapter,id){if(chapter.complete)throw new Error('DAY28_ALR
   else if(phase==='breakup_belongings'){facts.belongingsPlan=['BRIEF_TRANSFER','LATER','NONE'][index];chapter.phase='solo_afternoon';}
   else if(phase==='continuing_good_feeling'){facts.goodFeeling=['CHANGE_WORDS','CLOSER','TALK_ENOUGH'][index];chapter.phase='continuing_distance';}
   else if(phase==='continuing_distance'){facts.distanceWish=['HAND','HUG','TALK_ONLY'][index];if(index<2){facts.contactRequest=facts.distanceWish;chapter.phase='contact_resolution';}else chapter.phase='daily_listening';}
-  else if(phase==='continuing_intimacy'){facts.intimacyWish=['KISS','STAY','GOODBYE'][index];if(index===0){facts.contactRequest='KISS';chapter.phase='contact_resolution';}else chapter.phase='daily_listening';}
+  else if(phase==='continuing_intimacy'){facts.intimacyWish=['KISS','STAY','GOODBYE'][index];if(index===0){facts.contactRequest='KISS';facts.contactResponse=null;chapter.phase='contact_resolution';}else chapter.phase='daily_listening';}
   else if(phase==='daily_listening'){facts.dailyListening=['ASK_HURT','THINK_TOGETHER','NAME_TIRED'][index];chapter.phase='home_invitation_resolution';}
   else if(phase==='home_pause'){facts.homePause=['BRIEF_STAY','OWN_COMFORT','LISTEN_MORE'][index];chapter.phase='continuing_farewell';}
   else if(phase==='continuing_farewell'){facts.farewell=['GOODBYE','WANT_MORE','NEXT_WHEN_POSSIBLE'][index];chapter.phase=index===2?'next_meeting_resolution':chapter.input.jihoonAvailable?'social_scope':chapter.facts.contactAllowed?'continuing_night':'ending';if(chapter.phase==='ending')finishDay(chapter);}
