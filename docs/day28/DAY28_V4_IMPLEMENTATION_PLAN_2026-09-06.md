@@ -82,4 +82,4 @@ DAY27 완료 이력 → SCENE01 / C1
 
 ## 다음 시작점
 
-source/state/playable/bridge/저장과 전체 30일 회귀를 통과한 뒤 데스크톱 Friendly 비-SKIP QA를 시작한다.
+`DAY28_V4_FIDELITY_AUDIT_2026-09-06.md`에 기록한 HIGH 문제부터 보완한다. 특히 현재 NPC 응답, CALL 분리, 하은의 실제 고지/청취, 원문 대사·행동 누락을 해결한 뒤 브라우저 QA로 진행한다. 위 단계의 완료 표시는 원문 전체 충실도 PASS를 뜻하지 않는다.

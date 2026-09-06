@@ -14,6 +14,16 @@ const choose=state=>applyDay28V4GameChoice(state,getDay28V4Options(state.storyFl
 function finish(state){const all=[];let guard=0;while(state.storyFlags.day28V4.phase!=='ending'){assert.ok(guard++<70,state.storyFlags.day28V4.phase);const steps=getDay28V4GameSegment(state);all.push(...steps);const cue=steps.find(isDay28V4ResolutionStep);if(cue)all.push(...applyDay28V4GameResolution(state,getDay28V4RuntimeResolution(state,cue)).steps);else all.push(...choose(state).steps);}all.push(...getDay28V4GameSegment(state));return all;}
 const storage=()=>{const data=new Map();return {setItem:(key,value)=>data.set(key,value),getItem:key=>data.get(key)??null,removeItem:key=>data.delete(key)};};
 
+test('Story session startup restores the V4 presentation instead of overwriting it with the rehearsal',()=>{
+  const source=readFileSync(new URL('../game.js',import.meta.url),'utf8');
+  const resumeLine=source.split('\n').find(line=>line.includes('if(session.id===LOCKED_DAY28_SCENE_ID)'));
+  assert.ok(resumeLine);
+  assert.match(resumeLine,/getDay28ResumePresentation\(state\)/);
+  assert.doesNotMatch(resumeLine,/getLockedDay28ResumePresentation\(state\)/);
+  assert.match(resumeLine,/resumeVisual\.backgroundUrl\?\?getBackgroundAsset/);
+  assert.match(resumeLine,/activeCharacterAssetUrl=resumeVisual\.characterAssetUrl\?\?null/);
+});
+
 test('bridge maps every friendly transition and preserves legacy compatibility',()=>{const state=day28FriendlyFixture();assert.equal(getDay28V4GameCompatibility(state).mode,'V4');const all=finish(state);for(const number of [1,2,3,4,5,6,7,8,11,12,13,14,16,22,23,24])assert.ok(all.some(step=>step.type==='transition'&&step.sceneNumber===number),`scene ${number}`);for(const step of all.filter(step=>step.type==='transition')){assert.ok(step.backgroundUrl);assert.ok(step.storyClock);}const legacy={storyFlags:{day27RuntimeComplete:true,day28RuntimeStage:1}};assert.equal(getDay28V4GameCompatibility(legacy).mode,'LEGACY');});
 
 test('solo and new-person routes stay separate in the game adapter',()=>{const solo=day28SoloFixture(),soloSteps=finish(solo),soloScenes=new Set(soloSteps.filter(step=>step.type==='transition').map(step=>step.sceneNumber));assert.deepEqual([...soloScenes],[1,20,21,23,24]);assert.equal(soloSteps.some(isDay28V4ResolutionStep),false);const newer=day28NewMeetingFixture(),newSteps=finish(newer),newScenes=new Set(newSteps.filter(step=>step.type==='transition').map(step=>step.sceneNumber));assert.ok(newScenes.has(17));assert.equal(newScenes.has(2),false);assert.doesNotMatch(JSON.stringify(newSteps),/유리|서진/);});
