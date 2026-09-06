@@ -58,3 +58,15 @@
 - Mixed 교정 재실행과 거절 경로 모두 브라우저 warning/error 0이었다. 종료 뒤 세션 백업으로 사용자 저장을 복원했다.
 
 판정: **PASS**. DAY25 데스크톱 의미 경로는 모두 닫혔다. 전체 완료 판정은 Friendly/Neutral/Distant/Mixed `389×844` 모바일 경로가 끝날 때까지 보류한다.
+
+## 389×844 모바일 의미 경로
+
+- 브라우저 외곽 보정을 거쳐 실제 게임 콘텐츠 `innerWidth=389`, `innerHeight=844`에서 각 경로를 처음부터 실행했다. AUTO OFF를 유지하고 SKIP을 사용하지 않았다.
+- Friendly: C1~16 16개 선택을 완주했다. `PREPARE_MARRIAGE`, 현재 `KISS`, 지훈·소라 가능 응답 뒤 친구 식사, DAY26 `MARRIAGE_PREPARATION`을 확인했다.
+- Neutral: C1~6/C14/C16 8개 선택을 완주했다. 통화 유예를 결혼·접촉으로 바꾸지 않고 DAY26 `INDEPENDENT_LIFE`로 이었다.
+- Distant: 기종료 관계·혼자 경로 C1~6/C14/C16 8개 선택을 완주했다. 하은 대면·접촉·새 만남을 만들지 않고 DAY26 `INDEPENDENT_LIFE`로 이었다.
+- Mixed: DAY24 서진 관계 상태 거짓말 미정정 이력에서 C1~11/C14~16 14개 선택을 완주했다. C12~13을 열지 않고 `REDISCUSS`, DAY26 `RELATIONSHIP_REDISCUSSION`을 유지했다.
+- 네 경로 모두 완료 저장 `error=null`, `complete=true`, `day=26`, `day26Hook=true`, `freeAction=null`이었다. 각 완주 시점 `scrollWidth=clientWidth=389`, browser warning/error 0을 확인했다.
+- QA 종료 뒤 세션 백업으로 사용자 저장을 복원하고 임시 viewport override를 reset했다.
+
+판정: **PASS**. source/state/playable/bridge·저장·Story/Free·전체 자동 회귀·데스크톱 및 네 모바일 의미 경로가 모두 닫혀 DAY25를 **PASS / COMPLETE**로 승격한다.

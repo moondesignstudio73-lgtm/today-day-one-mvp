@@ -2,7 +2,7 @@
 
 ## 판정과 원문
 
-- 현재 상태: **PARTIAL / SOURCE LOCKED**.
+- 현재 상태: **PASS / COMPLETE / SOURCE LOCKED**.
 - 최종 원문: Notion `DAY 25 — 좋아한다는 말 다음 | SCENARIO V4`.
 - page id: `3c9c31f0-29a6-81c0-93a3-d109c07f6995`.
 - last edited snapshot: `2026-08-27T20:46:24.113Z`.
@@ -83,16 +83,17 @@ DAY24 완료 이력 → SCENE01~03 / C1~3 공통 도입
 7. ~~game bridge, 저장 재개, 시간·장소·인물 presentation, Story/Free 배타성을 연결한다.~~ 기반 완료.
    - ~~다섯 playable 모듈을 단일 bridge로 결합하고 현재 장소·미래·접촉·새 만남·친구 가능 응답, 원자 복원, 저장 왕복, DAY26 hook을 연결~~ 완료.
    - ~~`game.js` 실제 Story 루프와 Story/Free 배타성 연결~~ 완료. V4 진행·완료 중 legacy DAY25 Free Action과 legacy choice 기록을 차단하고, 현재 응답·completion·시계·재개 배경을 실제 루프에 연결했다.
-8. source/state/bridge/저장/경제/전체 30일 시뮬레이션 회귀를 통과한다.
-9. Friendly/Neutral/Distant/Mixed와 하은/유예/혼자/새 만남/입맞춤 거절 및 수락 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
+8. ~~source/state/bridge/저장/경제/전체 30일 시뮬레이션 회귀를 통과한다.~~ 완료.
+9. ~~Friendly/Neutral/Distant/Mixed와 하은/유예/혼자/새 만남/입맞춤 거절 및 수락 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.~~ 완료.
    - ~~Friendly 대면·지속·입맞춤 수락·친구 식사 데스크톱~~ PASS. C1~16 16개 선택, DAY26 전환, 오류·Free Action 비생성, 사용자 저장 복원을 확인했다.
    - ~~Neutral 통화 유예·독립 생활 데스크톱~~ PASS. C1~6/C14/C16 8개 선택과 DAY26 `INDEPENDENT_LIFE` 전환을 확인했다.
    - ~~Distant 기종료 관계 혼자·DAY24 실제 새 만남 데스크톱~~ PASS. 각각 8개/9개 선택을 완주했고 새 만남은 현재 응답 `RESCHEDULED`까지만 기록했다.
    - 기종료 fixture 불러오기에서 전역 이별 엔딩이 DAY25 pending Story를 가로채는 HIGH를 발견해, 유효한 당일 Campaign Story만 안전하게 우선 재개하도록 교정했다.
    - ~~Mixed 관계 지속·DAY24 관계 상태 거짓말 책임 데스크톱~~ PASS. C1~11/C14~16 14개 선택을 완주했고 신뢰 불충족 경로에서 C12~13 접촉이 열리지 않음을 확인했다. REDISCUSS 직후 축약 독백의 exact-source 누락으로 발생한 안전 중단은 전체 원문 source를 보존하는 projection으로 교정 후 처음부터 재검증했다.
    - ~~Friendly 현재 입맞춤 거절 데스크톱~~ PASS. 현재 신체 상태가 불편하면 별도 동의 응답에서 입맞춤을 거절하고 C13을 건너뛰되 관계와 결혼 준비 합의는 유지하는 15선택 경로를 완주했다.
-10. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY26 전환이 모두 PASS일 때만 DAY25 COMPLETE로 승격한다.
+   - ~~Friendly/Neutral/Distant/Mixed `389×844` 모바일~~ PASS. 각각 16/8/8/14개 노출 선택을 SKIP 없이 완주했고 네 경로 모두 `scrollWidth=clientWidth=389`, browser warning/error 0, DAY26 hook, 사용자 저장 복원과 viewport reset을 확인했다.
+10. ~~원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY26 전환이 모두 PASS일 때만 DAY25 COMPLETE로 승격한다.~~ 완료.
 
 ## 다음 시작점
 
-Friendly/Neutral/Distant/Mixed의 `389×844` 의미 경로를 SKIP 없이 확인한다. 이 관문 전까지 DAY25는 **PARTIAL**이다.
+DAY25는 **PASS / COMPLETE**다. 다음은 DAY26 최종 Notion 원문을 잠그고 DAY23~25 실제 이력을 감사한다.
