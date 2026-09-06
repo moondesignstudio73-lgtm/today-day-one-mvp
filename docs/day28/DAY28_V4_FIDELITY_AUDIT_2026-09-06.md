@@ -107,3 +107,12 @@
 - 실제 브라우저는 Codex 인앱 브라우저가 초기화 후에도 로컬 탭 attach timeout으로 연결되지 않아 **NOT RUN**이다. 자동 저장 검사는 실제 UI·AUTO OFF·비-SKIP·콘솔 관문을 대신하지 않으며 브라우저 PASS를 기록하지 않았다. QA용 로컬 서버는 종료했고 사용자 저장은 건드리지 않았다.
 
 다음 시작점: 인앱 브라우저 연결이 가능해지면 데스크톱 Friendly 대면·관계 지속 경로를 실제 Story 화면에서 AUTO OFF·SKIP 없이 DAY29까지 완주한다. 특히 SCENE14 공원 저녁에서 저장·새로고침·이어하기 후 장소/19:00/하은과 선택 진행을 재확인한다. DAY28은 계속 PARTIAL이며 DAY29 V4 원본 구현으로 넘어가지 않는다.
+
+## 후속: 실제 브라우저 QA 진입 하네스
+
+- DAY24~27과 달리 DAY28에는 사용자 저장을 보존하면서 replay-locked V4 경로로 들어가는 브라우저 진입점이 없었다. `tests/day28-v4-browser-entry.html`을 추가해 Friendly 대면 지속, Neutral 짧은 CALL, Distant Solo, Mixed 아라 새 만남 네 경로를 분리했다.
+- Neutral용 fixture는 DAY27 완료 전 현재 체력을 20으로 두고 DAY28 immutable input에 봉인한다. 본편 C1 `short` 뒤 실제 resolver가 `ACCEPTED/CALL`을 반환하며 Friendly fixture를 변경하지 않는다.
+- 하네스는 기본/Story/Free 저장 세 슬롯을 세션에 한 번만 백업하고 null 슬롯까지 복원한다. SKIP 조작 코드가 없고 본편 AUTO 초기값 OFF를 정적 계약으로 확인한다. 경로 상태 확인에는 DAY28 응답·접촉·초대·DAY29 hook·Free Action을 포함했다.
+- 집중 11/11 PASS. 실제 브라우저는 새 하네스 URL도 webview attach timeout으로 열리지 않아 NOT RUN이며 자세한 시도는 `DAY28_V4_BROWSER_QA_2026-09-06.md`에 기록했다. 사용자 저장 변경 없음, 로컬 서버 종료 확인.
+
+다음 시작점: 브라우저 연결 복구 후 `tests/day28-v4-browser-entry.html`의 Friendly 경로에서 AUTO OFF·SKIP 없이 DAY29까지 완주하고 SCENE14 저장 재개를 확인한다. DAY28은 계속 PARTIAL이다.
