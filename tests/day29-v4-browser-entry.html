@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DAY29 V4 실제 게임 QA</title>
+<style>body{font:18px system-ui;background:#181522;color:#fff;padding:40px}button{padding:16px;margin:8px}p{max-width:900px;line-height:1.6}</style>
+<h1>DAY29 V4 실제 게임 QA</h1>
+<p>검증된 DAY26~28 Friendly 이력에서 DAY29 실제 Story를 엽니다. 본편은 AUTO OFF·SKIP 미사용으로 진행하며, 격리된 브라우저 저장 세 슬롯을 최초 실행 전에 백업합니다.</p>
+<button data-route="friendly">Friendly · 하은 집 저녁·관계 지속</button>
+<button id="inspect">현재 QA 상태 확인</button>
+<button id="restore">테스트 전 저장 복원</button>
+<p role="status" id="status"></p>
+<script>function reportQaModuleError(message){sessionStorage.setItem('day29-v4-qa-module-error',message);document.querySelector('#status').textContent=`QA 모듈 실패: ${message}`;}window.addEventListener('error',event=>reportQaModuleError(event.message));window.addEventListener('unhandledrejection',event=>reportQaModuleError(String(event.reason?.message??event.reason)));</script>
+<script type="module">
+import {SaveManager} from '../src/save-manager.mjs';
+import {GAME_MODES} from '../src/scenario-state.mjs';
+import {createInitialState} from '../src/game-core.mjs';
+import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
+import {day28FriendlyFixture} from './day28-v4-playable-fixture.mjs';
+import {applyDay28V4Choice,completeDay28V4,getDay28V4Options,resolveDay28V4Contact,resolveDay28V4HomeInvitation,resolveDay28V4Meeting,resolveDay28V4NextMeeting,resolveDay28V4Relationship} from '../src/day28-v4-state-contract.mjs';
+
+const backupKey='day29-v4-qa-save-backup';
+const keys=[SaveManager.key,SaveManager.keyForMode(GAME_MODES.MARRIAGE_30),SaveManager.keyForMode(GAME_MODES.FREE_ROMANCE)];
+const pick=(options,suffix)=>suffix?options.find(option=>option.id.endsWith(`_${suffix}`)):options[0];
+function backup(){if(sessionStorage.getItem(backupKey)===null)sessionStorage.setItem(backupKey,JSON.stringify(Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))));}
+function completedFriendly(){const state=day28FriendlyFixture();while(state.storyFlags.day28V4.phase!=='ending'){const chapter=state.storyFlags.day28V4,phase=chapter.phase;if(phase==='meeting_resolution'){resolveDay28V4Meeting(state,{type:'day28MeetingResponse',target:chapter.facts.meetingTarget,outcome:'ACCEPTED',method:'IN_PERSON'});continue;}if(phase==='relationship_resolution'){resolveDay28V4Relationship(state,{type:'day28RelationshipResponse',outcome:'CONTINUE',contactAllowed:true});continue;}if(phase==='contact_resolution'){resolveDay28V4Contact(state,{type:'day28ContactResponse',contact:chapter.facts.contactRequest,outcome:'ACCEPTED'});continue;}if(phase==='home_invitation_resolution'){resolveDay28V4HomeInvitation(state,{type:'day28HomeInvitationResponse',accepted:true,location:'HAEUN_HOME'});continue;}if(phase==='next_meeting_resolution'){resolveDay28V4NextMeeting(state,{type:'day28NextMeetingResponse',outcome:'ACCEPTED'});continue;}const suffix=phase==='continuing_distance'?'talk_only':phase==='continuing_night'?'together_if_mutual':phase==='continuing_farewell'?'next_when_possible':null;const option=pick(getDay28V4Options(chapter),suffix);if(!option)throw new Error(`DAY28_QA_CHOICE_MISSING:${phase}:${suffix}`);applyDay28V4Choice(state,option.id);}completeDay28V4(state,{type:'chapterCompletionCue',day:28,finalSceneReached:true});return state;}
+function seed(){const fixture=completedFriendly(),state=createInitialState(createGirlfriendFromProfile('haeun',()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30}),scenario=state.scenario;Object.assign(state,fixture);state.gameMode=GAME_MODES.MARRIAGE_30;state.scenario={...scenario,...fixture.scenario,enabled:true};state.day=29;state.phase=0;state.pendingStoryId='m30-day29-current-eve-reconfirmation';state.settings??={};state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};return state;}
+document.querySelector('[data-route="friendly"]').addEventListener('click',()=>{try{backup();SaveManager.save(seed());location.href='../index.html?qa=day29-v4&route=friendly';}catch(error){document.querySelector('#status').textContent=`QA 준비 실패: ${error?.message??error}`;}});
+document.querySelector('#inspect').addEventListener('click',()=>{const raw=localStorage.getItem(SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)),saved=raw?JSON.parse(raw):null,chapter=saved?.storyFlags?.day29V4;document.querySelector('#status').textContent=JSON.stringify({error:saved?.eventRuntime?.lastError??null,phase:chapter?.phase??null,complete:chapter?.complete??false,eveningTarget:chapter?.facts?.eveningTarget??null,eveningLocation:chapter?.facts?.eveningLocation??null,futureResponse:chapter?.facts?.futureResponse??null,currentContact:chapter?.facts?.currentContact??null,stayResponse:chapter?.facts?.stayResponse??null,tomorrowRecipient:chapter?.facts?.day30Handoff?.tomorrowRecipient??null,day:saved?.day??null,pendingStoryId:saved?.pendingStoryId??null,day30Hook:saved?.storyFlags?.day29V4Day30HookPending??false,freeAction:saved?.storyFreeAction??null});});
+document.querySelector('#restore').addEventListener('click',()=>{const data=sessionStorage.getItem(backupKey);if(data===null){document.querySelector('#status').textContent='이 탭에 QA 백업이 없습니다.';return;}for(const [key,value] of Object.entries(JSON.parse(data)))value===null?localStorage.removeItem(key):localStorage.setItem(key,value);sessionStorage.removeItem(backupKey);document.querySelector('#status').textContent='테스트 전 저장을 복원했습니다.';});
+document.querySelector('#status').textContent='DAY29 Friendly 검증을 시작할 수 있습니다.';
+</script></html>

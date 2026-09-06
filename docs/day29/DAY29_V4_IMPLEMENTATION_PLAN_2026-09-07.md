@@ -64,7 +64,7 @@ DAY28 V4 완료 → SCENE01~09 / C1~9 공통 생활·저녁 범위
 
 ## 다음 시작점
 
-실제 브라우저에서 Friendly/Neutral/Distant/Mixed를 AUTO OFF·SKIP 없이 DAY30까지 검증한다. 우선 Friendly 데스크톱 완주와 대표 중간 저장 재개부터 시작한다.
+실제 브라우저에서 Neutral/Distant/Mixed 데스크톱을 AUTO OFF·SKIP 없이 DAY30까지 검증한다. 그다음 Friendly/Neutral/Distant/Mixed 389×844 모바일 관문을 닫는다.
 
 ## 상태 계약 완료 기록
 
@@ -101,3 +101,7 @@ SCENE23은 하은의 현재 미래 답이 `CONTINUE`이고 실제 다음 약속 
 네 playable 구간을 현재 phase에 따라 단일 Story 루프로 결합하고 검증된 DAY28 V4 완료 저장에서만 신규 DAY29 V4를 시작한다. 저녁 만남, 미래 재논의, 접촉, 숙박, 새 상대 답, 거짓말 정정의 현재 응답을 각각 runtime resolution으로 처리하며 실패 시 chapter/history/pending을 원자 복원한다. SaveManager 중간 저장 왕복은 동일 segment와 시간·장소·인물 presentation을 재현한다.
 
 completion은 단일 `day29-notion-v4` 이력과 DAY30 hook만 기록하고 DAY28 hook을 닫는다. V4 진행·완료에는 legacy DAY29 선택 기록이나 Free Action이 끼어들지 않으며, 하은 미래 응답 직후 전이 누락과 함께 머물지 않은 SCENE21의 하은 오표시도 교정했다. Friendly/Solo/실제 아라 경로, 원자적 실패, 저장 재개, 완료 중복 방지, 실제 `game.js` wiring 집중 검사 5/5와 전체 Node·100회×30일 회귀를 통과했다. 캐시는 `game.js?v=290`이다. 실제 브라우저는 아직 **NOT RUN**이므로 DAY29은 **PARTIAL**이며, 다음은 **Friendly 데스크톱 비-SKIP 완주·대표 중간 저장 재개**다.
+
+## Friendly 실제 Chrome QA 기록
+
+격리된 Chrome 152에서 Friendly를 AUTO OFF·SKIP 클릭 0회로 DAY30까지 완주했다(`DAY29_V4_BROWSER_QA_2026-09-07.md`). 하은 집 저녁, 미래 `CONTINUE`, 현재 `KISS`, 숙박 수락을 독립 응답으로 확인했고 최종 `complete=true/day=30/day30Hook=true/tomorrowRecipient=HAEUN`이다. SCENE15/C15에서는 reload 전후 `19:00 / girlfriend-home / 선행 선택 13개 / 하은 표시`가 동일했다. Story/Free 중첩과 조치 가능한 browser console error·runtime exception은 0건이며 임시 프로필 저장을 복구했다. DAY29은 **PARTIAL**, 다음은 **Neutral/Distant/Mixed 데스크톱 비-SKIP QA**다.
