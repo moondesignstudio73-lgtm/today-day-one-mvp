@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createInitialState} from '../src/game-core.mjs';
+import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
+import {GAME_MODES} from '../src/scenario-state.mjs';
+import {SaveManager} from '../src/save-manager.mjs';
+import {readFileSync} from 'node:fs';
+import {day27EndedFixture,day27FriendlyFixture} from './day27-v4-playable-fixture.mjs';
+import {getDay27V4Options} from '../src/day27-v4-state-contract.mjs';
+import {applyDay27V4GameChoice,applyDay27V4GameResolution,completeDay27V4GameChapter,getDay27V4GameCompatibility,getDay27V4GameResumePresentation,getDay27V4GameSegment,isDay27V4ResolutionStep} from '../src/day27-v4-game-bridge.mjs';
+import {getDay27V4RuntimeResolution} from '../src/day27-v4-runtime-resolution.mjs';
+
+const choose=state=>applyDay27V4GameChoice(state,getDay27V4Options(state.storyFlags.day27V4)[0].id);
+function finish(state){const all=[];let guard=0;while(state.storyFlags.day27V4.phase!=='ending'){assert.ok(guard++<60,state.storyFlags.day27V4.phase);const steps=getDay27V4GameSegment(state);all.push(...steps);const cue=steps.find(isDay27V4ResolutionStep);if(cue)all.push(...applyDay27V4GameResolution(state,getDay27V4RuntimeResolution(state,cue)).steps);else all.push(...choose(state).steps);}all.push(...getDay27V4GameSegment(state));return all;}
+const storage=()=>{const data=new Map();return {setItem:(key,value)=>data.set(key,value),getItem:key=>data.get(key)??null,removeItem:key=>data.delete(key)};};
+
+test('bridge preserves V4/legacy compatibility and maps presentation for every transition',()=>{const state=day27FriendlyFixture();assert.equal(getDay27V4GameCompatibility(state).mode,'V4');const all=finish(state);for(const number of [1,2,10,14,16,18,19,20,21,22,24])assert.ok(all.some(step=>step.type==='transition'&&step.sceneNumber===number),`scene ${number}`);for(const step of all.filter(step=>step.type==='transition')){assert.ok(step.backgroundUrl);assert.ok(step.storyClock);}const legacy={storyFlags:{day26RuntimeComplete:true,day27RuntimeStage:1}};assert.equal(getDay27V4GameCompatibility(legacy).mode,'LEGACY');});
+
+test('no-conversation game route has only SCENE01,23,24 and no resolution response',()=>{const state=day27EndedFixture(),all=finish(state),scenes=new Set(all.filter(step=>step.type==='transition').map(step=>step.sceneNumber));assert.deepEqual([...scenes],[1,23,24]);assert.equal(state.storyFlags.day27V4.facts.conversationOutcome,null);assert.equal(all.some(isDay27V4ResolutionStep),false);});
+
+test('choice and resolution failures atomically restore the replay-locked chapter',()=>{const state=day27FriendlyFixture();choose(state);const before=structuredClone(state.storyFlags.day27V4);assert.throws(()=>applyDay27V4GameResolution(state,{type:'day27NextTalkResponse',outcome:'ACCEPTED'}),/INVALID_NEXT_TALK|UNKNOWN_RESOLUTION/);assert.deepEqual(state.storyFlags.day27V4,before);});
+
+test('mid-day save round-trip preserves exact segment and presentation',()=>{const state=day27FriendlyFixture();for(let i=0;i<6;i++){const steps=getDay27V4GameSegment(state),cue=steps.find(isDay27V4ResolutionStep);if(cue)applyDay27V4GameResolution(state,getDay27V4RuntimeResolution(state,cue));else choose(state);}const expected=getDay27V4GameSegment(state),store=storage(),shell=createInitialState(createGirlfriendFromProfile('haeun',()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});Object.assign(shell,state);SaveManager.save(shell,store);const loaded=SaveManager.load(store,GAME_MODES.MARRIAGE_30);assert.deepEqual(loaded.storyFlags.day27V4,state.storyFlags.day27V4);assert.deepEqual(getDay27V4GameSegment(loaded),expected);assert.deepEqual(getDay27V4GameResumePresentation(loaded),getDay27V4GameResumePresentation(state));});
+
+test('completion records one DAY27 history and opens only DAY28 hook',()=>{const state=day27FriendlyFixture();state.storyHistory=[];const cue=finish(state).at(-1);completeDay27V4GameChapter(state,cue);completeDay27V4GameChapter(state,cue);assert.equal(state.storyHistory.length,1);assert.equal(state.storyHistory[0].scenarioId,'day27-notion-v4');assert.equal(state.storyFlags.day27V4.complete,true);assert.equal(state.storyFlags.day27V4Day28HookPending,true);assert.equal(state.storyFlags.day27RuntimeComplete,true);assert.equal(state.storyFlags.day27FreeActionComplete,undefined);});
+
+test('main game wires DAY27 V4 entry, choices, resolutions, completion, Story/Free exclusion and cache',()=>{const source=readFileSync(new URL('../game.js',import.meta.url),'utf8'),html=readFileSync(new URL('../index.html',import.meta.url),'utf8');assert.match(source,/day27-v4-game-bridge\.mjs\?v=1/);assert.match(source,/day27-v4-runtime-resolution\.mjs\?v=1/);assert.match(source,/if\(day27V4\)prepareDay27V4GameEntry\(state\)/);assert.match(source,/applyDay27V4GameChoice\(state,choiceId\)/);assert.match(source,/getDay27V4RuntimeResolution\(state,step\)/);assert.match(source,/applyDay27V4GameResolution\(state,response\)/);assert.match(source,/step\.day===27\?completeDay27V4GameChapter/);assert.match(source,/isDay27V4ResolutionStep\(step\)/);assert.match(source,/lockedDay27&&!day27V4\?27/);assert.match(source,/completedSession\?\.id===LOCKED_DAY27_SCENE_ID&&!state\.storyFlags\?\.day27V4/);assert.match(source,/!\(lockedDay27&&day27V4\)/);assert.match(html,/game\.js\?v=277/);});
