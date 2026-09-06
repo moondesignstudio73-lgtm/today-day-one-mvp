@@ -71,7 +71,7 @@ DAY27 완료 이력 → SCENE01 / C1
 
 1. ~~Notion 최종 원문을 플레이어 공개 snapshot으로 잠그고 내부 편집 메모·대체 V3를 분리한다.~~ 완료.
 2. ~~24 Scene·26 choice block·8개 variant와 모든 라벨을 기계 생성 registry 및 SHA 검증으로 고정한다.~~ 완료.
-3. DAY25~27 실제 이력을 동결하는 `day28-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.
+3. ~~DAY25~27 실제 이력을 동결하는 `day28-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
 4. SCENE01~08/C1~8 실제 재회·고쳐 듣기·관계 제안 playable을 구현한다.
 5. SCENE09~16 이별 C9~10, 지속 C9~14, 현재 접촉·집 초대 응답을 구현한다.
 6. SCENE17~24 새 만남 C8·공개 C15·혼자 C2~8·밤 C16·ending을 구현한다.
@@ -82,4 +82,4 @@ DAY27 완료 이력 → SCENE01 / C1
 
 ## 다음 시작점
 
-`day28-notion-v4/1` replay-locked 상태 계약을 구현한다.
+SCENE01~08/C1~8 실제 재회·고쳐 듣기·관계 제안 playable을 구현한다.
