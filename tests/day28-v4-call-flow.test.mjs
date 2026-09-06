@@ -18,7 +18,7 @@ test('a new accepted call uses only call-safe choices and skips walk, bench, tou
   choose(state,'ask_path');
   steps=getDay28V4GameSegment(state);
   assert.match(JSON.stringify(steps),/보이지 않는 표정을 추측하지 않았다/);
-  assert.doesNotMatch(JSON.stringify(steps),/짧은 길로 걸음/);
+  assert.doesNotMatch(JSON.stringify(steps),/짧은 길로 걸음|haeun-looks|haeun-stops/);
   choose(state);
   steps=getDay28V4GameSegment(state);
   assert.equal(steps.find(step=>step.type==='choice').options.some(option=>option.id.endsWith('_walk_together')),false);

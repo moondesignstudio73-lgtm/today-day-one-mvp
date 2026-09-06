@@ -25,7 +25,7 @@ test('C11 goodbye goes directly to the farewell instead of inventing daily talk 
   assert.ok(steps.some(step=>step.type==='transition'&&step.sceneNumber===16));
   assert.equal(steps.some(step=>step.type==='transition'&&[14,15].includes(step.sceneNumber)),false);
   assert.doesNotMatch(JSON.stringify(steps),/양말|집 초대|day28HomeInvitationCue/);
-  assert.match(JSON.stringify(steps),/아쉬움이 남아도 오늘의 거리를 지키며 인사했다/);
+  assert.match(JSON.stringify(steps),/오늘은 여기까지 하자/);
   assert.equal(validateDay28V4(chapter),true);
 });
 
