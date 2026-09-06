@@ -100,4 +100,4 @@ DAY23 완료 이력
 
 ## 다음 시작점
 
-SCENE01~24/C1~15, game bridge, 실제 `game.js` Story 루프를 연결했고 Friendly · 대면 · 관계 지속과 Neutral · 통화 · 관계 유예 데스크톱 경로를 검증된 DAY23 연속 이력에서 SKIP 없이 DAY25까지 완주했다. Neutral 완료 저장은 `conversation=PHONE`, `relationship=DEFER`, `futureAccepted=false`, `day25Route=DEFERRED_RELATIONSHIP`, `freeAction=null`이다. 다음 작업은 **Distant 오늘 거절/종료, 실제 연락·거짓말·새 만남 의미 경로와 389×844 모바일 QA**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
+SCENE01~24/C1~15, game bridge, 실제 `game.js` Story 루프를 연결했고 Friendly 대면·지속, Neutral 통화·유예, Distant 연락 불가·기종료 데스크톱 경로를 검증된 DAY23 연속 이력에서 SKIP 없이 DAY25까지 완주했다. Distant 경로는 하은의 메시지·대면·통화를 새로 만들지 않고 `day25Route=RELATIONSHIP_ENDED`, `freeAction=null`로 닫혔다. 다음 작업은 **활성 관계의 명시적 종료, 실제 연락·거짓말·새 만남 의미 경로와 389×844 모바일 QA**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.

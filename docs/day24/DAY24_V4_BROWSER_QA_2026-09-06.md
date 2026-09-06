@@ -4,7 +4,8 @@
 
 - Friendly · 대면 · 관계 지속 데스크톱 경로: PASS.
 - Neutral · 통화 · 관계 유예 데스크톱 경로: PASS.
-- DAY24 전체: PARTIAL. Distant/Mixed, 오늘 거절·종료, 연락 대상·거짓말·새 만남, 389×844 검증이 남아 있다.
+- Distant · 연락 불가 · 이미 종료된 관계 데스크톱 경로: PASS.
+- DAY24 전체: PARTIAL. 활성 관계의 명시적 종료, Mixed, 연락 대상·거짓말·새 만남, 389×844 검증이 남아 있다.
 
 ## 환경과 진입
 
@@ -31,6 +32,14 @@
 - 전환 저장: `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`, `freeAction=null`.
 - browser warning/error 0, 사용자 저장 복원 PASS.
 
+## Distant · 연락 불가 · 이미 종료된 관계
+
+- 관계·연락이 이미 끝난 DAY22 미여행 fixture에서 DAY23 C1~8과 DAY24의 실제 노출 선택 7개를 SKIP 없이 진행했다.
+- DAY24는 하은의 메시지·대면·통화를 새로 만들지 않았고, 현재 관계 응답도 조작하지 않은 채 자기 생활과 남은 말만 정리했다. 실제 화면에서 DAY24 `11:30`과 DAY25 `08:00` 전환을 확인했다.
+- 완료 저장: `error=null`, `phase=ending`, `complete=true`, `conversation=null`, `relationship=null`, `futureAccepted=false`, `day25Route=RELATIONSHIP_ENDED`.
+- 전환 저장: `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`, `freeAction=null`.
+- browser warning/error 0, 사용자 저장 복원 PASS.
+
 ## 발견 및 조치
 
 - DAY24 단독 fixture의 새 모듈 체인은 브라우저에서 불안정하게 로드될 수 있어, 이미 검증된 DAY23 브라우저 fixture에서 연속 플레이하는 harness로 바꿨다.
@@ -38,7 +47,7 @@
 
 ## 다음 관문
 
-1. Distant · 오늘 거절/종료를 데스크톱에서 SKIP 없이 완주한다.
+1. 활성 관계에서 명시적으로 이별을 선택하는 Distant 경로를 데스크톱에서 SKIP 없이 완주한다.
 2. 유리·서진·아라·연락 없음, 관계 상태 거짓말 정정/지속, 조건부 새 만남을 의미 경로별로 검증한다.
 3. Friendly/Neutral/Distant/Mixed 대표 경로를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
 4. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.
