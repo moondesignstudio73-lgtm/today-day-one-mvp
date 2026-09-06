@@ -27,9 +27,9 @@ test('normalization is idempotent, base-aware, and installed at the CG rendering
   assert.match(game, /if\(step.type==="cgShow"\)\{[^]*?layer.src=resolveStoryCgAsset\(step.source,document.baseURI\)/);
 });
 
-test('the published site deploys from the same main branch that receives release commits', () => {
+test('the published site keeps the environment-approved promotion branch and a fresh entry revision', () => {
   const workflow = readFileSync(new URL('../.github/workflows/deploy-pages.yml', import.meta.url), 'utf8');
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-  assert.match(workflow, /push:\s*\n\s*branches:\s*\n\s*- main\b/);
+  assert.match(workflow, /push:\s*\n\s*branches:\s*\n\s*- gh-pages\b/);
   assert.match(html, /game\.js\?v=289/);
 });
