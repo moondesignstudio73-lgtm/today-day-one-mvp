@@ -74,7 +74,7 @@ DAY25 완료 이력 → SCENE01 / C1 공통
 
 1. ~~Notion 최종 원문을 플레이어 공개 snapshot으로 잠그고 내부 편집 메모·V3를 분리한다.~~ 완료.
 2. ~~24 Scene·28 choice block·7개 variant와 모든 3개 라벨을 기계 생성 source registry와 SHA 검증으로 고정한다.~~ 완료.
-3. DAY23~25 실제 이력을 동결하는 `day26-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.
+3. ~~DAY23~25 실제 이력을 동결하는 `day26-notion-v4/1` replay-locked 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료. 실제 네 사람 식사·단일 새 만남 `ACCEPTED`·하은 연락 가능성·동일 수신자 거짓말·친구 인지·보유 옷·현재 몸 상태를 input seal로 고정한다. 외출 취소, 지훈 단독 식사, 새 상대의 관계 뜻·다음 약속은 각각 별도 현재 응답 전에는 확정하지 않는다.
 4. SCENE01~14/C1~12 네 사람 식탁 경로를 exact source ref로 구현한다. 선행 발언·하은 발화 중단·정정·피로·귀가를 상태로 구분한다.
 5. SCENE15 대체 C2~3 지훈 단독 식사와 SCENE16~20 대체 C4~8 새 만남을 구현한다. 현재 응답과 약속 수락을 별도 resolution으로 둔다.
 6. SCENE21 대체 C2~8 혼자 생활, SCENE22/C13 조건부 하은 밤 연락, SCENE23~24/C14 ending과 DAY27 hook을 구현한다.
@@ -91,4 +91,4 @@ DAY25 완료 이력 → SCENE01 / C1 공통
 
 ## 다음 시작점
 
-`day26-notion-v4/1` 상태 계약에서 DAY25 완료 input seal과 네 사람/지훈/새 만남/혼자 경로를 분리한다. 이 관문 전까지 DAY26는 **PARTIAL**이다.
+SCENE01~14/C1~12 네 사람 식탁 playable을 exact source ref로 구현한다. 선행 발언·하은 발화 중단·정정·피로·귀가를 실제 선택 결과로 분리한다. 이 관문 전까지 DAY26는 **PARTIAL**이다.
