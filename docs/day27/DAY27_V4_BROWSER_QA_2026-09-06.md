@@ -22,6 +22,15 @@ Mixed 경로는 C4 직후 `SCENE 06 · 하은에게 말하는 선택`에서 페�
 
 ## 남은 관문
 
-- Friendly/Neutral/Distant/Mixed를 실제 콘텐츠 389×844에서 SKIP 없이 재검증
-- 각 경로의 가로 overflow, 선택지 터치 영역, 인물/배경 자산, 콘솔 로그 확인
-- 모바일 관문까지 통과한 뒤 DAY27을 COMPLETE로 승격
+## 389×844 모바일 결과
+
+브라우저 외곽을 보정해 실제 콘텐츠 `innerWidth=389`, `innerHeight=844`에서 Friendly·Neutral·Distant·Mixed를 다시 진행했다. 네 경로 모두 `AUTO OFF`, `SKIP` 미사용으로 DAY28까지 완주했다.
+
+- 각 경로 완료 시 `scrollWidth=clientWidth=389`로 가로 overflow가 없었다.
+- 선택지는 모바일 레이어에서 직접 누를 수 있었고, 장면 진행 입력과 겹치지 않았다.
+- Friendly/Neutral은 관계 지속 밤 장면, Distant는 SCENE23 비대화 장면, Mixed는 실제 서진 거짓말 정정 장면만 표시됐다.
+- 네 경로 모두 DAY28 `08:00 / STORY · D-3` 전환 PASS.
+- browser warning/error 0건.
+- 사용자 저장 복원 및 임시 viewport reset PASS.
+
+데스크톱·모바일, 중간 저장, Story/Free 배타성, 원문/상태/플레이어블/브리지/전체 회귀 관문이 모두 닫혔다. DAY27은 **PASS / COMPLETE**다.

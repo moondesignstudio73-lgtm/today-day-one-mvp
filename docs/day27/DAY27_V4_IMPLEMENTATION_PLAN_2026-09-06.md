@@ -2,7 +2,7 @@
 
 ## 판정과 원문
 
-- 현재 상태: **PARTIAL / SOURCE LOCKED**.
+- 현재 상태: **PASS / COMPLETE**.
 - 최종 원문: Notion `DAY 27 — 되돌릴 수 없는 말 | SCENARIO V4`.
 - page id: `3c9c31f0-29a6-81fe-b0e1-df8c541775c9`.
 - last edited snapshot: `2026-08-27T20:56:48.044Z`.
@@ -76,9 +76,9 @@ DAY26 완료 이력 → SCENE01 / C1
 6. ~~SCENE18~24/C13~16 및 이별·비대화 대체 C3~8을 구현한다.~~ 완료. 지훈은 현재 가능 응답 뒤에만 C13으로 등장하고, C14 저녁 뒤 정직·진실 고지·관계 지속·연락 허용을 모두 만족할 때만 SCENE20/C15와 C16을 연다. 다음 만남은 별도 현재 응답 전에는 일정이 되지 않는다. 이별·연락 중지에는 대체 C15만, 대화 미성립에는 SCENE23 대체 C3~8만 노출하며 듣지 못한 반응을 만들지 않는다. SCENE22는 실제 남은 수신자별 정정만 유지하고 SCENE24 뒤에만 completion cue와 DAY28 handoff를 낸다.
 7. ~~game bridge, 저장 재개, 현재 응답, presentation, Story/Free 배타성을 연결한다.~~ 완료. 세 playable 모듈을 현재 phase와 경로로 결합하고 대화 성립·실제 수신자의 지속·하은 청취·관계 결과·지훈 가능 여부·다음 약속의 여섯 응답을 runtime resolution으로 연결했다. 선택·응답 오류는 chapter와 history/pending을 원자 복원하며 중간 저장은 동일 segment·시간·장소·인물을 재현한다. 완료는 단일 DAY27 history와 DAY28 hook만 만들고 V4 진행·완료에는 legacy 선택 기록이나 Free Action이 끼어들지 않는다. 캐시는 `game.js?v=277`이다.
 8. ~~source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.~~ 완료. DAY27 집중 24/24, 전체 Node 827/827, 100회×30일 시뮬레이션이 통과했다.
-9. Friendly/Neutral/Distant/Mixed의 거짓 정정·정직 대화·관계 종료·비대화를 데스크톱과 389×844에서 SKIP 없이 검증한다. 데스크톱 네 경로와 Mixed 중간 저장 재개는 완료했다.
-10. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY28 전환이 모두 PASS일 때만 DAY27 COMPLETE로 승격한다.
+9. ~~Friendly/Neutral/Distant/Mixed의 거짓 정정·정직 대화·관계 종료·비대화를 데스크톱과 389×844에서 SKIP 없이 검증한다.~~ 완료. 데스크톱 네 경로·Mixed 중간 저장 재개·실제 콘텐츠 389×844 네 경로를 모두 완주했다.
+10. ~~원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY28 전환이 모두 PASS일 때만 DAY27 COMPLETE로 승격한다.~~ 완료. 네 모바일 경로 모두 `scrollWidth=clientWidth=389`, browser warning/error 0, DAY28 전환, 사용자 저장과 viewport 원복을 확인했다.
 
 ## 다음 시작점
 
-Friendly/Neutral/Distant/Mixed를 실제 콘텐츠 389×844에서 SKIP 없이 검증하고 overflow·자산·콘솔·DAY28 전환을 닫는다.
+DAY28 최종 Notion 원문을 잠그고 DAY25~27 실제 이력을 감사한다.
