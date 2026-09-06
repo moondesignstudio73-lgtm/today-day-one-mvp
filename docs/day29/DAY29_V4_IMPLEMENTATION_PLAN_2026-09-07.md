@@ -51,8 +51,8 @@ DAY28 V4 완료 → SCENE01~09 / C1~9 공통 생활·저녁 범위
 
 ## 구현 단계와 완료 관문
 
-1. Notion 최종 원문을 플레이어 공개 snapshot으로 잠그고 24 Scene·23 choice registry와 SHA 검증을 고정한다.
-2. DAY26~28 실제 이력을 동결하는 `day29-notion-v4/1` 상태 계약과 legacy 진입 분리를 구현한다.
+1. ~~Notion 최종 원문을 플레이어 공개 snapshot으로 잠그고 24 Scene·23 choice registry와 SHA 검증을 고정한다.~~ 완료.
+2. ~~DAY26~28 실제 이력을 동결하는 `day29-notion-v4/1` 상태 계약과 legacy 진입 분리를 구현한다.~~ 완료.
 3. SCENE01~09 공통 생활·실제 소유물·업무·지출·저녁 범위 C1~9를 구현한다.
 4. SCENE10~17 하은 집/바깥 분기, 미래 대화, 접촉·키스·귀가·숙박 C10~17을 구현한다.
 5. SCENE18 새 관계, SCENE19 혼자, SCENE20 미정정 거짓말 C18~20을 구현한다.
@@ -64,4 +64,10 @@ DAY28 V4 완료 → SCENE01~09 / C1~9 공통 생활·저녁 범위
 
 ## 다음 시작점
 
-DAY26~28 상태 계약과 실제 history 필드를 대조해 DAY29 input snapshot을 구현한다. legacy `day29CurrentEveReconfirmationPending` 저장과 신규 DAY28 V4 handoff를 혼합하지 않는다.
+SCENE01~09/C1~9 playable을 구현한다. 실제 보유 옷·카드·사진·꽃이 없을 때 해당 물건을 만들지 않고, C9의 저녁 상대는 봉인된 후보와 별도 현재 응답이 모두 있을 때만 등장시킨다.
+
+## 상태 계약 완료 기록
+
+`day29-notion-v4/1`은 검증·완료된 DAY26~28 V4와 DAY28→29 hook만 신규 진입으로 허용한다. DAY28의 관계·연락·접촉·집 초대·다음 만남·새 관계·공개·거리 handoff를 그대로 봉인하며, 과거 DAY29 결혼 전날 3선택 진행 저장은 legacy로 유지한다. 옷·카드·사진·꽃·업무 메모는 실제 플래그에서 보수적으로 파생하고, 없는 사진은 C3 닫기만, 없는 구매 옷은 C2의 구매 회상 선택을 노출하지 않는다.
+
+하은/새 상대 저녁은 C9 뒤 별도 현재 응답을 기다리고, 미래 대화·키스/포옹·숙박·새 상대 다음 답·거짓말 정정도 각각 독립 resolution으로 기록한다. Friendly 집 저녁에서 키스 수락·숙박 거절, 완전 Solo, 실제 아라 새 관계의 `NEED_TIME`, 입력 변조와 legacy 분리를 replay 검증했다. DAY29은 **PARTIAL**, 다음은 **SCENE01~09/C1~9 playable**이다.
