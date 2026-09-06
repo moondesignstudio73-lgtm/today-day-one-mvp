@@ -25,6 +25,7 @@ test('DAY18 actual transition handler restores explicit actors after an empty sc
   const image={hidden:true},video={hidden:true},calls=[];
   const context={step:{},immersiveScene:{id:'day18',presentation:{characterId:null}},state:{day:18},
     LOCKED_DAY1_SCENE_ID:'day1',LOCKED_DAY2_SCENE_ID:'day2',LOCKED_DAY18_SCENE_ID:'day18',
+    lateV4TransitionCharacterSceneIds:new Set(['day18','day29']),
     $:id=>id==='#vnCharacter'?image:video,getBackgroundAsset:()=>'/background.png',
     applyScenePresentation:()=>{},resolveStoryAudioCue:()=>({sfxIds:[]}),
     sound:{applyStoryAudio:()=>{},playCue:()=>{}},

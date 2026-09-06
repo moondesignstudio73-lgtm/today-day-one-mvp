@@ -31,5 +31,5 @@ test('the published site keeps the environment-approved promotion branch and a f
   const workflow = readFileSync(new URL('../.github/workflows/deploy-pages.yml', import.meta.url), 'utf8');
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   assert.match(workflow, /push:\s*\n\s*branches:\s*\n\s*- gh-pages\b/);
-  assert.match(html, /game\.js\?v=289/);
+  assert.match(html, /game\.js\?v=290/);
 });

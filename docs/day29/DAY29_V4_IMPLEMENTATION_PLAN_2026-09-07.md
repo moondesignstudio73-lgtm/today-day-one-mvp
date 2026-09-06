@@ -57,14 +57,14 @@ DAY28 V4 완료 → SCENE01~09 / C1~9 공통 생활·저녁 범위
 4. ~~SCENE10~17 하은 집/바깥 분기, 미래 대화, 접촉·키스·귀가·숙박 C10~17을 구현한다.~~ 완료.
 5. ~~SCENE18 새 관계, SCENE19 혼자, SCENE20 미정정 거짓말 C18~20을 구현한다.~~ 완료.
 6. ~~SCENE21~24 내일의 한 가지·준비·인사·DAY30 handoff C21~23을 구현한다.~~ 완료.
-7. game bridge, 저장 재개, 현재 NPC 응답, Story/Free 배타성, 화면 presentation을 연결한다.
-8. source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.
+7. ~~game bridge, 저장 재개, 현재 NPC 응답, Story/Free 배타성, 화면 presentation을 연결한다.~~ 완료.
+8. ~~source/state/playable/bridge/저장/전체 30일 회귀를 통과한다.~~ 완료.
 9. Friendly/Neutral/Distant/Mixed를 실제 브라우저에서 AUTO OFF·SKIP 없이 DAY30까지 검증한다.
 10. 원문·런타임 텍스트·콘솔·자산·오버플로·DAY30 전환이 모두 PASS일 때만 DAY29 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-DAY29 V4 game bridge, 저장 재개, 현재 NPC 응답, Story/Free 배타성, 시간·장소·인물 presentation을 연결한다. SCENE01~24의 phase별 모듈을 실제 게임 루프에 결합하고 완료 전에는 legacy DAY29나 Free Action이 끼어들지 않게 한다.
+실제 브라우저에서 Friendly/Neutral/Distant/Mixed를 AUTO OFF·SKIP 없이 DAY30까지 검증한다. 우선 Friendly 데스크톱 완주와 대표 중간 저장 재개부터 시작한다.
 
 ## 상태 계약 완료 기록
 
@@ -95,3 +95,9 @@ SCENE20은 실제 미정정 거짓말이 있을 때만 열고 실제 수신자�
 SCENE21은 확정 약속의 시간·장소와 아직 답을 기다리는 빈칸을 구분하고 C21의 한 가지 우선순위만 DAY30 handoff에 남긴다. 하은과 실제 함께 머무는 경우에만 그녀의 내일 우선순위 대사를 출력하며, 다른 상대의 일정과 혼자 경로는 각각 별도 서술로 유지한다. SCENE22는 실제 가진 옷과 실제 존재하는 사진·카드·꽃만 준비하며, 없는 물건은 빈 창가와 다른 물건으로 남긴다.
 
 SCENE23은 하은의 현재 미래 답이 `CONTINUE`이고 실제 다음 약속 또는 함께 머무름이 있을 때만, 새 상대는 C18 다음 만남 제안이 현재 `ACCEPTED`일 때만 연다. 혼자·거절·`NEED_TIME/END`는 사람에게 보내는 C23을 건너뛰고 알람을 확인한다. SCENE24 원문 뒤에만 completion cue를 내며 `tomorrowRecipient`를 DAY30 handoff에 봉인한다. 하은 숙박·Solo·아라 다음 약속·하은 `NEED_TIME`의 source/state/완료 경계를 집중 검증했다. 실제 브라우저는 game bridge 전이라 **NOT RUN**이다. DAY29은 **PARTIAL**, 다음은 **game bridge·저장·presentation·Story/Free 연결**이다.
+
+## game bridge 및 저장 연결 완료 기록
+
+네 playable 구간을 현재 phase에 따라 단일 Story 루프로 결합하고 검증된 DAY28 V4 완료 저장에서만 신규 DAY29 V4를 시작한다. 저녁 만남, 미래 재논의, 접촉, 숙박, 새 상대 답, 거짓말 정정의 현재 응답을 각각 runtime resolution으로 처리하며 실패 시 chapter/history/pending을 원자 복원한다. SaveManager 중간 저장 왕복은 동일 segment와 시간·장소·인물 presentation을 재현한다.
+
+completion은 단일 `day29-notion-v4` 이력과 DAY30 hook만 기록하고 DAY28 hook을 닫는다. V4 진행·완료에는 legacy DAY29 선택 기록이나 Free Action이 끼어들지 않으며, 하은 미래 응답 직후 전이 누락과 함께 머물지 않은 SCENE21의 하은 오표시도 교정했다. Friendly/Solo/실제 아라 경로, 원자적 실패, 저장 재개, 완료 중복 방지, 실제 `game.js` wiring 집중 검사 5/5와 전체 Node·100회×30일 회귀를 통과했다. 캐시는 `game.js?v=290`이다. 실제 브라우저는 아직 **NOT RUN**이므로 DAY29은 **PARTIAL**이며, 다음은 **Friendly 데스크톱 비-SKIP 완주·대표 중간 저장 재개**다.
