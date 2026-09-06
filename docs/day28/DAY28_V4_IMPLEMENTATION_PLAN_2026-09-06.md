@@ -97,3 +97,7 @@ C3 `hidden_fact`는 신규 입력의 실제 거짓·수신자·정정·하은 �
 SCENE03~16의 하은 고쳐 듣기·작은 약속·길/벤치 대화·일상/업무 답장·집 머무름·작별과 SCENE20~21의 일곱 혼자 생활 선택을 실제 대사·독백·행동 큐로 확장했다. 큰 상처용 대사를 모든 경로에 공통 사용하지 않고, CALL에는 대면 몸짓을 만들지 않는다. 전체 Node 869/869 PASS, 브라우저 QA는 NOT RUN이다. 다음은 SCENE17~19·22~24의 남은 요약 투영과 player-facing 문자열 감사다.
 
 SCENE17~19의 실제 새 상대 대화·공개 범위 응답과 SCENE22~24의 밤·관계별 결말을 화면 대사·독백·행동으로 확장했다. 새 상대 경로가 하은 전용 SCENE22 제목·의자·옷 정리 선택과 SCENE24 대사를 재사용하던 문제를 분리했으며, 세 대표 경로 player-facing 자동 감사와 전체 Node 872/872를 통과했다. 실제 브라우저는 NOT RUN이다. 다음은 데스크톱 Friendly 비-SKIP 완주와 저장 재개다.
+
+### 최종 브라우저 관문 완료
+
+Chrome 152 실제 렌더링 엔진에서 Friendly 대면, Neutral 실제 CALL, Distant Solo, Mixed 아라 새 만남을 AUTO OFF·SKIP 클릭 없이 DAY29까지 완주했다. Friendly SCENE14/C12 reload 재개가 `19:00 / 공원 / 하은 / 선행 선택 11개`를 보존하는지 확인했고, 실행 중 발견한 전환 캐릭터 숨김과 provenance 객체 preload 404를 교정한 뒤 네 경로를 재실행했다. 전체 Node 회귀·문법·브라우저 관문 PASS로 DAY28을 **PASS / COMPLETE** 처리한다. 다음은 DAY29 최종 원문 잠금과 DAY26~28 실제 이력 감사다.

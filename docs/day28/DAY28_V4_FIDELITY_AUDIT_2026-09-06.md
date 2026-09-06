@@ -116,3 +116,13 @@
 - 집중 11/11 PASS. 실제 브라우저는 새 하네스 URL도 webview attach timeout으로 열리지 않아 NOT RUN이며 자세한 시도는 `DAY28_V4_BROWSER_QA_2026-09-06.md`에 기록했다. 사용자 저장 변경 없음, 로컬 서버 종료 확인.
 
 다음 시작점: 브라우저 연결 복구 후 `tests/day28-v4-browser-entry.html`의 Friendly 경로에서 AUTO OFF·SKIP 없이 DAY29까지 완주하고 SCENE14 저장 재개를 확인한다. DAY28은 계속 PARTIAL이다.
+
+## 최종: 실제 Chrome 네 의미 경로 종결
+
+- 인앱 webview 대신 격리된 Chrome 152 실제 렌더링 엔진을 CDP로 구동하는 `tests/day28-v4-browser-qa.mjs`를 추가했다. 화면 대화·선택·Free Action을 클릭해 Friendly/Neutral/Distant/Mixed를 각각 DAY29까지 진행했고 AUTO OFF, SKIP 클릭 0회를 유지했다.
+- Friendly SCENE14/C12에서 reload→이어하기 전후 `19:00 / neighborhood-park-day / 하은 표시 / choiceCount=11`을 고정했다. 첫 실행에서 전환 뒤 하은 숨김을 발견해 DAY18~28 V4 transition의 명시 캐릭터를 다시 표시하도록 수정했다.
+- Neutral은 C1 `short`를 실제 선택해 `meetingMethod=CALL`, `currentContact=null`, `homeInvitationResponse=null`을 확인했다. Distant는 Solo, Mixed는 아라 `NEW_MEETING / NEED_TIME`으로 각각 다른 의미 경로를 통과했다.
+- provenance 객체 `step.source`를 이미지처럼 preload하던 `/[object Object]` 404도 문자열 asset만 허용하도록 수정했다. 수정 후 조치 가능한 console error와 runtime exception은 0건이다.
+- 전체 Node 회귀와 100회×30일 시뮬레이션, 문법 검사, 네 경로 실제 브라우저 실행이 PASS했다. 격리 QA 프로필 저장은 복원됐고 사용자 실제 브라우저 저장은 접근하지 않았다.
+
+DAY28은 **PASS / COMPLETE**다. 다음 시작점은 DAY29 최종 Notion 원문 잠금과 DAY26~28 실제 이력 감사다.

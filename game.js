@@ -151,6 +151,7 @@ const getLockedDay14Segment=state=>["V4","V4_NEW"].includes(getDay14V4Compatibil
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
+const lateV4TransitionCharacterSceneIds=new Set([LOCKED_DAY18_SCENE_ID,LOCKED_DAY19_SCENE_ID,LOCKED_DAY20_SCENE_ID,LOCKED_DAY21_SCENE_ID,LOCKED_DAY22_SCENE_ID,LOCKED_DAY23_SCENE_ID,LOCKED_DAY24_SCENE_ID,LOCKED_DAY25_SCENE_ID,LOCKED_DAY26_SCENE_ID,LOCKED_DAY27_SCENE_ID,LOCKED_DAY28_SCENE_ID]);
 
 function isDay2ExplorationChoice(step=immersiveScene?.currentStep){const ids=new Set(["room_desk_checked","pc_interest","wardrobe_checked","friends_interest","unclassified_key_found"]);return step?.type==="choice"&&step.options?.some(option=>ids.has(option.id));}
 function getCurrentStoryUiState(){const freeActionStatus=state?.storyFreeAction&&immersiveScene&&state.storyFreeAction.storySceneId===immersiveScene.id?state.storyFreeAction.status:null;return deriveStoryUiState({runtimeState:eventRuntime.state,stepType:immersiveScene?.currentStep?.type??null,exploration:isDay2ExplorationChoice(),freeActionStatus});}
@@ -981,7 +982,7 @@ function startImmersiveScene(session) {
 
 function preloadImmersiveAssets(sequence=[]) {
   if(typeof Image==="undefined")return [];
-  const urls=[...new Set(sequence.flatMap(step=>[step?.assetUrl,step?.source,step?.backgroundId?getBackgroundAsset(step.backgroundId):""]).filter(Boolean))];
+  const urls=[...new Set(sequence.flatMap(step=>[step?.assetUrl,step?.source,step?.backgroundId?getBackgroundAsset(step.backgroundId):""]).filter(source=>typeof source==="string"&&source.length>0))];
   urls.forEach(source=>{const image=new Image();image.decoding="async";image.src=resolveStoryCgAsset(source,document.baseURI);});
   return urls;
 }
@@ -1162,7 +1163,7 @@ function renderImmersiveStep() {
     immersiveScene.presentation={...immersiveScene.presentation,backgroundId:step.backgroundId??immersiveScene.presentation.backgroundId,backgroundUrl:step.backgroundUrl??getBackgroundAsset(step.backgroundId),characterId:hasCharacter?step.characterId:immersiveScene.presentation.characterId,characterAssetUrl:step.characterAssetUrl??immersiveScene.presentation.characterAssetUrl,expressionId:hasCharacter?step.expressionId:step.expressionId??immersiveScene.presentation.expressionId,poseId:hasCharacter?step.poseId:step.poseId??immersiveScene.presentation.poseId,outfitId:step.outfitId??immersiveScene.presentation.outfitId,weather:step.weather??immersiveScene.presentation.weather,timeOfDay:step.timeOfDay??immersiveScene.presentation.timeOfDay,storyClock:step.storyClock??immersiveScene.presentation.storyClock};
     applyScenePresentation(immersiveScene.presentation);
     if(hasCharacter&&step.characterId===null){$("#vnCharacter").hidden=true;$("#vnCharacterVideo").hidden=true;}
-    if(hasCharacter&&step.characterId!==null&&immersiveScene?.id===LOCKED_DAY18_SCENE_ID)updateImmersiveCharacter(step.expressionId??"calm");
+    if(hasCharacter&&step.characterId!==null&&lateV4TransitionCharacterSceneIds.has(immersiveScene?.id))updateImmersiveCharacter(step.expressionId??"calm");
     if(immersiveScene?.id!==LOCKED_DAY1_SCENE_ID&&immersiveScene?.id!==LOCKED_DAY2_SCENE_ID){const audioCue=resolveStoryAudioCue({day:state.day,sceneId:immersiveScene?.id,label:step.label,backgroundId:step.backgroundId??immersiveScene.presentation.backgroundId,bgmId:step.bgmId});sound.applyStoryAudio(audioCue);audioCue.sfxIds.forEach(sfxId=>sound.playCue(sfxId));}
   }
   if (step.type === "transition") { if(eventRuntime.state!=="TRANSITIONING")eventRuntime.transition("TRANSITIONING",{sceneId:step.label});eventRuntime.input.lock(immersiveScene.id,"StoryTransition");showSceneTransition(step); return; }
