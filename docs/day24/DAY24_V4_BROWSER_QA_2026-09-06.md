@@ -8,7 +8,8 @@
 - Distant · 대면 · 활성 관계 명시적 종료 데스크톱 경로: PASS.
 - Mixed · 서울 · 유리 연락 사실 공개 데스크톱 경로: PASS.
 - Mixed · 서울 · 서진 연락 관계 상태 거짓말 데스크톱 경로: PASS.
-- DAY24 전체: PARTIAL. 아라 연락·조건부 새 만남, 389×844 검증이 남아 있다.
+- Mixed · 서울 · 아라 연락 조건부 새 만남 데스크톱 경로: PASS.
+- DAY24 전체: PARTIAL. 389×844 Friendly/Neutral/Distant/Mixed 검증이 남아 있다.
 
 ## 환경과 진입
 
@@ -33,6 +34,14 @@
 - 대면 카페 장면 없이 통화 흐름으로 진행됐고 관계 유예 뒤 하은 미래 대화 수락을 만들지 않은 채 DAY25로 전환됐다. 실제 화면에서 DAY24 `15:00`과 DAY25 `08:00`을 확인했다.
 - 완료 저장: `error=null`, `phase=ending`, `complete=true`, `conversation=PHONE`, `relationship=DEFER`, `futureAccepted=false`, `day25Route=DEFERRED_RELATIONSHIP`.
 - 전환 저장: `day=25`, `pendingStoryId=m30-day25-current-wedding-scope`, `day25Hook=true`, `freeAction=null`.
+- browser warning/error 0, 사용자 저장 복원 PASS.
+
+## Mixed · 서울 · 아라 연락 조건부 새 만남
+
+- DAY19에서 실제 아라 미완료 연락을 남긴 서울 당일 fixture를 DAY22→23→24로 전달했다. DAY23에서는 남은 연락을 지우지 않고 현재 흔들림을 숨기지 않는 선택으로 보존했다.
+- DAY24 대면에서 하은과 명시적으로 이별한 뒤 C8은 실제 관계 종료를 공개하고, 아라 C9은 사진 외에도 아라를 더 알고 싶은 마음을 선택했다. runtime의 별도 현재 응답이 수락된 뒤에만 C13 새 만남 문장이 열렸다.
+- 완료 저장: `relationship=END`, `contactRecipient=ARA`, `contactCleanup=RELATIONSHIP_ENDED`, `contactDirection=PERSONAL_INTEREST`, `relationshipStatusLie=null`, `newMeetingAccepted=true`, `futureAccepted=false`, `day25Route=RELATIONSHIP_ENDED`.
+- 새 만남은 연애 확정이나 새 결말로 표시되지 않았고, 하은 미래 대화도 열리지 않았다.
 - browser warning/error 0, 사용자 저장 복원 PASS.
 
 ## Mixed · 서울 · 유리 연락 사실 공개
@@ -75,6 +84,5 @@
 
 ## 다음 관문
 
-1. 아라 연락과 관계 종료 뒤 조건부 새 만남을 의미 경로로 검증한다.
-2. Mixed 대표 경로와 Friendly/Neutral/Distant를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
-3. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.
+1. Friendly/Neutral/Distant/Mixed 대표 경로를 실제 `389×844`에서 재실행하고 가로 넘침·인물/장소 누출을 확인한다.
+2. 모든 관문과 집중/전체 회귀가 PASS일 때만 DAY24를 COMPLETE로 승격한다.

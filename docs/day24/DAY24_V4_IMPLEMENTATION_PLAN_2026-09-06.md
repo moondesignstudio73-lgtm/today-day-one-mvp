@@ -100,4 +100,4 @@ DAY23 완료 이력
 
 ## 다음 시작점
 
-SCENE01~24/C1~15, game bridge, 실제 `game.js` Story 루프를 연결했고 Friendly 대면·지속, Neutral 통화·유예, Distant 연락 불가·기종료/명시적 종료, Mixed 서울·유리/서진 연락 데스크톱 경로를 검증된 DAY23 연속 이력에서 SKIP 없이 DAY25까지 완주했다. 서진 경로는 활성 관계 상태에서 `지금은 혼자야`를 선택한 결과를 recipient-specific `relationshipStatusLie`로 남기고 하은 자동 폭로와 새 만남을 만들지 않았다. 다음 작업은 **아라 연락·관계 종료 뒤 조건부 새 만남과 389×844 모바일 QA**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
+SCENE01~24/C1~15, game bridge, 실제 `game.js` Story 루프를 연결했고 Friendly 대면·지속, Neutral 통화·유예, Distant 연락 불가·기종료/명시적 종료, Mixed 서울·유리/서진/아라 연락 데스크톱 의미 경로를 검증된 DAY23 연속 이력에서 SKIP 없이 DAY25까지 완주했다. 아라 경로는 하은과 실제 이별하고 관계 종료를 공개한 뒤 아라의 별도 현재 수락이 있을 때만 `newMeetingAccepted=true`가 되어 C13을 열었으며 새 연애로 확정하지 않았다. 데스크톱 의미 경로는 닫혔고 다음 작업은 **Friendly/Neutral/Distant/Mixed 389×844 모바일 QA**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
