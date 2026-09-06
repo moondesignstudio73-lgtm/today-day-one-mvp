@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {applyDay25V4Choice,beginDay25V4,getDay25V4Options,resolveDay25V4Location} from '../src/day25-v4-state-contract.mjs';
+import {getDay25V4PlayableOpening} from '../src/day25-v4-playable-opening.mjs';
+import {validateDay25V4SourceStep} from '../src/day25-v4-source-selection.mjs';
+import {day25ContinuedFixture,day25EndedFixture} from './day25-v4-playable-fixture.mjs';
+const choose=(state,suffix)=>{const options=getDay25V4Options(state.storyFlags.day25V4),selected=suffix?options.find(option=>option.id.endsWith(`_${suffix}`)):options[0];assert.ok(selected);applyDay25V4Choice(state,selected.id);};
+const sourced=steps=>{for(const step of steps)if(['dialogue','message','monologue','playerNarration','stageAction'].includes(step.type))assert.equal(validateDay25V4SourceStep(step),true,`${step.type}:${step.text??step.description}`);};
+
+test('DAY25 opening keeps special and home plans behind current location consent',()=>{for(const suffix of ['special','home']){const state=day25ContinuedFixture();beginDay25V4(state);let steps=getDay25V4PlayableOpening(state.storyFlags.day25V4);sourced(steps);assert.equal(steps.at(-1).choiceNumber,1);choose(state,suffix);steps=getDay25V4PlayableOpening(state.storyFlags.day25V4);sourced(steps);assert.equal(steps.at(-1).type,'haeunMealLocationCue');assert.equal(state.storyFlags.day25V4.facts.reservationMade,false);resolveDay25V4Location(state,{type:'haeunMealLocationResponse',accepted:suffix==='special',costTimeFit:suffix==='special'});steps=getDay25V4PlayableOpening(state.storyFlags.day25V4);sourced(steps);assert.equal(steps.at(-1).choiceNumber,2);assert.equal(state.storyFlags.day25V4.facts.reservationMade,false);}}
+);
+
+test('SCENE01-03 reactions stay exact-source and cross into Haeun future only after C3',()=>{const state=day25ContinuedFixture();beginDay25V4(state);choose(state);let steps=getDay25V4PlayableOpening(state.storyFlags.day25V4);sourced(steps);choose(state,'my_fear');steps=getDay25V4PlayableOpening(state.storyFlags.day25V4);sourced(steps);assert.equal(steps.at(-1).choiceNumber,3);choose(state,'nervous');steps=getDay25V4PlayableOpening(state.storyFlags.day25V4);sourced(steps);assert.equal(steps.at(-1).nextScene,4);assert.match(JSON.stringify(steps),/함께 서툴러도/);});
+
+test('ended route never fabricates Haeun message, presence, or shared meal',()=>{const state=day25EndedFixture();beginDay25V4(state);let steps=getDay25V4PlayableOpening(state.storyFlags.day25V4);sourced(steps);assert.equal(steps.some(step=>step.type==='message'||step.character==='girlfriend'),false);choose(state,'home');assert.equal(state.storyFlags.day25V4.phase,'purpose');assert.equal(state.storyFlags.day25V4.facts.mealLocation,'OWN_DINNER');choose(state);steps=getDay25V4PlayableOpening(state.storyFlags.day25V4);sourced(steps);assert.equal(steps.some(step=>step.character==='girlfriend'||step.speaker==='하은'),false);choose(state);steps=getDay25V4PlayableOpening(state.storyFlags.day25V4);sourced(steps);assert.equal(steps.at(-1).nextScene,17);});
