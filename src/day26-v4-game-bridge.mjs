@@ -1,0 +1,40 @@
+import {BACKGROUND_ASSETS,getNpcSprite} from './assets/asset-manifest.mjs?v=25';
+import {MAP_LOCATION_ASSETS} from './map-location-assets.mjs';
+import {recordTransaction} from './economy-manager.mjs';
+import {applyDay26V4Choice,beginDay26V4,completeDay26V4,getDay26V4Entry,resolveDay26V4Attendance,resolveDay26V4Jihoon,resolveDay26V4NewLie,resolveDay26V4NewMeaning,resolveDay26V4NewNext,validateDay26V4} from './day26-v4-state-contract.mjs';
+import {getDay26V4PlayableGroup} from './day26-v4-playable-group.mjs?v=1';
+import {getDay26V4PlayableAlternates} from './day26-v4-playable-alternates.mjs?v=1';
+import {getDay26V4PlayableEnding} from './day26-v4-playable-ending.mjs?v=1';
+import {STORY_OUTFIT_ASSETS} from './story-outfit-assets.mjs';
+
+export const DAY26_V4_CAMPAIGN_SLOT='m30-day26-current-legal-preparation';
+const boundaries=new Set(['groupBoundary','alternateBoundary','endingBoundary']);
+const resolutionTypes=new Set(['attendanceChangeCue','jihoonMealCue','newMeetingIntentCue','newMeetingTruthCue','newMeetingNextCue']);
+const clock=Object.freeze({afternoon:'15:00',evening:'19:00',night:'22:00'});
+const backgroundMap=Object.freeze({bakery:'yeonhui-bakery','restaurant-exterior':'neighborhood-night',restaurant:'day18-gimbap-evening',street:'neighborhood-night'});
+const npcMap=Object.freeze({jihoon:'best-friend',sora:'sora-day11',yuri:'player-ex',seojin:'female-coworker',ara:'female-friend'});
+const mealCost=Object.freeze({GROUP_MEAL:24000,JIHOON_MEAL:16000,NEW_MEETING:22000});
+
+export function getDay26V4GameCompatibility(state){const entry=getDay26V4Entry(state);if(entry.mode==='BLOCKED_PREREQUISITE'&&state.storyFlags?.day25RuntimeComplete===true&&state.storyFlags?.day25V4?.complete!==true)return {mode:'LEGACY'};return entry;}
+export function prepareDay26V4GameEntry(state){const entry=getDay26V4GameCompatibility(state);return entry.mode==='V4_NEW'?beginDay26V4(state):entry;}
+
+function presentation(direction){let backgroundId=backgroundMap[direction.location]??direction.location;if(direction.location==='home')backgroundId=direction.time==='night'?'home-night':'home-evening';const backgroundUrl=BACKGROUND_ASSETS[backgroundId]??MAP_LOCATION_ASSETS[backgroundId];if(!backgroundUrl)throw new Error(`DAY26_BACKGROUND_MISSING:${backgroundId}`);const ids=direction.characters??[],characterId=ids.includes('girlfriend')?'girlfriend':ids[0]??null,characterAssetUrl=characterId==='girlfriend'?STORY_OUTFIT_ASSETS.day12:characterId?getNpcSprite(npcMap[characterId]??characterId):null;return {backgroundId,backgroundUrl,characterId,characterAssetUrl,expressionId:'calm',poseId:'standing',timeOfDay:direction.time,storyClock:clock[direction.time]??'22:00',storyLocation:direction.location};}
+function rawSegment(chapter){
+  if(['outfit','attendance_resolution','jihoon_resolution','group_scope','group_opening','group_celebration','group_listen','group_topic','group_slice','group_body','group_friend','group_private','group_walk','group_message'].includes(chapter.phase))return getDay26V4PlayableGroup(chapter);
+  if(['jihoon_talk','jihoon_close','new_curiosity','new_meaning','new_meaning_resolution','new_lie','new_lie_resolution','new_close','new_next_resolution','new_home'].includes(chapter.phase))return getDay26V4PlayableAlternates(chapter);
+  return getDay26V4PlayableEnding(chapter);
+}
+export function getDay26V4GameSegment(state){const chapter=state.storyFlags?.day26V4;if(!validateDay26V4(chapter))throw new Error('DAY26_INVALID_SAVE');return rawSegment(chapter).filter(step=>!boundaries.has(step.type)).map(step=>step.type==='sceneDirection'?{type:'transition',style:'crossfade',label:`SCENE ${String(step.number).padStart(2,'0')} · ${step.title}`,sceneNumber:step.number,bgmId:step.time==='night'?'theme':'daily',...presentation(step)}:step);}
+
+function resumeDirection(chapter){const phase=chapter.phase,route=chapter.facts.route;if(phase==='outfit'||phase==='attendance_resolution'||phase==='jihoon_resolution')return {location:'home',time:'afternoon',characters:[]};if(route==='GROUP_MEAL'&&['group_scope','group_opening','group_celebration','group_listen','group_topic','group_slice','group_body','group_friend','group_private'].includes(phase))return {location:'bakery',time:'evening',characters:['girlfriend','jihoon','sora']};if(route==='GROUP_MEAL'&&['group_walk'].includes(phase))return {location:'street',time:'night',characters:['girlfriend']};if(route==='JIHOON_MEAL'&&['jihoon_talk','jihoon_close'].includes(phase))return {location:'restaurant',time:'evening',characters:['jihoon']};if(route==='NEW_MEETING'&&!['new_home'].includes(phase))return {location:'restaurant',time:'evening',characters:[chapter.input.newMeeting.recipient.toLowerCase()]};return {location:'home',time:'night',characters:phase==='haeun_night'?['girlfriend']:[]};}
+export function getDay26V4GameResumePresentation(state){const chapter=state.storyFlags?.day26V4;if(!validateDay26V4(chapter))throw new Error('DAY26_INVALID_SAVE');return presentation(resumeDirection(chapter));}
+
+function settleMeal(state){const chapter=state.storyFlags.day26V4,route=chapter.facts.route,cost=mealCost[route];if(!cost||state.storyFlags.day26V4MealSettlement)return null;const charged=Math.min(cost,Math.max(0,Number(state.money)||0));const entry=charged?recordTransaction(state,{day:26,category:'food',label:`DAY 26 ${route==='GROUP_MEAL'?'네 사람 식사':route==='JIHOON_MEAL'?'지훈 식사':'새 만남 식사'}`,amount:-charged}):null;state.storyFlags.day26V4MealSettlement={day:26,route,cost:charged,ledgerIndex:entry?state.economyLedger.length-1:null};return entry;}
+function snapshot(state){return {chapter:structuredClone(state.storyFlags?.day26V4),money:state.money,ledger:structuredClone(state.economyLedger??[]),meal:structuredClone(state.storyFlags?.day26V4MealSettlement)};}
+function restore(state,saved){state.storyFlags.day26V4=saved.chapter;state.money=saved.money;state.economyLedger=saved.ledger;if(saved.meal===undefined)delete state.storyFlags.day26V4MealSettlement;else state.storyFlags.day26V4MealSettlement=saved.meal;}
+export function applyDay26V4GameChoice(state,id){const saved=snapshot(state);try{const result=applyDay26V4Choice(state,id);settleMeal(state);return {result,steps:getDay26V4GameSegment(state)};}catch(error){restore(state,saved);throw error;}}
+export function applyDay26V4GameResolution(state,response){const saved=snapshot(state);try{const result=response?.type==='attendanceChangeResponse'?resolveDay26V4Attendance(state,response):response?.type==='jihoonMealResponse'?resolveDay26V4Jihoon(state,response):response?.type==='newMeetingIntentResponse'?resolveDay26V4NewMeaning(state,response):response?.type==='newMeetingTruthResponse'?resolveDay26V4NewLie(state,response):response?.type==='newMeetingNextResponse'?resolveDay26V4NewNext(state,response):(()=>{throw new Error('DAY26_UNKNOWN_RESOLUTION')})();settleMeal(state);return {result,steps:getDay26V4GameSegment(state)};}catch(error){restore(state,saved);throw error;}}
+
+export function completeDay26V4GameChapter(state,cue){const chapter=completeDay26V4(state,cue);state.storyHistory??=[];if(!state.storyHistory.some(record=>record.sceneId===DAY26_V4_CAMPAIGN_SLOT))state.storyHistory.push({sceneId:DAY26_V4_CAMPAIGN_SLOT,scenarioId:'day26-notion-v4',day:26,arc:'사람들 앞의 우리',choiceId:chapter.choices.filter(record=>record.kind==='choice').at(-1)?.id??null,response:chapter.facts.day27Route==='HAEUN_PUBLIC_CORRECTION'?'앞서 말한 관계 속도를 사실로 만들지 않고 직접 정정할 대상으로 남겼다.':chapter.facts.day27Route==='NEW_MEETING_TRUTH'?'실제 상대에게 남은 관계 사실을 직접 바로잡을 책임으로 이어 갔다.':chapter.facts.day27Route==='HAEUN_VOICE'?'관계의 이름보다 하은의 현재 목소리를 먼저 듣기로 했다.':'사람을 만나지 않은 날에도 자기 생활과 실제 약속만 다음 날로 이었다.',facts:structuredClone(chapter.facts),choices:structuredClone(chapter.choices),route:chapter.facts.day27Route,mealSettlement:structuredClone(state.storyFlags.day26V4MealSettlement??null)});state.storyFlags.day26RuntimeComplete=true;state.pendingStoryId=null;return {type:'sceneEnd',day:26,complete:true};}
+
+export function isDay26V4ResolutionStep(step){return resolutionTypes.has(step?.type);}
