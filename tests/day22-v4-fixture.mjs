@@ -1,12 +1,13 @@
-import assert from 'node:assert/strict';
 import {applyDay21V4Choice,completeDay21V4,getDay21V4Options,resolveDay21V4Contact,resolveDay21V4Lodging,resolveDay21V4Travel} from '../src/day21-v4-state-contract.mjs';
 import {applyDay22V4Choice,getDay22V4Options} from '../src/day22-v4-state-contract.mjs';
 import {day21State} from './day21-v4-fixture.mjs';
 
+const ensure=(value,message)=>{if(!value)throw new Error(message);};
+
 function chooseDay21(state,suffix){
   const options=getDay21V4Options(state.storyFlags.day21V4);
   const selected=suffix?options.find(option=>option.id.endsWith(`_${suffix}`)):options[0];
-  assert.ok(selected,`DAY21 ${state.storyFlags.day21V4.phase}:${suffix}`);
+  ensure(selected,`DAY21 ${state.storyFlags.day21V4.phase}:${suffix}`);
   applyDay21V4Choice(state,selected.id);
 }
 
@@ -32,6 +33,6 @@ export function completedDay21ForDay22(route,{ara=false,shared=true}={}){
 export function chooseDay22(state,suffix){
   const options=getDay22V4Options(state.storyFlags.day22V4);
   const selected=suffix?options.find(option=>option.id.endsWith(`_${suffix}`)):options[0];
-  assert.ok(selected,`DAY22 ${state.storyFlags.day22V4.phase}:${suffix}`);
+  ensure(selected,`DAY22 ${state.storyFlags.day22V4.phase}:${suffix}`);
   return applyDay22V4Choice(state,selected.id);
 }

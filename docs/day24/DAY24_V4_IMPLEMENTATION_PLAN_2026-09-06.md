@@ -100,4 +100,4 @@ DAY23 완료 이력
 
 ## 다음 시작점
 
-SCENE01~24/C1~15, game bridge, 실제 `game.js` Story 루프를 연결했다. 검증된 V4만 신규 진입하며 legacy DAY24 저장은 기존 경로를 유지한다. 선택·다섯 현재 응답·완료 cue·시계·장소·인물·중간 저장 재개를 실제 진행에 연결했고 V4 중 legacy Free Action이 끼어들지 않는다. 다음 작업은 **DAY21~24 집중 회귀와 실제 브라우저 Friendly 대면 지속 경로 비-SKIP QA**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
+SCENE01~24/C1~15, game bridge, 실제 `game.js` Story 루프를 연결했고 Friendly · 대면 · 관계 지속 데스크톱 경로를 검증된 DAY23 연속 이력에서 SKIP 없이 DAY25까지 완주했다. 완료 저장은 `conversation=MEET`, `relationship=CONTINUE`, `futureAccepted=true`, `day25Route=HAEUN_FUTURE`, `freeAction=null`이다. 다음 작업은 **Neutral 통화 유예, Distant 오늘 거절/종료, 실제 연락·거짓말·새 만남 의미 경로와 389×844 모바일 QA**다. 이 관문 전까지 DAY24는 **PARTIAL**이다.
