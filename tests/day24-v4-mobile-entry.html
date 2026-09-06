@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DAY24 V4 모바일 실제 게임 QA</title>
+<style>body{font:16px system-ui;background:#181522;color:#fff;padding:20px}button{display:block;width:100%;max-width:480px;padding:14px;margin:10px 0}p{max-width:640px;line-height:1.6;overflow-wrap:anywhere}</style>
+<h1>DAY24 V4 모바일 실제 게임 QA</h1>
+<p>검증된 DAY23 완료 상태에서 DAY24 실제 Story를 엽니다. SKIP 없이 진행하고 종료 후 저장·오버플로를 검사합니다.</p>
+<button data-route="friendly">Friendly · 대면 · 지속</button>
+<button data-route="neutral">Neutral · 통화 · 유예</button>
+<button data-route="distant">Distant · 연락 불가 · 기종료</button>
+<button data-route="mixed">Mixed · 서울 · 유리 연락</button>
+<button id="inspect">현재 QA 상태 확인</button>
+<button id="restore">테스트 전 저장 복원</button>
+<p role="status" id="status"></p>
+<script type="module">
+import {SaveManager} from '../src/save-manager.mjs';
+import {GAME_MODES} from '../src/scenario-state.mjs';
+import {createInitialState} from '../src/game-core.mjs';
+import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
+import {completedDay23ForDay24} from './day24-v4-fixture.mjs';
+
+const backupKey='day24-v4-mobile-qa-save-backup';
+const keys=[SaveManager.key,SaveManager.keyForMode(GAME_MODES.MARRIAGE_30),SaveManager.keyForMode(GAME_MODES.FREE_ROMANCE)];
+function backup(){if(sessionStorage.getItem(backupKey)===null)sessionStorage.setItem(backupKey,JSON.stringify(Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))));}
+function seed(route){
+  const config={
+    friendly:['BUSAN_TRIP',{shared:true,day23Relationship:'CONTINUE',conversationMethod:'meet'}],
+    neutral:['BUSAN_TRIP',{shared:false,day23Relationship:'UNSURE',conversationMethod:'phone'}],
+    distant:['NO_TRAVEL',{}],
+    mixed:['SEOUL_DAY',{pendingContacts:['YURI'],day23Relationship:'CONTINUE',conversationMethod:'meet'}]
+  }[route];
+  if(!config)throw new Error(`DAY24_MOBILE_ROUTE:${route}`);
+  const fixture=completedDay23ForDay24(...config),state=createInitialState(createGirlfriendFromProfile('haeun',()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30});
+  Object.assign(state.storyFlags,fixture.storyFlags);state.breakup=fixture.breakup??null;state.ended=fixture.ended??false;
+  state.day=24;state.phase=0;state.pendingStoryId='m30-day24-current-commitment-check';state.money=240000;
+  state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};return state;
+}
+document.querySelectorAll('[data-route]').forEach(button=>button.addEventListener('click',()=>{try{backup();const route=button.dataset.route;SaveManager.save(seed(route));location.href=`../index.html?qa=day24-v4-mobile&route=${route}`;}catch(error){document.querySelector('#status').textContent=String(error?.stack??error);}}));
+document.querySelector('#inspect').addEventListener('click',()=>{const raw=localStorage.getItem(SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)),saved=raw?JSON.parse(raw):null,chapter=saved?.storyFlags?.day24V4,error=saved?.eventRuntime?.lastError;document.querySelector('#status').textContent=JSON.stringify({error:error??null,phase:chapter?.phase??null,complete:chapter?.complete??false,conversation:chapter?.facts?.conversationMode??null,relationship:chapter?.facts?.haeunRelationshipOutcome??null,futureAccepted:chapter?.facts?.futureTalkAccepted??false,contactRecipient:chapter?.facts?.contactRecipient??null,contactDirection:chapter?.facts?.contactDirection??null,day25Route:chapter?.facts?.day25Route??null,day:saved?.day??null,pendingStoryId:saved?.pendingStoryId??null,day25Hook:saved?.storyFlags?.day24V4Day25HookPending??false,freeAction:saved?.storyFreeAction??null});});
+document.querySelector('#restore').addEventListener('click',()=>{const data=sessionStorage.getItem(backupKey);if(data===null){document.querySelector('#status').textContent='이 탭에 백업이 없습니다.';return;}for(const [key,value] of Object.entries(JSON.parse(data)))value===null?localStorage.removeItem(key):localStorage.setItem(key,value);sessionStorage.removeItem(backupKey);document.querySelector('#status').textContent='테스트 전 저장을 복원했습니다.';});
+</script></html>
