@@ -7,6 +7,7 @@ const sourcePath=resolve(root,'docs/scenarios/DAY30_SCENARIO_V4_NOTION.md');
 const outputPath=resolve(root,'src/day30-v4-source-registry.mjs');
 const raw=readFileSync(sourcePath,'utf8').replace(/\r\n/g,'\n');
 const sceneMatches=[...raw.matchAll(/^## SCENE (\d{2}) — (.+)$/gm)];
+const afterStoryMatch=raw.match(/^## AFTER STORY — (.+)$/m);
 const variantFor=sceneNumber=>sceneNumber<=4?'COMMON_OPENING':sceneNumber<=9?'HAEUN_PREPARATION':sceneNumber<=11?'HAEUN_DEFERRED':sceneNumber===12?'HAEUN_LONG_TERM':sceneNumber===13?'HAEUN_CONTINUING':sceneNumber===14?'HAEUN_BREAKUP':sceneNumber===15?'SOLO_AFTER_BREAKUP':sceneNumber===16?'YURI_RELATIONSHIP':sceneNumber===17?'SEOJIN_RELATIONSHIP':sceneNumber===18?'ARA_RELATIONSHIP':sceneNumber===19?'GETTING_TO_KNOW':sceneNumber===20?'SOLO':sceneNumber===21?'UNRESOLVED_TRUTH':sceneNumber<=24?'COMMON_LIFE':sceneNumber===25?'ROUTE_CLOSE':'COMMON_CLOSE';
 
 const scenes=sceneMatches.map((match,index)=>{
@@ -25,6 +26,8 @@ const choices=scenes.flatMap(scene=>scene.choices);
 if(choices.length!==28)throw new Error(`DAY30_SOURCE_CHOICE_COUNT:${choices.length}`);
 if(choices.some(choice=>![3,4,5].includes(choice.labels.length)))throw new Error('DAY30_SOURCE_CHOICE_LABEL_COUNT');
 if(JSON.stringify(choices.map(choice=>choice.number))!==JSON.stringify(Array.from({length:28},(_,index)=>index+1)))throw new Error('DAY30_SOURCE_CHOICE_SEQUENCE');
+if(!afterStoryMatch)throw new Error('DAY30_AFTER_STORY_MISSING');
+const afterStory={title:afterStoryMatch[1].trim(),body:raw.slice(afterStoryMatch.index+afterStoryMatch[0].length+1).replace(/\n---\s*$/,'').trim()};
 
 const sha=createHash('sha256').update(raw).digest('hex');
 const generated=`// Generated mechanically from docs/scenarios/DAY30_SCENARIO_V4_NOTION.md.\n`+
@@ -33,6 +36,7 @@ const generated=`// Generated mechanically from docs/scenarios/DAY30_SCENARIO_V4
   `export const DAY30_V4_SOURCE_URL = 'https://app.notion.com/p/3c9c31f029a681bbbbc1c80179590cdd';\n`+
   `export const DAY30_V4_SOURCE_LAST_EDITED = '2026-08-27T21:17:38.535Z';\n`+
   `export const DAY30_V4_SOURCE_SHA256 = '${sha}';\n`+
-  `export const DAY30_V4_SOURCE_SCENES = Object.freeze(${JSON.stringify(scenes,null,2)}.map(scene=>Object.freeze({...scene,choices:Object.freeze(scene.choices.map(choice=>Object.freeze({...choice,labels:Object.freeze(choice.labels)})))})));\n`;
+  `export const DAY30_V4_SOURCE_SCENES = Object.freeze(${JSON.stringify(scenes,null,2)}.map(scene=>Object.freeze({...scene,choices:Object.freeze(scene.choices.map(choice=>Object.freeze({...choice,labels:Object.freeze(choice.labels)})))})));\n`+
+  `export const DAY30_V4_AFTER_STORY = Object.freeze(${JSON.stringify(afterStory,null,2)});\n`;
 writeFileSync(outputPath,generated,'utf8');
 console.log(`Generated ${scenes.length} scenes and ${choices.length} choice blocks; SHA-256 ${sha}`);

@@ -1,4 +1,5 @@
-import {DAY30_V4_SOURCE_SCENES} from './day30-v4-source-registry.mjs';
+import {DAY30_V4_AFTER_STORY,DAY30_V4_SOURCE_SCENES} from './day30-v4-source-registry.mjs';
 
-export function day30V4SourceRef(sceneNumber,exactLine){const scene=DAY30_V4_SOURCE_SCENES.find(item=>item.number===sceneNumber);if(!scene||!scene.body.split('\n').includes(exactLine))throw new Error(`DAY30_SOURCE_LINE_MISSING:${sceneNumber}`);return Object.freeze({day:30,sceneNumber,exact:exactLine});}
-export function validateDay30V4SourceStep(step){if(!step?.source||step.source.day!==30)return false;try{return day30V4SourceRef(step.source.sceneNumber,step.source.exact).exact===step.source.exact;}catch{return false;}}
+export function day30V4SourceRef(sceneNumber,exactLine){const scene=DAY30_V4_SOURCE_SCENES.find(item=>item.number===sceneNumber),inScene=scene?.body.split('\n').includes(exactLine),inAfterStory=sceneNumber===30&&DAY30_V4_AFTER_STORY.body.split('\n').includes(exactLine);if(!inScene&&!inAfterStory)throw new Error(`DAY30_SOURCE_LINE_MISSING:${sceneNumber}`);return Object.freeze({day:30,sceneNumber,...(inAfterStory?{section:'AFTER_STORY'}:{}),exact:exactLine});}
+export function day30V4AfterStoryRef(exactLine){if(!DAY30_V4_AFTER_STORY.body.split('\n').includes(exactLine))throw new Error('DAY30_AFTER_STORY_LINE_MISSING');return Object.freeze({day:30,section:'AFTER_STORY',exact:exactLine});}
+export function validateDay30V4SourceStep(step){if(!step?.source||step.source.day!==30)return false;try{return (step.source.section==='AFTER_STORY'?day30V4AfterStoryRef(step.source.exact):day30V4SourceRef(step.source.sceneNumber,step.source.exact)).exact===step.source.exact;}catch{return false;}}
