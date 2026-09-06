@@ -85,8 +85,9 @@ DAY24 완료 이력 → SCENE01~03 / C1~3 공통 도입
    - ~~`game.js` 실제 Story 루프와 Story/Free 배타성 연결~~ 완료. V4 진행·완료 중 legacy DAY25 Free Action과 legacy choice 기록을 차단하고, 현재 응답·completion·시계·재개 배경을 실제 루프에 연결했다.
 8. source/state/bridge/저장/경제/전체 30일 시뮬레이션 회귀를 통과한다.
 9. Friendly/Neutral/Distant/Mixed와 하은/유예/혼자/새 만남/입맞춤 거절 및 수락 경로를 데스크톱과 389×844에서 SKIP 없이 검증한다.
+   - ~~Friendly 대면·지속·입맞춤 수락·친구 식사 데스크톱~~ PASS. C1~16 16개 선택, DAY26 전환, 오류·Free Action 비생성, 사용자 저장 복원을 확인했다.
 10. 원문·런타임 텍스트·콘솔·이미지·오디오·오버플로·DAY26 전환이 모두 PASS일 때만 DAY25 COMPLETE로 승격한다.
 
 ## 다음 시작점
 
-DAY22~25 집중 회귀를 닫고 실제 브라우저에서 Friendly 대면 지속 경로를 SKIP 없이 완주한다. 이후 Neutral/Distant/Mixed와 389×844 의미 경로를 검증한다. 이 관문 전까지 DAY25는 **PARTIAL**이다.
+Neutral 재논의·입맞춤 거절과 Distant 혼자·새 만남 경로를 데스크톱에서 SKIP 없이 검증한다. 이후 Mixed와 389×844 의미 경로를 확인한다. 이 관문 전까지 DAY25는 **PARTIAL**이다.

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DAY25 V4 실제 게임 QA</title>
+<style>body{font:18px system-ui;background:#181522;color:#fff;padding:40px}button{padding:16px;margin:8px}p{max-width:900px;line-height:1.6}</style>
+<h1>DAY25 V4 실제 게임 QA</h1>
+<p>검증된 DAY24 완료 fixture에서 DAY25 실제 Story를 엽니다. 본편의 모든 장면과 선택은 SKIP 없이 진행하며, 최초 실행 전 사용자 저장을 이 탭 세션에 백업합니다.</p>
+<button data-route="friendly">Friendly · 대면 · 지속</button>
+<button data-route="ended">Distant · 관계 종료 · 혼자</button>
+<button id="inspect">현재 QA 상태 확인</button>
+<button id="restore">테스트 전 저장 복원</button>
+<p role="status" id="status"></p>
+<script type="module">
+import {SaveManager} from '../src/save-manager.mjs';
+import {GAME_MODES} from '../src/scenario-state.mjs';
+import {createInitialState} from '../src/game-core.mjs';
+import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';
+import {day25ContinuedFixture,day25EndedFixture} from './day25-v4-playable-fixture.mjs';
+
+const backupKey='day25-v4-qa-save-backup';
+const keys=[SaveManager.key,SaveManager.keyForMode(GAME_MODES.MARRIAGE_30),SaveManager.keyForMode(GAME_MODES.FREE_ROMANCE)];
+function backup(){if(sessionStorage.getItem(backupKey)===null)sessionStorage.setItem(backupKey,JSON.stringify(Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))));}
+function seed(route){const fixture=route==='friendly'?day25ContinuedFixture():day25EndedFixture(),state=createInitialState(createGirlfriendFromProfile('haeun',()=>.5),()=>.5,{mode:GAME_MODES.MARRIAGE_30}),scenario=state.scenario;Object.assign(state,fixture);state.scenario={...scenario,...fixture.scenario,enabled:true};state.day=25;state.phase=0;state.pendingStoryId='m30-day25-current-wedding-scope';state.settings??={};state.settings.guideCompleted={main:true,atlas:true,district:true,room:true,map:true};return state;}
+document.querySelectorAll('[data-route]').forEach(button=>button.addEventListener('click',()=>{backup();const route=button.dataset.route;SaveManager.save(seed(route));location.href=`../index.html?qa=day25-v4&route=${route}`;}));
+document.querySelector('#inspect').addEventListener('click',()=>{const raw=localStorage.getItem(SaveManager.keyForMode(GAME_MODES.MARRIAGE_30)),saved=raw?JSON.parse(raw):null,chapter=saved?.storyFlags?.day25V4,error=saved?.eventRuntime?.lastError;document.querySelector('#status').textContent=JSON.stringify({error:error??null,route:chapter?.input?.route??null,tone:chapter?.input?.relationshipTone??null,phase:chapter?.phase??null,complete:chapter?.complete??false,location:chapter?.facts?.mealLocation??null,future:chapter?.facts?.haeunFutureOutcome??null,contact:chapter?.facts?.currentContact??null,kiss:chapter?.facts?.kissOccurred??false,friends:chapter?.facts?.friendMealScheduled??false,day26Route:chapter?.facts?.day26Route??null,day:saved?.day??null,pendingStoryId:saved?.pendingStoryId??null,day26Hook:saved?.storyFlags?.day25V4Day26HookPending??false,freeAction:saved?.storyFreeAction??null});});
+document.querySelector('#restore').addEventListener('click',()=>{const data=sessionStorage.getItem(backupKey);if(data===null){document.querySelector('#status').textContent='이 탭에 QA 백업이 없습니다.';return;}for(const [key,value] of Object.entries(JSON.parse(data)))value===null?localStorage.removeItem(key):localStorage.setItem(key,value);sessionStorage.removeItem(backupKey);document.querySelector('#status').textContent='테스트 전 저장을 복원했습니다.';});
+document.querySelector('#status').textContent='DAY25 검증 경로를 선택하세요.';
+</script></html>
