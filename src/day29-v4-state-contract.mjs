@@ -30,7 +30,7 @@ function reduceChoice(chapter,id){if(chapter.complete)throw new Error('DAY29_ALR
   else if(phase==='card'){facts.card=['SAME_TODAY','KEEP_PAST','DISTANCE'][index];chapter.phase='flower';}
   else if(phase==='flower'){facts.flower=['CARE','CLEAR','CLEAN'][index];chapter.phase='work';}
   else if(phase==='work'){facts.work=['ASK_SCHEDULE','REST_FIRST','PRACTICE'][index];chapter.phase='money';}
-  else if(phase==='money'){facts.money=['SMALL_MEAL','KEEPSAKE','SAVE'][index];chapter.phase='friend';}
+  else if(phase==='money'){facts.money=['SMALL_MEAL','KEEPSAKE','SAVE'][index];chapter.phase=chapter.input.jihoonKnown?'friend':'evening';}
   else if(phase==='friend'){facts.friend=['IF_POSSIBLE','CHECK_IN','OTHER_DAY'][index];chapter.phase='evening';}
   else if(phase==='evening'){facts.eveningPlan=['MEAL','SHORT','SOLO'][index];if(index===2||!chapter.input.eveningCandidate){facts.eveningTarget=null;chapter.phase='solo_evening';}else{facts.eveningTarget=chapter.input.eveningCandidate;chapter.phase='evening_resolution';}}
   else if(phase==='haeun_success'){facts.haeunSuccess=['MY_CHAIR','STILL_FLOOR','SIT_HERE'][index];chapter.phase='haeun_meal';}
