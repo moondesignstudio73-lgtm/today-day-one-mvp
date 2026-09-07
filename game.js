@@ -155,7 +155,7 @@ const getLockedDay14Segment=state=>["V4","V4_NEW"].includes(getDay14V4Compatibil
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = value => String(value).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
-const lateV4TransitionCharacterSceneIds=new Set([LOCKED_DAY18_SCENE_ID,LOCKED_DAY19_SCENE_ID,LOCKED_DAY20_SCENE_ID,LOCKED_DAY21_SCENE_ID,LOCKED_DAY22_SCENE_ID,LOCKED_DAY23_SCENE_ID,LOCKED_DAY24_SCENE_ID,LOCKED_DAY25_SCENE_ID,LOCKED_DAY26_SCENE_ID,LOCKED_DAY27_SCENE_ID,LOCKED_DAY28_SCENE_ID,LOCKED_DAY29_SCENE_ID]);
+const lateV4TransitionCharacterSceneIds=new Set([LOCKED_DAY18_SCENE_ID,LOCKED_DAY19_SCENE_ID,LOCKED_DAY20_SCENE_ID,LOCKED_DAY21_SCENE_ID,LOCKED_DAY22_SCENE_ID,LOCKED_DAY23_SCENE_ID,LOCKED_DAY24_SCENE_ID,LOCKED_DAY25_SCENE_ID,LOCKED_DAY26_SCENE_ID,LOCKED_DAY27_SCENE_ID,LOCKED_DAY28_SCENE_ID,LOCKED_DAY29_SCENE_ID,LOCKED_DAY30_SCENE_ID]);
 
 function isDay2ExplorationChoice(step=immersiveScene?.currentStep){const ids=new Set(["room_desk_checked","pc_interest","wardrobe_checked","friends_interest","unclassified_key_found"]);return step?.type==="choice"&&step.options?.some(option=>ids.has(option.id));}
 function getCurrentStoryUiState(){const freeActionStatus=state?.storyFreeAction&&immersiveScene&&state.storyFreeAction.storySceneId===immersiveScene.id?state.storyFreeAction.status:null;return deriveStoryUiState({runtimeState:eventRuntime.state,stepType:immersiveScene?.currentStep?.type??null,exploration:isDay2ExplorationChoice(),freeActionStatus});}
