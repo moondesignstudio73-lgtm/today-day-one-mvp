@@ -60,4 +60,5 @@
 - Chrome 152 격리 프로필에서 DAY18 유리 물 장면을 일반 진입하고 강제 새로고침 후 이어하기까지 확인했다. 두 번 모두 `yuri-menu-wait-water-v10.png?art=hand-review-20260907-2`, 원본 1672×941을 로드했고 SKIP 사용은 0회였다.
 - 신고 이미지와 v10 승인본을 원본 크기로 비교해 전경 주인공 손·손목·검은 소매가 0개이고 유리의 얼굴·의상·손·테이블 구도가 보존됨을 확인했다.
 - 집중 회귀 72/72, 전체 Node 회귀 940/940, `node --check game.js`, `git diff --check` PASS다.
-- 원격 `main`·`gh-pages` 동일 SHA 승격과 정식 공개 URL 확인 전까지 배포 상태는 `PENDING`이다.
+- 수정 커밋 `195a1db587a9ee532d62a183aa33115e5ffec621`을 원격 `main`과 `gh-pages`에 같은 SHA로 fast-forward 승격했다. GitHub Pages 실행 `34071736812`는 `success`로 완료됐다.
+- 정식 공개 진입점은 `game.js?v=292`와 `today-day-one-build=20260907-hand-review-2`, 공개 `game.js`는 `story-cg-asset-policy.mjs?v=3`을 제공한다. 공개 v1과 v10은 모두 HTTP 200, 2,040,303바이트, 승인 SHA-256 `DEF6DBA66FFA0E3EA46380291A74341558C214551C4B5778BDB8C2A83EC00886`으로 일치해 `배포 PASS`다.
