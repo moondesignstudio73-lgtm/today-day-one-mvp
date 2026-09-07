@@ -20,7 +20,45 @@ function scene19(chapter){const scope=chapter.facts.newRelationshipResponse==='R
 function socialScopeResult(chapter){if(chapter.facts.socialScope==null)return [];if(chapter.facts.socialScope==='AGREED_ONLY')return [spoken(19,'나','오늘 서로 정한 만큼만 말할게.','지훈이 물으면 나는 짧게 답했다.'),spoken(19,'지훈','알겠어.','그가 축하하면 고마웠고, 알겠다고 하면 그걸로 충분했다. 더 큰 반응을 받으려고 관계의 이름을 앞서 붙이지 않았다.')];if(chapter.facts.socialScope==='PRIVATE')return [spoken(19,'나','오늘은 자세히 말하지 않을게.','관계가 끝났다면 끝났다고 말하거나 오늘은 이야기하기 어렵다고 했다.'),spoken(19,'지훈','응. 나중에 말하고 싶을 때 해.','그가 축하하면 고마웠고, 알겠다고 하면 그걸로 충분했다. 더 큰 반응을 받으려고 관계의 이름을 앞서 붙이지 않았다.')];return [spoken(19,'나','내 마음은 말할게. 상대의 사적인 이야기는 여기까지만 할게.','- “내 마음은 말하되 상대의 사적인 이야기는 남겨 두자.”'),spoken(19,'지훈','알겠어.','그가 축하하면 고마웠고, 알겠다고 하면 그걸로 충분했다. 더 큰 반응을 받으려고 관계의 이름을 앞서 붙이지 않았다.')];}
 const soloDefs={solo_afternoon:[20,2,'남은 오후'],solo_feeling:[20,3,'지금 내 마음'],solo_meal:[21,4,'저녁 식사'],solo_after_meal:[21,5,'식사 뒤'],solo_contact:[21,6,'연락할 일이 있다면'],solo_tomorrow:[21,7,'내일 하나'],solo_close:[21,8,'오늘의 끝']};
 const lastSoloChoice=(chapter,number)=>chapter.choices.filter(record=>record.kind==='choice'&&record.number===number&&record.variant==='SOLO_LIFE').at(-1)?.id??'';
-function soloResult(chapter,number){const id=lastSoloChoice(chapter,number);if(number===2){if(id.endsWith('_walk_home'))return [action(20,'short-walk-home','집에 돌아갈 힘을 남겨 두고 짧게 걷는다.','산책을 고르면 멀리 가지 않았다. 집에 돌아갈 힘을 남겼다.')];if(id.endsWith('_own_task'))return [action(20,'own-task','미뤄 둔 개인 일 하나를 끝낸다.','개인 일을 고르면 내 생활에서 필요한 작은 것을 했다. 내 마음을 완전히 정리해야 일을 시작할 수 있는 것은 아니었다.')];return [groundedMono(20,'지훈에게 가능한 때를 물었다. 바쁘다면 다음에 듣기로 했다.','친구에게 물으면 그가 바쁜지도 들었다. 안 되면 다음으로 뒀다.')];}if(number===3){if(id.endsWith('_live_sad'))return [groundedMono(20,'조금 슬퍼도 오늘을 살 수 있다고 생각했다. 끼니까지 미루지는 않기로 했다.','마음이 좋아지는 말을 외운다고 바로 좋아지지는 않았다. 그래도 그 마음으로 상대에게 계속 연락하는 행동을 하지 않을 수는 있었다.')];if(id.endsWith('_keep_words'))return [groundedMono(20,'답이 없어도 오늘 내가 한 말을 바꾸지 않기로 했다.','나는 하나를 골랐다.')];return [groundedMono(20,'다시 연락하고 싶은 마음은 잠깐 기다려 보기로 했다.','그 마음으로 상대에게 계속 연락하는 행동을 하지 않을 수는 있었다.')];}if(number===4){if(id.endsWith('_familiar'))return [action(21,'familiar-meal','익숙한 한 끼를 배고픈 만큼 먹는다.','나는 배고픈 만큼 먹었다. 누군가와 헤어졌거나 대화가 미뤄졌다고 끼니를 빼야 하는 것은 아니었다.')];if(id.endsWith('_simple_new'))return [action(21,'simple-new-meal','오늘 가능한 간단한 음식을 골라 한 끼를 차린다.','없으면 오늘 가능한 한 끼를 골랐다.')];return [action(21,'use-home-food','집에 남은 음식이 먹을 수 있는지 확인해 한 끼를 차린다.','남은 것이 있으면 먹을 수 있는지 보고 먹었다. 없으면 오늘 가능한 한 끼를 골랐다.')];}if(number===5){if(id.endsWith('_wash_cup'))return [action(21,'wash-cup','내일 쓸 컵을 씻어 둔다.','컵을 씻으면 내일 쓸 수 있었다.')];if(id.endsWith('_music'))return [action(21,'listen-music','음악을 틀고 지금 듣고 싶은 만큼 듣는다.','음악을 들으면 끝까지 들을 수도, 중간에 끌 수도 있었다.')];return [action(21,'do-nothing','의자에 기대어 잠깐 아무것도 하지 않는다.','아무것도 하지 않으면 의자에 기대앉았다. 혼자 있는 시간을 생산적인 것으로 채워야만 견딘 사람인 것은 아니었다.')];}if(number===6){if(id.endsWith('_logistics_only'))return [groundedMono(21,'실제로 필요한 정리만 확인했다. 답을 받기 위한 긴 대화는 열지 않았다.','돌려줄 물건이 있으면 합의한 방식만 확인했다. 상대의 답을 받으려고 반환 일정으로 긴 대화를 열지 않았다.')];if(id.endsWith('_friend_status'))return [groundedMono(21,'친구에게는 상대 이야기가 아니라 내 안부만 짧게 전했다.','- “친구에게 내 안부만 전하자.”')];return [action(21,'no-contact','휴대전화를 내려놓고 오늘은 연락 없이 쉰다.','- “오늘은 연락 없이 쉬자.”')];}if(number===7){if(id.endsWith('_clothes'))return [action(21,'prepare-clothes','내일 입을 옷을 한 벌 정리해 둔다.','- “입을 옷을 정리하자.”')];if(id.endsWith('_food'))return [action(21,'check-food','내일 먹을 수 있는 것을 확인한다.','- “먹을 것을 확인하자.”')];return [groundedMono(21,'내일 몸이 괜찮으면 동네를 짧게 걷기로 했다.','- “내 몸이 괜찮으면 동네를 걷자.”')];}if(number===8){if(id.endsWith('_keep_answer'))return [groundedMono(21,'오늘 들은 답을 내게 편한 말로 고치지 않고 그대로 두었다.','- “오늘 들은 답을 그대로 두자.”')];if(id.endsWith('_leave_unknown'))return [groundedMono(21,'모르는 부분은 오늘 모르는 채로 남겨 두었다.','- “모르는 부분은 모르는 채로 두자.”')];return [groundedMono(21,'이제 잘 쉬고 내일의 생활로 돌아가기로 했다.','- “잘 쉬고 내일 다시 살자.”')];}return [];}
+function soloResult(chapter,number){
+  const id=lastSoloChoice(chapter,number);
+  if(number===2){
+    if(id.endsWith('_walk_home'))return [action(20,'short-walk-home','집에 돌아갈 힘을 남겨 두고 짧게 걷는다.','산책을 고르면 멀리 가지 않았다. 집에 돌아갈 힘을 남겼다.')];
+    if(id.endsWith('_own_task'))return [action(20,'own-task','미뤄 둔 개인 일 하나를 끝낸다.','개인 일을 고르면 내 생활에서 필요한 작은 것을 했다. 내 마음을 완전히 정리해야 일을 시작할 수 있는 것은 아니었다.')];
+    return [groundedMono(20,'지훈에게 가능한 때를 물었다. 바쁘다면 다음에 듣기로 했다.','친구에게 물으면 그가 바쁜지도 들었다. 안 되면 다음으로 뒀다.')];
+  }
+  if(number===3){
+    if(id.endsWith('_live_sad'))return [groundedMono(20,'조금 슬퍼도 오늘을 살 수 있다고 생각했다. 끼니까지 미루지는 않기로 했다.','마음이 좋아지는 말을 외운다고 바로 좋아지지는 않았다. 그래도 그 마음으로 상대에게 계속 연락하는 행동을 하지 않을 수는 있었다.')];
+    if(id.endsWith('_keep_words'))return [groundedMono(20,'답이 없어도 오늘 내가 한 말을 바꾸지 않기로 했다.','나는 하나를 골랐다.')];
+    return [groundedMono(20,'다시 연락하고 싶은 마음은 잠깐 기다려 보기로 했다.','마음이 좋아지는 말을 외운다고 바로 좋아지지는 않았다. 그래도 그 마음으로 상대에게 계속 연락하는 행동을 하지 않을 수는 있었다.')];
+  }
+  if(number===4){
+    if(id.endsWith('_familiar'))return [action(21,'familiar-meal','익숙한 한 끼를 배고픈 만큼 먹는다.','나는 배고픈 만큼 먹었다. 누군가와 헤어졌거나 대화가 미뤄졌다고 끼니를 빼야 하는 것은 아니었다.')];
+    if(id.endsWith('_simple_new'))return [action(21,'simple-new-meal','오늘 가능한 간단한 음식을 골라 한 끼를 차린다.','남은 것이 있으면 먹을 수 있는지 보고 먹었다. 없으면 오늘 가능한 한 끼를 골랐다.')];
+    return [action(21,'use-home-food','집에 남은 음식이 먹을 수 있는지 확인해 한 끼를 차린다.','남은 것이 있으면 먹을 수 있는지 보고 먹었다. 없으면 오늘 가능한 한 끼를 골랐다.')];
+  }
+  if(number===5){
+    if(id.endsWith('_wash_cup'))return [action(21,'wash-cup','내일 쓸 컵을 씻어 둔다.','컵을 씻으면 내일 쓸 수 있었다.')];
+    if(id.endsWith('_music'))return [action(21,'listen-music','음악을 틀고 지금 듣고 싶은 만큼 듣는다.','음악을 들으면 끝까지 들을 수도, 중간에 끌 수도 있었다.')];
+    return [action(21,'do-nothing','의자에 기대어 잠깐 아무것도 하지 않는다.','아무것도 하지 않으면 의자에 기대앉았다. 혼자 있는 시간을 생산적인 것으로 채워야만 견딘 사람인 것은 아니었다.')];
+  }
+  if(number===6){
+    if(id.endsWith('_logistics_only'))return [groundedMono(21,'실제로 필요한 정리만 확인했다. 답을 받기 위한 긴 대화는 열지 않았다.','돌려줄 물건이 있으면 합의한 방식만 확인했다. 상대의 답을 받으려고 반환 일정으로 긴 대화를 열지 않았다.')];
+    if(id.endsWith('_friend_status'))return [groundedMono(21,'친구에게는 상대 이야기가 아니라 내 안부만 짧게 전했다.','- “친구에게 내 안부만 전하자.”')];
+    return [action(21,'no-contact','휴대전화를 내려놓고 오늘은 연락 없이 쉰다.','- “오늘은 연락 없이 쉬자.”')];
+  }
+  if(number===7){
+    if(id.endsWith('_clothes'))return [action(21,'prepare-clothes','내일 입을 옷을 한 벌 정리해 둔다.','- “입을 옷을 정리하자.”')];
+    if(id.endsWith('_food'))return [action(21,'check-food','내일 먹을 수 있는 것을 확인한다.','- “먹을 것을 확인하자.”')];
+    return [groundedMono(21,'내일 몸이 괜찮으면 동네를 짧게 걷기로 했다.','- “내 몸이 괜찮으면 동네를 걷자.”')];
+  }
+  if(number===8){
+    if(id.endsWith('_keep_answer'))return [groundedMono(21,'오늘 들은 답을 내게 편한 말로 고치지 않고 그대로 두었다.','- “오늘 들은 답을 그대로 두자.”')];
+    if(id.endsWith('_leave_unknown'))return [groundedMono(21,'모르는 부분은 오늘 모르는 채로 남겨 두었다.','- “모르는 부분은 모르는 채로 두자.”')];
+    return [groundedMono(21,'이제 잘 쉬고 내일의 생활로 돌아가기로 했다.','- “잘 쉬고 내일 다시 살자.”')];
+  }
+  return [];
+}
 function solo(chapter){const [scene,number]=soloDefs[chapter.phase],lead=number===2?[direction(20,'cafe','afternoon',[]),groundedMono(20,'카페 안쪽 자리에 잠깐 앉아 물을 마셨다. 휴대전화를 열었다가 다시 닫았다.','나는 물을 마시고 휴대전화를 열었다가 닫았다.'),mono(20,'그 마음이 답을 받아야 할 권리는 아니라는 것도 알았다.')]:number===4?[...soloResult(chapter,3),direction(21,'home','evening',[]),mono(21,'집에 돌아와 식사를 준비했다.')]:soloResult(chapter,number-1);return [...lead,choice(chapter,number,'SOLO_LIFE')];}
 function newPersonNightChoice(chapter){const labels=['각자 내일을 보내고 저녁에 이야기할까요?','서로 편하면 다음 만남을 천천히 정해요.','저는 내일 제 일부터 하고 연락할게요.'];return {...choice(chapter,16,'CONTINUING_NIGHT'),prompt:'내일을 나누는 방법',options:getDay28V4Options(chapter).map((option,index)=>({...option,label:labels[index]}))};}
 function scene22(chapter){const newPerson=chapter.facts.newRelationshipResponse==='RECIPROCATE',phone=chapter.facts.meetingMethod==='CALL',scope=socialScopeResult(chapter);if(newPerson){const name=person(chapter.input.newMeeting.recipient),newDirection={...direction(22,'home','night',[]),title:'내일을 나누는 방법'};return [...scope,newDirection,spoken(22,name,'내일은 제 할 일을 먼저 하고, 끝나면 연락할게요.','새 상대와 실제로 연락하는 경우에도 그 사람의 내일을 들었다. 하은의 생활계획을 이름만 바꿔 옮기지는 않았다.'),newPersonNightChoice(chapter)];}const lead=[...scope,direction(22,'home','night',phone?[]:['girlfriend']),...(phone?[{type:'phoneCallCue',speaker:'하은',status:'silence'}]:[]),quoted(22,'**주인공** “계절이 바뀌나?”'),quoted(22,'**하은** “의자에 앉고 싶어서.”'),quoted(22,'**주인공** “우리 집 의자랑 비슷하네.”'),quoted(22,'**하은** “네 의자만 고생하는 건 아니야.”')];return [...lead,choice(chapter,16,'CONTINUING_NIGHT')];}
