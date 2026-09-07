@@ -46,3 +46,18 @@
 - GitHub Pages 실행 `34058228181`은 `success`로 완료됐고 공개 `index.html`은 `game.js?v=289`, 공개 `game.js`는 `story-cg-asset-policy.mjs?v=2`를 제공한다.
 - 공개 유리 컷의 과거 URL v1과 승인 URL v9는 모두 HTTP 200이며 제거본 SHA-256 `DEF6DBA66FFA0E3EA46380291A74341558C214551C4B5778BDB8C2A83EC00886`과 일치한다.
 - 함께 재확인한 음식 나누기 v1/v3와 하은 맛보기 v1/v3도 각 과거·승인 URL이 동일한 로컬 승인 해시를 반환했다. 공개 페이지의 배포 연결과 신고 장면 재노출 차단을 `PASS`로 판정한다.
+
+## 2026-09-07 정식 배포 호스트 재확인
+
+- 새 신고 이미지는 다시 전경 POV 손이 남은 과거 유리 식사 컷과 일치한다. 로컬과 정식 배포의 `yuri-menu-wait-water-v1.png` 및 v9는 모두 손이 제거된 SHA-256 `DEF6DBA66FFA0E3EA46380291A74341558C214551C4B5778BDB8C2A83EC00886`을 반환했다.
+- 정식 대상 `https://moondesignstudio73-lgtm.github.io/today-day-one-mvp/`는 확인 시점에 `game.js?v=289`를 제공했지만, 소스 가져오기용 저장소의 별도 Pages `https://superstarman35.github.io/game/`는 `game.js?v=182`에 머물러 있었다. 두 주소를 같은 현재 배포로 취급하지 않는다.
+- 반복 신고된 장면은 손을 다시 생성하지 않고 기존 손 제거본을 `yuri-menu-wait-water-v10.png`으로 재발행한다. v1~v9도 v10과 바이트 동일하게 유지하며 공통 렌더러 캐시 키를 `hand-review-20260907-2`로 올린다.
+- DAY18 실행 소스가 참조하는 26개 이벤트 이미지를 연락표로 재감사했다. 신고 컷 외에는 애니메이션 인물과 사진형 손이 혼합된 추가 HIGH 실패를 발견하지 않았다. 이 판정은 DAY18 실행 이미지 범위이며 전체 DAY 이미지 전수 감사로 확대하지 않는다.
+- 정식 호스트·빌드 리비전·자산 해시를 함께 남기지 않은 스크린샷은 원인 미확정으로 기록하고, 정식 호스트만 플레이·검수·공유 기준으로 삼는 규칙을 `STORY_V4_IMAGE_STYLE_RULES.md`에 추가했다.
+
+### v10 로컬 브라우저·회귀 검증
+
+- Chrome 152 격리 프로필에서 DAY18 유리 물 장면을 일반 진입하고 강제 새로고침 후 이어하기까지 확인했다. 두 번 모두 `yuri-menu-wait-water-v10.png?art=hand-review-20260907-2`, 원본 1672×941을 로드했고 SKIP 사용은 0회였다.
+- 신고 이미지와 v10 승인본을 원본 크기로 비교해 전경 주인공 손·손목·검은 소매가 0개이고 유리의 얼굴·의상·손·테이블 구도가 보존됨을 확인했다.
+- 집중 회귀 72/72, 전체 Node 회귀 940/940, `node --check game.js`, `git diff --check` PASS다.
+- 원격 `main`·`gh-pages` 동일 SHA 승격과 정식 공개 URL 확인 전까지 배포 상태는 `PENDING`이다.

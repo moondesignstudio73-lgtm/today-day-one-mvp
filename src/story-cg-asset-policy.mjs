@@ -2,7 +2,7 @@
 // This also covers older persisted scene steps without rewriting the player's save.
 const directory = 'assets/events/day18-v4/';
 const groups = {
-  'yuri-menu-wait-water': 9,
+  'yuri-menu-wait-water': 10,
   'food-sharing': 3,
   'haeun-tasting': 3,
   'own-meals': 3,
@@ -35,7 +35,7 @@ export function resolveStoryCgAsset(source, baseUrl) {
     if (!approved) return source;
     const result = new URL(approved, base);
     // A new cache key also bypasses cached bytes under an already-correct filename.
-    result.searchParams.set('art', 'hand-review-20260907-1');
+    result.searchParams.set('art', 'hand-review-20260907-2');
     return result.href;
   } catch {
     return source;

@@ -7,7 +7,7 @@
 <button data-route="park">Park · 공원 대화</button><button data-route="phone">Phone · 통화</button><button data-route="deferred">Deferred · 무연락 연기</button><button data-route="busan">Busan · 검증 견적</button><button data-route="seoul">Seoul · 당일</button><button data-route="rest">Rest · 각자 쉬기</button><button id="restore">테스트 전 저장 복원</button><p role="status" id="status"></p>
 <script type="module">
 import {createInitialState} from '../src/game-core.mjs';import {createGirlfriendFromProfile} from '../src/girlfriend-manager.mjs';import {SaveManager} from '../src/save-manager.mjs';import {GAME_MODES} from '../src/scenario-state.mjs';
-import {beginDay18V4,applyDay18V4Choice} from '../src/day18-v4-state-contract.mjs';import {completeDay18V4GameChapter} from '../src/day18-v4-game-bridge.mjs?v=63';
+import {beginDay18V4,applyDay18V4Choice} from '../src/day18-v4-state-contract.mjs';import {completeDay18V4GameChapter} from '../src/day18-v4-game-bridge.mjs?v=64';
 import {getDay19V4Options} from '../src/day19-v4-state-contract.mjs';import {applyDay19V4GameChoice,completeDay19V4GameChapter,prepareDay19V4GameEntry} from '../src/day19-v4-game-bridge.mjs?v=4';
 import {getDay20V4Options} from '../src/day20-v4-state-contract.mjs';import {applyDay20V4GameChoice,applyDay20V4GameResolution,completeDay20V4GameChapter,getDay20V4GameSegment,prepareDay20V4GameEntry} from '../src/day20-v4-game-bridge.mjs?v=1';import {getDay20V4RuntimeResolution} from '../src/day20-v4-runtime-resolution.mjs?v=1';
 const backupKey='day21-v4-qa-save-backup',keys=[SaveManager.key,SaveManager.keyForMode(GAME_MODES.MARRIAGE_30),SaveManager.keyForMode(GAME_MODES.FREE_ROMANCE)];

@@ -7,7 +7,7 @@ const base = 'https://example.test/game/index.html';
 test('all reviewed hand-art URLs resolve to approved bytes with a fresh cache key', () => {
   for (const [old, approved] of Object.entries(STORY_CG_APPROVED_REPLACEMENTS)) {
     for (const source of [old, `./${old}?old=1#cg`, new URL(old, base).href]) {
-      assert.equal(resolveStoryCgAsset(source, base), `https://example.test/game/${approved}?art=hand-review-20260907-1`);
+    assert.equal(resolveStoryCgAsset(source, base), `https://example.test/game/${approved}?art=hand-review-20260907-2`);
     }
     assert.deepEqual(readFileSync(new URL(`../${old}`, import.meta.url)), readFileSync(new URL(`../${approved}`, import.meta.url)));
   }
@@ -31,5 +31,7 @@ test('the published site keeps the environment-approved promotion branch and a f
   const workflow = readFileSync(new URL('../.github/workflows/deploy-pages.yml', import.meta.url), 'utf8');
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   assert.match(workflow, /push:\s*\n\s*branches:\s*\n\s*- gh-pages\b/);
-  assert.match(html, /game\.js\?v=291/);
+  assert.match(html, /game\.js\?v=292/);
+  assert.match(html, /<link rel="canonical" href="https:\/\/moondesignstudio73-lgtm\.github\.io\/today-day-one-mvp\/">/);
+  assert.match(html, /today-day-one-build" content="20260907-hand-review-2"/);
 });
